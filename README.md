@@ -8,7 +8,7 @@ Bokeh is used as the base package for visualizations.
 
 ### Prerequisites
 
-Need to install python 3.8x or higher and add it to path on your system. You can check it by opening cmd.exe or a terminal and typing:
+Need to install [python 3.8](https://www.python.org/downloads/) and add it to path on your system before exiting the installation process. You can check it by opening cmd.exe or a terminal and typing:
 
 ```
 $python --version
@@ -30,7 +30,7 @@ You can create an interactive webpage from any example using:
 $bokeh serve --show <filename.py>
 ```
 
-If already running an interactive visualization default port will be unavailable. You can specify port usin --port
+If already running an interactive visualization default port will be unavailable. You can specify port using --port
 
 ```
 $bokeh serve --show <filename.py> --port 5010
@@ -48,7 +48,7 @@ The interactive webpage can be found here:
 
 * **Raghuram Thiagarajan** - *Initial work* - [swamilikes2code](https://github.com/swamilikes2code)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/graphs/contributors) who participated in this project.
 
 ## License
 
