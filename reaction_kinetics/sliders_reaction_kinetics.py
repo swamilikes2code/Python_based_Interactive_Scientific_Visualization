@@ -62,8 +62,9 @@ int_vec_C = vec_conc_t[:,2]
 source = ColumnDataSource(data=dict(vec_time=vec_time, int_vec_A=int_vec_A, int_vec_B=int_vec_B, int_vec_C=int_vec_C))
 
 # Set up plot
-TOOLS = "crosshair,pan,undo,redo,reset,save,wheel_zoom,box_zoom"
-plot = figure(plot_height=900, plot_width=1200, tooltips = [("A","$int_vec_A"), ("Time","$vec_time")],
+TOOLTIPS = [("Time(s)","$vec_time"),("A","$int_vec_A"),("B","$int_vec_B"),("C","$int_vec_C"),]
+TOOLS = "pan,undo,redo,reset,save,wheel_zoom,box_zoom,hover"
+plot = figure(plot_height=600, plot_width=800, tooltips = TOOLTIPS,
               title="Example: Sequential reactions with A --> B --> C, starting with [A]_0 = 1.0",
               tools=TOOLS, x_range=[t_start, t_end], y_range=[-0.05, 1.05])
 
@@ -72,11 +73,11 @@ plot.line('vec_time', 'int_vec_B', source=source, line_width=3, line_alpha=0.6, 
 plot.circle('vec_time', 'int_vec_C', source=source, size=5, alpha=0.6, line_color="navy", legend_label="C Concentration")
 plot.xaxis.axis_label = "Time (s)"
 plot.yaxis.axis_label = "Concentration"
-plot.legend.location = "top_right"
+plot.legend.location = "top_left"
 plot.legend.click_policy="hide"
 plot.legend.background_fill_alpha = 0.5
-plot.background_fill_color = "#efefef"
-plot.grid.grid_line_color = "darkslategray"
+plot.grid.grid_line_color = "silver"
+plot.background_fill_color = "gainsboro"
 
 # Set up widgets
 text = TextInput(title="Exercise", value='For A -> B -> C, set Values of k_AB, k_BC, order_AB, and order_BC')
@@ -114,5 +115,5 @@ for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC]:
 # Set up layouts and add to document
 inputs = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
 
-curdoc().add_root(row(inputs, plot, width=1200))
+curdoc().add_root(row(inputs, plot, width=800))
 curdoc().title = "Sliders_Sequential_Reactions"
