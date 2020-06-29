@@ -12,7 +12,7 @@ from scipy.integrate import odeint
 
 from bokeh.io import curdoc
 from bokeh.layouts import row, column, gridplot
-from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, TextInput
+from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, TextInput, HoverTool
 from bokeh.plotting import figure
 from bokeh.palettes import Blues8
 
@@ -62,21 +62,20 @@ int_vec_C = vec_conc_t[:,2]
 source = ColumnDataSource(data=dict(vec_time=vec_time, int_vec_A=int_vec_A, int_vec_B=int_vec_B, int_vec_C=int_vec_C))
 
 # Set up plot
-TOOLS = "crosshair,pan,undo,redo,reset,save,wheel_zoom,box_zoom"
-plot = figure(plot_height=900, plot_width=1200, tooltips = [("A","$int_vec_A"), ("Time","$vec_time")],
-              title="Example: Sequential reactions with A --> B --> C, starting with [A]_0 = 1.0",
-              tools=TOOLS, x_range=[t_start, t_end], y_range=[-0.05, 1.05])
+TOOLTIPS = [("Time (s)","@vec_time"), ("A","@int_vec_A{0,0.000}"), ("B","@int_vec_B{0,0.000}"), ("C","@int_vec_C{0,0.000}")]
+TOOLS = "pan,undo,redo,reset,save,wheel_zoom,box_zoom"
+plot = figure(plot_height=600, plot_width=800, tools=TOOLS, tooltips=TOOLTIPS,
+              title="Example: Sequential reactions with A --> B --> C, starting with [A]_0 = 1.0", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
 
 plot.cross('vec_time', 'int_vec_A', source=source, size=8, alpha=0.6, color="navy", legend_label="A Concentration")
 plot.line('vec_time', 'int_vec_B', source=source, line_width=3, line_alpha=0.6, line_color="navy", legend_label="B Concentration")
 plot.circle('vec_time', 'int_vec_C', source=source, size=5, alpha=0.6, line_color="navy", legend_label="C Concentration")
 plot.xaxis.axis_label = "Time (s)"
 plot.yaxis.axis_label = "Concentration"
-plot.legend.location = "top_right"
+plot.legend.location = "top_left"
 plot.legend.click_policy="hide"
 plot.legend.background_fill_alpha = 0.5
-plot.background_fill_color = "#efefef"
-plot.grid.grid_line_color = "darkslategray"
+plot.grid.grid_line_color = "silver"
 
 # Set up widgets
 text = TextInput(title="Exercise", value='For A -> B -> C, set Values of k_AB, k_BC, order_AB, and order_BC')
@@ -114,5 +113,5 @@ for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC]:
 # Set up layouts and add to document
 inputs = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
 
-curdoc().add_root(row(inputs, plot, width=1200))
+curdoc().add_root(row(inputs, plot, width=800))
 curdoc().title = "Sliders_Sequential_Reactions"
