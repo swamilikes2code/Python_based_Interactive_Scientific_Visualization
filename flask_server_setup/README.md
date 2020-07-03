@@ -34,8 +34,8 @@ Step 4: Navigate to localhost:8080 to see the HTML setup.
 
 Below is a link to the screenshot of command line commands in the repository.
 
-![Screesnshot of CMD](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/flask_server_setup/images/flask_server_setup_command_line.PNG)
+![Screesnshot of CMD](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/blob/master/flask_server_setup/images/flask_server_setup_command_line.PNG)
 
 The final output on your local machine should appear as:
 
-![Screesnshot of Final Output](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/flask_server_setup/images/flask_server_setup_command_line.PNG)
+![Screesnshot of Final Output](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/blob/master/flask_server_setup/images/final_server_output.PNG)
