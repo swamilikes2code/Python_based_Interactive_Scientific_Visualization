@@ -44,9 +44,14 @@ The interactive webpage can be found here:
 
 * [Bokeh](https://docs.bokeh.org/en/latest/) - The visualization library used
 
-## Authors
+* [Flask](https://pypi.org/project/Flask/) - Used to embed interactive Bokeh applications in a HTML
 
-* **Raghuram Thiagarajan** - *Initial work* - [swamilikes2code](https://github.com/swamilikes2code)
+## Authors
+* **Anna Moragne** - *Developer* - [annamoragne](https://github.com/annamoragne)
+
+* **Brian Lucas** - *Developer* - [cariocabrian](https://github.com/cariocabrian)
+
+* **Raghuram Thiagarajan** - *Project Lead* - [swamilikes2code](https://github.com/swamilikes2code)
 
 See also the list of [contributors](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/graphs/contributors) who participated in this project.
 
@@ -59,4 +64,3 @@ This project is licensed under the GNU General Public License
 * Python Community
 * PyData Ann Arbor Meetup
 * Bokeh Visualization Library
-
