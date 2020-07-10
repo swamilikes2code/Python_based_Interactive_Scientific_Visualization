@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>STEM Interactive Visualizations</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<style>
+body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
+body {font-size:16px;}
+.w3-sidebar {color: rgb(84, 121, 128);}
+.TealHead {color: rgb(84, 121, 128);}
+.teal {color: white; background-color: rgb(84, 121, 128);}
+.graph {overflow: auto}
+</style>
+<body>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar teal w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
+  <div class="w3-container">
+    <h3 class="w3-padding-64"><b>STEM Based<br>Interactive Visualizations</b></h3>
+  </div>
+  <div class="w3-bar-block">
+    <a href="#Overview" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Overview</a> 
+    <a href="#react_kin" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Reaction Kinetics</a> 
+    <a href="#ZECC" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Zero Energy Cooling Chamber</a> 
+    <a href="#SEIR" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Infectious Disease Modeling</a> 
+  </div>
+</nav>
+
+<!-- Top menu on small screens -->
+<header class="w3-container w3-top w3-hide-large teal w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button teal w3-margin-right" onclick="w3_open()">☰</a>
+  <span>Company Name</span>
+</header>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:340px;margin-right:40px">
+
+  <!-- Header -->
+  <div class="w3-container" style="margin-top:80px" id="showcase">
+    <h1 class="w3-jumbo"><b>STEM Learning Through Interactive Visualization</b></h1>
+    <hr style="width:50px;border:5px solid #204051" class="w3-round">
+  </div>
+
+<!-- About Page -->
+  <div class="w3-container" id="Overview" style="margin-top:75px">
+    <h1 class="w3-xxxlarge TealHead"><b>Overview</b></h1>
+    <hr style="width:50px;border:5px solid #204051" class="w3-round">
+    <p> This page was designed to help students learn conceptually complex STEM problems by giving them a more interactive way of engaging with course material. </p>
+    <p> Our models cover a variety of different topics and subjects, hopefully you find these to be useful!
+    </p>
+  </div> 
+ <!-- Reaction Kinetics -->
+  <div class="w3-container" id="react_kin" style="margin-top:75px">
+    <h1 class="w3-xxxlarge TealHead"><b>Reaction Kinetics</b></h1>
+    <hr style="width:50px;border:5px solid #204051" class="w3-round">
+    <p>This program allows you to see the change in A, B, and C concentrations as you change the orders and initial k-constants.
+    </p>
+    <div class="graph">
+        {{bokeh_script_reaction_kinetics|safe}}
+    </div>
+  </div>
+
+  <!-- ZECC -->
+  <div class="w3-container" id="ZECC" style="margin-top:75px">
+    <h1 class="w3-xxxlarge TealHead"><b>Zero Energy Cooling Chamber</b></h1>
+    <hr style="width:50px;border:5px solid #204051" class="w3-round">
+    <p>This program allows you to create a Zero Energy Cooling Chamber with your chosen specified dimensions, material and location for the chamber.</p> 
+    <p>You can choose whether or not to use temperature data from a yearly time scale or a 24 hour time scale. As you adjust variable values, the graphs in the "Heat Transfer & Water" tab will update. To figure out how much water is necessary and the cost of your chamber, simply press the "Calculate" button, you can do this as many times as is desired. Ultimately you want to create a chamber that is the most cost efficient, while still being able to store enough food.
+
+<p>“The essence of engineering is finding solutions to problems.”</p>
+<i>- Homo Problematis Solvendis–Problem-solving Man: A History of Human Creativity</i>
+
+<h1>Introduction:</h1>
+
+<p>     Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
+
+<p>     The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
+
+<p>     The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p>
+
+<h1>Assignment:</h1> <p>The variables that define the ZECC’s function are the materials, humidity, dimensions, inner temperature, and ambient (outer) temperature. After reviewing the importance of the variables, play around with the ZECC yourself, and understand how each variable affects the system as a whole.</p>
+
+<dd>- The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</dd>
+<dd>- The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</dd>
+<dd>- The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</dd>
+<dd>- The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</dd>
+<dd>- The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</dd>
+
+<p>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</p>
+
+
+    </p>
+    <div class="graph">
+        {{bokeh_script_ZECC|safe}}
+    </div>
+  </div>
+  
+  <!-- SEIR Model -->
+  <div class="w3-container" id="SEIR" style="margin-top:75px">
+    <h1 class="w3-xxxlarge TealHead"><b>Infectious Disease Modeling</b></h1>
+    <hr style="width:50px;border:5px solid #204051" class="w3-round">
+    <p>SEIR Model: Susceptible-Exposed-Infected_Recovered</p>
+    <p> This model allows you to see how different infectious disease outbreaks occur. By implementing different mitigation strategies you can see how useful and beneficial certain strategies are. You can also see how different age groups are effcted differently. Addittionaly, you can look at data from specific historical epidemics and pandemics.  </p>
+    <p><b>Our designers are thoughtfully chosen</b>:</p>
+  </div>
+
+<!-- End page content -->
+</div>
+
+<!-- W3.CSS Container -->
+<div class="w3-light-grey w3-container w3-padding-32" style="margin-top:75px;padding-right:58px"><p class="w3-right">Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a></p></div>
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+  document.getElementById("mySidebar").style.display = "none";
+  document.getElementById("myOverlay").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
