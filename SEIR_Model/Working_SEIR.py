@@ -1,11 +1,9 @@
-
 import numpy as np
 from scipy.integrate import odeint
-import matplotlib.pyplot as plt
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
-from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d
-from bokeh.plotting import figure, show
+from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d, Div
+from bokeh.plotting import figure
 TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
 
 # Total population, N.
@@ -22,10 +20,10 @@ E0=0 # initial number of people exposed to the virus but not yet transmitable
 S0 = N - Is_nh0 - Is_h0 - Ia_uk0 - Ia_k0 - R0 - D0 - E0
 # Contact rate, beta, and mean recovery rate, gamma, (in 1/days).
 beta_S_h=0.001 #the contact/infection rate per day for hospitalized symptomatic infecteds
-beta_S_nh=0.15 #the contact/infection rate per day for non-hospitalized symptomatic infecteds
+beta_S_nh=0.1 #the contact/infection rate per day for non-hospitalized symptomatic infecteds
 beta_A_uk=0.35 #the contact/infection rate per day for unknown asymptomatic infecteds
-beta_A_k=0.01 #the contact/infection rate per day for known symptomatic infecteds
-gamma = 1/14  #the recovery rate per day
+beta_A_k=0.1 #the contact/infection rate per day for known symptomatic infecteds
+gamma = 0.04  #the recovery rate per day
 gamma_hosp=1/25
 death_rate_S=0.004 #death rate for symptomatic infecteds
 death_rate_hosp=0.008
@@ -37,7 +35,7 @@ return_rate=0.00002 #rate at which recovered people once again become susceptibl
 sd=1 # if social distancing is put into effect, the rate at which contact rates will decrease
 v_freq=0 #frequency of people getting vaccinated
 v_eff=0.98 #how effective the vaccine is 
-test_rate=0.01
+test_rate_inc=1 #rate at which testing increases over time
 hosp=0.1
 health_capacity=150
 hcd=1 #health capacity effecting the death rate
@@ -53,6 +51,7 @@ def vac_freq(t_vac, total_time):
     elif total_time>=t_vac:
         vac_f=0.01
     return vac_f
+    
 def health_cap_effect(health_capacity, Is_h):
     if Is_h<health_capacity:
         hcd=1
@@ -65,9 +64,10 @@ def health_cap_effect(health_capacity, Is_h):
         
 
 # The SIR model differential equations.
-def deriv(y, t, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate, t_vac, health_capacity):
+def deriv(y, t, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity):
     S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = y
     v_freq=vac_freq(t_vac, t)
+    test_rate=.001*t*test_rate_inc
     hce=health_cap_effect(health_capacity, Is_h)
     dSdt = (-beta_S_nh * sd* S * Is_nh / N)-(beta_S_h * S * Is_h / N)-(beta_A_uk * sd * S * Ia_uk / N)-(beta_A_k * sd * S * Ia_k / N)-(nat_death*S)+(nat_birth*(N-D))+(return_rate*R)-(v_freq*v_eff*S)
     dEdt = (beta_S_nh * sd* S * Is_nh / N)+(beta_S_h * S * Is_h / N)+(beta_A_uk * sd * S * Ia_uk / N)+(beta_A_k * sd * S * Ia_k / N) - (E_to_I_forA * E)-(E_to_I_forS*E)-(nat_death*E)
@@ -82,13 +82,13 @@ def deriv(y, t, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, 
 # Initial conditions vector
 y0 = S0, E0, Ia_uk0, Ia_k0, Is_nh0, Is_h0, R0, D0
 # Integrate the SIR equations over the time grid, t.
-ret = odeint(deriv, y0, t, args=(N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h,  gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate, t_vac, health_capacity))
+ret = odeint(deriv, y0, t, args=(N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h,  gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity))
 S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.T
 #print(type(Ia_k))
 all_asymp=[]
 for i in range(0,160):
-    all_asymp.append((Ia_k[i]+Ia_uk[i])/1000)
-sourcePops=ColumnDataSource(data=dict(time=t, S=S/1000, E=E/1000, Ia_uk=Ia_uk/1000, Ia_k=Ia_k/1000, Is_nh=Is_nh/1000, Is_h=Is_h/1000, R=R/1000, D=D/1000, all_Ia=all_asymp, hc=([health_capacity/1000]*160)))
+    all_asymp.append(Ia_k[i]+Ia_uk[i])
+sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h, R=R, D=D, all_Ia=all_asymp, hc=([health_capacity]*160)))
 
 pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, width=1000, height=800)
 pops.title.text_font_size='15pt'
@@ -103,15 +103,30 @@ pops.line('time', 'R', source=sourcePops, legend_label="Recovered", line_width=2
 pops.line('time', 'D', source=sourcePops, legend_label="Dead", line_width=2, color='black')
 pops.line('time', 'hc', source=sourcePops, legend_label="Health Capacity", color="black", line_alpha=0.5, line_dash='dashed')
 
+infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", tools=TOOLS, width=600, height=600)
+infecteds.title.text_font_size='14pt'
+infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color='blue', line_dash='dotted')
+infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color='blue', line_dash='dashed')
+infecteds.line('time', 'Is_nh', source=sourcePops, legend_label="Non-Hospitalized Symptomatic", line_width=2, color='red', line_dash='dotted')
+infecteds.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized", line_width=2, color='red', line_dash='dashed')
+infecteds.line('time', 'hc', source=sourcePops, legend_label="Health Capacity", color="black", line_alpha=0.5, line_dash='dashed')
+
 S_infection_rate_slide=Slider(title="Infection Rate of Non-Hospitalized Symptomatic Individuals", value=beta_S_nh, start=0, end=1, step=0.01)
 A_infection_rate_slide=Slider(title="Infection Rate of Unknown Asymptomatic Individuals", value=beta_A_uk, start=0, end=1, step=0.01)
 social_distancing=Slider(title="Rate of Social Distancing", value=(1-sd), start=0, end=1, step=0.01)
 recovery_slider=Slider(title="Rate of Recovery", value=gamma, start=0, end=.5, step=0.01)
 death_rate_slide=Slider(title="Death Rate for Infection", value=death_rate_S, start=0, end=0.5, step=0.001)
-testing_rate=Slider(title="Rate at Which People Are Being Tested", value=test_rate, start=0, end=1, step=0.05)
+testing_rate=Slider(title="Rate of Increase of Testing", value=test_rate_inc, start=1, end=5, step=0.1)
 vaccine_slide=Slider(title="Time at Which the Vaccine is Introduced", value=t_vac, start=0, end=160, step=1)
 hosp_space_slide=Slider(title="Additional Hospital Beds / Ventilators", value=0, start=0, end=60, step=5)
+return_rate_slide=Slider(title="Rate at which Recovered Individuals Lose Their Immunity", value=return_rate, start=0, end=1, step=0.01)
 #latent_time_slide=Slider(title="Exposure Latency Rate", value=E_to_I_rate, start=0, end=1, step=0.05)
+
+rate_values=[nat_birth, nat_death, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, return_rate, E_to_I_forA, E_to_I_forS, "0.001*t*"+str(test_rate_inc), hosp, gamma , gamma_hosp, death_rate_S, death_rate_hosp, v_freq, 1-sd]
+rate_names=["Natural Birth Rate", "Natural Death Rate", "Starting Population", "Rate at which unknown asymptomatic infecteds infect suscpetibles", "Rate at which known asymptomatic infecteds infect suscpetibles", "Rate at which non-hospitalized symptomatic infecteds infect suscpetibles", "Rate at which hospitalized symptomatic infecteds infect suscpetibles", "Rate of recovered individuals becoming susceptible again", "Rate of exposed class that become asymptomatic infected", "Rate of exposed class that become symptomatic infected", "Rate at which individuals are being tested", "Rate was which symptomatic infected become hospitalized", "Rate of recovery", "Rate of hospitalized recovery", "Death rate for non-hospitalized symptomatic infected", "Death rate for hospitalized infected", "Rate of vaccination once introduced", "Social Distancing Rate"]
+data_for_table=ColumnDataSource(data=dict(names=rate_names, values=rate_values))
+columnsT=[TableColumn(field='names', title="Parameter Name"), TableColumn(field='values', title="Current Value")]
+data_table=DataTable(source=data_for_table, columns=columnsT, margin=(20, 10, 10, 20))
 
 def update_data(attr, old, new):
     S_infect_rate=S_infection_rate_slide.value
@@ -124,19 +139,38 @@ def update_data(attr, old, new):
     increase_hc=hosp_space_slide.value
     #E_to_I=latent_time_slide.value
     health_cap=health_capacity+increase_hc
+    return_rate=return_rate_slide.value
     
     ret = odeint(deriv, y0, t, args=(N, A_infect_rate, beta_A_k, S_infect_rate, beta_S_h, recov_rate, gamma_hosp, nat_death, death_rate, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate, vaccine, health_cap))
     S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.T
     all_asymp=[]
     for i in range(0,160):
-        all_asymp.append((Ia_k[i]+Ia_uk[i])/1000)
-    sourcePops.data=dict(time=t, S=S/1000, E=E/1000, Ia_uk=Ia_uk/1000, Ia_k=Ia_k/1000, Is_nh=Is_nh/1000, Is_h=Is_h/1000,  R=R/1000, D=D/1000, all_Ia=all_asymp, hc=([health_cap/1000]*160))
+        all_asymp.append(Ia_k[i]+Ia_uk[i])
+    sourcePops.data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h,  R=R, D=D, all_Ia=all_asymp, hc=([health_cap]*160))
+    data_for_table.data=dict(names=rate_names, values=[nat_birth, nat_death, N, A_infect_rate, beta_A_k, S_infect_rate, beta_S_h, return_rate, E_to_I_forA, E_to_I_forS, "0.001*t*"+str(test_rate), hosp, recov_rate, gamma_hosp, death_rate, death_rate_hosp, v_freq, 1-sd])
 
-updates=[S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, A_infection_rate_slide, vaccine_slide, hosp_space_slide]
+updates=[S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, A_infection_rate_slide, vaccine_slide, hosp_space_slide, return_rate_slide]
 for u in updates:
     u.on_change('value', update_data)
-widgets=column(A_infection_rate_slide, S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, vaccine_slide, hosp_space_slide)
-curdoc().add_root(row(widgets, pops))
+
+# Text Description of the Model 
+div1=Div(text="The general SEIR model displays the populations of 8 different classes of individuals in an infectious disease outbreak; Susceptible, Exposed, Unknown Asymptomatic Infected, Known Symptomatic Infected, Non-Hospitalized Symptomatic Infected, Hospitalized Symptomatic Infected, Recovered, and Dead. The current model displays an initial population of 1,000 individuals over 160 days.", margin=(20, 20, 10, 20), width=750)
+div2=Div(text="The Exposed class is for individuals who have been infected but are not yet showing symptoms and are not yet able to infect others. They then become either asymptomatic or symptomatic infected. Individuals can become Known Asymptomatic through testing. Testing is assumed to be available through a function of 0.001*t but the user can increase this rate through one of the available sliders.", margin=(10, 20, 10, 20), width=750)
+div3=Div(text="Symptomatic Infecteds become hospitalized at a rate of 0.1 and hospitalized individuals have a longer recovery time and higher death rate because their cases are more severe.", margin=(10, 20, 10, 20), width=750)
+div4=Div(text="Once a vaccine is introduced, individuals can move directly from the susceptible class to the recovered class. The vaccine is assumed to be 98% effective and be distributed at a rate of 0.01 once it is introduced. <br> The inclusion of social distancing will reduce the rate of infection.", margin=(10, 20, 10, 20), width=750)
+div5=Div(text="By adding hospital beds and ventilators, the health capacity of the population increases. If the amount of hospitalized symptomatic individuals surpasses the health capacity then hospitalized deaths will increase and recovery rate will decrease due to the health system being overwhelmed.", margin=(10, 20, 10, 20), width=750)
+div6=Div(text="There is assumed to be a natural birth rate of .001 and a natural death rate of 0.0002. This accounts for individuals entering and exiting the system, for causes unrelated to the outbreak.", margin=(10, 20, 10, 20), width=750)
+
+
+   
+widgets=column(A_infection_rate_slide, S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, vaccine_slide, hosp_space_slide, return_rate_slide)
+tab1=Panel(child=row(column(widgets, data_table), column(pops, infecteds)), title="General SEIR")
+tab2=Panel(child=column(div1, div2, div3, div4, div5, div6), title="Model Description")
+#tab3=Panel(title="Specific Outbreaks")
+tabs=Tabs(tabs=[tab1, tab2])
+
+
+curdoc().add_root(tabs)
 curdoc().title="Infectious Disease Model"
 
 
