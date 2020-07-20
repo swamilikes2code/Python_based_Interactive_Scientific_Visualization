@@ -241,9 +241,9 @@ water_trial=water_needed_hourly(initial_dims, Costa_hourly.temps, vap1_init, Cos
 #print(sum(water_trial))
 sourceW=ColumnDataSource(data=dict(time=time_range1, temps=CostaRica.temps, water=water_monthly))
 
-g3=figure(title="Water Added to System For It To Function Properly", x_axis_label='Time in Months', y_axis_label='Water Added (in Liters)', tools=TOOLS)
-g3.line('time', 'water', source=sourceW, color='blue', line_width=2)
-g3.title.text_font_size='12pt'
+#g3=figure(title="Water Added to System For It To Function Properly", x_axis_label='Time in Months', y_axis_label='Water Added (in Liters)', tools=TOOLS)
+#g3.line('time', 'water', source=sourceW, color='blue', line_width=2)
+#g3.title.text_font_size='12pt'
 
 #Evaporative Cooling Rate Q/t=mLv/t
 def evap_cool(mass, latent, time):
@@ -454,7 +454,7 @@ def update_data(attr, old, new):
         g1.y_range.start=np.min(source.data['output'])-10000
         g1.y_range.end=np.max(source.data['output'])+10000
         g1.xaxis.axis_label="Time (in Months)"
-        g3.xaxis.axis_label="Time (in Months)"
+        #g3.xaxis.axis_label="Time (in Months)"
         g4.xaxis.axis_label="Time (in Months)"
         
     elif time=="24 Hours":
@@ -490,7 +490,7 @@ def update_data(attr, old, new):
         g1.y_range.start=np.min(source.data['output'])-10
         g1.y_range.end=np.max(source.data['output'])+10
         g1.xaxis.axis_label="Time (in Hours)"
-        g3.xaxis.axis_label="Time (in Hours)"
+        #g3.xaxis.axis_label="Time (in Hours)"
         g4.xaxis.axis_label="Time (in Hours)"
 
 def button_updates():
@@ -573,9 +573,9 @@ p_dp=Paragraph(text="Note:    Dew-Point temperature is critically dependent on b
                margin=(20, 20, 20, 20), width=650)
 
 
-    
-tab1=Panel(child=column(row(diff_temps, hourly_temps), humid), title="Climate Data")
-tab2=Panel(child=column(row(g1, g3), row(g4, column(p_Heat, p_dp))), title="Heat Transfer & Water")
+  
+tab2=Panel(child=column(row(diff_temps, hourly_temps), humid), title="Climate Data")
+tab1=Panel(child=column(row(g1, g4), column(p_Heat, p_dp)), title="Heat Transfer & Water")
 tab3=Panel(child=column(p_ZECC, p_LHV, p_HT), title="Information")
 tabs=Tabs(tabs=[tab1, tab2, tab3])
 
