@@ -4,6 +4,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d, Div
 from bokeh.plotting import figure
+from math import exp
 TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
 
 # Total population, N.
@@ -44,24 +45,15 @@ hcr=1 #health capacity effecting the recovery rate
 t = np.linspace(0, 160, 160) #160 days
 t_vac=160 #time at which vaccine is introduced
 
-def vac_freq(t_vac, total_time): #function that gives the vaccine rate, it will be 0 before the vaccine is introduced and 0.01 after the vaccine is introduced
-    vac_f=0
-    if total_time<t_vac:
-        vac_f=0
-    elif total_time>=t_vac:
-        vac_f=0.01
-    return vac_f
-    
-def health_cap_effect(health_capacity, Is_h): #function adjusts hospitalized infecteds' death and recovery rates if health capacity is surpassed
-    if Is_h<health_capacity:
-        hcd=1
-        hcr=1
-    elif Is_h>health_capacity:
-        hcd=1.5
-        hcr=0.7
-    health_effect=[hcd, hcr]
-    return health_effect
-        
+def vac_freq(t_vac, current_time): #function that gives the vaccine rate, it will be 0 before the vaccine is introduced and 0.01 after the vaccine is introduced
+    vf=(.01*exp(current_time-t_vac))/(1+exp(current_time-t_vac))
+    return vf
+
+def health_cap_effect(health_capacity, Is_h):
+    diff=(health_capacity-Is_h)
+    hcd=1+((0.5*exp(-diff))/(1+exp(-diff)))
+    hcr=0.7+((0.3*exp(diff))/(1+exp(diff)))
+    return hcd, hcr    
 
 # The SIR model differential equations.
 def deriv(t, y, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity):
