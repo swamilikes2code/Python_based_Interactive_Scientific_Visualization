@@ -1,25 +1,21 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Thu Jul 16 09:12:58 2020
-
 @author: annamoragne
 """
-
 import networkx as nx
 import numpy as np
-from bokeh.io import  show, output_file, curdoc
+from bokeh.io import curdoc
 from bokeh.models import (BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool,
                          MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool)
-from bokeh.models import ColumnDataSource, GraphRenderer, Arrow, OpenHead, Slider, Button
+from bokeh.models import ColumnDataSource, GraphRenderer, Slider, Button, Div, Arrow, OpenHead
 from bokeh.palettes import Spectral4, RdYlBu8
 from bokeh.models.graphs import from_networkx
 from bokeh.transform import transform
 from bokeh.models.transforms import CustomJSTransform
 from bokeh.models.annotations import LabelSet
-from bokeh.plotting import figure
-from scipy.integrate import odeint, solve_ivp
+from scipy.integrate import solve_ivp
 from bokeh.layouts import row, column
+from math import exp
 
 
 class_names=['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic Infected', 'Non-Hospitalized Symptomatic Infected', 'Hospitalized Symptomatic Infected', 'Recovered', 'Dead']
@@ -30,9 +26,12 @@ G=nx.DiGraph()
 G.add_nodes_from(range(8), name=class_names)
 G.add_edges_from(needed_edges)
 
-plot = Plot(plot_width=800, plot_height=800,
-            x_range=Range1d(-1.1,1.1), y_range=Range1d(-1.1,1.1))
+plot = Plot(plot_width=800, plot_height=800, margin=(10, 5, 5, 20),
+            x_range=Range1d(-1.2,2.1), y_range=Range1d(-2.1,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
+plot.title.text_font_size='15pt'
+node_names=['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic Infected', 'Non-Hospitalized Symptomatic Infected', 'Hospitalized Symptomatic Infected', 'Recovered', 'Dead']
+
 
 graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
 
@@ -44,21 +43,17 @@ graph_renderer.node_renderer.selection_glyph = Circle(size=30, fill_color=Spectr
 graph_renderer.node_renderer.hover_glyph = Circle(size=30, fill_color=Spectral4[1])
 graph_renderer.node_renderer.data_source
 
-graph_renderer.edge_renderer.glyph = MultiLine(line_color="#CCCCCC", line_alpha=0.8, line_width=4)
-graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2], line_width=4)
-graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=6)
+graph_renderer.edge_renderer.glyph = MultiLine(line_color="#CCCCCC", line_alpha=0.8, line_width=6)
+graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2], line_width=6)
+graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=8)
 
 graph_renderer.selection_policy = NodesAndLinkedEdges()
 graph_renderer.inspection_policy = EdgesAndLinkedNodes()
 
-#trying to add arrows to directed graph
-pos = nx.layout.spring_layout(G)
-what=nx.draw_networkx_edges(G, pos=pos, edge_color='black', alpha=0.5, arrows=True, arrowstyle='->',rrowsize=10, width=2)
-#plot.add_layout(what)
+
 # add the labels to the node renderer data source
 source = graph_renderer.node_renderer.data_source
 source.data['names'] = class_names
-
 # create a transform that can extract the actual x,y positions
 code = """
     var result = new Float64Array(xs.length)
@@ -73,8 +68,8 @@ ycoord = CustomJSTransform(v_func=code % "1", args=dict(provider=graph_renderer.
 # Use the transforms to supply coords to a LabelSet 
 labels = LabelSet(x=transform('index', xcoord),
                   y=transform('index', ycoord),
-                  text='names', text_font_size="12px",
-                  x_offset=0, y_offset=15,
+                  text='names', text_font_size="20px",
+                  x_offset=10, y_offset=15,
                   source=source, render_mode='canvas')
 
 plot.add_layout(labels)
@@ -123,23 +118,15 @@ hcr=1 #health capacity effecting the recovery rate
 t = np.linspace(0, 365, 365) #160 days
 t_vac=200 #time at which vaccine is introduced
 
-def vac_freq(t_vac, total_time): #function that gives the vaccine rate, it will be 0 before the vaccine is introduced and 0.01 after the vaccine is introduced
-    vac_f=0
-    if total_time<t_vac:
-        vac_f=0
-    elif total_time>=t_vac:
-        vac_f=0.01
-    return vac_f
+def vac_freq(t_vac, current_time): #function that gives the vaccine rate, it will be 0 before the vaccine is introduced and 0.01 after the vaccine is introduced
+    vf=(.01*exp(current_time-t_vac))/(1+exp(current_time-t_vac))
+    return vf
     
-def health_cap_effect(health_capacity, Is_h): #function adjusts hospitalized infecteds' death and recovery rates if health capacity is surpassed
-    if Is_h<health_capacity:
-        hcd=1
-        hcr=1
-    elif Is_h>health_capacity:
-        hcd=1.5
-        hcr=0.7
-    health_effect=[hcd, hcr]
-    return health_effect
+def health_cap_effect(health_capacity, Is_h):
+    diff=(health_capacity-Is_h)
+    hcd=1+((0.5*exp(-diff))/(1+exp(-diff)))
+    hcr=0.7+((0.3*exp(diff))/(1+exp(diff)))
+    return hcd, hcr   
         
 
 # The SIR model differential equations.
@@ -167,7 +154,7 @@ S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y
 #print(type(Ia_k))
 big_array=[S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D]
 
-time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)")
+time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", margin=(10, 10, 10, 20))
 start_vals=[S[0]/2, E[0], Ia_uk[0], Ia_k[0], Is_nh[0], Is_h[0], R[0]/2, D[0]]
 current_source=ColumnDataSource(data=dict(sizes=start_vals))
 graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
@@ -189,14 +176,14 @@ def update_data(attr, old, new):
     graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
     graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
     
-def animate_update(time):
-    day = time
-    if day > 365:
+def animate_update():
+    day = time_slider.value
+    if day <= 365:
         new_dict=[S[day]/2, E[day], Ia_uk[day], Ia_k[day], Is_nh[day], Is_h[day], R[day]/2, D[day]]
         current_source.data=dict(sizes=new_dict)
         graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
         graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
-        #time_slider.value = day+1
+        time_slider.value = day+1
         
 
 callback_id = None
@@ -204,20 +191,25 @@ def animate():
     global callback_id
     if button.label == '► Play':
         button.label = '❚❚ Pause'
-        callback_id = curdoc().add_periodic_callback(animate_update, 200)
+        callback_id = curdoc().add_periodic_callback(animate_update, 100)
     else:
         button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
     
+#trying to add arrows to directed graph
+start_coord=[[.95, .117], [.97, -.07], [.9, -.1],[.64, .7257], [.625, .6691], [-.15, .9357], [0, .9], [.05, .878], [-.65, .5785], [-.65, .65], [-.94, -.14], [-.9, -.1], [-.85, -.0618], [-.6, -.7], [-.6, -.743], [.1, -.957], [.1, -.9]]
+end_coord=[[.72, .653], [.73, -.63], [.1, -.9], [.1, .957], [-.84, .06], [-.61, .738], [0, -.9], [.585, -.4207], [-.12, -.708], [.6, -.6], [-.75, -.5833], [-.1, -.9], [.54, -.631], [.6, -.7], [-.2, -.914], [.6, -.743], [.9, -.1]]
+for i in range(0, 17):
+    plot.add_layout(Arrow(end=OpenHead(line_color="black", line_width=2, size=10, line_alpha=.65), x_start=start_coord[i][0], y_start=start_coord[i][1], x_end=end_coord[i][0], y_end=end_coord[i][1], line_alpha=0.25))
     
 time_slider.on_change('value', update_data)
-button = Button(label='► Play', width=60)
+button = Button(label='► Play', width=120, margin=(1, 1, 1, 20))
 button.on_click(animate)
 
-curdoc().add_root(column(plot, time_slider, button))
-curdoc().title="Infectious Disease Model"
-#output_file("bubble_SEIR.html")
-#show(column(plot, time_slider))
+note1=Div(text="Note that the size of all circles are proportional to their population size, except for Susceptible and Recovered classes are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
+note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown infected being 0.25, for known infecteds being 0.1, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.04. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
+display=column(plot, time_slider, button, note1, note2)
+
 
 
 
