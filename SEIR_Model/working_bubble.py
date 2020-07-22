@@ -18,20 +18,18 @@ from bokeh.layouts import row, column
 from math import exp
 
 
-class_names=['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic Infected', 'Non-Hospitalized Symptomatic Infected', 'Hospitalized Symptomatic Infected', 'Recovered', 'Dead']
-needed_edges=[(0, 1), (0, 7), (0, 6), (1, 2), (1,4), (2, 3), (2,6), (2,7), (3, 6), (3,7), (4,5), (4,6), (4,7), (5,6), (5,7), (6,7), (6,0)]
-practice_sizes=[5, 10, 15, 20, 25, 30, 35, 40]
+class_names=['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic', 'Non-Hospitalized Symptomatic', 'Hospitalized Infected', 'Recovered', 'Dead']
+needed_edges=[(0, 1), (0, 7), (0, 6), (1, 2), (1,4), (2, 3), (2,6), (2,7), (3, 6), (3,7), (4,5), (4,6), (4,7), (5,6), (5,7), (6,7), (6,0)] #coordinate pairs that represent an edge going from the #x node to the #y node in each pair
+practice_sizes=[5, 10, 15, 20, 25, 30, 35, 40] #temporary numbers just to set up the graph
 
+#Creating the network graph
 G=nx.DiGraph()
 G.add_nodes_from(range(8), name=class_names)
 G.add_edges_from(needed_edges)
-
 plot = Plot(plot_width=800, plot_height=800, margin=(10, 5, 5, 20),
-            x_range=Range1d(-1.2,2.1), y_range=Range1d(-2.1,1.2))
+            x_range=Range1d(-1.8,2.1), y_range=Range1d(-1.9,1.4))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 plot.title.text_font_size='15pt'
-node_names=['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic Infected', 'Non-Hospitalized Symptomatic Infected', 'Hospitalized Symptomatic Infected', 'Recovered', 'Dead']
-
 
 graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
 
@@ -46,36 +44,23 @@ graph_renderer.node_renderer.data_source
 graph_renderer.edge_renderer.glyph = MultiLine(line_color="#CCCCCC", line_alpha=0.8, line_width=6)
 graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2], line_width=6)
 graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=8)
+graph_renderer.edge_renderer.data_source.data['edge_names']=["Susceptibles becoming exposed to disease", "Susceptibles dying of natural causes", "Susceptibles who have received the vaccine", "Exposed individuals becoming Asymptomatic Infecteds", "Exposed individuals becoming Symptomatic Infected", "Asymptomatic individuals get tested and and are then aware they are a carrier of the disease", "Individuals recover and are no longer infectious", "Dying of natural causes", "Individuals recover and are no longer infectious", "Dying of natural causes", "Becoming hospitalized", "Symptomatic individuals recover", "Symptomatic individuals die of disease or of natural causes", "Hospitalized patients recover", "Hospitalized patients die of the disease or of natural causes", "Recovered individuals die of natural causes", "Recovered individuals lose their immunity and become susceptible again"]
+
 
 graph_renderer.selection_policy = NodesAndLinkedEdges()
 graph_renderer.inspection_policy = EdgesAndLinkedNodes()
 
 
-# add the labels to the node renderer data source
-source = graph_renderer.node_renderer.data_source
-source.data['names'] = class_names
-# create a transform that can extract the actual x,y positions
-code = """
-    var result = new Float64Array(xs.length)
-    for (var i = 0; i < xs.length; i++) {
-        result[i] = provider.graph_layout[xs[i]][%s]
-    }
-    return result
-"""
-xcoord = CustomJSTransform(v_func=code % "0", args=dict(provider=graph_renderer.layout_provider))
-ycoord = CustomJSTransform(v_func=code % "1", args=dict(provider=graph_renderer.layout_provider))
-
-# Use the transforms to supply coords to a LabelSet 
-labels = LabelSet(x=transform('index', xcoord),
-                  y=transform('index', ycoord),
-                  text='names', text_font_size="20px",
-                  x_offset=10, y_offset=15,
-                  source=source, render_mode='canvas')
-
+# add the labels to the nodes on the graph
+xcoord = [1.15, .85, -.35, -1.2, -1.6, -1.3, 0, .85]
+ycoord = [0, .85, 1.03, .85, 0.1, -1, -1.05, -.85]
+label_source=ColumnDataSource(data=dict(x=xcoord, y=ycoord, names=class_names))
+labels = LabelSet(x='x',y='y',text='names', text_font_size="16px",
+                  source=label_source, render_mode='canvas')
 plot.add_layout(labels)
 
-
-plot.add_tools(HoverTool(tooltips=None), TapTool(), BoxSelectTool(), ResetTool())
+node_hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
+plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 plot.renderers.append(graph_renderer)
 
 
@@ -104,7 +89,7 @@ death_rate_hosp=0.008
 nat_death=0.0002
 nat_birth=0.001
 E_to_I_forS=0.5 #rate at which individuals from the exposed class become symptomatic infecteds
-E_to_I_forA=0.1 #rate at which as individuals from the exposed class become asymptomatic infecteds
+E_to_I_forA=0.2 #rate at which as individuals from the exposed class become asymptomatic infecteds
 return_rate=0.00002 #rate at which recovered people once again become susceptible
 sd=1 # if social distancing is put into effect, the rate at which contact rates will decrease
 v_freq=0 #frequency of people getting vaccinated
@@ -176,7 +161,7 @@ def update_data(attr, old, new):
     graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
     graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
     
-def animate_update():
+def animate_update(): #this function animates the graph by continually increasing the time point being looked at 
     day = time_slider.value
     if day <= 365:
         new_dict=[S[day]/2, E[day], Ia_uk[day], Ia_k[day], Is_nh[day], Is_h[day], R[day]/2, D[day]]
@@ -187,7 +172,7 @@ def animate_update():
         
 
 callback_id = None
-def animate():
+def animate(): #this function calls the animate_update() function to animate when the button is pressed
     global callback_id
     if button.label == '► Play':
         button.label = '❚❚ Pause'
@@ -196,7 +181,7 @@ def animate():
         button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
     
-#trying to add arrows to directed graph
+#adding arrows to edges to make it a directed graph
 start_coord=[[.95, .117], [.97, -.07], [.9, -.1],[.64, .7257], [.625, .6691], [-.15, .9357], [0, .9], [.05, .878], [-.65, .5785], [-.65, .65], [-.94, -.14], [-.9, -.1], [-.85, -.0618], [-.6, -.7], [-.6, -.743], [.1, -.957], [.1, -.9]]
 end_coord=[[.72, .653], [.73, -.63], [.1, -.9], [.1, .957], [-.84, .06], [-.61, .738], [0, -.9], [.585, -.4207], [-.12, -.708], [.6, -.6], [-.75, -.5833], [-.1, -.9], [.54, -.631], [.6, -.7], [-.2, -.914], [.6, -.743], [.9, -.1]]
 for i in range(0, 17):
@@ -206,8 +191,9 @@ time_slider.on_change('value', update_data)
 button = Button(label='► Play', width=120, margin=(1, 1, 1, 20))
 button.on_click(animate)
 
-note1=Div(text="Note that the size of all circles are proportional to their population size, except for Susceptible and Recovered classes are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
+note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
 note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown infected being 0.25, for known infecteds being 0.1, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.04. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
+#latout for this tab
 display=column(plot, time_slider, button, note1, note2)
 
 
