@@ -12,7 +12,7 @@ from scipy.integrate import odeint
 
 from bokeh.io import curdoc
 from bokeh.layouts import row, column, gridplot
-from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, TextInput, HoverTool
+from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool
 from bokeh.plotting import figure
 from bokeh.palettes import Blues8
 
@@ -65,7 +65,7 @@ source = ColumnDataSource(data=dict(vec_time=vec_time, int_vec_A=int_vec_A, int_
 TOOLTIPS = [("Time (s)","@vec_time"), ("A","@int_vec_A{0,0.000}"), ("B","@int_vec_B{0,0.000}"), ("C","@int_vec_C{0,0.000}")]
 TOOLS = "pan,undo,redo,reset,save,wheel_zoom,box_zoom"
 plot = figure(plot_height=600, plot_width=800, tools=TOOLS, tooltips=TOOLTIPS,
-              title="Example: Sequential reactions with A --> B --> C, starting with [A]_0 = 1.0", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
+              title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
 
 plot.cross('vec_time', 'int_vec_A', source=source, size=8, alpha=0.6, color="navy", legend_label="A Concentration")
 plot.line('vec_time', 'int_vec_B', source=source, line_width=3, line_alpha=0.6, line_color="navy", legend_label="B Concentration")
@@ -78,17 +78,12 @@ plot.legend.background_fill_alpha = 0.5
 plot.grid.grid_line_color = "silver"
 
 # Set up widgets
-text = TextInput(title="Exercise", value='For A -> B -> C, set Values of k_AB, k_BC, order_AB, and order_BC')
+text = Div(text="""For a sequential reaction <b>A to B to C</b>, set Values of <b>k_AB</b>, <b>k_BC</b>, <b>order_AB</b>, and <b>order_BC</b>.
+Goal is to maximize concentration of B at a certain time. Concentration of A(t=0s) = 1.0.""", width=300)
 slider_k_AB = Slider(title="k_AB"+" (initial: "+str(k_AB_start)+")", value=k_AB_start, start=2.02, end=8.0, step=0.02)
 slider_k_BC = Slider(title="k_BC"+" (initial: "+str(k_BC_start)+")", value=k_BC_start, start=0.02, end=2.0, step=0.02)
 slider_order_AB = Slider(title="order_AB"+" (initial: "+str(order_AB_start)+")", value=order_AB_start, start=1, end=5, step=1)
 slider_order_BC = Slider(title="order_BC"+" (initial: "+str(k_BC_start)+")", value=order_BC_start, start=1, end=5, step=1)
-
-# Set up callbacks
-def update_title(attrname, old, new):
-    plot.title.text = text.value
-
-text.on_change('value', update_title)
 
 def update_data(attrname, old, new):
 
