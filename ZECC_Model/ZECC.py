@@ -67,7 +67,7 @@ weather_sets=[beth_yearly, CostaRica, Miami, Ecuador, Kenya, Zambia]
 hourly_set=[beth_hourly1_C, Costa_hourly, Miami_hourly, Ecuador_hourly, Kenya_hourly, Zambia_hourly]
 
 TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
-diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS)
+diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, width=550, height=600)
 diff_temps.title.text_font_size='15pt'
 diff_temps.xaxis.ticker = list(range(1, 13))
 diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -84,7 +84,7 @@ diff_temps.line(time_range1, Zambia.temps, legend_label=Zambia.location, line_wi
 diff_temps.legend.click_policy="hide"
 diff_temps.legend.location='bottom_right'
 
-hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS)
+hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, width=550, height=600)
 hourly_temps.title.text_font_size='12pt'
 #for x in range(0, 6):
  #   hourly_temps.line(time_range, hourly_set[x].temps, legend_label=hourly_set[x].location, line_width=2, color=colors[x])
@@ -98,7 +98,7 @@ hourly_temps.line(time_range, Zambia_hourly.temps, legend_label=Zambia_hourly.lo
 hourly_temps.legend.click_policy='hide'
 hourly_temps.legend.location='bottom_right'
 
-humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS)
+humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS, width=550, height=600)
 humid.title.text_font_size='12pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -147,21 +147,21 @@ source=ColumnDataSource(data=dict(time=time_range1, output=out1))
 start1=np.min(source.data['output'])
 end1=np.max(source.data['output'])
 
-g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS)
+g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS, width=600, height=450)
 g1.line('time', 'output', source=source, color="purple", legend_label="Heat Conduction", line_dash=[4,4], line_width=3)
 g1.y_range=Range1d(start1, end1)
 g1.legend.click_policy="hide"
 g1.title.text_font_size='15pt'
 
-slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5)
-slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5)
-slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25)
-slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001)
-select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials)
-slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5)
-location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=loc_and_time)
-time_select=Select(title="Time Interval", value="12 Months", options=time_ranges)
-calculate_button=Button(label="Calculate", button_type='success', background='lightblue')
+slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=450)
+slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5, width=450)
+slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25, width=450)
+slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=450)
+select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=450)
+slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=450)
+location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=loc_and_time, width=450)
+time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=450)
+calculate_button=Button(label="Calculate", button_type='success', background='lightblue', width=500)
 
 def latent_heat(temp):
     #Interpolating the values for latent heat of evaporation
@@ -346,7 +346,7 @@ def dew_point_hourly(temps, rh, time):
     return dp_out
 dp_Costa=dew_point(CostaRica.temps, CostaRica.rh, range(0,12))
 #print(dp_Costa)
-g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20))
+g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), width=400, height=450)
 g4.title.text_font_size='12pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=CostaRica.temps, dp=dp_Costa, T1=range(0,12)))
 g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
@@ -562,7 +562,7 @@ def button_updates():
     
 #Information that will appear as text paragraphs 
 p_Heat=Paragraph(text="Note:    Heat per Time: Displays the heat transferred (from evaporation or conduction) per unit time. The heat conducted refers to the heat transferred from the inner chamber to the water. The evaporative cooling rate refers to the rate of heat leaving the system through evaporation. Water Used: Displays the water needed to keep the system running properly, based off the amount of water evaporating at a given time. A system at steady state needs to release the same amount of what it takes in.", 
-                 margin=(20, 20, 20, 20), width=650)
+                 margin=(20, 20, 20, 20), width=450)
 p_ZECC=Paragraph(text="Zero Energy Cooling: By using the principles behind perspiration, there is a way to create an eco friendly chamber for storing food in harsh conditions. The two chamber cooling system consists of two nested chambers, with sand filling the space in between. Water is set to flow in the sand layer. ", 
                  margin=(20, 10, 20, 10), width=650)
 p_HT=Paragraph(text="Heat Transfer in the ZECC: The heat transfer that occurs in the zero energy cooling chamber, is a combination of all three of the heat transfer methods. The radiation from solar energy heats the chamber and the surrounding area. The ground also radiates heat. The fluid flow and the conduction of the water is what helps to cool the chamber down.",
@@ -570,12 +570,12 @@ p_HT=Paragraph(text="Heat Transfer in the ZECC: The heat transfer that occurs in
 p_LHV=Paragraph(text="Latent Heat of Vaporization: When one mole of a substance at atmospheric pressure goes from the liquid phase to the gaseous phase, there is energy required to bring the substance to a boil and make the phase change occur. Bringing a substance to its boiling point is not enough since there is still energy required to make phase change occur. This energy required is the latent heat of vaporization. Temperature changes can’t occur without phase changes.",
                 margin=(20, 10, 20, 10), width=650)
 p_dp=Paragraph(text="Note:    Dew-Point temperature is critically dependent on both the design of the chamber and inputed values. If the temperature of the outer wall of the chamber becomes too low then water will begin to condense on the surface and no evaporation will occur, halting the cooling process of the inner chamber.", 
-               margin=(20, 20, 20, 20), width=650)
+               margin=(20, 20, 20, 20), width=450)
 
-
+widgets=column(location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp)
   
 tab2=Panel(child=column(row(diff_temps, hourly_temps), humid), title="Climate Data")
-tab1=Panel(child=column(row(g1, g4), column(p_Heat, p_dp)), title="Heat Transfer & Water")
+tab1=Panel(child=row(column(widgets, p_Heat, p_dp), column(row(g1, g4), calculate_button, data_table)), title="Heat Transfer & Essential Temps")
 tab3=Panel(child=column(p_ZECC, p_LHV, p_HT), title="Information")
 tabs=Tabs(tabs=[tab1, tab2, tab3])
 
@@ -585,11 +585,8 @@ for u in updates:
     
 calculate_button.on_click(button_updates)
 
-widgets=column(location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp, calculate_button, data_table)
-#graphs=column(row(diff_temps, hourly_temps), row(g1, g3))
 
-
-curdoc().add_root(row(widgets, tabs))
+curdoc().add_root(tabs)
 curdoc().title="Heat Transfer and Cost for ZECC Model"
 
 
