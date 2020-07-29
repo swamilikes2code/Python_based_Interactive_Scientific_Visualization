@@ -1,11 +1,22 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jul 29 10:19:17 2020
+
+@author: annamoragne
+"""
+import networkx as nx
 import numpy as np
-from scipy.integrate import odeint, solve_ivp
+from scipy.integrate import solve_ivp
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
-from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d, Div
+from bokeh.models import (ColumnDataSource, Slider, TableColumn, DataTable, Button, Panel, Tabs, GraphRenderer, Div, Arrow, OpenHead, 
+                          BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool)
 from bokeh.plotting import figure
 from math import exp
-from bokeh.palettes import RdYlBu8
+from bokeh.palettes import RdYlBu8, Spectral4
+from bokeh.models.graphs import from_networkx
+from bokeh.models.annotations import LabelSet
 TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
 
 # Total population, N.
@@ -156,6 +167,141 @@ for u in updates:
 
 #Creating visual layout for the program 
 widgets=column(A_infection_rate_slide, S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, vaccine_slide, hosp_space_slide, return_rate_slide)
+
+tabB=Panel(child=row(column(widgets, data_table), column(pops, infecteds)), title="Adjustable SEIR Model")
+
+
+#########################################################################################
+
+#NETWORK GRAPH (will be first tab)
+class_names=['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic', 'Non-Hospitalized Symptomatic', 'Hospitalized Infected', 'Recovered', 'Dead']
+needed_edges=[(0, 1), (0, 7), (0, 6), (1, 2), (1,4), (2, 3), (2,6), (2,7), (3, 6), (3,7), (4,5), (4,6), (4,7), (5,6), (5,7), (6,7), (6,0)] #coordinate pairs that represent an edge going from the #x node to the #y node in each pair
+practice_sizes=[5, 10, 15, 20, 25, 30, 35, 40] #temporary numbers just to set up the graph
+
+#Creating the network graph
+G=nx.DiGraph()
+G.add_nodes_from(range(8), name=class_names)
+G.add_edges_from(needed_edges)
+plot = Plot(plot_width=800, plot_height=800, margin=(10, 5, 5, 20),
+            x_range=Range1d(-1.8,2.1), y_range=Range1d(-1.9,1.4))
+plot.title.text = "Class Populations for Infectious Disease Outbreak"
+plot.title.text_font_size='15pt'
+
+graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
+
+graph_renderer.node_renderer.data_source.add(RdYlBu8, 'color')
+graph_renderer.node_renderer.data_source.add(practice_sizes, 'size')
+graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+graph_renderer.node_renderer.data_source.data['name'] =['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic Infected', 'Non-Hospitalized Symptomatic Infected', 'Hospitalized Symptomatic Infected', 'Recovered', 'Dead']
+graph_renderer.node_renderer.selection_glyph = Circle(size=30, fill_color=Spectral4[2])
+graph_renderer.node_renderer.hover_glyph = Circle(size=30, fill_color=Spectral4[1])
+graph_renderer.node_renderer.data_source
+
+graph_renderer.edge_renderer.glyph = MultiLine(line_color="#CCCCCC", line_alpha=0.8, line_width=6)
+graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2], line_width=6)
+graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=8)
+graph_renderer.edge_renderer.data_source.data['edge_names']=["Susceptibles becoming exposed to disease", "Susceptibles dying of natural causes", "Susceptibles who have received the vaccine", "Exposed individuals becoming Asymptomatic Infecteds", "Exposed individuals becoming Symptomatic Infected", "Asymptomatic individuals get tested and and are then aware they are a carrier of the disease", "Individuals recover and are no longer infectious", "Dying of natural causes", "Individuals recover and are no longer infectious", "Dying of natural causes", "Becoming hospitalized", "Symptomatic individuals recover", "Symptomatic individuals die of disease or of natural causes", "Hospitalized patients recover", "Hospitalized patients die of the disease or of natural causes", "Recovered individuals die of natural causes", "Recovered individuals lose their immunity and become susceptible again"]
+
+
+graph_renderer.selection_policy = NodesAndLinkedEdges()
+graph_renderer.inspection_policy = EdgesAndLinkedNodes()
+
+
+# add the labels to the nodes on the graph
+xcoord = [1.15, .85, -.35, -1.2, -1.6, -1.3, 0, .85]
+ycoord = [0, .85, 1.03, .85, 0.1, -1, -1.05, -.85]
+label_source=ColumnDataSource(data=dict(x=xcoord, y=ycoord, names=class_names))
+labels = LabelSet(x='x',y='y',text='names', text_font_size="16px",
+                  source=label_source, render_mode='canvas')
+plot.add_layout(labels)
+
+node_hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
+plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), ResetTool())
+plot.renderers.append(graph_renderer)
+
+ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity))
+Sb, Eb, Ia_ukb, Ia_kb, Is_nhb, Is_hb, Rb, Db = ret.y
+
+time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", margin=(10, 10, 10, 20))
+start_vals=[Sb[0]/2, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2, Db[0]]
+current_source=ColumnDataSource(data=dict(sizes=start_vals))
+graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
+graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+
+def update_data_bubble(attr, old, new):
+    t=time_slider.value
+    newS=S[t]/2
+    newE=E[t]
+    newI1=Ia_uk[t]
+    newI2=Ia_k[t]
+    newI3=Is_nh[t]
+    newI4=Is_h[t]
+    newR=R[t]/2
+    newD=D[t]
+    new_dict=[newS, newE, newI1, newI2, newI3, newI4, newR, newD]
+    current_source.data=dict(sizes=new_dict)
+    graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
+    graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+    
+def animate_update(): #this function animates the graph by continually increasing the time point being looked at 
+    day = time_slider.value
+    if day <= 365:
+        new_dict=[S[day]/2, E[day], Ia_uk[day], Ia_k[day], Is_nh[day], Is_h[day], R[day]/2, D[day]]
+        current_source.data=dict(sizes=new_dict)
+        graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
+        graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+        time_slider.value = day+1
+        
+
+callback_id = None
+def animate(): #this function calls the animate_update() function to animate when the button is pressed
+    global callback_id
+    if button.label == '► Play':
+        button.label = '❚❚ Pause'
+        callback_id = curdoc().add_periodic_callback(animate_update, 100)
+    else:
+        button.label = '► Play'
+        curdoc().remove_periodic_callback(callback_id)
+
+#adding arrows to edges to make it a directed graph
+start_coord=[[.95, .117], [.97, -.07], [.9, -.1],[.64, .7257], [.625, .6691], [-.15, .9357], [0, .9], [.05, .878], [-.65, .5785], [-.65, .65], [-.94, -.14], [-.9, -.1], [-.85, -.0618], [-.6, -.7], [-.6, -.743], [.1, -.957], [.1, -.9]]
+end_coord=[[.72, .653], [.73, -.63], [.1, -.9], [.1, .957], [-.84, .06], [-.61, .738], [0, -.9], [.585, -.4207], [-.12, -.708], [.6, -.6], [-.75, -.5833], [-.1, -.9], [.54, -.631], [.6, -.7], [-.2, -.914], [.6, -.743], [.9, -.1]]
+for i in range(0, 17):
+    plot.add_layout(Arrow(end=OpenHead(line_color="black", line_width=2, size=10, line_alpha=.65), x_start=start_coord[i][0], y_start=start_coord[i][1], x_end=end_coord[i][0], y_end=end_coord[i][1], line_alpha=0.25))
+    
+time_slider.on_change('value', update_data_bubble)
+button = Button(label='► Play', width=120, margin=(1, 1, 1, 20))
+button.on_click(animate)
+
+note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
+note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown infected being 0.25, for known infecteds being 0.1, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.04. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
+#latout for this tab
+display=column(plot, time_slider, button, note1, note2)
+
+tabA=Panel(child=display, title="General Outbreak")
+
+
+
+##################################################################################
+
+# Text Description of the Model 
+div1=Div(text="The general SEIR model displays the populations of 8 different classes of individuals in an infectious disease outbreak; Susceptible, Exposed, Unknown Asymptomatic Infected, Known Symptomatic Infected, Non-Hospitalized Symptomatic Infected, Hospitalized Symptomatic Infected, Recovered, and Dead. The current model displays an initial population of 1,000 individuals over 160 days.", margin=(20, 20, 10, 20), width=750)
+div2=Div(text="The Exposed class is for individuals who have been infected but are not yet showing symptoms and are not yet able to infect others. They then become either asymptomatic or symptomatic infected. Individuals can become Known Asymptomatic through testing. Testing is assumed to be available through a function of 0.001*t but the user can increase this rate through one of the available sliders.", margin=(10, 20, 10, 20), width=750)
+div3=Div(text="Symptomatic Infecteds become hospitalized at a rate of 0.1 and hospitalized individuals have a longer recovery time and higher death rate because their cases are more severe.", margin=(10, 20, 10, 20), width=750)
+div4=Div(text="Once a vaccine is introduced, individuals can move directly from the susceptible class to the recovered class. The vaccine is assumed to be 98% effective and be distributed at a rate of 0.01 once it is introduced. <br> The inclusion of social distancing will reduce the rate of infection.", margin=(10, 20, 10, 20), width=750)
+div5=Div(text="By adding hospital beds and ventilators, the health capacity of the population increases. If the amount of hospitalized symptomatic individuals surpasses the health capacity then hospitalized deaths will increase and recovery rate will decrease due to the health system being overwhelmed.", margin=(10, 20, 10, 20), width=750)
+div6=Div(text="There is assumed to be a natural birth rate of .001 and a natural death rate of 0.0002. This accounts for individuals entering and exiting the system, for causes unrelated to the outbreak.", margin=(10, 20, 10, 20), width=750)
+text_descriptions=column(div1, div2, div3, div4, div5, div6)
+
+tabC=Panel(child=text_descriptions, title="Model Description")
+
+
+##########################
+# Putting it all together
+tabs=Tabs(tabs=[tabA, tabB, tabC])
+
+curdoc().add_root(tabs)
+curdoc().title="Modeling Infectious Disease Outbreaks"
 
 
 
