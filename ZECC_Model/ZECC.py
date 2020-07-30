@@ -3,8 +3,10 @@ from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d
 from bokeh.plotting import figure, show
+from bokeh.palettes import Colorblind8
 import numpy as np
 from scipy.interpolate import interp1d
+from bokeh.tile_providers import CARTODBPOSITRON, get_provider, Vendors
 
 time_range=list(range(0, 24))
 time_range1=list(range(1,13))
@@ -29,6 +31,22 @@ miami_F=[68, 70, 72.5, 75.5, 80, 82.5, 84, 84, 82.5, 80, 75, 70.5]
 Ecuador_C=[15.5, 15.55, 15.45, 15.55, 15.55, 15.5, 15.45, 15.9, 15.85, 15.65, 15.45, 15.5]
 Kenya_C=[19.7, 20.2, 20.7, 20.2, 19.1, 17.8, 16.7, 17.2, 18.6, 19.8, 19.3, 19.2]
 Zambia_C=[22.5, 22.4, 21.95, 20.55, 18.25, 15.8, 15.6, 17.85, 21.6, 23.95, 23.9, 22.75]
+
+get_provider(Vendors.CARTODBPOSITRON)
+tile_provider=get_provider('CARTODBPOSITRON')
+
+# range bounds supplied in web mercator coordinates
+mapp = figure(x_range=(-14000000, 7000000), y_range=(-4000000, 6060000),
+           x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=1/1, sizing_mode='scale_both')
+mapp.add_tile(tile_provider)
+mapp.circle(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.5, legend_label="Bethlehem, PA")
+mapp.circle(x=-8931102.469623, y=2972160.043550, size=10, fill_color='orange', fill_alpha=.5, legend_label="Miami, FL")
+mapp.circle(x=-9290844.007714, y=953484.087498, size=10, fill_color=Colorblind8[2], fill_alpha=0.5, legend_label="Puerto Jiménez, Costa Rica")
+mapp.circle(x=-8741967.501084, y=-22993.039835, size=10, fill_color='green', fill_alpha=0.5, legend_label="Quito, Ecuador")
+mapp.circle(x=4105174.772925, y=-145162.620135, size=10, fill_color='red', fill_alpha=0.5, legend_label="Nairobi, Kenya")
+mapp.circle(x=3564845.194234, y=-948229.994036, size=10, fill_color='lightblue', fill_alpha=0.5, legend_label="Lusaka, Zambia")
+mapp.legend.background_fill_alpha=0.45
+
 
 
 def FtoC(Ftemps):
@@ -100,7 +118,7 @@ hourly_temps.legend.click_policy='hide'
 hourly_temps.legend.location='bottom_left'
 hourly_temps.legend.background_fill_alpha=0.7
 
-humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
+humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS, aspect_ratio=4/3, width=600)
 humid.title.text_font_size='12pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -584,7 +602,7 @@ widgets=column(location_select, time_select, select_material, slide_length, slid
 selecters=column(location_select, time_select, select_material)
 sliders=column(slide_length, slide_height, slide_width, slide_thick, slide_desired_temp)
 
-tab2=Panel(child=column(row(diff_temps, hourly_temps), humid), title="Climate Data")
+tab2=Panel(child=column(row(diff_temps, hourly_temps), row(humid, mapp)), title="Climate Data")
 tab1=Panel(child=column(row(selecters, sliders), row(g4, g1), calculate_button, data_table), title="Heat Transfer & Essential Temps")
 tab3=Panel(child=column(p_ZECC, p_LHV, p_HT, p_Heat, p_dp), title="Information")
 tabs=Tabs(tabs=[tab1, tab2, tab3])
@@ -596,7 +614,7 @@ for u in updates:
 calculate_button.on_click(button_updates)
 
 curdoc().add_root(tabs)
-curdoc().title="Heat Transfer and Cost for ZECC Model"
+curdoc().title="Zero Energy Cooling Chamber"
 
 
 
