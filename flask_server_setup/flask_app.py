@@ -10,9 +10,10 @@ app = Flask(__name__)
 #create index page function
 @app.route("/", methods=['GET'])
 def index():
+    bokeh_script_SEIR_Model = server_document(url="http://localhost:5005/SEIR_Model")
     bokeh_script_reaction_kinetics = server_document(url="http://localhost:5006/sliders_reaction_kinetics")
     bokeh_script_ZECC = server_document(url="http://localhost:5007/ZECC")
-    return render_template("index.html", bokeh_script_reaction_kinetics=bokeh_script_reaction_kinetics, bokeh_script_ZECC=bokeh_script_ZECC)
+    return render_template("index.html", bokeh_script_reaction_kinetics=bokeh_script_reaction_kinetics, bokeh_script_ZECC=bokeh_script_ZECC, bokeh_script_SEIR_Model=bokeh_script_SEIR_Model)
 
 #run the app
 if __name__ == "__main__":
