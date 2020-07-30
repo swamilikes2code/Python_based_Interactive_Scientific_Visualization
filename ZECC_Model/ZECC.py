@@ -67,7 +67,7 @@ weather_sets=[beth_yearly, CostaRica, Miami, Ecuador, Kenya, Zambia]
 hourly_set=[beth_hourly1_C, Costa_hourly, Miami_hourly, Ecuador_hourly, Kenya_hourly, Zambia_hourly]
 
 TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
-diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, width=600)
+diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
 diff_temps.title.text_font_size='15pt'
 diff_temps.xaxis.ticker = list(range(1, 13))
 diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -85,7 +85,7 @@ diff_temps.legend.click_policy="hide"
 diff_temps.legend.location='bottom_left'
 diff_temps.legend.background_fill_alpha=0.7
 
-hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, width=600)
+hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
 hourly_temps.title.text_font_size='12pt'
 #for x in range(0, 6):
  #   hourly_temps.line(time_range, hourly_set[x].temps, legend_label=hourly_set[x].location, line_width=2, color=colors[x])
@@ -100,7 +100,7 @@ hourly_temps.legend.click_policy='hide'
 hourly_temps.legend.location='bottom_left'
 hourly_temps.legend.background_fill_alpha=0.7
 
-humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS, aspect_ratio=4/3, width=600)
+humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
 humid.title.text_font_size='12pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -150,7 +150,7 @@ source=ColumnDataSource(data=dict(time=time_range1, output=out1))
 start1=np.min(source.data['output'])
 end1=np.max(source.data['output'])
 
-g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS, aspect_ratio=4/3, height=450,  margin=(20, 20, 20, 10))
+g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both',  margin=(20, 20, 20, 10))
 g1.line('time', 'output', source=source, color="purple", legend_label="Heat Conduction", line_dash=[4,4], line_width=3)
 g1.y_range=Range1d(start1, end1)
 g1.legend.click_policy="hide"
@@ -351,14 +351,14 @@ def dew_point_hourly(temps, rh, time):
     return dp_out
 dp_Costa=dew_point(CostaRica.temps, CostaRica.rh, range(0,12))
 #print(dp_Costa)
-g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), aspect_ratio=4/3, height=450)
+g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), aspect_ratio=4/3, sizing_mode='scale_both')
 g4.title.text_font_size='12pt'
-g4.legend.background_fill_alpha=0.5
-g4.legend.location='top_left'
-g4.legend.click_policy='hide'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=CostaRica.temps, dp=dp_Costa, T1=range(0,12)))
 g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
 g4.line('time', 'dp', source=sourceDP, color='darkblue', line_width=2, line_dash=[4,4], legend_label="Dew-Point Temperature")
+g4.legend.background_fill_alpha=0.5
+g4.legend.location='top_left'
+g4.legend.click_policy='hide'
 
 def T1_calc(dims, temps, wanted_temp, mat, time_range):
     T_bulk = temps # degrees C of air surrounding outside
@@ -580,10 +580,12 @@ p_LHV=Paragraph(text="Latent Heat of Vaporization: When one mole of a substance 
 p_dp=Paragraph(text="Note:    Dew-Point temperature is critically dependent on both the design of the chamber and inputed values. If the temperature of the outer wall of the chamber becomes too low then water will begin to condense on the surface and no evaporation will occur, halting the cooling process of the inner chamber.", 
                margin=(20, 10, 20, 10), width=700)
 
-widgets=column(location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp)
-  
+widgets=column(location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp, calculate_button)
+selecters=column(location_select, time_select, select_material)
+sliders=column(slide_length, slide_height, slide_width, slide_thick, slide_desired_temp)
+
 tab2=Panel(child=column(row(diff_temps, hourly_temps), humid), title="Climate Data")
-tab1=Panel(child=column(row(widgets, g4, g1), row(column(calculate_button, data_table))), title="Heat Transfer & Essential Temps")
+tab1=Panel(child=column(row(selecters, sliders), row(g4, g1), calculate_button, data_table), title="Heat Transfer & Essential Temps")
 tab3=Panel(child=column(p_ZECC, p_LHV, p_HT, p_Heat, p_dp), title="Information")
 tabs=Tabs(tabs=[tab1, tab2, tab3])
 
@@ -593,9 +595,11 @@ for u in updates:
     
 calculate_button.on_click(button_updates)
 
-
 curdoc().add_root(tabs)
 curdoc().title="Heat Transfer and Cost for ZECC Model"
+
+
+
 
 
 

@@ -96,7 +96,7 @@ for i in range(0,365): #this combines the two types of asymptomatic infecteds (m
 sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h, R=R, D=D, all_Ia=all_asymp, hc=([health_capacity]*365)))
 
 #creating a graph with lines for the different classes of the model
-pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, width=700)
+pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
 pops.title.text_font_size='15pt'
 pops.line('time', 'S', source=sourcePops, legend_label="Susceptible", line_width=2, color=RdYlBu8[0])
 pops.line('time', 'E', source=sourcePops, legend_label="Exposed", line_width=2, color=RdYlBu8[1])
@@ -113,7 +113,7 @@ pops.legend.location='top_left'
 pops.legend.background_fill_alpha=0.5
 
 #creating a graph that only displays the 4 different types of infecteds
-infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", tools=TOOLS, aspect_ratio=4/3, width=600, margin=(10, 10, 10, 10))
+infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both', margin=(10, 10, 10, 10))
 infecteds.title.text_font_size='14pt'
 infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color='blue')
 infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color='darkblue', line_dash='dashed')
@@ -141,7 +141,7 @@ rate_values=[nat_birth, nat_death, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, 
 rate_names=["Natural Birth Rate", "Natural Death Rate", "Starting Population", "Rate at which unknown asymptomatic infecteds infect suscpetibles", "Rate at which known asymptomatic infecteds infect suscpetibles", "Rate at which non-hospitalized symptomatic infecteds infect suscpetibles", "Rate at which hospitalized symptomatic infecteds infect suscpetibles", "Rate of recovered individuals becoming susceptible again", "Rate of exposed class that become asymptomatic infected", "Rate of exposed class that become symptomatic infected", "Rate at which individuals are being tested", "Rate was which symptomatic infected become hospitalized", "Rate of recovery", "Rate of hospitalized recovery", "Death rate for non-hospitalized symptomatic infected", "Death rate for hospitalized infected", "Rate of vaccination once introduced", "Social Distancing Rate"]
 data_for_table=ColumnDataSource(data=dict(names=rate_names, values=rate_values))
 columnsT=[TableColumn(field='names', title="Parameter Name"), TableColumn(field='values', title="Current Value")]
-data_table=DataTable(source=data_for_table, columns=columnsT, margin=(20, 10, 10, 20))
+data_table=DataTable(source=data_for_table, columns=columnsT, margin=(20, 10, 10, 20), sizing_mode='scale_width')
 
 #when slider values are adjusted this function will be called and then update the data appropriately 
 def update_data(attr, old, new):
@@ -188,8 +188,8 @@ practice_sizes=[5, 10, 15, 20, 25, 30, 35, 40] #temporary numbers just to set up
 G=nx.DiGraph()
 G.add_nodes_from(range(8), name=class_names)
 G.add_edges_from(needed_edges)
-plot = Plot(plot_width=800, plot_height=800, margin=(10, 5, 5, 20),
-            x_range=Range1d(-1.8,2.1), y_range=Range1d(-1.9,1.4))
+plot = Plot(aspect_ratio=1/1, sizing_mode='scale_both', margin=(10, 5, 5, 20),
+            x_range=Range1d(-1.7,2.1), y_range=Range1d(-1.8,1.4))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 plot.title.text_font_size='15pt'
 
@@ -228,32 +228,47 @@ plot.renderers.append(graph_renderer)
 ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity))
 Sb, Eb, Ia_ukb, Ia_kb, Is_nhb, Is_hb, Rb, Db = ret.y
 
-time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", margin=(10, 10, 10, 20))
-start_vals=[Sb[0]/2, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2, Db[0]]
+
+time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=500, margin=(10, 10, 10, 20))
+start_vals=[Sb[0]/2.3, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2.3, Db[0]]
 current_source=ColumnDataSource(data=dict(sizes=start_vals))
 graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
 graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
 
+
+####### Bar Graph
+proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0]/1000, Is_hb[0]/1000, Rb[0]/1000, Db[0]/1000]
+bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names))
+bargraph=figure(x_range=class_names, plot_height=1, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both', margin=(10, 10, 10, 10))
+bargraph.vbar(x='names', top='tall', source=bar_source, width=0.5)
+bargraph.title.text_font_size='12pt'
+bargraph.xaxis.major_label_orientation=45
+
+
 def update_data_bubble(attr, old, new):
     t=time_slider.value
-    newS=S[t]/2
-    newE=E[t]
-    newI1=Ia_uk[t]
-    newI2=Ia_k[t]
-    newI3=Is_nh[t]
-    newI4=Is_h[t]
-    newR=R[t]/2
-    newD=D[t]
-    new_dict=[newS, newE, newI1, newI2, newI3, newI4, newR, newD]
+    newS=Sb[t]
+    newE=Eb[t]
+    newI1=Ia_ukb[t]
+    newI2=Ia_kb[t]
+    newI3=Is_nhb[t]
+    newI4=Is_hb[t]
+    newR=Rb[t]
+    newD=Db[t]
+    new_dict=[newS/2.3, newE, newI1, newI2, newI3, newI4, newR/2.3, newD]
+    new_bar=[newS/1000, newE/1000, newI1/1000, newI2/1000, newI3/1000, newI4/1000, newR/1000, newD/1000]
     current_source.data=dict(sizes=new_dict)
+    bar_source.data=dict(tall=new_bar, names=class_names)
     graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
     graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
     
 def animate_update(): #this function animates the graph by continually increasing the time point being looked at 
     day = time_slider.value
     if day <= 365:
-        new_dict=[S[day]/2, E[day], Ia_uk[day], Ia_k[day], Is_nh[day], Is_h[day], R[day]/2, D[day]]
+        new_dict=[Sb[day]/2.3, Eb[day], Ia_ukb[day], Ia_kb[day], Is_nhb[day], Is_hb[day], Rb[day]/2.3, Db[day]]
+        new_bar=[Sb[day]/1000, Eb[day]/1000, Ia_ukb[day]/1000, Ia_kb[day]/1000, Is_nhb[day]/1000, Is_hb[day]/1000, Rb[day]/1000, Db[day]/1000]
         current_source.data=dict(sizes=new_dict)
+        bar_source.data=dict(tall=new_bar, names=class_names)
         graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
         graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
         time_slider.value = day+1
@@ -282,7 +297,7 @@ button.on_click(animate)
 note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
 note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown infected being 0.25, for known infecteds being 0.1, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.04. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
 #latout for this tab
-display=column(plot, time_slider, button, note1, note2)
+display=column(row(plot, bargraph), time_slider, button, note1, note2)
 
 tabA=Panel(child=display, title="General Outbreak")
 
