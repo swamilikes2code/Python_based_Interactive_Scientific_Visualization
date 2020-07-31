@@ -132,5 +132,5 @@ for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_tim
 inputs = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_time)
 
 #curdoc().add_root(row(inputs, column(plot_conc, plot_vbar), width=800))
-curdoc().add_root(column(inputs, plot_conc, plot_vbar, width=800))
+curdoc().add_root(row(inputs, plot_conc, plot_vbar, width=800))
 curdoc().title = "Sliders_Sequential_Reactions"
