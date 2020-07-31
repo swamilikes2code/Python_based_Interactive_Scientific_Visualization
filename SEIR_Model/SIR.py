@@ -97,14 +97,14 @@ sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, 
 
 #creating a graph with lines for the different classes of the model
 pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both', margin=(10, 10, 10, 40))
-pops.title.text_font_size='15pt'
+pops.title.text_font_size='14pt'
 pops.line('time', 'S', source=sourcePops, legend_label="Susceptible", line_width=2, color=Colorblind8[0])
 pops.line('time', 'E', source=sourcePops, legend_label="Exposed", line_width=2, color=Colorblind8[1])
 pops.line('time', 'Ia_uk', source=sourcePops, legend_label="Unknown Asymptomatic Infected", line_width=2, color=Colorblind8[2], line_dash=[4,4])
 pops.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic Infected", line_width=2, color=Colorblind8[3], line_dash=[2,2])
 #pops.line('time', 'all_Ia', source=sourcePops, legend_label="All Asymptomatic Infected", line_width=2, color='olivedrab', line_dash='dotted')
 pops.line('time', 'Is_nh', source=sourcePops, legend_label="Symptomatic Infected", line_width=2, color=Colorblind8[4], line_dash=[3,3])
-pops.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized Infecteds", line_width=1, color=Colorblind8[5])
+pops.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized Infecteds", line_width=2, color=Colorblind8[5])
 pops.line('time', 'R', source=sourcePops, legend_label="Recovered", line_width=2, color=Colorblind8[6], line_dash=[8,2])
 pops.line('time', 'D', source=sourcePops, legend_label="Dead", line_width=2, color=Colorblind8[7])
 pops.line('time', 'hc', source=sourcePops, legend_label="Health Capacity", color="black", line_alpha=0.5, line_dash='dashed')
@@ -115,9 +115,9 @@ pops.legend.background_fill_alpha=0.5
 #creating a graph that only displays the 4 different types of infecteds
 infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both', margin=(10, 10, 10, 40))
 infecteds.title.text_font_size='14pt'
-infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2])
+infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2], line_width=2)
 infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color=Colorblind8[3], line_dash='dashed')
-infecteds.line('time', 'Is_nh', source=sourcePops, legend_label="Non-Hospitalized Symptomatic", line_width=2, color='red')
+infecteds.line('time', 'Is_nh', source=sourcePops, legend_label="Non-Hospitalized Symptomatic", line_width=2, color=Colorblind8[4])
 infecteds.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized", line_width=2, color=Colorblind8[5], line_dash='dashed')
 infecteds.line('time', 'hc', source=sourcePops, legend_label="Health Capacity", color="black", line_alpha=0.5, line_dash='dashed')
 infecteds.legend.click_policy='hide'
@@ -191,7 +191,7 @@ G.add_edges_from(needed_edges)
 plot = Plot(aspect_ratio=1/1, sizing_mode='scale_both', margin=(10, 5, 5, 20),
             x_range=Range1d(-1.7,2.1), y_range=Range1d(-1.8,1.4))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
-plot.title.text_font_size='15pt'
+plot.title.text_font_size='14pt'
 
 graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
 
@@ -241,7 +241,7 @@ proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0
 bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names, colors=Colorblind8))
 bargraph=figure(x_range=class_names, plot_height=1, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both', margin=(15, 10, 10, 10))
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
-bargraph.title.text_font_size='12pt'
+bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
 
 

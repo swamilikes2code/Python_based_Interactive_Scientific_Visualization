@@ -39,13 +39,13 @@ tile_provider=get_provider('CARTODBPOSITRON')
 mapp = figure(x_range=(-14000000, 7000000), y_range=(-4000000, 6060000),
            x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=1/1, sizing_mode='scale_both')
 mapp.add_tile(tile_provider)
-mapp.circle(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.5, legend_label="Bethlehem, PA")
-mapp.circle(x=-8931102.469623, y=2972160.043550, size=10, fill_color='orange', fill_alpha=.5, legend_label="Miami, FL")
-mapp.circle(x=-9290844.007714, y=953484.087498, size=10, fill_color=Colorblind8[2], fill_alpha=0.5, legend_label="Puerto Jiménez, Costa Rica")
-mapp.circle(x=-8741967.501084, y=-22993.039835, size=10, fill_color='green', fill_alpha=0.5, legend_label="Quito, Ecuador")
-mapp.circle(x=4105174.772925, y=-145162.620135, size=10, fill_color='red', fill_alpha=0.5, legend_label="Nairobi, Kenya")
-mapp.circle(x=3564845.194234, y=-948229.994036, size=10, fill_color='lightblue', fill_alpha=0.5, legend_label="Lusaka, Zambia")
-mapp.legend.background_fill_alpha=0.45
+mapp.circle(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.7, legend_label="Bethlehem, PA")
+mapp.circle(x=-8931102.469623, y=2972160.043550, size=10, fill_color='darkred', fill_alpha=.7, legend_label="Miami, FL")
+mapp.circle(x=-9290844.007714, y=953484.087498, size=10, fill_color='darkgreen', fill_alpha=0.7, legend_label="Puerto Jiménez, Costa Rica")
+mapp.circle(x=-8741967.501084, y=-22993.039835, size=10, fill_color='peru', fill_alpha=0.7, legend_label="Quito, Ecuador")
+mapp.circle(x=4105174.772925, y=-145162.620135, size=10, fill_color='mediumpurple', fill_alpha=0.7, legend_label="Nairobi, Kenya")
+mapp.circle(x=3564845.194234, y=-948229.994036, size=10, fill_color='navy', fill_alpha=0.7, legend_label="Lusaka, Zambia")
+mapp.legend.background_fill_alpha=0.5
 
 
 
@@ -86,7 +86,7 @@ hourly_set=[beth_hourly1_C, Costa_hourly, Miami_hourly, Ecuador_hourly, Kenya_ho
 
 TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
 diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
-diff_temps.title.text_font_size='15pt'
+diff_temps.title.text_font_size='14pt'
 diff_temps.xaxis.ticker = list(range(1, 13))
 diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
                                         7: "July", 8:'August', 9:'September', 10: 'October', 11: 'November', 12: 'December'}
@@ -95,31 +95,31 @@ diff_temps.xaxis.major_label_orientation=1
 diff_temps.line(time_range1, beth_yearly.temps, legend_label=beth_yearly.location, line_width=2, color='blue')
 diff_temps.line(time_range1, CostaRica.temps, legend_label=CostaRica.location, line_width=2, line_dash=[2,8], color='darkgreen')
 diff_temps.line(time_range1, Miami.temps, legend_label=Miami.location, line_width=2, color='darkred')
-diff_temps.line(time_range1, Ecuador.temps, legend_label=Ecuador.location, line_width=3, line_dash=[8,2], color='peru')
+diff_temps.line(time_range1, Ecuador.temps, legend_label=Ecuador.location, line_width=2, line_dash=[8,2], color='peru')
 diff_temps.line(time_range1, Kenya.temps, legend_label=Kenya.location, line_width=2, line_dash=[2,2], color='mediumpurple')
-diff_temps.line(time_range1, Zambia.temps, legend_label=Zambia.location, line_width=3, line_dash=[4,4], color='navy')
+diff_temps.line(time_range1, Zambia.temps, legend_label=Zambia.location, line_width=2, line_dash=[4,4], color='navy')
 
 diff_temps.legend.click_policy="hide"
 diff_temps.legend.location='bottom_left'
 diff_temps.legend.background_fill_alpha=0.7
 
 hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
-hourly_temps.title.text_font_size='12pt'
+hourly_temps.title.text_font_size='14pt'
 #for x in range(0, 6):
  #   hourly_temps.line(time_range, hourly_set[x].temps, legend_label=hourly_set[x].location, line_width=2, color=colors[x])
 hourly_temps.line(time_range, beth_hourly1_C.temps, legend_label=beth_hourly1_C.location, line_width=2, color='blue')
 hourly_temps.line(time_range, Costa_hourly.temps, legend_label=Costa_hourly.location, line_width=2, line_dash=[2,8], color='darkgreen')
 hourly_temps.line(time_range, Miami_hourly.temps, legend_label=Miami_hourly.location, line_width=2, color='darkred')
-hourly_temps.line(time_range, Ecuador_hourly.temps, legend_label=Ecuador_hourly.location, line_width=3, line_dash=[8,2], color='peru')
+hourly_temps.line(time_range, Ecuador_hourly.temps, legend_label=Ecuador_hourly.location, line_width=2, line_dash=[8,2], color='peru')
 hourly_temps.line(time_range, Kenya_hourly.temps, legend_label=Kenya_hourly.location, line_width=2, line_dash=[2,2], color='mediumpurple')
-hourly_temps.line(time_range, Zambia_hourly.temps, legend_label=Zambia_hourly.location, line_width=3, line_dash=[4,4], color='navy')
+hourly_temps.line(time_range, Zambia_hourly.temps, legend_label=Zambia_hourly.location, line_width=2, line_dash=[4,4], color='navy')
 
 hourly_temps.legend.click_policy='hide'
 hourly_temps.legend.location='bottom_left'
 hourly_temps.legend.background_fill_alpha=0.7
 
 humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS, aspect_ratio=4/3, width=600)
-humid.title.text_font_size='12pt'
+humid.title.text_font_size='14pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
                                         7: "July", 8:'August', 9:'September', 10: 'October', 11: 'November', 12: 'December'}
@@ -128,9 +128,9 @@ humid.xaxis.major_label_orientation=1
 humid.line(time_range1, beth_yearly.rh, legend_label=beth_yearly.location, line_width=2, color='blue')
 humid.line(time_range1, CostaRica.rh, legend_label=CostaRica.location, line_width=2, line_dash=[2,8], color='darkgreen')
 humid.line(time_range1, Miami.rh, legend_label=Miami.location, line_width=2, color='darkred')
-humid.line(time_range1, Ecuador.rh, legend_label=Ecuador.location, line_width=3, line_dash=[8,2], color='peru')
+humid.line(time_range1, Ecuador.rh, legend_label=Ecuador.location, line_width=2, line_dash=[8,2], color='peru')
 humid.line(time_range1, Kenya.rh, legend_label=Kenya.location, line_width=2, line_dash=[2,2], color='mediumpurple')
-humid.line(time_range1, Zambia.rh, legend_label=Zambia.location, line_width=3, line_dash=[4,4], color='navy')
+humid.line(time_range1, Zambia.rh, legend_label=Zambia.location, line_width=2, line_dash=[4,4], color='navy')
 
 humid.legend.click_policy="hide"
 humid.legend.location='bottom_left'
@@ -173,7 +173,7 @@ g1.line('time', 'output', source=source, color="purple", legend_label="Heat Cond
 g1.y_range=Range1d(start1, end1)
 g1.legend.click_policy="hide"
 g1.legend.background_fill_alpha=0.5
-g1.title.text_font_size='15pt'
+g1.title.text_font_size='14pt'
 g1.legend.location='top_left'
 
 slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=350)
@@ -286,7 +286,7 @@ source3=ColumnDataSource(data=dict(time=time_range1, evap_out=evap_out))
 start=int(min(source3.data['evap_out']))
 end=int(max(source3.data['evap_out']))
 g1.extra_y_ranges['second']=(Range1d(start, end))
-g1.line('time', 'evap_out', source=source3, color='orange', legend_label="Evaporation Cooling Rate", line_width=3, y_range_name='second')
+g1.line('time', 'evap_out', source=source3, color='orange', legend_label="Evaporation Cooling Rate", line_width=2, y_range_name='second')
 ax2 = LinearAxis(y_range_name="second", axis_label="Evaporative Cooling Heat per Time")
 g1.add_layout(ax2, 'left')
 
@@ -370,7 +370,7 @@ def dew_point_hourly(temps, rh, time):
 dp_Costa=dew_point(CostaRica.temps, CostaRica.rh, range(0,12))
 #print(dp_Costa)
 g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), aspect_ratio=4/3, sizing_mode='scale_both')
-g4.title.text_font_size='12pt'
+g4.title.text_font_size='14pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=CostaRica.temps, dp=dp_Costa, T1=range(0,12)))
 g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
 g4.line('time', 'dp', source=sourceDP, color='darkblue', line_width=2, line_dash=[4,4], legend_label="Dew-Point Temperature")
