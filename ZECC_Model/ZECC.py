@@ -603,7 +603,7 @@ selecters=column(location_select, time_select, select_material)
 sliders=column(slide_length, slide_height, slide_width, slide_thick, slide_desired_temp)
 
 tab2=Panel(child=column(row(diff_temps, hourly_temps), row(humid, mapp)), title="Climate Data")
-tab1=Panel(child=column(row(selecters, sliders), column(g4, g1), calculate_button, data_table), title="Heat Transfer & Essential Temps")
+tab1=Panel(child=column(row(selecters, sliders), row(g4, g1), calculate_button, data_table), title="Heat Transfer & Essential Temps")
 tab3=Panel(child=column(p_ZECC, p_LHV, p_HT, p_Heat, p_dp), title="Information")
 tabs=Tabs(tabs=[tab1, tab2, tab3])
 
