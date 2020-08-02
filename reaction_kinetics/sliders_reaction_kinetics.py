@@ -68,8 +68,8 @@ source_vbar = ColumnDataSource(data=dict(specie_names=specie_names, vbar_top=vba
 # Set up plot for concentrations
 TOOLTIPS = [("Time (s)","@vec_time"), ("A","@int_vec_A{0,0.000}"), ("B","@int_vec_B{0,0.000}"), ("C","@int_vec_C{0,0.000}")]
 TOOLS = "pan,undo,redo,reset,save,wheel_zoom,box_zoom"
-plot_conc = figure(plot_height=600, plot_width=800, tools=TOOLS, tooltips=TOOLTIPS,
-              title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
+plot_conc = figure(plot_height=450, plot_width=600, tools=TOOLS, tooltips=TOOLTIPS,
+              title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[0.0, 1.05])
 plot_conc.line('vec_time', 'int_vec_A', source=source, line_width=3, line_alpha=0.6, line_color="darkgray",
                legend_label="A Concentration")
 plot_conc.line('vec_time', 'int_vec_B', source=source, line_width=3, line_alpha=0.6, line_color="navy",
@@ -85,7 +85,7 @@ plot_conc.grid.grid_line_color = "silver"
 
 # Set up vertical bar plot for concentrations at a certain time
 TOOLTIPS_vbar = [("Specie_Name","@specie_names"), ("Concentration","@vbar_top{0,0.000}")]
-plot_vbar = figure(plot_height=600, plot_width=800, tools=TOOLS, tooltips=TOOLTIPS_vbar, x_range=specie_names,
+plot_vbar = figure(plot_height=450, plot_width=600, tools=TOOLS, tooltips=TOOLTIPS_vbar, x_range=specie_names,
                    y_range=[-0.05, 1.05], title="Concentration A, B and C at time specified by time slider")
 plot_vbar.vbar(x='specie_names', top='vbar_top', source=source_vbar, bottom=0.0, width=0.5, alpha=0.6, color="color",
                legend_field="specie_names")
@@ -129,8 +129,9 @@ for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_tim
     w.on_change('value', update_data)
 
 # Set up layouts and add to document
-inputs = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_time)
+inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
+inputs_time = slider_time
 
 #curdoc().add_root(row(inputs, column(plot_conc, plot_vbar), width=800))
-curdoc().add_root(row(inputs, plot_conc, plot_vbar, width=800))
+curdoc().add_root(row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475), width=750))
 curdoc().title = "Sliders_Sequential_Reactions"
