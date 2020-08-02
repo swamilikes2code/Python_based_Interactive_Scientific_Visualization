@@ -86,7 +86,7 @@ plot_conc.grid.grid_line_color = "silver"
 # Set up vertical bar plot for concentrations at a certain time
 TOOLTIPS_vbar = [("Specie_Name","@specie_names"), ("Concentration","@vbar_top{0,0.000}")]
 plot_vbar = figure(plot_height=600, plot_width=800, tools=TOOLS, tooltips=TOOLTIPS_vbar, x_range=specie_names,
-                   y_range=[0.00, 1.10], title="Concentration A, B and C at time specified by time slider")
+                   y_range=[-0.05, 1.05], title="Concentration A, B and C at time specified by time slider")
 plot_vbar.vbar(x='specie_names', top='vbar_top', source=source_vbar, bottom=0.0, width=0.5, alpha=0.6, color="color",
                legend_field="specie_names")
 plot_vbar.xgrid.grid_line_color = None
@@ -122,7 +122,7 @@ def update_data(attrname, old, new):
     vbar_top_temp = [np.interp(time_temp, vec_time, int_vec_A), np.interp(time_temp, vec_time, int_vec_B),
                      np.interp(time_temp, vec_time, int_vec_C)]
     specie_names = ['A', 'B', 'C']
-    specie_colors = ['darkgray', 'mediumblue', 'goldenrod']
+    specie_colors = ['darkgray', 'mediumblue', 'darkorange']
     source_vbar.data = dict(specie_names=specie_names, vbar_top=vbar_top_temp, color=specie_colors)
 
 for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_time]:
