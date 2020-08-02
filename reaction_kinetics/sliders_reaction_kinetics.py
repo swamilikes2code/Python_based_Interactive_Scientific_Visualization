@@ -69,7 +69,7 @@ source_vbar = ColumnDataSource(data=dict(specie_names=specie_names, vbar_top=vba
 TOOLTIPS = [("Time (s)","@vec_time"), ("A","@int_vec_A{0,0.000}"), ("B","@int_vec_B{0,0.000}"), ("C","@int_vec_C{0,0.000}")]
 TOOLS = "pan,undo,redo,reset,save,wheel_zoom,box_zoom"
 plot_conc = figure(plot_height=450, plot_width=600, tools=TOOLS, tooltips=TOOLTIPS,
-              title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[0.0, 1.05])
+              title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
 plot_conc.line('vec_time', 'int_vec_A', source=source, line_width=3, line_alpha=0.6, line_color="darkgray",
                legend_label="A Concentration")
 plot_conc.line('vec_time', 'int_vec_B', source=source, line_width=3, line_alpha=0.6, line_color="navy",
@@ -89,6 +89,8 @@ plot_vbar = figure(plot_height=450, plot_width=600, tools=TOOLS, tooltips=TOOLTI
                    y_range=[-0.05, 1.05], title="Concentration A, B and C at time specified by time slider")
 plot_vbar.vbar(x='specie_names', top='vbar_top', source=source_vbar, bottom=0.0, width=0.5, alpha=0.6, color="color",
                legend_field="specie_names")
+plot_vbar.xaxis.axis_label = "Species"
+plot_vbar.yaxis.axis_label = "Concentration"
 plot_vbar.xgrid.grid_line_color = None
 plot_vbar.legend.orientation = "horizontal"
 plot_vbar.legend.location = "top_center"
@@ -132,6 +134,11 @@ for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_tim
 inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
 inputs_time = slider_time
 
-#curdoc().add_root(row(inputs, column(plot_conc, plot_vbar), width=800))
-curdoc().add_root(row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475), width=750))
-curdoc().title = "Sliders_Sequential_Reactions"
+# setup row_layout_flag. If row_layout_flag is 1, layout is row format. If not equal to 1 it will display in column fromat
+row_layout_flag = 1
+if (row_layout_flag == 1):
+    curdoc().add_root(row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)))
+else:
+    curdoc().add_root(gridplot([[inputs_reaction, plot_conc], [None, column(plot_vbar, inputs_time, height=475)]]))
+
+curdoc().title = "Sequential_Reactions"
