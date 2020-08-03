@@ -37,7 +37,7 @@ tile_provider=get_provider('CARTODBPOSITRON')
 
 # range bounds supplied in web mercator coordinates
 mapp = figure(x_range=(-14000000, 7000000), y_range=(-4000000, 6060000),
-           x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=1/1, sizing_mode='scale_both')
+           x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=4/3, sizing_mode='scale_both')
 mapp.add_tile(tile_provider)
 mapp.circle(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.7, legend_label="Bethlehem, PA")
 mapp.circle(x=-8931102.469623, y=2972160.043550, size=10, fill_color='darkred', fill_alpha=.7, legend_label="Miami, FL")
@@ -118,7 +118,7 @@ hourly_temps.legend.click_policy='hide'
 hourly_temps.legend.location='bottom_left'
 hourly_temps.legend.background_fill_alpha=0.7
 
-humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", tools=TOOLS, aspect_ratio=4/3, width=600)
+humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", x_range=diff_temps.x_range, tools=TOOLS, aspect_ratio=4/3, width=600)
 humid.title.text_font_size='14pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -176,15 +176,15 @@ g1.legend.background_fill_alpha=0.5
 g1.title.text_font_size='14pt'
 g1.legend.location='top_left'
 
-slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=350)
-slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5, width=350)
-slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25, width=350)
-slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=350)
-select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=350)
-slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=350)
-location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=loc_and_time, width=350)
-time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=350)
-calculate_button=Button(label="Calculate", button_type='success', background='lightblue', width=350)
+slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=450, margin=(10, 0, 5, 30))
+slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5, width=450, margin=(5, 0, 5, 30))
+slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25, width=450, margin=(5, 0, 5, 30))
+slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=450, margin=(5, 0, 5, 30))
+select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=400, margin=(5, 0, 5, 20))
+slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=450, margin=(5, 5, 5, 30))
+location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=loc_and_time, width=400, margin=(10, 5, 5, 20))
+time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=400, margin=(5, 5, 5, 20))
+calculate_button=Button(label="Calculate", button_type='success', background='lightblue', width=450, margin=(5, 0, 5, 20))
 
 def latent_heat(temp):
     #Interpolating the values for latent heat of evaporation
@@ -347,7 +347,7 @@ sourceTable=ColumnDataSource(data=dict(name=tableName, time=tableTime, Year_Pric
 columnsT=[TableColumn(field='name', title='Location'), TableColumn(field='time', title='Time Interval'), TableColumn(field='space', title='Storage Volume Capacity (in m^3)'), 
           TableColumn(field='Day_Water', title='Daily Water Input (in Liters)'), TableColumn(field='Year_Water', title='Yearly Water Input (in L)'),
           TableColumn(field='Day_Price', title='Daily Cost in $'), TableColumn(field='Year_Price', title='Yearly Cost in $')]
-data_table=DataTable(source=sourceTable, columns=columnsT, width=750)
+data_table=DataTable(source=sourceTable, columns=columnsT, width=750, margin=(5, 0, 0, 20))
 
 def dew_point(temps, rh, time):
     dp_out=[]
