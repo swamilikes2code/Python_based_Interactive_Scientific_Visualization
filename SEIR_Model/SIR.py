@@ -230,8 +230,8 @@ current_source=ColumnDataSource(data=dict(sizes=start_vals))
 graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
 graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
 
-node_hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
-plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), ResetTool())
+hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
+plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 
 
 ####### Bar Graph
