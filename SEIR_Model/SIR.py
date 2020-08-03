@@ -217,8 +217,6 @@ labels = LabelSet(x='x',y='y',text='names', text_font_size="13px",
                   source=label_source, render_mode='canvas')
 plot.add_layout(labels)
 
-node_hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
-plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 plot.renderers.append(graph_renderer)
 
 #solving the system of ODEs with original parameters to determine size of nodes
@@ -232,6 +230,9 @@ current_source=ColumnDataSource(data=dict(sizes=start_vals))
 graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
 graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
 
+node_hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
+plot.add_tools(node_hover_tool, TapTool(), BoxSelectTool(), ResetTool())
+
 
 ####### Bar Graph
 proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0]/1000, Is_hb[0]/1000, Rb[0]/1000, Db[0]/1000]
@@ -240,6 +241,8 @@ bargraph=figure(x_range=class_names, plot_height=1, y_range=Range1d(0, 1.04), ti
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
 bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
+bar_hover=HoverTool(tooltips=[("Current Proportion", "@tall")])
+bargraph.add_tools(bar_hover)
 
 
 def update_data_bubble(attr, old, new): #when time slider value changes the graphs update to show class sizes at that specific time
