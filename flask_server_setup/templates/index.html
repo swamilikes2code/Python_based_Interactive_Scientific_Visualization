@@ -1,29 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>This is a title</title>
-    </head>
-    <body>
-	<li><a href=“sliders_reaction_kinetics.html">Reaction Kinetics</a></li>
-	<li><a href="https://srrweb.cc.lehigh.edu/SIR_Model">SIR Model</a></li>
-	<li><a href=“ZECC.html">Zero Energy Cooling Chamber</a></li>
-	<li><a href=“SIR.html">SIR Infectious Disease Model</a></li>
-		
-      <h3>THIS IS A HEADING</h3>
-	  <p>This is Paragraph 1</p>
-      <div>
-	    {{bokeh_script_reaction_kinetics|safe}}
-      </div>
-	  <h3>This is Heading 2</h3>
-	  <p>This is Paragraph 2</p>
-      <div>
-	    {{bokeh_script_ZECC|safe}}
-      </div>
-	    <h3>This is Heading 3</h3>
-	    <p>This is Paragraph 3</p>
-	<div>
-	    {{bokeh_script_SEIR_Model|safe}}
-	    </div>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--TITLE FOR BROWSER TAB-->
+    <title>STEM Visualizations</title>
+</head>
+
+<body>
+    <!--THIS IS THE OPENING PARAGRAPH/TITLE, DON'T USE THIS PARAGRAPH FOR FORMATTING-->
+    <h1 style="font-family:Arial; font-size:500%;">STEM Learning Through Interactive Visualization</h1>
+
+    <p style="font-size:200%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">
+        This site was designed to help students learn conceptually complex STEM problems by giving them a more interactive way of engaging with course material.
+
+        <br><br><br>
+
+        Our long-term vision is to create an open repository for a range of visualization-based models: from interactive data visualization (through plots) of system response to more advanced graphics-based simulations of complex natural and engineered systems. Our models cover a variety of different topics and subjects, hopefully you find these to be useful!
+        <br><br>- Mountaintop Summer Team
+
+        <br><br><br>
+
+    </p><!--ENDING OF THE INTRODUCTION PARAGRAPH-->
+
+    <br><br><!--INCLUDE TWO SPACE BREAKS IN BETWEEN EVERY PARAGRAPH BOX-->
+
+    <!-------MODELS------------------------------------------------------>
+
+    <h1 style="font-family:Arial; font-size:500%;">Models:</h1><!--THIS IS THE TITLE FOR THE MODELS-->
+    <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
+
+    <!--REACTION KINETICS DIVISION-->
+    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+
+        <h1 style="font-family:Arial; font-size:300%; text-decoration:underline;">Reaction Kinetics:</h1>
+
+        <p style="font-size:200%; font-family:Helvetica;" align="justify">Reaction kinetics is the branch of chemistry concerned with the rate of transformation of reactant into product. Reaction rate is generally expressed in terms of concentration per unit time. This program allows you to see the change in A, B, and C concentrations as you change the orders and initial k-constants.</p>
+
+        <link style="font-size:300% ;font-family:Arial;" target="_blank"><a href="sliders_reaction_kinetics">CLICK HERE TO VIEW</a></link>
+
+    </div>
+
+    <br><br>
+
+    <!--ZECC DIVISION-->
+    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+
+        <h1 style="font-family:Arial; font-size:300%; text-decoration:underline;">Zero Energy Cooling Chamber:</h1>
+
+        <p style="font-size:200%; font-family:Helvetica;" align="justify">This program allows you to create a Zero Energy Cooling Chamber with your chosen specified dimensions, material and location for the chamber. A Zero Energy Cooling Chamber is an eco-friendly and cost-effective way of storing food. Usually used in hot climates, it uses passive evaporation to cool down the food storage chamber. Click to see more information.</p>
+
+        <link style="font-size:500%; font-family:Arial;" target="_blank"><a href="ZECC">CLICK HERE TO VIEW</a></link>
+
+    </div>
+
+    <br><br>
+
+    <!--SIR DIVISION-->
+    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+
+        <h1 style="font-family:Arial; font-size:300%; text-decoration:underline;">SIR Infectious Disease Model:</h1>
+
+        <p style="font-size:200%; font-family:Helvetica;" align="justify">SEIR Model (Susceptible-Exposed-Infected-Recovered) is an infectious disease model that relates different populations through a set of ordinary differential equations.</p>
+
+        <link style="font-size:300%; font-family:Arial;" target="_blank"><a href="SIR">CLICK HERE TO VIEW</a></link>
+
+    </div>
+
+    <br><br>
+
+</body>
+
+<!---------------------------------------------------------------------------------->
+
+<foot>
+
+    <link><a href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization.git">GITHUB</a></link>
+
+    <br>
+
+    <link><a href="acknowledgements">ACKNOWLEDGEMENTS</a></link>
+
+</foot>
+
 </html>
