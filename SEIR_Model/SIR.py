@@ -20,7 +20,6 @@ from bokeh.models.annotations import LabelSet
 TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
 
 #Setting up info and parameters for SIR model equations
-
 N = 1000 #starting total population
 # Initial number of individuals in each class
 Is_nh0 = 1 #initial number of symptomatic infected individuals that are not hospitalized
@@ -92,19 +91,21 @@ ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, beta_A_uk, beta
 S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y #solving the system of ODEs
 #Creating a data source for all of class values over time 
 sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h, R=R, D=D, hc=([health_capacity]*365)))
-
+#hover_line=HoverTool(names=["S_line", "E_line"])
 #creating a graph with lines for the different classes of the model
 pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both', margin=(10, 20, 10, 40))
 pops.title.text_font_size='14pt'
-pops.line('time', 'S', source=sourcePops, legend_label="Susceptible", line_width=2, color=Colorblind8[0])
-pops.line('time', 'E', source=sourcePops, legend_label="Exposed", line_width=2, color=Colorblind8[1])
-pops.line('time', 'Ia_uk', source=sourcePops, legend_label="Unknown Asymptomatic Infected", line_width=2, color=Colorblind8[2], line_dash=[4,4])
-pops.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic Infected", line_width=2, color=Colorblind8[3], line_dash=[2,2])
-pops.line('time', 'Is_nh', source=sourcePops, legend_label="Symptomatic Infected", line_width=2, color=Colorblind8[4], line_dash=[3,3])
-pops.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized Infecteds", line_width=2, color=Colorblind8[5])
-pops.line('time', 'R', source=sourcePops, legend_label="Recovered", line_width=2, color=Colorblind8[6], line_dash=[8,2])
-pops.line('time', 'D', source=sourcePops, legend_label="Dead", line_width=2, color=Colorblind8[7])
+#adding a line for each of the 8 different class populations
+l1=pops.line('time', 'S', source=sourcePops, legend_label="Susceptible", line_width=2, color=Colorblind8[0], name="S_line")
+l2=pops.line('time', 'E', source=sourcePops, legend_label="Exposed", line_width=2, color=Colorblind8[1], name="E_line")
+l3=pops.line('time', 'Ia_uk', source=sourcePops, legend_label="Unknown Asymptomatic Infected", line_width=2, color=Colorblind8[2], line_dash=[4,4], name="Ia_uk_line")
+l4=pops.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic Infected", line_width=2, color=Colorblind8[3], line_dash=[2,2], name="Ia_k_line")
+l5=pops.line('time', 'Is_nh', source=sourcePops, legend_label="Symptomatic Infected", line_width=2, color=Colorblind8[4], line_dash=[3,3], name="Is_nh_line")
+l6=pops.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized Infecteds", line_width=2, color=Colorblind8[5], name="Is_h_line")
+l7=pops.line('time', 'R', source=sourcePops, legend_label="Recovered", line_width=2, color=Colorblind8[6], line_dash=[8,2], name="R_line")
+l8=pops.line('time', 'D', source=sourcePops, legend_label="Dead", line_width=2, color=Colorblind8[7], name="D_line")
 pops.line('time', 'hc', source=sourcePops, legend_label="Health Capacity", color="black", line_alpha=0.5, line_dash='dashed')
+#legend attributes
 pops.legend.click_policy="hide"
 pops.legend.location='top_left'
 pops.legend.background_fill_alpha=0.5
@@ -112,14 +113,26 @@ pops.legend.background_fill_alpha=0.5
 #creating a graph that only displays the 4 different types of infecteds
 infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_width', margin=(10, 20, 10, 40))
 infecteds.title.text_font_size='14pt'
-infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2], line_width=2)
-infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color=Colorblind8[3], line_dash='dashed')
-infecteds.line('time', 'Is_nh', source=sourcePops, legend_label="Non-Hospitalized Symptomatic", line_width=2, color=Colorblind8[4])
-infecteds.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized", line_width=2, color=Colorblind8[5], line_dash='dashed')
+la=infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2], line_width=2)
+lb=infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color=Colorblind8[3], line_dash='dashed')
+lc=infecteds.line('time', 'Is_nh', source=sourcePops, legend_label="Non-Hospitalized Symptomatic", line_width=2, color=Colorblind8[4])
+ld=infecteds.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized", line_width=2, color=Colorblind8[5], line_dash='dashed')
 infecteds.line('time', 'hc', source=sourcePops, legend_label="Health Capacity", color="black", line_alpha=0.5, line_dash='dashed')
 infecteds.legend.click_policy='hide'
 infecteds.legend.location='top_left'
 infecteds.legend.background_fill_alpha=0.5
+
+#Adding tool so that when user hovers over line, the current class population will be displayed
+h1=HoverTool(tooltips=[("Susceptible Population", "@S")], renderers=[l1])
+h2=HoverTool(tooltips=[("Exposed Population", "@E")], renderers=[l2])
+h3=HoverTool(tooltips=[("Unknown Asymptomatic Population", "@Ia_uk")], renderers=[l3, la])
+h4=HoverTool(tooltips=[("Known Asymptomatic Population", "@Ia_k")], renderers=[l4, lb])
+h5=HoverTool(tooltips=[("Symptomatic Population", "@Is_nh")], renderers=[l5, lc])
+h6=HoverTool(tooltips=[("Hospitalized Symptomatic Population", "@Is_h")], renderers=[l6, ld])
+h7=HoverTool(tooltips=[("Recovered Population", "@R")], renderers=[l7])
+h8=HoverTool(tooltips=[("Dead Population", "@D")], renderers=[l8])
+pops.add_tools(h1, h2, h3, h4, h5, h6, h7, h8)
+infecteds.add_tools(h3, h4, h5, h6)
 
 #creating sliders for user-adjustable values
 S_infection_rate_slide=Slider(title="Infection Rate of Non-Hospitalized Symptomatics", value=beta_S_nh, start=0, end=1, step=0.01, margin=(0, 5, 0, 20))
@@ -131,7 +144,6 @@ testing_rate=Slider(title="Rate of Increase of Testing", value=test_rate_inc, st
 vaccine_slide=Slider(title="Time at Which the Vaccine is Introduced", value=t_vac, start=0, end=365, step=1, margin=(0, 5, 0, 20))
 hosp_space_slide=Slider(title="Additional Hospital Beds / Ventilators", value=0, start=0, end=60, step=5, margin=(0, 5, 0, 20))
 return_rate_slide=Slider(title="Rate at which  Individuals Lose Immunity", value=return_rate, start=0, end=1, step=0.01, margin=(0, 5, 20, 20))
-#latent_time_slide=Slider(title="Exposure Latency Rate", value=E_to_I_rate, start=0, end=1, step=0.05)
 
 #creating a data table that will display all of the current values for certain parameters
 rate_values=[nat_birth, nat_death, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, return_rate, E_to_I_forA, E_to_I_forS, "0.001*t*"+str(test_rate_inc), hosp, gamma , gamma_hosp, death_rate_S, death_rate_hosp, .01, 1-sd]
@@ -140,8 +152,7 @@ data_for_table=ColumnDataSource(data=dict(names=rate_names, values=rate_values))
 columnsT=[TableColumn(field='names', title="Parameter Name"), TableColumn(field='values', title="Current Value")]
 data_table=DataTable(source=data_for_table, columns=columnsT, margin=(20, 10, 10, 20), width=500)
 
-#when slider values are adjusted this function will be called and then update the data appropriately 
-def update_data(attr, old, new):
+def update_data(attr, old, new): #when slider values are adjusted this function will be called and then update the data appropriately 
     #retrieving the current value of all of the sliders
     S_infect_rate=S_infection_rate_slide.value
     A_infect_rate=A_infection_rate_slide.value
@@ -154,7 +165,7 @@ def update_data(attr, old, new):
     health_cap=health_capacity+increase_hc
     return_rate=return_rate_slide.value
     
-    #resolving the system of ODEs with the new parameter values from the sliders
+    #re-solving the system of ODEs with the new parameter values from the sliders
     ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, A_infect_rate, beta_A_k, S_infect_rate, beta_S_h, recov_rate, gamma_hosp, nat_death, death_rate, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate, vaccine, health_cap))
     S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y
     sourcePops.data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h,  R=R, D=D, hc=([health_cap]*365))
@@ -167,7 +178,6 @@ for u in updates:
 
 #Creating visual layout for the program 
 widgets=column(A_infection_rate_slide, S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, vaccine_slide, hosp_space_slide, return_rate_slide)
-
 tabB=Panel(child=row(column(pops, infecteds), column(widgets, data_table)), title="Adjustable SEIR Model")
 
 
@@ -186,7 +196,6 @@ plot = Plot(aspect_ratio=1/1, sizing_mode='scale_both', margin=(10, 5, 5, 20),
             x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 plot.title.text_font_size='14pt'
-
 graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
 
 #creating the nodes/circles for the network graph
@@ -204,19 +213,16 @@ graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2]
 graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=8)
 graph_renderer.edge_renderer.data_source.data['edge_names']=["Susceptibles becoming exposed to disease", "Susceptibles dying of natural causes", "Susceptibles who have received the vaccine", "Exposed individuals becoming Asymptomatic Infecteds", "Exposed individuals becoming Symptomatic Infected", "Asymptomatic individuals get tested and and are then aware they are a carrier of the disease", "Individuals recover and are no longer infectious", "Dying of natural causes", "Individuals recover and are no longer infectious", "Dying of natural causes", "Becoming hospitalized", "Symptomatic individuals recover", "Symptomatic individuals die of disease or of natural causes", "Hospitalized patients recover", "Hospitalized patients die of the disease or of natural causes", "Recovered individuals die of natural causes", "Recovered individuals lose their immunity and become susceptible again"]
 
-
 graph_renderer.selection_policy = NodesAndLinkedEdges()
 graph_renderer.inspection_policy = EdgesAndLinkedNodes()
 
-
 # add the labels to the nodes on the graph
-xcoord = [1.15, .85, -.45, -1.2, -1.25, -1.25, -.15, .85]
-ycoord = [0, .75, 1.05, .85, 0.1, -.95, -1.2, -.95]
+xcoord = [1.15, .85, -.45, -1.2, -1.25, -1.25, -.15, .85] #location for the label
+ycoord = [0, .75, 1.05, .85, 0.1, -.95, -1.2, -.95] #location for the label
 label_source=ColumnDataSource(data=dict(x=xcoord, y=ycoord, names=class_names))
 labels = LabelSet(x='x',y='y',text='names', text_font_size="13px",
                   source=label_source, render_mode='canvas')
 plot.add_layout(labels)
-
 plot.renderers.append(graph_renderer)
 
 #solving the system of ODEs with original parameters to determine size of nodes
@@ -227,9 +233,11 @@ Sb, Eb, Ia_ukb, Ia_kb, Is_nhb, Is_hb, Rb, Db = ret.y
 time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=500, margin=(10, 10, 10, 20))
 start_vals=[Sb[0]/2.3, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2.3, Db[0]]
 current_source=ColumnDataSource(data=dict(sizes=start_vals))
+#updating the node sizes
 graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
 graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
 
+#when edge is hovered over, will display a description of the movement of individuals along that edge
 hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
 plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 
@@ -302,9 +310,7 @@ note1=Div(text="Note that the size of all circles are proportional to their popu
 note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown infected being 0.25, for known infecteds being 0.1, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.04. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
 #latout for this tab
 display=column(row(plot, bargraph), time_slider, button, note1, note2)
-
 tabA=Panel(child=display, title="General Outbreak") #first panel
-
 
 
 ##################################################################################
@@ -320,15 +326,9 @@ text_descriptions=column(div1, div2, div3, div4, div5, div6)
 
 tabC=Panel(child=text_descriptions, title="Model Description") #third panel
 
-
 ##########################
-# Putting it all together
-tabs=Tabs(tabs=[tabA, tabB, tabC])
 
+# Putting it all together for final output
+tabs=Tabs(tabs=[tabA, tabB, tabC])
 curdoc().add_root(tabs)
 curdoc().title="Modeling Infectious Disease Outbreaks"
-
-
-
-
-
