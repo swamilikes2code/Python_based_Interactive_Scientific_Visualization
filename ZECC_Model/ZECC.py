@@ -12,7 +12,7 @@ time_range=list(range(0, 24)) #hourly time scale
 time_range1=list(range(1,13)) #yearly time scale
 initial_dims=[3, 2, 1, .3] #starting dimensions of the chamber [length, width, height, sand_thickness]
 materials=["Brick", "Cardboard", "Aluminum", "Concrete"] #possible materials to choose from
-loc_and_time=["Bethlehem, PA", "Miami, Fl", "Puerto Jiménez, Costa Rica", "Quito, Ecuador", "Nairobi, Kenya", "Lusaka, Zambia"] #possible locations to choose from
+loc_and_time=["Bethlehem, PA", "Miami, FL", "Puerto Jiménez, Costa Rica", "Quito, Ecuador", "Nairobi, Kenya", "Lusaka, Zambia"] #possible locations to choose from
 time_ranges=["12 Months", "24 Hours"] #possible time ranges
 
 #defining lists for temperatures for one day in mid june (temp taken at each hour)
@@ -24,7 +24,7 @@ ecuador_hourly_C=[11, 11, 10, 10, 9, 9, 9, 9, 12, 14, 17, 19, 20, 20, 20, 19, 18
 zambia_hourly_C=[14, 13, 13, 13, 13, 12, 12, 12, 13, 16, 18, 19, 20, 20, 21, 21, 20, 20, 18, 17, 16, 16, 15, 14]
 
 #defining lists for temperatures for monthly averages at each location
-beth_yearly_F=[27.5, 31, 39, 50, 60, 69, 73.5, 71.5, 64, 52.5, 43, 32.5]
+beth_yearly_F=[32.1, 32.1, 39, 50, 60, 69, 73.5, 71.5, 64, 52.5, 43, 32.5]
 CostaRica_C=[26.2, 26.5, 27.7, 28, 27.3, 26.5, 26.7, 26.3, 26, 25.9, 25.6, 25.7]
 miami_F=[68, 70, 72.5, 75.5, 80, 82.5, 84, 84, 82.5, 80, 75, 70.5]
 Ecuador_C=[15.5, 15.55, 15.45, 15.55, 15.55, 15.5, 15.45, 15.9, 15.85, 15.65, 15.45, 15.5]
@@ -75,7 +75,7 @@ Kenya=Weather(Kenya_C, "Nairobi, Kenya", "12 Months", [.7, .6, .65, .8, .8, .75,
 Zambia=Weather(Zambia_C, "Lusaka, Zambia", "12 Months", [.86, .89, .84, .66, .57, .59, .56, .45, .43, .32, .57, .71] )
 
 #creating class instances for each of the 6 locations on a 24 hour time scale
-beth_hourly1_C=Weather(FtoC(beth_hourly1), "Bethlehem, PA", "24 Hours", .679)
+beth_hourly=Weather(FtoC(beth_hourly1), "Bethlehem, PA", "24 Hours", .679)
 Costa_hourly=Weather(costa_hourly_C, "Puerto Jiménez, Costa Rica", "24 Hours", .763)
 Kenya_hourly=Weather(kenya_hourly_C, "Nairobi, Kenya", "24 Hours", .75)
 Miami_hourly=Weather(miami_hourly_C, "Miami, FL", "24 Hours", .661)
@@ -83,9 +83,9 @@ Ecuador_hourly=Weather(ecuador_hourly_C, "Quito, Ecuador", "24 Hours", .7)
 Zambia_hourly=Weather(zambia_hourly_C, "Lusaka, Zambia", "24 Hours", .652)
 
 weather_sets=[beth_yearly, CostaRica, Miami, Ecuador, Kenya, Zambia] #this contains all class instances on the yearly time scale
-hourly_set=[beth_hourly1_C, Costa_hourly, Miami_hourly, Ecuador_hourly, Kenya_hourly, Zambia_hourly] #this contains all class instances on the hourly time scale
+hourly_set=[beth_hourly, Costa_hourly, Miami_hourly, Ecuador_hourly, Kenya_hourly, Zambia_hourly] #this contains all class instances on the hourly time scale
 
-TOOLS = "pan,undo,redo,reset,save,box_zoom,tap" #tools for the graphs
+TOOLS = "pan,reset,save,box_zoom" #tools for the graphs
 #Creating Grpah to show average temps throught the year for each location
 diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
 diff_temps.title.text_font_size='14pt'
@@ -109,7 +109,7 @@ diff_temps.legend.background_fill_alpha=0.7
 hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
 hourly_temps.title.text_font_size='14pt'
 #adding each location to the graph
-hourly_temps.line(time_range, beth_hourly1_C.temps, legend_label=beth_hourly1_C.location, line_width=2, color='blue')
+hourly_temps.line(time_range, beth_hourly.temps, legend_label=beth_hourly.location, line_width=2, color='blue')
 hourly_temps.line(time_range, Costa_hourly.temps, legend_label=Costa_hourly.location, line_width=2, line_dash=[2,8], color='darkgreen')
 hourly_temps.line(time_range, Miami_hourly.temps, legend_label=Miami_hourly.location, line_width=2, color='darkred')
 hourly_temps.line(time_range, Ecuador_hourly.temps, legend_label=Ecuador_hourly.location, line_width=2, line_dash=[8,2], color='peru')
@@ -166,7 +166,6 @@ e_sand = 0.343  # porosity of sand
 
 #first we calculate all values for Costa Rica yearly so we have something to initially show on our graphs before user makes adjustments
 out1=calc_HC(CostaRica.temps, initial_dims, k_brick, 15)
-#print(out1)
 source=ColumnDataSource(data=dict(time=time_range1, output=out1)) #creating a data source to show data that we currently want displayed
 start1=np.min(source.data['output'])
 end1=np.max(source.data['output'])
@@ -415,7 +414,6 @@ def T1_calc(dims, temps, wanted_temp, mat, time_range): #calculating outer wall 
         cond=0.8
     # calculations
     q = hr * rate * 4.18 * (1 / 24) * (1 / 3600) * m/1000 * 1000  # total respiration rate of one metric ton of potatoes - in J/sec
-    #print(q)
     T4 = -((q * (1 / (h1*A_chamber))) - Tc)
     T3 = -((q * (L1 / (cond*A_innerbrick))) - T4)
     T2 = -((q * (L2 / (k_ws*A_sand))) - T3)
@@ -507,7 +505,7 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
         elif loc=="Lusaka, Zambia":
             place=Zambia_hourly
         elif loc=="Bethlehem, PA":
-            place=beth_hourly1_C
+            place=beth_hourly
         dims=[length, width, height, thick]
         out=HC_hourly(place.temps, dims, cond, want_temp)
         vap=[]
@@ -581,7 +579,7 @@ def button_updates(): #when calculate button is pressed, this function re-calcul
         elif loc=="Lusaka, Zambia":
             place=Zambia_hourly
         elif loc=="Bethlehem, PA":
-            place==beth_hourly1_C
+            place=beth_hourly
         vap1=[]
         for p in place.temps:
             vap1.append(SVP(p))
