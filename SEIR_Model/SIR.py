@@ -17,7 +17,7 @@ from math import exp
 from bokeh.palettes import Spectral4, Colorblind8
 from bokeh.models.graphs import from_networkx
 from bokeh.models.annotations import LabelSet
-TOOLS = "pan,undo,redo,reset,save,box_zoom,tap"
+TOOLS = "pan,reset,save,box_zoom"
 
 #Setting up info and parameters for SIR model equations
 N = 1000 #starting total population
@@ -247,7 +247,7 @@ plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 ####### Bar Graph
 proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0]/1000, Is_hb[0]/1000, Rb[0]/1000, Db[0]/1000]
 bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names, colors=Colorblind8))
-bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=TOOLS, height=600, margin=(15, 10, 10, 10))
+bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=600, margin=(15, 10, 10, 10))
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
 bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
