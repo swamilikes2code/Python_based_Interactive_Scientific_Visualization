@@ -16,8 +16,7 @@ loc_and_time=["Bethlehem, PA", "Miami, FL", "Puerto Jiménez, Costa Rica", "Quit
 time_ranges=["12 Months", "24 Hours"] #possible time ranges
 
 #defining lists for temperatures for one day in mid june (temp taken at each hour)
-#beth_hourly1=[66, 65, 64, 64, 64, 64, 64, 65, 66, 67, 70, 71, 73, 73, 72, 75, 76, 76, 76, 75, 75, 73, 71, 70] #hourly bethlhem temperatures for June 18, 2020
-beth_hourly_C=[19, 18, 18, 18, 18, 18, 18, 18, 19, 19, 21, 22, 23, 23, 22, 24, 24, 24, 24, 24, 24, 23, 22, 21]
+beth_hourly1=[66, 65, 64, 64, 64, 64, 64, 65, 66, 67, 70, 71, 73, 73, 72, 75, 76, 76, 76, 75, 75, 73, 71, 70] #hourly bethlhem temperatures for June 18, 2020
 costa_hourly_C=[24, 24, 24, 24, 24, 24, 24, 25, 26, 27, 28, 28, 28, 28, 27, 27, 28, 28, 25, 25, 25, 25, 25, 24] #hourly june 24, 2020
 kenya_hourly_C=[15, 15, 15, 15, 14, 14, 14, 14, 15, 16, 18, 19, 20, 21, 21, 22, 22, 22, 21, 19, 19, 18, 17, 16]
 miami_hourly_C=[29, 28, 28, 28, 28, 28, 28, 28, 29, 30, 30, 31, 31, 31, 32, 31, 31, 31, 31, 30, 29, 29, 29, 29]
@@ -25,7 +24,7 @@ ecuador_hourly_C=[11, 11, 10, 10, 9, 9, 9, 9, 12, 14, 17, 19, 20, 20, 20, 19, 18
 zambia_hourly_C=[14, 13, 13, 13, 13, 12, 12, 12, 13, 16, 18, 19, 20, 20, 21, 21, 20, 20, 18, 17, 16, 16, 15, 14]
 
 #defining lists for temperatures for monthly averages at each location
-beth_yearly_F=[27.5, 31, 39, 50, 60, 69, 73.5, 71.5, 64, 52.5, 43, 32.5]
+beth_yearly_F=[32.1, 32.1, 39, 50, 60, 69, 73.5, 71.5, 64, 52.5, 43, 32.5]
 CostaRica_C=[26.2, 26.5, 27.7, 28, 27.3, 26.5, 26.7, 26.3, 26, 25.9, 25.6, 25.7]
 miami_F=[68, 70, 72.5, 75.5, 80, 82.5, 84, 84, 82.5, 80, 75, 70.5]
 Ecuador_C=[15.5, 15.55, 15.45, 15.55, 15.55, 15.5, 15.45, 15.9, 15.85, 15.65, 15.45, 15.5]
@@ -76,7 +75,7 @@ Kenya=Weather(Kenya_C, "Nairobi, Kenya", "12 Months", [.7, .6, .65, .8, .8, .75,
 Zambia=Weather(Zambia_C, "Lusaka, Zambia", "12 Months", [.86, .89, .84, .66, .57, .59, .56, .45, .43, .32, .57, .71] )
 
 #creating class instances for each of the 6 locations on a 24 hour time scale
-beth_hourly=Weather(beth_hourly_C, "Bethlehem, PA", "24 Hours", .679)
+beth_hourly=Weather(FtoC(beth_hourly1), "Bethlehem, PA", "24 Hours", .679)
 Costa_hourly=Weather(costa_hourly_C, "Puerto Jiménez, Costa Rica", "24 Hours", .763)
 Kenya_hourly=Weather(kenya_hourly_C, "Nairobi, Kenya", "24 Hours", .75)
 Miami_hourly=Weather(miami_hourly_C, "Miami, FL", "24 Hours", .661)
@@ -167,7 +166,6 @@ e_sand = 0.343  # porosity of sand
 
 #first we calculate all values for Costa Rica yearly so we have something to initially show on our graphs before user makes adjustments
 out1=calc_HC(CostaRica.temps, initial_dims, k_brick, 15)
-#print(out1)
 source=ColumnDataSource(data=dict(time=time_range1, output=out1)) #creating a data source to show data that we currently want displayed
 start1=np.min(source.data['output'])
 end1=np.max(source.data['output'])
@@ -416,7 +414,6 @@ def T1_calc(dims, temps, wanted_temp, mat, time_range): #calculating outer wall 
         cond=0.8
     # calculations
     q = hr * rate * 4.18 * (1 / 24) * (1 / 3600) * m/1000 * 1000  # total respiration rate of one metric ton of potatoes - in J/sec
-    #print(q)
     T4 = -((q * (1 / (h1*A_chamber))) - Tc)
     T3 = -((q * (L1 / (cond*A_innerbrick))) - T4)
     T2 = -((q * (L2 / (k_ws*A_sand))) - T3)
@@ -582,7 +579,7 @@ def button_updates(): #when calculate button is pressed, this function re-calcul
         elif loc=="Lusaka, Zambia":
             place=Zambia_hourly
         elif loc=="Bethlehem, PA":
-            place==beth_hourly
+            place=beth_hourly
         vap1=[]
         for p in place.temps:
             vap1.append(SVP(p))
