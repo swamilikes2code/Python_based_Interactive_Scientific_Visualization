@@ -38,11 +38,11 @@ $bokeh serve --show <filename.py> --port 5010
 
 The interactive webpage can be found here: 
 
-* [Zero Energy Cooling Chamber](https://srrweb.cc.lehigh.edu/ZECC) - Zero Energy Cooling Chamber example
+* [Zero Energy Cooling Chamber](https://srrweb.cc.lehigh.edu/app/ZECC) - Zero Energy Cooling Chamber example
 
-* [Susceptible Exposed Infected Recovered Model](https://srrweb.cc.lehigh.edu/SIR_Model) - Susceptible Exposed Infected Recovered Model example
+* [Susceptible Exposed Infected Recovered Model](https://srrweb.cc.lehigh.edu/app/SIR) - Susceptible Exposed Infected Recovered Model example
 
-* [Sequential_Reactions](https://srrweb.cc.lehigh.edu/sliders_reaction_kinetics) - Sequential Reactions example
+* [Sequential_Reactions](https://srrweb.cc.lehigh.edu/app/sliders_reaction_kinetics) - Sequential Reactions example
 
 ## Built With
 
