@@ -57,7 +57,7 @@ The interactive webpage can be found here:
 
 * **Raghuram Thiagarajan** - *Project Lead* - [swamilikes2code](https://github.com/swamilikes2code)
 
-* **Srinivas Rangarajan** - *Principle Investigator* - [Faculty Website at Lehigh](https://engineering.lehigh.edu/faculty/srinivas-rangarajan)
+* **Srinivas Rangarajan** - *Principal Investigator* - [Faculty Website at Lehigh](https://engineering.lehigh.edu/faculty/srinivas-rangarajan)
 
 See also the list of [contributors](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/graphs/contributors) who participated in this project.
 
