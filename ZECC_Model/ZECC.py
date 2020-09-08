@@ -5,6 +5,7 @@ from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColum
 from bokeh.plotting import figure, show
 from bokeh.palettes import Colorblind8
 import numpy as np
+import pandas as pd 
 from scipy.interpolate import interp1d
 from bokeh.tile_providers import CARTODBPOSITRON, get_provider, Vendors
 
@@ -58,32 +59,12 @@ def FtoC(Ftemps): #if need to convert temps from F to C
 
 beth_yearly_C=FtoC(beth_yearly_F) #converting bethlehem yearly temps to celsius
 Miami_C=FtoC(miami_F) #converting miami yearly temps to celsius
-
-class Weather: #creating a class for each location that stores temperatures, location name, time range, and relative humidity
-    def __init__(self, temps_list, name, time_int, rh):
-        self.location=name
-        self.temps=temps_list
-        self.time=time_int
-        self.rh=rh
- 
-#creating class instances for each of the 6 locations on a yearly time scale
-beth_yearly=Weather(beth_yearly_C, "Bethlehem, PA", "12 Months", [.691, .667, .626, .609, .656, .679, .688, .719, .74, .718, .705, .714])
-CostaRica=Weather(CostaRica_C, "Puerto Jiménez, Costa Rica", "12 Months", [.592, .554, .527, .642, .743, .763, .759, .766, .768, .796, .788, .713])
-Miami=Weather(Miami_C, "Miami, FL", "12 Months", [.607, .603, .558, .584, .605, .661, .662, .674, .697, .648, .617, .647])
-Ecuador=Weather(Ecuador_C, "Quito, Ecuador", "12 Months", [.75, .80, .80, .80, .8, .7, .65, .6, .7, .75, .75, .8])
-Kenya=Weather(Kenya_C, "Nairobi, Kenya", "12 Months", [.7, .6, .65, .8, .8, .75, .75, .7, .65, .65, .8, .75])
-Zambia=Weather(Zambia_C, "Lusaka, Zambia", "12 Months", [.86, .89, .84, .66, .57, .59, .56, .45, .43, .32, .57, .71] )
-
-#creating class instances for each of the 6 locations on a 24 hour time scale
-beth_hourly=Weather(FtoC(beth_hourly1), "Bethlehem, PA", "24 Hours", .679)
-Costa_hourly=Weather(costa_hourly_C, "Puerto Jiménez, Costa Rica", "24 Hours", .763)
-Kenya_hourly=Weather(kenya_hourly_C, "Nairobi, Kenya", "24 Hours", .75)
-Miami_hourly=Weather(miami_hourly_C, "Miami, FL", "24 Hours", .661)
-Ecuador_hourly=Weather(ecuador_hourly_C, "Quito, Ecuador", "24 Hours", .7)
-Zambia_hourly=Weather(zambia_hourly_C, "Lusaka, Zambia", "24 Hours", .652)
-
-weather_sets=[beth_yearly, CostaRica, Miami, Ecuador, Kenya, Zambia] #this contains all class instances on the yearly time scale
-hourly_set=[beth_hourly, Costa_hourly, Miami_hourly, Ecuador_hourly, Kenya_hourly, Zambia_hourly] #this contains all class instances on the hourly time scale
+        
+#Creating a Pandas data frame rather than a class and class instances for each 
+df_data={"locations": loc_and_time, "hourly_temps": [beth_hourly1, miami_hourly_C, costa_hourly_C, ecuador_hourly_C, kenya_hourly_C, zambia_hourly_C], "yearly_temps": [beth_yearly_C, Miami_C, CostaRica_C, Ecuador_C, Kenya_C, Zambia_C], 
+         "hourly_rh": [.679, .661, .763, .7, .75, .652], "yearly_rh": [[.691, .667, .626, .609, .656, .679, .688, .719, .74, .718, .705, .714], [.607, .603, .558, .584, .605, .661, .662, .674, .697, .648, .617, .647], [.592, .554, .527, .642, .743, .763, .759, .766, .768, .796, .788, .713], [.75, .80, .80, .80, .8, .7, .65, .6, .7, .75, .75, .8], [.7, .6, .65, .8, .8, .75, .75, .7, .65, .65, .8, .75], [.86, .89, .84, .66, .57, .59, .56, .45, .43, .32, .57, .71]], 
+         }
+location_df=pd.DataFrame(data=df_data, index=df_data["locations"])
 
 TOOLS = "pan,reset,save,box_zoom" #tools for the graphs
 #Creating Grpah to show average temps throught the year for each location
@@ -93,32 +74,10 @@ diff_temps.xaxis.ticker = list(range(1, 13))
 diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
                                         7: "July", 8:'August', 9:'September', 10: 'October', 11: 'November', 12: 'December'} #makes x-axis have name labels instead of month numbers
 diff_temps.xaxis.major_label_orientation=1
-#adding each location to the graph
-diff_temps.line(time_range1, beth_yearly.temps, legend_label=beth_yearly.location, line_width=2, color='blue')
-diff_temps.line(time_range1, CostaRica.temps, legend_label=CostaRica.location, line_width=2, line_dash=[2,8], color='darkgreen')
-diff_temps.line(time_range1, Miami.temps, legend_label=Miami.location, line_width=2, color='darkred')
-diff_temps.line(time_range1, Ecuador.temps, legend_label=Ecuador.location, line_width=2, line_dash=[8,2], color='peru')
-diff_temps.line(time_range1, Kenya.temps, legend_label=Kenya.location, line_width=2, line_dash=[2,2], color='mediumpurple')
-diff_temps.line(time_range1, Zambia.temps, legend_label=Zambia.location, line_width=2, line_dash=[4,4], color='navy')
-#legend attributes
-diff_temps.legend.click_policy="hide"
-diff_temps.legend.location='bottom_left'
-diff_temps.legend.background_fill_alpha=0.7
 
 #creating a graph to show the 6 locations temperatures throught one day 
 hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
 hourly_temps.title.text_font_size='14pt'
-#adding each location to the graph
-hourly_temps.line(time_range, beth_hourly.temps, legend_label=beth_hourly.location, line_width=2, color='blue')
-hourly_temps.line(time_range, Costa_hourly.temps, legend_label=Costa_hourly.location, line_width=2, line_dash=[2,8], color='darkgreen')
-hourly_temps.line(time_range, Miami_hourly.temps, legend_label=Miami_hourly.location, line_width=2, color='darkred')
-hourly_temps.line(time_range, Ecuador_hourly.temps, legend_label=Ecuador_hourly.location, line_width=2, line_dash=[8,2], color='peru')
-hourly_temps.line(time_range, Kenya_hourly.temps, legend_label=Kenya_hourly.location, line_width=2, line_dash=[2,2], color='mediumpurple')
-hourly_temps.line(time_range, Zambia_hourly.temps, legend_label=Zambia_hourly.location, line_width=2, line_dash=[4,4], color='navy')
-#legend attributes
-hourly_temps.legend.click_policy='hide'
-hourly_temps.legend.location='bottom_left'
-hourly_temps.legend.background_fill_alpha=0.7
 
 #Creating a graph to show the average humidity trends for each location throughout the year
 humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", x_range=diff_temps.x_range, tools=TOOLS, aspect_ratio=4/3, width=600)
@@ -127,14 +86,24 @@ humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
                                         7: "July", 8:'August', 9:'September', 10: 'October', 11: 'November', 12: 'December'} #chaning x-axis to month names instead of numbers
 humid.xaxis.major_label_orientation=1
-#adding each location to the humidity graph
-humid.line(time_range1, beth_yearly.rh, legend_label=beth_yearly.location, line_width=2, color='blue')
-humid.line(time_range1, CostaRica.rh, legend_label=CostaRica.location, line_width=2, line_dash=[2,8], color='darkgreen')
-humid.line(time_range1, Miami.rh, legend_label=Miami.location, line_width=2, color='darkred')
-humid.line(time_range1, Ecuador.rh, legend_label=Ecuador.location, line_width=2, line_dash=[8,2], color='peru')
-humid.line(time_range1, Kenya.rh, legend_label=Kenya.location, line_width=2, line_dash=[2,2], color='mediumpurple')
-humid.line(time_range1, Zambia.rh, legend_label=Zambia.location, line_width=2, line_dash=[4,4], color='navy')
-#legend attributes
+
+colors=['blue', 'darkgreen', 'darkred', 'peru', 'mediumpurple', 'navy']
+x=0
+#trying to print but with pandas data frame instead
+for i in loc_and_time:
+    diff_temps.line(time_range1, location_df.at[i, "yearly_temps"], legend_label=i, line_width=2, color=colors[x])
+    hourly_temps.line(time_range, location_df.at[i, 'hourly_temps'], legend_label=i, line_width=2, color=colors[x])
+    humid.line(time_range1, location_df.at[i, 'yearly_rh'], legend_label=i, line_width=2, color=colors[x])
+    x=x+1
+#yearly temperature graph legend attributes
+diff_temps.legend.click_policy="hide"
+diff_temps.legend.location='bottom_left'
+diff_temps.legend.background_fill_alpha=0.7
+#hourly temperature graph legend attributes
+hourly_temps.legend.click_policy='hide'
+hourly_temps.legend.location='bottom_left'
+hourly_temps.legend.background_fill_alpha=0.7
+#humidity graph legend attributes
 humid.legend.click_policy="hide"
 humid.legend.location='bottom_left'
 humid.legend.background_fill_alpha=0.7
@@ -457,34 +426,22 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
         cond=0.8
         
     if time=="12 Months":  #different functions used for calculations depending on if time scale is 24 hours or 12 months
-        if loc=="Puerto Jiménez, Costa Rica":
-            place=CostaRica
-        elif loc=="Miami, FL":
-            place=Miami
-        elif loc=="Quito, Ecuador":
-            place=Ecuador
-        elif loc=="Nairobi, Kenya":
-            place=Kenya
-        elif loc=="Lusaka, Zambia":
-            place=Zambia
-        elif loc=="Bethlehem, PA":
-            place=beth_yearly
         dims=[length, width, height, thick]
-        out=calc_HC(place.temps, dims, cond, want_temp)
+        out=calc_HC(location_df.at[loc, "yearly_temps"], dims, cond, want_temp)
         vap=[]
-        for p in place.temps:
+        for p in location_df.at[loc, "yearly_temps"]:
             vap.append(SVP(p))
         #recalculating values
-        water=water_needed(dims, place.temps, vap, place.rh)
-        latent=latent_heat(place.temps)
+        water=water_needed(dims, location_df.at[loc, "yearly_temps"], vap, location_df.at[loc, "yearly_rh"])
+        latent=latent_heat(location_df.at[loc, "yearly_temps"])
         evap=evap_cool(water, latent, time_range1)
-        dp=dew_point(place.temps, place.rh, range(0,12))
-        T1=T1_calc(dims, place.temps, want_temp, mat, range(0,12))
+        dp=dew_point(location_df.at[loc, "yearly_temps"], location_df.at[loc, "yearly_rh"], range(0,12))
+        T1=T1_calc(dims, location_df.at[loc, "yearly_temps"], want_temp, mat, range(0,12))
         #updating data source values for what to display
         source.data=dict(time=time_range1, output=out)
-        sourceW.data=dict(time=time_range1, temps=place.temps, water=water)
+        sourceW.data=dict(time=time_range1, temps=location_df.at[loc, "yearly_temps"], water=water)
         source3.data=dict(time=time_range1, evap_out=evap)
-        sourceDP.data=dict(time=time_range1, temps=place.temps, dp=dp, T1=T1)
+        sourceDP.data=dict(time=time_range1, temps=location_df.at[loc, "yearly_temps"], dp=dp, T1=T1)
         g1.extra_y_ranges['second'].start=np.min(source3.data['evap_out'])-10000
         g1.extra_y_ranges['second'].end=np.max(source3.data['evap_out'])+10000
         g1.y_range.start=np.min(source.data['output'])-10000
@@ -494,34 +451,22 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
         g4.xaxis.axis_label="Time (in Months)"
         
     elif time=="24 Hours":  #different functions used for calculations depending on if time scale is 24 hours or 12 months
-        if loc=="Puerto Jiménez, Costa Rica":
-            place=Costa_hourly
-        elif loc=="Miami, FL":
-            place=Miami_hourly
-        elif loc=="Quito, Ecuador":
-            place=Ecuador_hourly
-        elif loc=="Nairobi, Kenya":
-            place=Kenya_hourly
-        elif loc=="Lusaka, Zambia":
-            place=Zambia_hourly
-        elif loc=="Bethlehem, PA":
-            place=beth_hourly
         dims=[length, width, height, thick]
-        out=HC_hourly(place.temps, dims, cond, want_temp)
+        out=HC_hourly(location_df.at[loc, "hourly_temps"], dims, cond, want_temp)
         vap=[]
-        for p in place.temps:
+        for p in location_df.at[loc, "hourly_temps"]:
             vap.append(SVP(p))
         #recalculating values
-        water=water_needed_hourly(dims, place.temps, vap, place.rh)
-        latent=latent_heat(place.temps)
+        water=water_needed_hourly(dims, location_df.at[loc, "hourly_temps"], vap, location_df.at[loc, "hourly_rh"])
+        latent=latent_heat(location_df.at[loc, "hourly_temps"])
         evap=evap_cool_hourly(water, latent, time_range)
-        T1=T1_calc(dims, place.temps, want_temp, mat, range(0,24))
-        dp=dew_point_hourly(place.temps, place.rh, range(0,24))
+        T1=T1_calc(dims, location_df.at[loc, "hourly_temps"], want_temp, mat, range(0,24))
+        dp=dew_point_hourly(location_df.at[loc, "hourly_temps"], location_df.at[loc, "hourly_rh"], range(0,24))
         #updating data source values for what to display
         source.data=dict(time=time_range, output=out)
-        sourceW.data=dict(time=time_range, temps=place.temps, water=water)
+        sourceW.data=dict(time=time_range, temps=location_df.at[loc, "hourly_temps"], water=water)
         source3.data=dict(time=time_range, evap_out=evap)
-        sourceDP.data=dict(time=time_range, temps=place.temps, dp=dp, T1=T1)
+        sourceDP.data=dict(time=time_range, temps=location_df.at[loc, "hourly_temps"], dp=dp, T1=T1)
         g1.extra_y_ranges['second'].start=np.min(source3.data['evap_out'])-10
         g1.extra_y_ranges['second'].end=np.max(source3.data['evap_out'])+10
         g1.y_range.start=np.min(source.data['output'])-10
@@ -544,23 +489,11 @@ def button_updates(): #when calculate button is pressed, this function re-calcul
     water=0
     price=0
     if interval=="12 Months": #different functions used for calculations depending on if time scale is 24 hours or 12 months
-        if loc=="Puerto Jiménez, Costa Rica":
-            place=CostaRica
-        elif loc=="Miami, FL":
-            place=Miami
-        elif loc=="Quito, Ecuador":
-            place=Ecuador
-        elif loc=="Nairobi, Kenya":
-            place=Kenya
-        elif loc=="Lusaka, Zambia":
-            place=Zambia
-        elif loc=="Bethlehem, PA":
-            place=beth_yearly
         vap=[]
-        for p in place.temps:
+        for p in location_df.at[loc, "yearly_temps"]:
             vap.append(SVP(p))
         #recalculating values
-        water=water_needed(dims, place.temps, vap, place.rh)
+        water=water_needed(dims, location_df.at[loc, "yearly_temps"], vap, location_df.at[loc, "yearly_rh"])
         price=cost_calc(dims, sum(water), mat)
         tablePriceY.append("$"+str(round(price, 2)))
         tablePriceD.append("$"+str(round((price/365), 2)))
@@ -568,30 +501,18 @@ def button_updates(): #when calculate button is pressed, this function re-calcul
         tableWaterD.append(str(round(sum(water)/365, 2))+" L")
         
     elif interval=="24 Hours":  #different functions used for calculations depending on if time scale is 24 hours or 12 months
-        if loc=="Puerto Jiménez, Costa Rica":
-            place=Costa_hourly
-        elif loc=="Miami, FL":
-            place=Miami_hourly
-        elif loc=="Quito, Ecuador":
-            place=Ecuador_hourly
-        elif loc=="Nairobi, Kenya":
-            place=Kenya_hourly
-        elif loc=="Lusaka, Zambia":
-            place=Zambia_hourly
-        elif loc=="Bethlehem, PA":
-            place=beth_hourly
         vap1=[]
-        for p in place.temps:
+        for p in location_df.at[loc, "hourly_temps"]:
             vap1.append(SVP(p))
         #recalculating values
-        water=water_needed_hourly(dims, place.temps, vap1, place.rh)
+        water=water_needed_hourly(dims, location_df.at[loc, "hourly_temps"], vap1, location_df.at[loc, "hourly_rh"])
         price=cost_calc(dims, sum(water), mat)
         tablePriceD.append("$"+str(round(price/365,2)))
         tablePriceY.append("$"+str(round(price, 2)))
         tableWaterD.append(str(round(sum(water), 2))+" L")
         tableWaterY.append(str(round(sum(water)*365, 2))+ " L")  
     
-    tableName.append(place.location) #changing location name in data table
+    tableName.append(loc) #changing location name in data table
     tableSpace.append(str(round((dims[0]*dims[1]*dims[2]), 2))+" m^3") #calculating chamber volume for data table
     tableTime.append(place.time) #time interval being used
     #updating values that will be displayed in data table
