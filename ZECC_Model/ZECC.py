@@ -1,5 +1,5 @@
-
 from bokeh.io import curdoc
+import ast
 from bokeh.layouts import row, column
 from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d, HoverTool
 from bokeh.plotting import figure, show
@@ -15,23 +15,6 @@ initial_dims=[3, 2, 1, .3] #starting dimensions of the chamber [length, width, h
 materials=["Brick", "Cardboard", "Aluminum", "Concrete"] #possible materials to choose from
 loc_and_time=["Bethlehem, PA", "Miami, FL", "Puerto Jiménez, Costa Rica", "Quito, Ecuador", "Nairobi, Kenya", "Lusaka, Zambia"] #possible locations to choose from
 time_ranges=["12 Months", "24 Hours"] #possible time ranges
-
-#defining lists for temperatures for one day in mid june (temp taken at each hour)
-beth_hourly1=[66, 65, 64, 64, 64, 64, 64, 65, 66, 67, 70, 71, 73, 73, 72, 75, 76, 76, 76, 75, 75, 73, 71, 70] #hourly bethlhem temperatures for June 18, 2020
-costa_hourly_C=[24, 24, 24, 24, 24, 24, 24, 25, 26, 27, 28, 28, 28, 28, 27, 27, 28, 28, 25, 25, 25, 25, 25, 24] #hourly june 24, 2020
-kenya_hourly_C=[15, 15, 15, 15, 14, 14, 14, 14, 15, 16, 18, 19, 20, 21, 21, 22, 22, 22, 21, 19, 19, 18, 17, 16]
-miami_hourly_C=[29, 28, 28, 28, 28, 28, 28, 28, 29, 30, 30, 31, 31, 31, 32, 31, 31, 31, 31, 30, 29, 29, 29, 29]
-ecuador_hourly_C=[11, 11, 10, 10, 9, 9, 9, 9, 12, 14, 17, 19, 20, 20, 20, 19, 18, 17, 15, 14, 13, 12, 12, 11]
-zambia_hourly_C=[14, 13, 13, 13, 13, 12, 12, 12, 13, 16, 18, 19, 20, 20, 21, 21, 20, 20, 18, 17, 16, 16, 15, 14]
-
-#defining lists for temperatures for monthly averages at each location
-beth_yearly_F=[32.1, 32.1, 39, 50, 60, 69, 73.5, 71.5, 64, 52.5, 43, 32.5]
-CostaRica_C=[26.2, 26.5, 27.7, 28, 27.3, 26.5, 26.7, 26.3, 26, 25.9, 25.6, 25.7]
-miami_F=[68, 70, 72.5, 75.5, 80, 82.5, 84, 84, 82.5, 80, 75, 70.5]
-Ecuador_C=[15.5, 15.55, 15.45, 15.55, 15.55, 15.5, 15.45, 15.9, 15.85, 15.65, 15.45, 15.5]
-Kenya_C=[19.7, 20.2, 20.7, 20.2, 19.1, 17.8, 16.7, 17.2, 18.6, 19.8, 19.3, 19.2]
-Zambia_C=[22.5, 22.4, 21.95, 20.55, 18.25, 15.8, 15.6, 17.85, 21.6, 23.95, 23.9, 22.75]
-
 
 get_provider(Vendors.CARTODBPOSITRON) #this helps set up map
 tile_provider=get_provider('CARTODBPOSITRON')
@@ -49,22 +32,13 @@ mapp.circle(x=3564845.194234, y=-948229.994036, size=10, fill_color='navy', fill
 mapp.legend.background_fill_alpha=0.5
 
 
-
-def FtoC(Ftemps): #if need to convert temps from F to C
-    newTemps=[]
-    for x in Ftemps:
-        n=(x-32)*(5/9)
-        newTemps.append(n)
-    return newTemps
-
-beth_yearly_C=FtoC(beth_yearly_F) #converting bethlehem yearly temps to celsius
-Miami_C=FtoC(miami_F) #converting miami yearly temps to celsius
-        
 #Creating a Pandas data frame rather than a class and class instances for each 
-df_data={"locations": loc_and_time, "hourly_temps": [beth_hourly1, miami_hourly_C, costa_hourly_C, ecuador_hourly_C, kenya_hourly_C, zambia_hourly_C], "yearly_temps": [beth_yearly_C, Miami_C, CostaRica_C, Ecuador_C, Kenya_C, Zambia_C], 
-         "hourly_rh": [.679, .661, .763, .7, .75, .652], "yearly_rh": [[.691, .667, .626, .609, .656, .679, .688, .719, .74, .718, .705, .714], [.607, .603, .558, .584, .605, .661, .662, .674, .697, .648, .617, .647], [.592, .554, .527, .642, .743, .763, .759, .766, .768, .796, .788, .713], [.75, .80, .80, .80, .8, .7, .65, .6, .7, .75, .75, .8], [.7, .6, .65, .8, .8, .75, .75, .7, .65, .65, .8, .75], [.86, .89, .84, .66, .57, .59, .56, .45, .43, .32, .57, .71]], 
-         }
-location_df=pd.DataFrame(data=df_data, index=df_data["locations"])
+location_df=pd.read_csv("ZECC_Location_Info.csv")
+#Python reads lists in as strings so the following for loop will convert them back to lists
+for x in range(0, len(location_df)):
+    location_df.iloc[x,1]=ast.literal_eval(location_df.iloc[x,1])
+    location_df.iloc[x,2]=ast.literal_eval(location_df.iloc[x,2])
+    location_df.iloc[x,3]=ast.literal_eval(location_df.iloc[x,3])
 
 TOOLS = "pan,reset,save,box_zoom" #tools for the graphs
 #Creating Grpah to show average temps throught the year for each location
@@ -89,11 +63,11 @@ humid.xaxis.major_label_orientation=1
 
 colors=['blue', 'darkgreen', 'darkred', 'peru', 'mediumpurple', 'navy']
 x=0
-#trying to print but with pandas data frame instead
-for i in loc_and_time:
-    diff_temps.line(time_range1, location_df.at[i, "yearly_temps"], legend_label=i, line_width=2, color=colors[x])
-    hourly_temps.line(time_range, location_df.at[i, 'hourly_temps'], legend_label=i, line_width=2, color=colors[x])
-    humid.line(time_range1, location_df.at[i, 'yearly_rh'], legend_label=i, line_width=2, color=colors[x])
+#Creating lines on each of the three graphs
+for i in range(0, len(location_df)):
+    diff_temps.line(time_range1, location_df.iloc[i, 1], legend_label=location_df.iloc[i,0], line_width=2, color=colors[x])
+    hourly_temps.line(time_range, location_df.iloc[i, 2], legend_label=location_df.iloc[i,0], line_width=2, color=colors[x])
+    humid.line(time_range1, location_df.iloc[i, 3], legend_label=location_df.iloc[i,0], line_width=2, color=colors[x])
     x=x+1
 #yearly temperature graph legend attributes
 diff_temps.legend.click_policy="hide"
@@ -134,7 +108,7 @@ k_brick = 0.72  # thermal conductivity of brick W/mK
 e_sand = 0.343  # porosity of sand
 
 #first we calculate all values for Costa Rica yearly so we have something to initially show on our graphs before user makes adjustments
-out1=calc_HC(CostaRica.temps, initial_dims, k_brick, 15)
+out1=calc_HC(location_df.iloc[2, 1], initial_dims, k_brick, 15)
 source=ColumnDataSource(data=dict(time=time_range1, output=out1)) #creating a data source to show data that we currently want displayed
 start1=np.min(source.data['output'])
 end1=np.max(source.data['output'])
@@ -155,9 +129,9 @@ slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, e
 slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=450, margin=(5, 0, 5, 30))
 select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=400, margin=(5, 0, 5, 20))
 slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=450, margin=(5, 5, 5, 30))
-location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=loc_and_time, width=400, margin=(10, 5, 5, 20))
+location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=location_df['Location'], width=400, margin=(10, 5, 5, 20))
 time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=400, margin=(5, 5, 5, 20))
-calculate_button=Button(label="Calculate", button_type='success', background='lightblue', width=450, margin=(5, 0, 5, 20)) #a button that will calculate cost and water needed when clicked
+calculate_button=Button(label="Calculate", button_type='success', width=450, margin=(5, 0, 5, 20)) #a button that will calculate cost and water needed when clicked
 
 def latent_heat(temp): #function to interpolate latent heat value
     #Interpolating the values for latent heat of evaporation
@@ -166,7 +140,7 @@ def latent_heat(temp): #function to interpolate latent heat value
     f1 = interp1d(x, y, kind= 'cubic')
     return f1(temp)
 
-latent_out=latent_heat(CostaRica.temps)
+latent_out=latent_heat(location_df.iloc[2, 1])
 
 def SVP(temp):
     #Interpolate the values for Saturated Vapor Pressure
@@ -223,16 +197,16 @@ def water_needed_hourly(dims, temp, SVP, rh): #function to calculate the amount 
     return evap_rate
 
 vap_init=[]
-for p in CostaRica.temps:
+for p in location_df.iloc[2, 1]:
     vap_init.append(SVP(p))
 vap1_init=[]
-for p in Costa_hourly.temps:
+for p in location_df.iloc[2, 1]:
     vap1_init.append(SVP(p))
 
 #getting water for Costa Rica as that will be the initial display
-water_monthly=water_needed(initial_dims, CostaRica.temps, vap_init, CostaRica.rh)
-water_trial=water_needed_hourly(initial_dims, Costa_hourly.temps, vap1_init, Costa_hourly.rh)
-sourceW=ColumnDataSource(data=dict(time=time_range1, temps=CostaRica.temps, water=water_monthly))
+water_monthly=water_needed(initial_dims, location_df.iloc[2, 1], vap_init, location_df.iloc[2, 3])
+water_trial=water_needed_hourly(initial_dims, location_df.iloc[2, 1], vap1_init, location_df.iloc[2, 3])
+sourceW=ColumnDataSource(data=dict(time=time_range1, temps=location_df.iloc[2, 1], water=water_monthly))
 
 
 #Evaporative Cooling Rate Q/t=mLv/t
@@ -306,13 +280,13 @@ price1=cost_calc(initial_dims, sum(water_monthly), "Brick") #inital cost of ZECC
 sourceP=ColumnDataSource(data=dict(price=[price1])) #storing info in Price data source
 
 #Creating a data table that will print out the volume of the chamber as well as the cost of the ZECC and the amount of water needed, both on a daily and yearly time scale
-tableName=[CostaRica.location]
+tableName=["Puerto Jiménez, Costa Rica"]
 tablePriceY=["$"+str(round(price1, 2))]
 tablePriceD=["$"+str(round(price1/365,2))]
 tableWaterY=[str(round(sum(water_monthly), 2))+" L"]
 tableWaterD=[str(round(sum(water_monthly)/365, 2)) +" L"]
 tableSpace=[str(round(initial_dims[0]*initial_dims[1]*initial_dims[2], 2))+" m^3"]
-tableTime=[CostaRica.time]
+tableTime=[time_ranges[0]]
 
 #putting info into data table
 sourceTable=ColumnDataSource(data=dict(name=tableName, time=tableTime, Year_Price=tablePriceY, Day_Price=tablePriceD, Year_Water=tableWaterY, Day_Water=tableWaterD, space=tableSpace))
@@ -339,12 +313,12 @@ def dew_point_hourly(temps, rh, time): #calculating dew point of loction at spec
         gamma = a - (((a * temps[t]) / (b + temps[t])) + np.log(rh))
         dp_out.append(alpha / gamma)
     return dp_out
-dp_Costa=dew_point(CostaRica.temps, CostaRica.rh, range(0,12)) #dew point for initial Costa Rica ZECC
+dp_Costa=dew_point(location_df.iloc[2, 1], location_df.iloc[2, 3], range(0,12)) #dew point for initial Costa Rica ZECC
 
 #creating a graph that shows the ambient temp, outer wall temp, and dew point temp
 g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), aspect_ratio=4/3, sizing_mode='scale_both')
 g4.title.text_font_size='14pt'
-sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=CostaRica.temps, dp=dp_Costa, T1=range(0,12)))
+sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=location_df.iloc[2, 1], dp=dp_Costa, T1=range(0,12)))
 gl1=g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
 gl2=g4.line('time', 'dp', source=sourceDP, color='darkblue', line_width=2, line_dash=[4,4], legend_label="Dew-Point Temperature")
 g4.legend.background_fill_alpha=0.5
@@ -392,8 +366,8 @@ def T1_calc(dims, temps, wanted_temp, mat, time_range): #calculating outer wall 
         T1.append(abc)
     #print(T1)
     return T1
-Costa_T1=T1_calc(initial_dims, CostaRica.temps, 18, "Brick", range(0,12))
-sourceDP.data=dict(time=time_range1, temps=CostaRica.temps, dp=dp_Costa, T1=Costa_T1)
+Costa_T1=T1_calc(initial_dims, location_df.iloc[2, 1], 18, "Brick", range(0,12))
+sourceDP.data=dict(time=time_range1, temps=location_df.iloc[2, 1], dp=dp_Costa, T1=Costa_T1)
 gl3=g4.line('time', 'T1', source=sourceDP, legend_label="Outer Wall Temperature", line_width=2, line_dash=[8,2], color='purple')
 
 #Adding display of value for when each line is hovered over at specific point
@@ -413,9 +387,20 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
     loc=location_select.value
     time=time_select.value
     cond=0
-    place=CostaRica
-    #loc_and_time=["Bethlehem, PA", "Miami, Fl", "Puerto Jiménez, Costa Rica", "Quito, Ecuador", "Nairobi, Kenya", "Lusaka, Zambia"]
-    
+    place=0
+    if loc=="Bethlehem, PA":
+        place=0
+    elif loc=="Miami, FL":
+        place=1
+    elif loc=="Puerto Jiménez, Costa Rica":
+        place=2
+    elif loc=="Quito, Ecuador":
+        place=3
+    elif loc=="Nairobi, Kenya":
+        place=4
+    elif loc=="Lusaka, Zambia":
+        place=5
+
     if mat =="Brick": #selectng conductivity value based off of material selected
         cond=0.72
     elif mat=="Cardboard":
@@ -427,21 +412,21 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
         
     if time=="12 Months":  #different functions used for calculations depending on if time scale is 24 hours or 12 months
         dims=[length, width, height, thick]
-        out=calc_HC(location_df.at[loc, "yearly_temps"], dims, cond, want_temp)
+        out=calc_HC(location_df.iloc[place, 1], dims, cond, want_temp)
         vap=[]
-        for p in location_df.at[loc, "yearly_temps"]:
+        for p in location_df.iloc[place, 1]:
             vap.append(SVP(p))
         #recalculating values
-        water=water_needed(dims, location_df.at[loc, "yearly_temps"], vap, location_df.at[loc, "yearly_rh"])
-        latent=latent_heat(location_df.at[loc, "yearly_temps"])
+        water=water_needed(dims, location_df.iloc[place, 1], vap, location_df.iloc[place, 3])
+        latent=latent_heat(location_df.iloc[place, 1])
         evap=evap_cool(water, latent, time_range1)
-        dp=dew_point(location_df.at[loc, "yearly_temps"], location_df.at[loc, "yearly_rh"], range(0,12))
-        T1=T1_calc(dims, location_df.at[loc, "yearly_temps"], want_temp, mat, range(0,12))
+        dp=dew_point(location_df.iloc[place, 1], location_df.iloc[place, 3], range(0,12))
+        T1=T1_calc(dims, location_df.iloc[place, 1], want_temp, mat, range(0,12))
         #updating data source values for what to display
         source.data=dict(time=time_range1, output=out)
-        sourceW.data=dict(time=time_range1, temps=location_df.at[loc, "yearly_temps"], water=water)
+        sourceW.data=dict(time=time_range1, temps=location_df.iloc[place, 1], water=water)
         source3.data=dict(time=time_range1, evap_out=evap)
-        sourceDP.data=dict(time=time_range1, temps=location_df.at[loc, "yearly_temps"], dp=dp, T1=T1)
+        sourceDP.data=dict(time=time_range1, temps=location_df.iloc[place, 1], dp=dp, T1=T1)
         g1.extra_y_ranges['second'].start=np.min(source3.data['evap_out'])-10000
         g1.extra_y_ranges['second'].end=np.max(source3.data['evap_out'])+10000
         g1.y_range.start=np.min(source.data['output'])-10000
@@ -452,21 +437,21 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
         
     elif time=="24 Hours":  #different functions used for calculations depending on if time scale is 24 hours or 12 months
         dims=[length, width, height, thick]
-        out=HC_hourly(location_df.at[loc, "hourly_temps"], dims, cond, want_temp)
+        out=HC_hourly(location_df.iloc[place, 2], dims, cond, want_temp)
         vap=[]
-        for p in location_df.at[loc, "hourly_temps"]:
+        for p in location_df.iloc[place, 2]:
             vap.append(SVP(p))
         #recalculating values
-        water=water_needed_hourly(dims, location_df.at[loc, "hourly_temps"], vap, location_df.at[loc, "hourly_rh"])
-        latent=latent_heat(location_df.at[loc, "hourly_temps"])
+        water=water_needed_hourly(dims, location_df.iloc[place, 2], vap, location_df.iloc[place, 2])
+        latent=latent_heat(location_df.iloc[place, 2])
         evap=evap_cool_hourly(water, latent, time_range)
-        T1=T1_calc(dims, location_df.at[loc, "hourly_temps"], want_temp, mat, range(0,24))
-        dp=dew_point_hourly(location_df.at[loc, "hourly_temps"], location_df.at[loc, "hourly_rh"], range(0,24))
+        T1=T1_calc(dims, location_df.iloc[place, 2], want_temp, mat, range(0,24))
+        dp=dew_point_hourly(location_df.iloc[place, 2], location_df.iloc[place, 4], range(0,24))
         #updating data source values for what to display
         source.data=dict(time=time_range, output=out)
-        sourceW.data=dict(time=time_range, temps=location_df.at[loc, "hourly_temps"], water=water)
+        sourceW.data=dict(time=time_range, temps=location_df.iloc[place, 2], water=water)
         source3.data=dict(time=time_range, evap_out=evap)
-        sourceDP.data=dict(time=time_range, temps=location_df.at[loc, "hourly_temps"], dp=dp, T1=T1)
+        sourceDP.data=dict(time=time_range, temps=location_df.iloc[place, 4], dp=dp, T1=T1)
         g1.extra_y_ranges['second'].start=np.min(source3.data['evap_out'])-10
         g1.extra_y_ranges['second'].end=np.max(source3.data['evap_out'])+10
         g1.y_range.start=np.min(source.data['output'])-10
@@ -484,37 +469,51 @@ def button_updates(): #when calculate button is pressed, this function re-calcul
     thick=slide_thick.value
     loc=location_select.value
     interval=time_select.value
-    place=CostaRica
+    #place=CostaRica
     dims=[length, width, height, thick]
     water=0
     price=0
+    place=0
+    if loc=="Bethlehem, PA":
+        place=0
+    elif loc=="Miami, FL":
+        place=1
+    elif loc=="Puerto Jiménez, Costa Rica":
+        place=2
+    elif loc=="Quito, Ecuador":
+        place=3
+    elif loc=="Nairobi, Kenya":
+        place=4
+    elif loc=="Lusaka, Zambia":
+        place=5
     if interval=="12 Months": #different functions used for calculations depending on if time scale is 24 hours or 12 months
         vap=[]
-        for p in location_df.at[loc, "yearly_temps"]:
+        for p in location_df.iloc[place, 1]:
             vap.append(SVP(p))
         #recalculating values
-        water=water_needed(dims, location_df.at[loc, "yearly_temps"], vap, location_df.at[loc, "yearly_rh"])
+        water=water_needed(dims, location_df.iloc[place, 1], vap, location_df.iloc[place, 3])
         price=cost_calc(dims, sum(water), mat)
         tablePriceY.append("$"+str(round(price, 2)))
         tablePriceD.append("$"+str(round((price/365), 2)))
         tableWaterY.append(str(round(sum(water), 2))+" L")
         tableWaterD.append(str(round(sum(water)/365, 2))+" L")
+        tableTime.append("12 Months")
         
     elif interval=="24 Hours":  #different functions used for calculations depending on if time scale is 24 hours or 12 months
         vap1=[]
-        for p in location_df.at[loc, "hourly_temps"]:
+        for p in location_df.iloc[place, 2]:
             vap1.append(SVP(p))
         #recalculating values
-        water=water_needed_hourly(dims, location_df.at[loc, "hourly_temps"], vap1, location_df.at[loc, "hourly_rh"])
+        water=water_needed_hourly(dims, location_df.iloc[place, 2], vap1, location_df.iloc[place, 4])
         price=cost_calc(dims, sum(water), mat)
         tablePriceD.append("$"+str(round(price/365,2)))
         tablePriceY.append("$"+str(round(price, 2)))
         tableWaterD.append(str(round(sum(water), 2))+" L")
-        tableWaterY.append(str(round(sum(water)*365, 2))+ " L")  
+        tableWaterY.append(str(round(sum(water)*365, 2))+ " L")
+        tableTime.append("24 Hours")
     
     tableName.append(loc) #changing location name in data table
     tableSpace.append(str(round((dims[0]*dims[1]*dims[2]), 2))+" m^3") #calculating chamber volume for data table
-    tableTime.append(place.time) #time interval being used
     #updating values that will be displayed in data table
     sourceTable.data=dict(name=tableName, time=tableTime, Year_Price=tablePriceY, Day_Price=tablePriceD, Day_Water=tableWaterD, Year_Water=tableWaterY, space=tableSpace)
     
