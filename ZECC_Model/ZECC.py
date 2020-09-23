@@ -2,8 +2,7 @@ from bokeh.io import curdoc
 import ast
 from bokeh.layouts import row, column
 from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d, HoverTool
-from bokeh.plotting import figure, show
-from bokeh.palettes import Colorblind8
+from bokeh.plotting import figure
 import numpy as np
 import pandas as pd 
 from scipy.interpolate import interp1d
@@ -13,7 +12,6 @@ time_range=list(range(0, 24)) #hourly time scale
 time_range1=list(range(1,13)) #yearly time scale
 initial_dims=[3, 2, 1, .3] #starting dimensions of the chamber [length, width, height, sand_thickness]
 materials=["Brick", "Cardboard", "Aluminum", "Concrete"] #possible materials to choose from
-loc_and_time=["Bethlehem, PA", "Miami, FL", "Puerto Jiménez, Costa Rica", "Quito, Ecuador", "Nairobi, Kenya", "Lusaka, Zambia"] #possible locations to choose from
 time_ranges=["12 Months", "24 Hours"] #possible time ranges
 
 get_provider(Vendors.CARTODBPOSITRON) #this helps set up map
