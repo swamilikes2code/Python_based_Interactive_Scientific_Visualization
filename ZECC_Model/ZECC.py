@@ -368,6 +368,7 @@ def T1_calc(dims, temps, wanted_temp, mat, time_range): #calculating outer wall 
         T1.append(abc)
     #print(T1)
     return T1
+
 Costa_T1=T1_calc(initial_dims, yearly_temps_df.iloc[2], 18, "Brick", range(0,12))
 sourceDP.data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], dp=dp_Costa, T1=Costa_T1)
 gl3=g4.line('time', 'T1', source=sourceDP, legend_label="Outer Wall Temperature", line_width=2, line_dash=[8,2], color='purple')
@@ -431,7 +432,7 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
         for p in daily_temps_df.loc[location]:
             vap.append(SVP(p))
         #recalculating values
-        water=water_needed_hourly(dims, daily_temps_df.loc[location], vap, )
+        water=water_needed_hourly(dims, daily_temps_df.loc[location], vap, daily_rh.loc[location])
         latent=latent_heat(daily_temps_df.loc[location])
         evap=evap_cool_hourly(water, latent, time_range)
         T1=T1_calc(dims, daily_temps_df.loc[location], want_temp, mat, range(0,24))
@@ -440,7 +441,7 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
         source.data=dict(time=time_range, output=out)
         sourceW.data=dict(time=time_range, temps=daily_temps_df.loc[location], water=water)
         source3.data=dict(time=time_range, evap_out=evap)
-        sourceDP.data=dict(time=time_range, temps=daily_rh.loc[location], dp=dp, T1=T1)
+        sourceDP.data=dict(time=time_range, temps=daily_temps_df.loc[location], dp=dp, T1=T1)
         g1.extra_y_ranges['second'].start=np.min(source3.data['evap_out'])-10
         g1.extra_y_ranges['second'].end=np.max(source3.data['evap_out'])+10
         g1.y_range.start=np.min(source.data['output'])-10
