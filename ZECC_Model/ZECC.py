@@ -32,10 +32,10 @@ mapp.legend.background_fill_alpha=0.5
 
 
 #Creating a Pandas data frame for data stored in csv files that are found in the same folder as the program is stored
-yearly_temps_df=pd.read_csv("Yearly_Temps.csv", index_col=0, header=0) #reading in data for the monthly average temperatures for 6 different locations
-yearly_rh_df=pd.read_csv("Yearly_RH.csv", index_col=0, header=0) #reading in data for the monthly average of relative humidity for 6 different locations
-daily_temps_df=pd.read_csv("Hourly_Temps.csv", index_col=0, header=0) #reading in data for the hourly temperatures for one day in mid-June for 6 locations
-daily_rh=pd.read_csv("ZECC_Daily_rh.csv", index_col=0, header=0) #reading in data for the dailt relative humidity values for each location
+yearly_temps_df=pd.read_csv("ZECC_Model/Yearly_Temps.csv", index_col=0, header=0) #reading in data for the monthly average temperatures for 6 different locations
+yearly_rh_df=pd.read_csv("ZECC_Model/Yearly_RH.csv", index_col=0, header=0) #reading in data for the monthly average of relative humidity for 6 different locations
+daily_temps_df=pd.read_csv("ZECC_Model/Hourly_Temps.csv", index_col=0, header=0) #reading in data for the hourly temperatures for one day in mid-June for 6 locations
+daily_rh=pd.read_csv("ZECC_Model/ZECC_Daily_rh.csv", index_col=0, header=0) #reading in data for the dailt relative humidity values for each location
 
 
 TOOLS = "pan,reset,save,box_zoom" #tools for the graphs
