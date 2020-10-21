@@ -7,6 +7,7 @@ Created on Wed Jul 29 10:19:17 2020
 """
 import networkx as nx
 import numpy as np
+import math
 from scipy.integrate import solve_ivp
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
@@ -58,7 +59,8 @@ t = np.linspace(0, 365, 365) #365 days
 t_vac=365 #time at which vaccine is introduced
 
 def vac_freq(t_vac, current_time): #function that gives the vaccine rate, it will be 0 before the vaccine is introduced and 0.01 after the vaccine is introduced
-    vf=(.01*exp(10*(current_time-t_vac)))/(1+exp(10*(current_time-t_vac)))
+    #vf=(.01*exp(10*(current_time-t_vac)))/(1+exp(10*(current_time-t_vac)))
+    vf=0.1*(math.atan(current_time-t_vac)+(math.pi/2))
     return vf
 
 def health_cap_effect(health_capacity, Is_h): #function that shows death rates and recovery rates being effected if hospital capacity is surpased
