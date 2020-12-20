@@ -11,7 +11,7 @@ from bokeh.tile_providers import get_provider, Vendors
 time_range=list(range(0, 24)) #hourly time scale
 time_range1=list(range(1,13)) #yearly time scale
 initial_dims=[3, 2, 1, .3] #starting dimensions of the chamber [length, width, height, sand_thickness]
-materials=["Brick", "Cardboard", "Aluminum", "Concrete"] #possible materials to choose from
+materials=["Brick", "Wood", "Terracotta", "Concrete"] #possible materials to choose from
 time_ranges=["12 Months", "24 Hours"] #possible time ranges
 
 get_provider(Vendors.CARTODBPOSITRON) #this helps set up map
@@ -263,12 +263,12 @@ def cost_calc(dims, water_amount, mat): #calculating the cost to build and opera
     if mat=="Brick":
        materials_cost= 1900*0.037*V1 + 1905*.05*V2 + 1900*0.037*V3
        #Brick cost 0.037 $/Kg and density is 1900 Kg/m^3
-    elif mat=="Cardboard":
-        materials_cost=1905*0.5*V2 + (V1+V2)*(0.11*689)
-        #Cardboard cost $0.11/Kg and desnsity is 689 Kg/m^3
-    elif mat=="Aluminum":
-        materials_cost=1905*0.5*V2 + (V1+V2)*(1.754*2710)
-        #Aluminum cost is $1.754/Kg and density is 2710 Kg/m^3
+    elif mat=="Wood":
+        materials_cost=1905*0.5*V2 + (V1+V2)*(2.43*689)
+        #Wood cost $2.43/Sq F and desnsity is 689 Kg/m^3
+    elif mat=="Terracotta":
+        materials_cost=1905*0.5*V2 + (V1+V2)*(15*2710)
+        #Terracotta cost is $15 per sq inch and density is 2710 Kg/m^3
     elif mat=="Concrete":
         materials_cost=1905*0.5*V2 +(V1+V2)*(98.425)
         #Concrete cost is $98.425/m^3
@@ -351,10 +351,10 @@ def T1_calc(dims, temps, wanted_temp, mat, time_range): #calculating outer wall 
     cond=0
     if mat =="Brick":
         cond=0.72
-    elif mat=="Cardboard":
-        cond=0.048 
-    elif mat=='Aluminum':
-        cond=205 
+    elif mat=="Wood":
+        cond=12.5 
+    elif mat=='Terracotta':
+        cond=7.0 
     elif mat=='Concrete':
         cond=0.8
     # calculations
@@ -393,10 +393,10 @@ def update_data(attr, old, new): #when slider or drop down menu values get adjus
 
     if mat =="Brick": #selectng conductivity value based off of material selected
         cond=0.72
-    elif mat=="Cardboard":
-        cond=0.048 
-    elif mat=='Aluminum':
-        cond=205 
+    elif mat=="Wood":
+        cond=12.5 
+    elif mat=='Terracotta':
+        cond=7.0 
     elif mat=='Concrete':
         cond=0.8
         
