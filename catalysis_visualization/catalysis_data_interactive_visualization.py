@@ -60,13 +60,13 @@ select_x_axis = Select(title="X Axis", options=sorted(axis_map_x.keys()), value=
 select_y_axis = Select(title="Y Axis", options=sorted(axis_map_y.keys()), value="CarbonDiOxide_y")
 
 TOOLTIPS=[
-    ("M1 %", "@M1_mol%"),
-    ("M2 %", "@M2_mol%"),
-    ("M3 %", "@M3_mol%")
+    ("M1 Percent", "@M1_mol_percent"),
+    ("M2 Percent", "@M2_mol_percent"),
+    ("M3 Percent", "@M3_mol_percent")
 ]
 
 # Create Column Data Source that will be used by the plot
-source = ColumnDataSource(data=dict(x=[], y=[]))
+source = ColumnDataSource(data=dict(x=[], y=[], M1_mol_percent=[], M2_mol_percent=[], M3_mol_percent=[]))
 
 p = figure(height=600, width=700, title="", toolbar_location=None, tooltips=TOOLTIPS, sizing_mode="scale_both")
 p.circle(x="x", y="y", source=source, size=7, color='mediumblue', line_color=None, fill_alpha=0.6)
@@ -93,6 +93,9 @@ def update():
     source.data = dict(
         x=df[x_name],
         y=df[y_name],
+        M1_mol_percent=df['M1_mol_percentage'],
+        M2_mol_percent=df['M2_mol_percentage'], 
+        M3_mol_percent=df['M3_mol_percentage'],
     )
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp, select_ch4_to_o2, select_x_axis, select_y_axis]

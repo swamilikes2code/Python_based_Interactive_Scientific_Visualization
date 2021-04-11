@@ -1,4 +1,4 @@
-Name,M1,M1_atom_number,M2,M2_atom_number,M3,M3_atom_number,Support ,Support_ID,M2_mol,M3_mol,M1_mol%,M2_mol%,M3_mol%,Temp,Total_flow,Ar_flow,CH4_flow,O2_flow,CT,CH4/O2,CH4_conv,C2y,C2H6y,C2H4y,COy,CO2y,C2s,C2H6s,C2H4s,COs,CO2s
+Name,M1,M1_atom_number,M2,M2_atom_number,M3,M3_atom_number,Support ,Support_ID,M2_mol,M3_mol,M1_mol_percentage,M2_mol_percentage,M3_mol_percentage,Temp,Total_flow,Ar_flow,CH4_flow,O2_flow,CT,CH4/O2,CH4_conv,C2y,C2H6y,C2H4y,COy,CO2y,C2s,C2H6s,C2H4s,COs,CO2s
 Mn-Na2WO4/BN,Mn,25,Na,11,W,74,BN,4,0.37,0.185,40,40,20,900,10,1.5,5.7,2.8,0.75,2,36.28,5.86,0.68,5.18,30.82,6.01,16.15,1.87,14.28,84.95,16.57
 Mn-Na2WO4/BN,Mn,25,Na,11,W,74,BN,4,0.37,0.185,40,40,20,900,15,2.3,8.5,4.3,0.5,2,37.04,6.29,0.7,5.59,31.29,5.76,16.98,1.89,15.09,84.48,15.55
 Mn-Na2WO4/BN,Mn,25,Na,11,W,74,BN,4,0.37,0.185,40,40,20,900,20,3,11.3,5.7,0.38,2,26.83,5.34,0.55,4.79,21.62,3.12,19.9,2.05,17.85,80.58,11.63
