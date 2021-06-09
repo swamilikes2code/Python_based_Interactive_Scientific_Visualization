@@ -1,29 +1,27 @@
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
-from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput
-from bokeh.plotting import figure
+from bokeh.layouts import column, row, gridplot
+from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool
+from bokeh.plotting import figure, curdoc
 
 # Import dataset
-dir_path = '.\\data\\'
-data_filename = 'OCM-data.csv'
-df_catalysis_dataset = pd.read_csv(dir_path+data_filename)
+df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
 
 # Determine key values for Select Tool. More details in the Notebook.
 
 unique_temp = (df_catalysis_dataset['Temp']
- .sort_values()
- .astype(str)
- .unique()
-)
+               .sort_values()
+               .astype(str)
+               .unique()
+               )
 sorted_unique_temp = dict(zip(unique_temp, unique_temp))
 
 unique_ch4_to_o2 = (df_catalysis_dataset['CH4/O2']
- .sort_values()
- .astype(str)
- .unique()
-)
+                    .sort_values()
+                    .astype(str)
+                    .unique()
+                    )
 sorted_unique_ch4_to_o2 = dict(zip(unique_ch4_to_o2, unique_ch4_to_o2))
 
 axis_map_x = {
@@ -51,25 +49,42 @@ axis_map_y = {
 }
 
 # Create Input controls
-slider_methane_conversion = Slider(title="Minimum Methane conversion value", 
-                                   value=20, start=1, end=46, step=1)
-slider_C2y = Slider(title="Minimum value of C2y", start=0.1, end=22.1, value=4.0, step=0.1)
-slider_temp = Slider(title="Minimum value of Temperature", start=700.0, end=900.0, value=800.0, step=50.0)
-select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(sorted_unique_ch4_to_o2.keys()), value="6")
-select_x_axis = Select(title="X Axis", options=sorted(axis_map_x.keys()), value="Ethane_y")
-select_y_axis = Select(title="Y Axis", options=sorted(axis_map_y.keys()), value="CarbonDiOxide_y")
+slider_methane_conversion = Slider(
+    title="Minimum Methane conversion value", value=20, start=1, end=46, step=1)
+slider_C2y = Slider(title="Minimum value of C2y",
+                    start=0.1, end=22.1, value=4.0, step=0.1)
+slider_temp = Slider(title="Minimum value of Temperature",
+                     start=700.0, end=900.0, value=800.0, step=50.0)
+select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(
+    sorted_unique_ch4_to_o2.keys()), value="6")
+select_x_axis = Select(title="X Axis", options=sorted(
+    axis_map_x.keys()), value="Ethane_y")
+select_y_axis = Select(title="Y Axis", options=sorted(
+    axis_map_y.keys()), value="CarbonDiOxide_y")
 
-TOOLTIPS=[
+TOOLTIPS = [
     ("M1 Percent", "@M1_mol_percent"),
     ("M2 Percent", "@M2_mol_percent"),
     ("M3 Percent", "@M3_mol_percent")
 ]
 
-# Create Column Data Source that will be used by the plot
-source = ColumnDataSource(data=dict(x=[], y=[], M1_mol_percent=[], M2_mol_percent=[], M3_mol_percent=[]))
+# tools in the toolbar
+TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset"
 
-p = figure(height=600, width=700, title="", toolbar_location=None, tooltips=TOOLTIPS, sizing_mode="scale_both")
-p.circle(x="x", y="y", source=source, size=7, color='mediumblue', line_color=None, fill_alpha=0.6)
+# Create Column Data Source that will be used by the plot
+source = ColumnDataSource(
+    data=dict(x=[], y=[], M1_mol_percent=[], M2_mol_percent=[], M3_mol_percent=[]))
+
+p = figure(height=600, width=700, title="", tools=TOOLS, toolbar_location="above",
+           tooltips=TOOLTIPS, sizing_mode="scale_both")
+p.select(BoxSelectTool).select_every_mousemove = False
+p.select(LassoSelectTool).select_every_mousemove = False
+p.circle(x="x", y="y", source=source, size=7,
+         color='mediumblue', line_color=None, fill_alpha=0.6)
+
+# TODO: create the horizontal histogram
+
+# TODO: create the vertical histogram
 
 def select_data():
     temp_val = slider_temp.value
@@ -81,6 +96,7 @@ def select_data():
         (df_catalysis_dataset['CH4/O2'] == float(select_ch4_to_o2.value))
     ]
     return selected
+
 
 def update():
     df = select_data()
@@ -94,14 +110,16 @@ def update():
         x=df[x_name],
         y=df[y_name],
         M1_mol_percent=df['M1_mol_percentage'],
-        M2_mol_percent=df['M2_mol_percentage'], 
+        M2_mol_percent=df['M2_mol_percentage'],
         M3_mol_percent=df['M3_mol_percentage'],
     )
 
-controls = [slider_methane_conversion, slider_C2y, slider_temp, select_ch4_to_o2, select_x_axis, select_y_axis]
+
+controls = [slider_methane_conversion, slider_C2y, slider_temp,
+            select_ch4_to_o2, select_x_axis, select_y_axis]
 for control in controls:
     control.on_change('value', lambda attr, old, new: update())
-    
+
 inputs = column(*controls, width=320)
 
 l = column(row(inputs, p), sizing_mode="scale_both")
