@@ -93,9 +93,9 @@ def select_data():
     ]
     return selected
 
-# Repositioned the todo 
+# Repositioned the todo so that the select_data() function could be used by methods
 # TODO: create the horizontal histogram
-hhist, hedges = np.histogram(select_data()[axis_map_x[select_x_axis.value]], bins=20)
+hhist, hedges = np.histogram(select_data()[axis_map_x[select_x_axis.value]], bins=10)
 hzeros = np.zeros(len(hedges)-1)
 hmax = max(hhist)*1.1
 
