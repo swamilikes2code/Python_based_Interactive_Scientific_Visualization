@@ -52,7 +52,7 @@ axis_map_y = {
 slider_methane_conversion = Slider(
     title="Minimum Methane conversion value", value=20, start=1, end=46, step=1)
 slider_C2y = Slider(title="Minimum value of C2y",
-                    start=0.1, end=22.1, value=4.0, step=0.1)
+                    start=0.06, end=21.03, value=4.0, step=0.1)
 slider_temp = Slider(title="Minimum value of Temperature",
                      start=700.0, end=900.0, value=800.0, step=50.0)
 select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(
@@ -83,6 +83,21 @@ p.circle(x="x", y="y", source=source, size=7,
          color='mediumblue', line_color=None, fill_alpha=0.6)
 
 # TODO: create the horizontal histogram
+hhist, hedges = np.histogram(select_data()[axis_map_x[select_x_axis.value]], bins=20)
+hzeros = np.zeros(len(hedges)-1)
+hmax = max(hhist)*1.1
+
+LINE_ARGS = dict(color="#3A5785", line_color=None)
+
+ph = figure(toolbar_location=None, width=p.width, height=200, x_range=p.x_range,
+            y_range=(-hmax, hmax), min_border=10, min_border_left=50, y_axis_location="right")
+ph.xgrid.grid_line_color = None
+ph.yaxis.major_label_orientation = np.pi/4
+ph.background_fill_color = "#fafafa"
+
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color="white", line_color="#3A5785")
+hh1 = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
+hh2 = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
 
 # TODO: create the vertical histogram
 
