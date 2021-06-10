@@ -79,8 +79,9 @@ p = figure(height=600, width=700, title="", tools=TOOLS, toolbar_location="above
            tooltips=TOOLTIPS, sizing_mode="scale_both")
 p.select(BoxSelectTool).select_every_mousemove = False
 p.select(LassoSelectTool).select_every_mousemove = False
-p.circle(x="x", y="y", source=source, size=7,
+r = p.circle(x="x", y="y", source=source, size=7,
          color='mediumblue', line_color=None, fill_alpha=0.6)
+# r = p.scatter(x = "x",y="y",alpha=0.3)
 
 def select_data():
     temp_val = slider_temp.value
@@ -126,7 +127,7 @@ pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vhist, color="white", 
 vh1 = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
 vh2 = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
 
-layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
+layout = gridplot([[p, pv], [ph, None]], merge_tools=True)
 
 def update():
     df = select_data()
@@ -170,9 +171,9 @@ for control in controls:
 
 inputs = column(*controls, width=320)
 
-l = column(row(inputs, p), sizing_mode="scale_both")
+l = column([row(inputs, p),layout], sizing_mode="scale_both")
 
 update()  # initial load of the data
-
+r.data_source.selected.on_change('indices', update1)
 curdoc().add_root(l)
 curdoc().title = "Catalysis Data"
