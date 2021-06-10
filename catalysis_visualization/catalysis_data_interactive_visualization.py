@@ -144,6 +144,24 @@ def update():
         M3_mol_percent=df['M3_mol_percentage'],
     )
 
+# Brought in update for the histogram selections attempt
+def update1(attr, old, new):
+    inds = new
+    if len(inds) == 0 or len(inds) == len(select_data()[axis_map_x[select_x_axis.value]]):
+        hhist1, hhist2 = hzeros, hzeros
+        vhist1, vhist2 = vzeros, vzeros
+    else:
+        neg_inds = np.ones_like(select_data()[axis_map_x[select_x_axis.value]], dtype=np.bool)
+        neg_inds[inds] = False
+        hhist1, _ = np.histogram(select_data()[axis_map_x[select_x_axis.value]][inds], bins=hedges)
+        vhist1, _ = np.histogram(select_data()[axis_map_y[select_y_axis.value]][inds], bins=vedges)
+        hhist2, _ = np.histogram(select_data()[axis_map_x[select_x_axis.value]][neg_inds], bins=hedges)
+        vhist2, _ = np.histogram(select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
+
+    hh1.data_source.data["top"]   =  hhist1
+    hh2.data_source.data["top"]   = -hhist2
+    vh1.data_source.data["right"] =  vhist1
+    vh2.data_source.data["right"] = -vhist2
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
             select_ch4_to_o2, select_x_axis, select_y_axis]
