@@ -82,6 +82,18 @@ p.select(LassoSelectTool).select_every_mousemove = False
 p.circle(x="x", y="y", source=source, size=7,
          color='mediumblue', line_color=None, fill_alpha=0.6)
 
+def select_data():
+    temp_val = slider_temp.value
+    select_ch4_to_o2_val = select_ch4_to_o2.value
+    selected = df_catalysis_dataset[
+        (df_catalysis_dataset.CH4_conv >= slider_methane_conversion.value) &
+        (df_catalysis_dataset.C2y >= slider_C2y.value) &
+        (df_catalysis_dataset.Temp >= float(slider_temp.value)) &
+        (df_catalysis_dataset['CH4/O2'] == float(select_ch4_to_o2.value))
+    ]
+    return selected
+
+# Repositioned the todo 
 # TODO: create the horizontal histogram
 hhist, hedges = np.histogram(select_data()[axis_map_x[select_x_axis.value]], bins=20)
 hzeros = np.zeros(len(hedges)-1)
@@ -100,18 +112,21 @@ hh1 = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.
 hh2 = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
 
 # TODO: create the vertical histogram
+vhist, vedges = np.histogram(select_data()[axis_map_y[select_y_axis.value]], bins=10)
+vzeros = np.zeros(len(vedges)-1)
+vmax = max(vhist)*1.1
 
-def select_data():
-    temp_val = slider_temp.value
-    select_ch4_to_o2_val = select_ch4_to_o2.value
-    selected = df_catalysis_dataset[
-        (df_catalysis_dataset.CH4_conv >= slider_methane_conversion.value) &
-        (df_catalysis_dataset.C2y >= slider_C2y.value) &
-        (df_catalysis_dataset.Temp >= float(slider_temp.value)) &
-        (df_catalysis_dataset['CH4/O2'] == float(select_ch4_to_o2.value))
-    ]
-    return selected
+pv = figure(toolbar_location=None, width=200, height=p.height, x_range=(-vmax, vmax),
+            y_range=p.y_range, min_border=10, y_axis_location="right")
+pv.ygrid.grid_line_color = None
+pv.xaxis.major_label_orientation = np.pi/4
+pv.background_fill_color = "#fafafa"
 
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vhist, color="white", line_color="#3A5785")
+vh1 = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
+vh2 = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
+
+layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
 
 def update():
     df = select_data()
