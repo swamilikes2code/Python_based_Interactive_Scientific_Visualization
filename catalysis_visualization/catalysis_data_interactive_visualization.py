@@ -96,6 +96,30 @@ def select_data():
     return selected
 
 
+def update():
+    df = select_data()
+    x_name = axis_map_x[select_x_axis.value]
+    y_name = axis_map_y[select_y_axis.value]
+
+    p.xaxis.axis_label = select_x_axis.value
+    p.yaxis.axis_label = select_y_axis.value
+    p.title.text = 'Title TBD'
+    source.data = dict(
+        x=df[x_name],
+        y=df[y_name],
+        M1_mol_percent=df['M1_mol_percentage'],
+        M2_mol_percent=df['M2_mol_percentage'],
+        M3_mol_percent=df['M3_mol_percentage'],
+    )
+
+
+controls = [slider_methane_conversion, slider_C2y, slider_temp,
+            select_ch4_to_o2, select_x_axis, select_y_axis]
+for control in controls:
+    control.on_change('value', lambda attr, old, new: update())
+
+inputs = column(*controls, width=320)
+
 # Repositioned the todo so that the select_data() function could be used by methods
 # TODO: create the horizontal histogram
 hhist, hedges = np.histogram(
@@ -140,22 +164,6 @@ vh2 = pv.quad(
 layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
 
 
-def update():
-    df = select_data()
-    x_name = axis_map_x[select_x_axis.value]
-    y_name = axis_map_y[select_y_axis.value]
-
-    p.xaxis.axis_label = select_x_axis.value
-    p.yaxis.axis_label = select_y_axis.value
-    p.title.text = 'Title TBD'
-    source.data = dict(
-        x=df[x_name],
-        y=df[y_name],
-        M1_mol_percent=df['M1_mol_percentage'],
-        M2_mol_percent=df['M2_mol_percentage'],
-        M3_mol_percent=df['M3_mol_percentage'],
-    )
-
 # Brought in update for the histogram selections attempt
 
 
@@ -182,13 +190,6 @@ def update1(attr, old, new):
     vh1.data_source.data["right"] = vhist1
     vh2.data_source.data["right"] = -vhist2
 
-
-controls = [slider_methane_conversion, slider_C2y, slider_temp,
-            select_ch4_to_o2, select_x_axis, select_y_axis]
-for control in controls:
-    control.on_change('value', lambda attr, old, new: update())
-
-inputs = column(*controls, width=320)
 
 l = column([row(inputs, layout)], sizing_mode="scale_both")
 
