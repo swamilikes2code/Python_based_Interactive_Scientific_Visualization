@@ -80,8 +80,9 @@ p = figure(height=600, width=700, title="", tools=TOOLS, toolbar_location="above
 p.select(BoxSelectTool).select_every_mousemove = False
 p.select(LassoSelectTool).select_every_mousemove = False
 r = p.circle(x="x", y="y", source=source, size=7,
-         color='mediumblue', line_color=None, fill_alpha=0.6)
+             color='mediumblue', line_color=None, fill_alpha=0.6)
 # r = p.scatter(x = "x",y="y",alpha=0.3)
+
 
 def select_data():
     temp_val = slider_temp.value
@@ -94,40 +95,50 @@ def select_data():
     ]
     return selected
 
+
 # Repositioned the todo so that the select_data() function could be used by methods
 # TODO: create the horizontal histogram
-hhist, hedges = np.histogram(select_data()[axis_map_x[select_x_axis.value]], bins=10)
+hhist, hedges = np.histogram(
+    select_data()[axis_map_x[select_x_axis.value]], bins=10)
 hzeros = np.zeros(len(hedges)-1)
 hmax = max(hhist)*1.1
 
 LINE_ARGS = dict(color="#3A5785", line_color=None)
 
-ph = figure(toolbar_location=None, width=p.width, height=200, x_range=p.x_range,
+ph = figure(toolbar_location=None, width=p.width, height=100, x_range=p.x_range,
             y_range=(-hmax, hmax), min_border=10, min_border_left=50, y_axis_location="right")
 ph.xgrid.grid_line_color = None
 ph.yaxis.major_label_orientation = np.pi/4
 ph.background_fill_color = "#fafafa"
 
-ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, color="white", line_color="#3A5785")
-hh1 = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
-hh2 = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
+ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:],
+        top=hhist, color="white", line_color="#3A5785")
+hh1 = ph.quad(
+    bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
+hh2 = ph.quad(
+    bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
 
 # TODO: create the vertical histogram
-vhist, vedges = np.histogram(select_data()[axis_map_y[select_y_axis.value]], bins=10)
+vhist, vedges = np.histogram(
+    select_data()[axis_map_y[select_y_axis.value]], bins=10)
 vzeros = np.zeros(len(vedges)-1)
 vmax = max(vhist)*1.1
 
-pv = figure(toolbar_location=None, width=200, height=p.height, x_range=(-vmax, vmax),
+pv = figure(toolbar_location=None, width=100, height=p.height-40, x_range=(-vmax, vmax),
             y_range=p.y_range, min_border=10, y_axis_location="right")
 pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
 pv.background_fill_color = "#fafafa"
 
-pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vhist, color="white", line_color="#3A5785")
-vh1 = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
-vh2 = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
+pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:],
+        right=vhist, color="white", line_color="#3A5785")
+vh1 = pv.quad(
+    left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
+vh2 = pv.quad(
+    left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
 
-layout = gridplot([[p, pv], [ph, None]], merge_tools=True)
+layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
+
 
 def update():
     df = select_data()
@@ -146,23 +157,31 @@ def update():
     )
 
 # Brought in update for the histogram selections attempt
+
+
 def update1(attr, old, new):
     inds = new
     if len(inds) == 0 or len(inds) == len(select_data()[axis_map_x[select_x_axis.value]]):
         hhist1, hhist2 = hzeros, hzeros
         vhist1, vhist2 = vzeros, vzeros
     else:
-        neg_inds = np.ones_like(select_data()[axis_map_x[select_x_axis.value]], dtype=np.bool)
+        neg_inds = np.ones_like(
+            select_data()[axis_map_x[select_x_axis.value]], dtype=np.bool)
         neg_inds[inds] = False
-        hhist1, _ = np.histogram(select_data()[axis_map_x[select_x_axis.value]][inds], bins=hedges)
-        vhist1, _ = np.histogram(select_data()[axis_map_y[select_y_axis.value]][inds], bins=vedges)
-        hhist2, _ = np.histogram(select_data()[axis_map_x[select_x_axis.value]][neg_inds], bins=hedges)
-        vhist2, _ = np.histogram(select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
+        hhist1, _ = np.histogram(
+            select_data()[axis_map_x[select_x_axis.value]][inds], bins=hedges)
+        vhist1, _ = np.histogram(
+            select_data()[axis_map_y[select_y_axis.value]][inds], bins=vedges)
+        hhist2, _ = np.histogram(
+            select_data()[axis_map_x[select_x_axis.value]][neg_inds], bins=hedges)
+        vhist2, _ = np.histogram(
+            select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
 
-    hh1.data_source.data["top"]   =  hhist1
-    hh2.data_source.data["top"]   = -hhist2
-    vh1.data_source.data["right"] =  vhist1
+    hh1.data_source.data["top"] = hhist1
+    hh2.data_source.data["top"] = -hhist2
+    vh1.data_source.data["right"] = vhist1
     vh2.data_source.data["right"] = -vhist2
+
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
             select_ch4_to_o2, select_x_axis, select_y_axis]
@@ -171,9 +190,9 @@ for control in controls:
 
 inputs = column(*controls, width=320)
 
-l = column([row(inputs, p),layout], sizing_mode="scale_both")
+l = column([row(inputs, layout)], sizing_mode="scale_both")
 
 update()  # initial load of the data
-r.data_source.selected.on_change('indices', update1)
 curdoc().add_root(l)
 curdoc().title = "Catalysis Data"
+r.data_source.selected.on_change('indices', update1)
