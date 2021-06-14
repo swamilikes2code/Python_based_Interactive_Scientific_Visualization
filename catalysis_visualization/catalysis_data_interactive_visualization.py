@@ -41,11 +41,6 @@ axis_map_y = {
     "Ethylene_y": "C2H4y",
     "CarbonDiOxide_y": "CO2y",
     "CarbonMonoOxide_y": "COy",
-    "DiCarbon_s": "C2s",
-    "Ethane_s": "C2H6s",
-    "Ethylene_s": "C2H4s",
-    "CarbonDiOxide_s": "CO2s",
-    "CarbonMonoOxide_s": "COs",
 }
 
 # Create Input controls
