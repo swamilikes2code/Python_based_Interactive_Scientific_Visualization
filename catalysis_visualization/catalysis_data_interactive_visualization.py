@@ -25,6 +25,15 @@ unique_ch4_to_o2 = (df_catalysis_dataset['CH4/O2']
 sorted_unique_ch4_to_o2 = dict(zip(unique_ch4_to_o2, unique_ch4_to_o2))
 
 axis_map_x = {
+    "Argon Flow": "Ar_flow",
+    "Methane Flow": "CH4_flow",
+    "Oxygen Flow": "O2_flow",
+    "Amount of Catalyst": "CT",
+    "M2_mol": "M2_mol",
+    "M3_mol":"M3_mol",
+}
+
+axis_map_y = {
     "Ethane_y": "C2H6y",
     "Ethylene_y": "C2H4y",
     "CarbonDiOxide_y": "CO2y",
@@ -34,13 +43,6 @@ axis_map_x = {
     "Ethylene_s": "C2H4s",
     "CarbonDiOxide_s": "CO2s",
     "CarbonMonoOxide_s": "COs",
-}
-
-axis_map_y = {
-    "Ethane_y": "C2H6y",
-    "Ethylene_y": "C2H4y",
-    "CarbonDiOxide_y": "CO2y",
-    "CarbonMonoOxide_y": "COy",
 }
 
 # Create Input controls
@@ -53,7 +55,7 @@ slider_temp = Slider(title="Minimum value of Temperature",
 select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(
     sorted_unique_ch4_to_o2.keys()), value="6")
 select_x_axis = Select(title="X Axis", options=sorted(
-    axis_map_x.keys()), value="Ethane_y")
+    axis_map_x.keys()), value="Argon Flow")
 select_y_axis = Select(title="Y Axis", options=sorted(
     axis_map_y.keys()), value="CarbonDiOxide_y")
 
