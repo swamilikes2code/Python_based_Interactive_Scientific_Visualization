@@ -6,7 +6,7 @@ from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSe
 from bokeh.plotting import figure, curdoc
 
 # Import dataset
-df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", header=0)
+df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
 
 # Determine key values for Select Tool. More details in the Notebook.
 
@@ -30,7 +30,7 @@ axis_map_x = {
     "Oxygen Flow": "O2_flow",
     "Amount of Catalyst": "CT",
     "M2_mol": "M2_mol",
-    "M3_mol":"M3_mol",
+    "M3_mol": "M3_mol",
 }
 
 axis_map_y = {
@@ -63,7 +63,7 @@ TOOLTIPS = [
     ("M1 Percent", "@M1_mol_percent"),
     ("M2 Percent", "@M2_mol_percent"),
     ("M3 Percent", "@M3_mol_percent"),
-    ("Element Name","@Name")
+    ("Element Name", "@Name")
 ]
 
 # tools in the toolbar
@@ -108,7 +108,7 @@ def update():
         M1_mol_percent=df['M1_mol_percentage'],
         M2_mol_percent=df['M2_mol_percentage'],
         M3_mol_percent=df['M3_mol_percentage'],
-        Name = df['Name'],
+        Name=df.index
     )
 
 
