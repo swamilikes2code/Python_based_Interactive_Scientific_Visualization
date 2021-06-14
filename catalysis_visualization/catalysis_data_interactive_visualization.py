@@ -6,7 +6,7 @@ from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSe
 from bokeh.plotting import figure, curdoc
 
 # Import dataset
-df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
+df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", header=0)
 
 # Determine key values for Select Tool. More details in the Notebook.
 
@@ -62,7 +62,8 @@ select_y_axis = Select(title="Y Axis", options=sorted(
 TOOLTIPS = [
     ("M1 Percent", "@M1_mol_percent"),
     ("M2 Percent", "@M2_mol_percent"),
-    ("M3 Percent", "@M3_mol_percent")
+    ("M3 Percent", "@M3_mol_percent"),
+    ("Element Name","@Name")
 ]
 
 # tools in the toolbar
@@ -70,7 +71,7 @@ TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset"
 
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(
-    data=dict(x=[], y=[], M1_mol_percent=[], M2_mol_percent=[], M3_mol_percent=[]))
+    data=dict(x=[], y=[], M1_mol_percent=[], M2_mol_percent=[], M3_mol_percent=[], Name=[]))
 
 p = figure(height=600, width=700, title="", tools=TOOLS, toolbar_location="above",
            tooltips=TOOLTIPS, sizing_mode="scale_both")
@@ -100,13 +101,14 @@ def update():
 
     p.xaxis.axis_label = select_x_axis.value
     p.yaxis.axis_label = select_y_axis.value
-    p.title.text = 'Title TBD'
+    p.title.text = 'Data Exploration'
     source.data = dict(
         x=df[x_name],
         y=df[y_name],
         M1_mol_percent=df['M1_mol_percentage'],
         M2_mol_percent=df['M2_mol_percentage'],
         M3_mol_percent=df['M3_mol_percentage'],
+        Name = df['Name'],
     )
 
 
