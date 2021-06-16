@@ -61,10 +61,10 @@ select_y_axis = Select(title="Y Axis", options=sorted(
     axis_map_y.keys()), value="CarbonDiOxide_y")
 
 TOOLTIPS = [
-    ("M1 Percent", "@M1_mol_percent"),
-    ("M2 Percent", "@M2_mol_percent"),
-    ("M3 Percent", "@M3_mol_percent"),
-    ("Element Name", "@Name")
+    ("M1", "@M1"),
+    ("M2", "@M2"),
+    ("M3", "@M3"),
+    ("Catalyst/Support", "@Name")
 ]
 
 # tools in the toolbar
@@ -72,7 +72,7 @@ TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset"
 
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(
-    data=dict(x=[], y=[], M1_mol_percent=[], M2_mol_percent=[], M3_mol_percent=[], Name=[]))
+    data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
 p = figure(height=600, width=700, title="", tools=TOOLS, toolbar_location="above",
            tooltips=TOOLTIPS)
@@ -106,9 +106,9 @@ def update():
     source.data = dict(
         x=df[x_name],
         y=df[y_name],
-        M1_mol_percent=df['M1_mol_percentage'],
-        M2_mol_percent=df['M2_mol_percentage'],
-        M3_mol_percent=df['M3_mol_percentage'],
+        M1=df['M1'],
+        M2=df['M2'],
+        M3=df['M3'],
         Name=df.index
     )
 
