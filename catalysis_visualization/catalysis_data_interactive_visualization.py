@@ -1,3 +1,4 @@
+from bokeh.core.enums import SizingMode
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
@@ -74,7 +75,7 @@ source = ColumnDataSource(
     data=dict(x=[], y=[], M1_mol_percent=[], M2_mol_percent=[], M3_mol_percent=[], Name=[]))
 
 p = figure(height=600, width=700, title="", tools=TOOLS, toolbar_location="above",
-           tooltips=TOOLTIPS, sizing_mode="scale_both")
+           tooltips=TOOLTIPS)
 p.select(BoxSelectTool).select_every_mousemove = False
 p.select(LassoSelectTool).select_every_mousemove = False
 r = p.circle(x="x", y="y", source=source, size=7,
@@ -147,7 +148,7 @@ vhist, vedges = np.histogram(
 vzeros = np.zeros(len(vedges)-1)
 vmax = max(vhist)*1.1
 
-pv = figure(toolbar_location=None, width=100, height=p.height-40, x_range=(-vmax, vmax),
+pv = figure(toolbar_location=None, width=100, height=p.height, x_range=(-vmax, vmax),
             y_range=p.y_range, min_border=10, y_axis_location="right")
 pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
