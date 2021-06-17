@@ -9,6 +9,10 @@ from bokeh.plotting import figure, curdoc
 # Import dataset
 df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
 
+# Removing the Blank names from the data
+df_catalysis_dataset.set_index(df_catalysis_dataset.index)
+df_catalysis_dataset.drop("Blank",axis=0)
+
 # Determine key values for Select Tool. More details in the Notebook.
 
 unique_temp = (df_catalysis_dataset['Temp']
