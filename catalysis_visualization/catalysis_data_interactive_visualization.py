@@ -13,6 +13,13 @@ df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
 df_catalysis_dataset.set_index(df_catalysis_dataset.index)
 df_catalysis_dataset.drop("Blank",axis=0)
 
+# Calculating error percentage 
+
+#Sum of columns to compare with CH4_conv
+df_catalysis_dataset["Sum_y"]= df_catalysis_dataset.loc[:,"C2H6y":"CO2y"].sum(axis=1) 
+df_catalysis_dataset["error_ch4_conv"]=abs((df_catalysis_dataset["Sum_y"]-df_catalysis_dataset["CH4_conv"])/
+                                            df_catalysis_dataset["CH4_conv"])*100
+
 # Determine key values for Select Tool. More details in the Notebook.
 
 unique_temp = (df_catalysis_dataset['Temp']
