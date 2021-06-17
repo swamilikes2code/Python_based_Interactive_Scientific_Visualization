@@ -74,8 +74,8 @@ TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset"
 source = ColumnDataSource(
     data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
-p = figure(height=600, width=700, title="", tools=TOOLS, toolbar_location="above",
-           tooltips=TOOLTIPS)
+p = figure(height=600, width=700, title="", tools=TOOLS,
+           toolbar_location="above", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).select_every_mousemove = False
 p.select(LassoSelectTool).select_every_mousemove = False
 r = p.circle(x="x", y="y", source=source, size=7,
@@ -95,31 +95,6 @@ def select_data():
     return selected
 
 
-def update():
-    df = select_data()
-    x_name = axis_map_x[select_x_axis.value]
-    y_name = axis_map_y[select_y_axis.value]
-
-    p.xaxis.axis_label = select_x_axis.value
-    p.yaxis.axis_label = select_y_axis.value
-    p.title.text = 'Data Exploration'
-    source.data = dict(
-        x=df[x_name],
-        y=df[y_name],
-        M1=df['M1'],
-        M2=df['M2'],
-        M3=df['M3'],
-        Name=df.index
-    )
-
-
-controls = [slider_methane_conversion, slider_C2y, slider_temp,
-            select_ch4_to_o2, select_x_axis, select_y_axis]
-for control in controls:
-    control.on_change('value', lambda attr, old, new: update())
-
-inputs = column(*controls, width=320)
-
 # Repositioned the todo so that the select_data() function could be used by methods
 # TODO: create the horizontal histogram
 hhist, hedges = np.histogram(
@@ -135,8 +110,8 @@ ph.xgrid.grid_line_color = None
 ph.yaxis.major_label_orientation = np.pi/4
 ph.background_fill_color = "#fafafa"
 
-ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:],
-        top=hhist, color="white", line_color="#3A5785")
+hh = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:],
+             top=hhist, color="white", line_color="#3A5785")
 hh1 = ph.quad(
     bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
 hh2 = ph.quad(
@@ -154,8 +129,8 @@ pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
 pv.background_fill_color = "#fafafa"
 
-pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:],
-        right=vhist, color="white", line_color="#3A5785")
+pp = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:],
+             right=vhist, color="white", line_color="#3A5785")
 vh1 = pv.quad(
     left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
 vh2 = pv.quad(
@@ -165,6 +140,43 @@ layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
 
 
 # Brought in update for the histogram selections attempt
+
+
+def update():
+    df = select_data()
+    x_name = axis_map_x[select_x_axis.value]
+    y_name = axis_map_y[select_y_axis.value]
+
+    p.xaxis.axis_label = select_x_axis.value
+    p.yaxis.axis_label = select_y_axis.value
+    p.title.text = 'Data Exploration'
+    source.data = dict(
+        x=df[x_name],
+        y=df[y_name],
+        M1=df['M1'],
+        M2=df['M2'],
+        M3=df['M3'],
+        Name=df.index
+    )
+
+    # also update both histograms
+    global hhist, hedges, vhist, vedges
+    hhist, hedges = np.histogram(df[axis_map_x[select_x_axis.value]], bins=10)
+    vhist, vedges = np.histogram(df[axis_map_y[select_y_axis.value]], bins=10)
+    hh.data_source.data["top"] = hhist
+    hh.data_source.data["right"] = hedges[1:]
+    hh.data_source.data["left"] = hedges[:-1]
+    pp.data_source.data["right"] = vhist
+    pp.data_source.data["bottom"] = vedges[:-1]
+    pp.data_source.data["top"] = vedges[1:]
+
+
+controls = [slider_methane_conversion, slider_C2y, slider_temp,
+            select_ch4_to_o2, select_x_axis, select_y_axis]
+for control in controls:
+    control.on_change('value', lambda attr, old, new: update())
+
+inputs = column(*controls, width=320)
 
 
 def update1(attr, old, new):
