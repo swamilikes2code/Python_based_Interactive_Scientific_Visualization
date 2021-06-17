@@ -129,7 +129,7 @@ pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
 pv.background_fill_color = "#fafafa"
 
-pp = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:],
+vv = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:],
              right=vhist, color="white", line_color="#3A5785")
 vh1 = pv.quad(
     left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
@@ -160,6 +160,7 @@ def update():
     )
 
     # also update both histograms
+    global hhist, hedges, vhist, vedges
     hhist, hedges = np.histogram(df[axis_map_x[select_x_axis.value]], bins=10)
     vhist, vedges = np.histogram(df[axis_map_y[select_y_axis.value]], bins=10)
     hmax = max(hhist)*1.1
@@ -168,10 +169,18 @@ def update():
     pv.x_range.end = vmax
     hh.data_source.data["top"] = hhist
     hh.data_source.data["right"] = hedges[1:]
+    hh1.data_source.data["right"] = hedges[1:]
+    # hh2.data_source.data["right"] = hedges[1:]
     hh.data_source.data["left"] = hedges[:-1]
-    pp.data_source.data["right"] = vhist
-    pp.data_source.data["bottom"] = vedges[:-1]
-    pp.data_source.data["top"] = vedges[1:]
+    hh1.data_source.data["left"] = hedges[:-1]
+    # hh2.data_source.data["left"] = hedges[:-1]
+    vv.data_source.data["right"] = vhist
+    vv.data_source.data["bottom"] = vedges[:-1]
+    vh1.data_source.data["bottom"] = vedges[:-1]
+    # vh2.data_source.data["bottom"] = vedges[:-1]
+    vv.data_source.data["top"] = vedges[1:]
+    vh1.data_source.data["top"] = vedges[1:]
+    # vh2.data_source.data["top"] = vedges[1:]
 
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
@@ -201,9 +210,9 @@ def update1(attr, old, new):
             select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
 
     hh1.data_source.data["top"] = hhist1
-    hh2.data_source.data["top"] = -hhist2
+    # hh2.data_source.data["top"] = -hhist2
     vh1.data_source.data["right"] = vhist1
-    vh2.data_source.data["right"] = -vhist2
+    # vh2.data_source.data["right"] = -vhist2
 
 
 l = column([row(inputs, layout)], sizing_mode="scale_both")
