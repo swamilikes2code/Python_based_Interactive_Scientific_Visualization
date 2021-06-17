@@ -64,6 +64,8 @@ slider_C2y = Slider(title="Minimum value of C2y",
                     start=0.06, end=21.03, value=4.0, step=0.1)
 slider_temp = Slider(title="Minimum value of Temperature",
                      start=700.0, end=900.0, value=800.0, step=50.0)
+slider_error = Slider(title="Maximum Error Permitted", 
+                      start=0.0, end=100.0, step=0.5, value=37.0)
 select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(
     sorted_unique_ch4_to_o2.keys()), value="6")
 select_x_axis = Select(title="X Axis", options=sorted(
@@ -101,6 +103,7 @@ def select_data():
         (df_catalysis_dataset.CH4_conv >= slider_methane_conversion.value) &
         (df_catalysis_dataset.C2y >= slider_C2y.value) &
         (df_catalysis_dataset.Temp >= float(slider_temp.value)) &
+        (df_catalysis_dataset.error_ch4_conv <= float(slider_error.value)) &
         (df_catalysis_dataset['CH4/O2'] == float(select_ch4_to_o2.value))
     ]
     return selected
@@ -195,7 +198,7 @@ def update():
 
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
-            select_ch4_to_o2, select_x_axis, select_y_axis]
+            slider_error,select_ch4_to_o2, select_x_axis, select_y_axis]
 for control in controls:
     control.on_change('value', lambda attr, old, new: update())
 
