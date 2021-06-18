@@ -161,26 +161,34 @@ def update():
 
     # also update both histograms
     global hhist, hedges, vhist, vedges
-    hhist, hedges = np.histogram(df[axis_map_x[select_x_axis.value]], bins=10)
-    vhist, vedges = np.histogram(df[axis_map_y[select_y_axis.value]], bins=10)
-    hmax = max(hhist)*1.1
-    vmax = max(vhist)*1.1
-    ph.y_range.end = hmax
-    pv.x_range.end = vmax
-    hh.data_source.data["top"] = hhist
-    hh.data_source.data["right"] = hedges[1:]
-    hh1.data_source.data["right"] = hedges[1:]
-    # hh2.data_source.data["right"] = hedges[1:]
-    hh.data_source.data["left"] = hedges[:-1]
-    hh1.data_source.data["left"] = hedges[:-1]
-    # hh2.data_source.data["left"] = hedges[:-1]
-    vv.data_source.data["right"] = vhist
-    vv.data_source.data["bottom"] = vedges[:-1]
-    vh1.data_source.data["bottom"] = vedges[:-1]
-    # vh2.data_source.data["bottom"] = vedges[:-1]
-    vv.data_source.data["top"] = vedges[1:]
-    vh1.data_source.data["top"] = vedges[1:]
-    # vh2.data_source.data["top"] = vedges[1:]
+    if len(df) == 0:
+        hhist, hedges = hzeros, hzeros
+        vedges, vhist = vzeros, vzeros
+        hh.data_source.data["top"] = hzeros
+        vv.data_source.data["right"] = vzeros
+    else:
+        hhist, hedges = np.histogram(
+            df[axis_map_x[select_x_axis.value]], bins=10)
+        vhist, vedges = np.histogram(
+            df[axis_map_y[select_y_axis.value]], bins=10)
+        hmax = max(hhist)*1.1
+        vmax = max(vhist)*1.1
+        ph.y_range.end = hmax
+        pv.x_range.end = vmax
+        hh.data_source.data["top"] = hhist
+        hh.data_source.data["right"] = hedges[1:]
+        hh1.data_source.data["right"] = hedges[1:]
+        # hh2.data_source.data["right"] = hedges[1:]
+        hh.data_source.data["left"] = hedges[:-1]
+        hh1.data_source.data["left"] = hedges[:-1]
+        # hh2.data_source.data["left"] = hedges[:-1]
+        vv.data_source.data["right"] = vhist
+        vv.data_source.data["bottom"] = vedges[:-1]
+        vh1.data_source.data["bottom"] = vedges[:-1]
+        # vh2.data_source.data["bottom"] = vedges[:-1]
+        vv.data_source.data["top"] = vedges[1:]
+        vh1.data_source.data["top"] = vedges[1:]
+        # vh2.data_source.data["top"] = vedges[1:]
 
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
@@ -204,10 +212,10 @@ def update1(attr, old, new):
             select_data()[axis_map_x[select_x_axis.value]][inds], bins=hedges)
         vhist1, _ = np.histogram(
             select_data()[axis_map_y[select_y_axis.value]][inds], bins=vedges)
-        hhist2, _ = np.histogram(
-            select_data()[axis_map_x[select_x_axis.value]][neg_inds], bins=hedges)
-        vhist2, _ = np.histogram(
-            select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
+        # hhist2, _ = np.histogram(
+        #     select_data()[axis_map_x[select_x_axis.value]][neg_inds], bins=hedges)
+        # vhist2, _ = np.histogram(
+        #     select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
 
     hh1.data_source.data["top"] = hhist1
     # hh2.data_source.data["top"] = -hhist2
