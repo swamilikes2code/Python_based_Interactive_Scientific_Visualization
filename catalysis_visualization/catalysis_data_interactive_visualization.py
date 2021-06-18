@@ -171,10 +171,8 @@ def update():
             df[axis_map_x[select_x_axis.value]], bins=10)
         vhist, vedges = np.histogram(
             df[axis_map_y[select_y_axis.value]], bins=10)
-        hmax = max(hhist)*1.1
-        vmax = max(vhist)*1.1
-        ph.y_range.end = hmax
-        pv.x_range.end = vmax
+        ph.y_range.end = max(hhist)*1.1
+        pv.x_range.end = max(vhist)*1.1
         hh.data_source.data["top"] = hhist
         hh.data_source.data["right"] = hedges[1:]
         hh1.data_source.data["right"] = hedges[1:]
