@@ -110,41 +110,43 @@ def select_data():
 
 
 # Repositioned the todo so that the select_data() function could be used by methods
-# TODO: create the horizontal histogram
+# the horizontal histogram
 hhist, hedges = np.histogram(
     select_data()[axis_map_x[select_x_axis.value]], bins=10)
 hzeros = np.zeros(len(hedges)-1)
-hmax = max(hhist)*1.1
 
 LINE_ARGS = dict(color="#3A5785", line_color=None)
 
-ph = figure(toolbar_location=None, width=p.width, height=100, x_range=p.x_range,
-            y_range=(0, hmax), min_border=10, min_border_left=50, y_axis_location="right")
+ph = figure(toolbar_location=None, width=p.width, height=100, x_range=p.x_range, y_range=(
+    0, (max(hhist)*1.1)), min_border=10, min_border_left=50, y_axis_location="right")
 ph.xgrid.grid_line_color = None
 ph.yaxis.major_label_orientation = np.pi/4
 ph.background_fill_color = "#fafafa"
 
+# histogram to reflect the data points
 hh = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:],
              top=hhist, color="white", line_color="#3A5785")
+# histograms highlight on top of the original histogram
 hh1 = ph.quad(
     bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.5, **LINE_ARGS)
 hh2 = ph.quad(
     bottom=0, left=hedges[:-1], right=hedges[1:], top=hzeros, alpha=0.1, **LINE_ARGS)
 
-# TODO: create the vertical histogram
+# the vertical histogram
 vhist, vedges = np.histogram(
     select_data()[axis_map_y[select_y_axis.value]], bins=10)
 vzeros = np.zeros(len(vedges)-1)
-vmax = max(vhist)*1.1
 
-pv = figure(toolbar_location=None, width=100, height=p.height, x_range=(0, vmax),
-            y_range=p.y_range, min_border=10, y_axis_location="right")
+pv = figure(toolbar_location=None, width=100, height=p.height, x_range=(
+    0, (max(vhist)*1.1)), y_range=p.y_range, min_border=10, y_axis_location="right")
 pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
 pv.background_fill_color = "#fafafa"
 
+# histogram to reflect the data points
 vv = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:],
              right=vhist, color="white", line_color="#3A5785")
+# histograms highlight on top of the original histogram
 vh1 = pv.quad(
     left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.5, **LINE_ARGS)
 vh2 = pv.quad(
@@ -154,8 +156,6 @@ layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
 
 
 # Brought in update for the histogram selections attempt
-
-
 def update():
     df = select_data()
     x_name = axis_map_x[select_x_axis.value]
@@ -175,26 +175,32 @@ def update():
 
     # also update both histograms
     global hhist, hedges, vhist, vedges
-    hhist, hedges = np.histogram(df[axis_map_x[select_x_axis.value]], bins=10)
-    vhist, vedges = np.histogram(df[axis_map_y[select_y_axis.value]], bins=10)
-    hmax = max(hhist)*1.1
-    vmax = max(vhist)*1.1
-    ph.y_range.end = hmax
-    pv.x_range.end = vmax
-    hh.data_source.data["top"] = hhist
-    hh.data_source.data["right"] = hedges[1:]
-    hh1.data_source.data["right"] = hedges[1:]
-    # hh2.data_source.data["right"] = hedges[1:]
-    hh.data_source.data["left"] = hedges[:-1]
-    hh1.data_source.data["left"] = hedges[:-1]
-    # hh2.data_source.data["left"] = hedges[:-1]
-    vv.data_source.data["right"] = vhist
-    vv.data_source.data["bottom"] = vedges[:-1]
-    vh1.data_source.data["bottom"] = vedges[:-1]
-    # vh2.data_source.data["bottom"] = vedges[:-1]
-    vv.data_source.data["top"] = vedges[1:]
-    vh1.data_source.data["top"] = vedges[1:]
-    # vh2.data_source.data["top"] = vedges[1:]
+    if len(df) == 0:
+        hhist, hedges = hzeros, hzeros
+        vedges, vhist = vzeros, vzeros
+        hh.data_source.data["top"] = hzeros
+        vv.data_source.data["right"] = vzeros
+    else:
+        hhist, hedges = np.histogram(
+            df[axis_map_x[select_x_axis.value]], bins=10)
+        vhist, vedges = np.histogram(
+            df[axis_map_y[select_y_axis.value]], bins=10)
+        ph.y_range.end = max(hhist)*1.1
+        pv.x_range.end = max(vhist)*1.1
+        hh.data_source.data["top"] = hhist
+        hh.data_source.data["right"] = hedges[1:]
+        hh1.data_source.data["right"] = hedges[1:]
+        # hh2.data_source.data["right"] = hedges[1:]
+        hh.data_source.data["left"] = hedges[:-1]
+        hh1.data_source.data["left"] = hedges[:-1]
+        # hh2.data_source.data["left"] = hedges[:-1]
+        vv.data_source.data["right"] = vhist
+        vv.data_source.data["bottom"] = vedges[:-1]
+        vh1.data_source.data["bottom"] = vedges[:-1]
+        # vh2.data_source.data["bottom"] = vedges[:-1]
+        vv.data_source.data["top"] = vedges[1:]
+        vh1.data_source.data["top"] = vedges[1:]
+        # vh2.data_source.data["top"] = vedges[1:]
 
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
@@ -205,7 +211,7 @@ for control in controls:
 inputs = column(*controls, width=320)
 
 
-def update1(attr, old, new):
+def update_histogram(attr, old, new):
     inds = new
     if len(inds) == 0 or len(inds) == len(select_data()[axis_map_x[select_x_axis.value]]):
         hhist1, hhist2 = hzeros, hzeros
@@ -218,10 +224,10 @@ def update1(attr, old, new):
             select_data()[axis_map_x[select_x_axis.value]][inds], bins=hedges)
         vhist1, _ = np.histogram(
             select_data()[axis_map_y[select_y_axis.value]][inds], bins=vedges)
-        hhist2, _ = np.histogram(
-            select_data()[axis_map_x[select_x_axis.value]][neg_inds], bins=hedges)
-        vhist2, _ = np.histogram(
-            select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
+        # hhist2, _ = np.histogram(
+        #     select_data()[axis_map_x[select_x_axis.value]][neg_inds], bins=hedges)
+        # vhist2, _ = np.histogram(
+        #     select_data()[axis_map_y[select_y_axis.value]][neg_inds], bins=vedges)
 
     hh1.data_source.data["top"] = hhist1
     # hh2.data_source.data["top"] = -hhist2
@@ -234,4 +240,4 @@ l = column([row(inputs, layout)], sizing_mode="scale_both")
 update()  # initial load of the data
 curdoc().add_root(l)
 curdoc().title = "Catalysis Data"
-r.data_source.selected.on_change('indices', update1)
+r.data_source.selected.on_change('indices', update_histogram)
