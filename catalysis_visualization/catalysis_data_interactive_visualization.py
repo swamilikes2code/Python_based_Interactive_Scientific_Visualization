@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool
+from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel
 from bokeh.plotting import figure, curdoc
 
 # Import dataset
@@ -237,7 +237,11 @@ def update_histogram(attr, old, new):
 
 l = column([row(inputs, layout)], sizing_mode="scale_both")
 
+#organizing panels of diaply
+tab1=Panel(child = l, title="Data Exploration")
+tabs=Tabs(tabs=[tab1])
+
 update()  # initial load of the data
-curdoc().add_root(l)
+curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
