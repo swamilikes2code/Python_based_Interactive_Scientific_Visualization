@@ -1,24 +1,30 @@
 from bokeh.core.enums import SizingMode
+from bokeh.models.annotations import Title
+from matplotlib.pyplot import xlabel, ylabel
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
 from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel
 from bokeh.plotting import figure, curdoc
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
 
 # Removing the Blank names from the data
 df_catalysis_dataset.set_index(df_catalysis_dataset.index)
-df_catalysis_dataset.drop("Blank",axis=0)
+df_catalysis_dataset.drop("Blank", axis=0)
 
-# Calculating error percentage 
+# Calculating error percentage
 
-#Sum of columns to compare with CH4_conv
-df_catalysis_dataset["Sum_y"]= df_catalysis_dataset.loc[:,"C2H6y":"CO2y"].sum(axis=1) 
-df_catalysis_dataset["error_ch4_conv"]=abs((df_catalysis_dataset["Sum_y"]-df_catalysis_dataset["CH4_conv"])/
-                                            df_catalysis_dataset["CH4_conv"])*100
+# Sum of columns to compare with CH4_conv
+df_catalysis_dataset["Sum_y"] = df_catalysis_dataset.loc[:,
+                                                         "C2H6y":"CO2y"].sum(axis=1)
+df_catalysis_dataset["error_ch4_conv"] = abs((df_catalysis_dataset["Sum_y"]-df_catalysis_dataset["CH4_conv"]) /
+                                             df_catalysis_dataset["CH4_conv"])*100
 
 # Determine key values for Select Tool. More details in the Notebook.
 
@@ -64,7 +70,7 @@ slider_C2y = Slider(title="Minimum value of C2y",
                     start=0.06, end=21.03, value=4.0, step=0.1)
 slider_temp = Slider(title="Minimum value of Temperature",
                      start=700.0, end=900.0, value=800.0, step=50.0)
-slider_error = Slider(title="Maximum Error Permitted", 
+slider_error = Slider(title="Maximum Error Permitted",
                       start=0.0, end=100.0, step=0.5, value=37.0)
 select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(
     sorted_unique_ch4_to_o2.keys()), value="6")
@@ -87,7 +93,7 @@ TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset"
 source = ColumnDataSource(
     data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
-p = figure(height=600, width=700, title="", tools=TOOLS,
+p = figure(height=600, width=700, title="Data Exploration", tools=TOOLS,
            toolbar_location="above", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).select_every_mousemove = False
 p.select(LassoSelectTool).select_every_mousemove = False
@@ -152,7 +158,7 @@ vh1 = pv.quad(
 vh2 = pv.quad(
     left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
 
-layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
+layout = gridplot([[p, pv], [ph, None]], merge_tools=True)
 
 
 # Brought in update for the histogram selections attempt
@@ -160,10 +166,8 @@ def update():
     df = select_data()
     x_name = axis_map_x[select_x_axis.value]
     y_name = axis_map_y[select_y_axis.value]
-
     p.xaxis.axis_label = select_x_axis.value
     p.yaxis.axis_label = select_y_axis.value
-    p.title.text = 'Data Exploration'
     source.data = dict(
         x=df[x_name],
         y=df[y_name],
@@ -204,7 +208,7 @@ def update():
 
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
-            slider_error,select_ch4_to_o2, select_x_axis, select_y_axis]
+            slider_error, select_ch4_to_o2, select_x_axis, select_y_axis]
 for control in controls:
     control.on_change('value', lambda attr, old, new: update())
 
@@ -235,11 +239,31 @@ def update_histogram(attr, old, new):
     # vh2.data_source.data["right"] = -vhist2
 
 
-l = column([row(inputs, layout)], sizing_mode="scale_both")
+visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 
-#organizing panels of diaply
-tab1=Panel(child = l, title="Data Exploration")
-tabs=Tabs(tabs=[tab1])
+# REGRESSION MODEL
+# TODO: Add selection tools
+# Prepare x and y values
+reg_x = df_catalysis_dataset[["Ar_flow", "CH4_flow",
+                              "O2_flow", "CT", "M2_mol", "M3_mol"]].values
+reg_y = df_catalysis_dataset["COy"].values
+# Split into training and test
+reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
+    reg_x, reg_y, test_size=0.2, random_state=0)
+# Training model
+reg_ml = LinearRegression()
+reg_ml.fit(reg_x_train, reg_y_train)
+# Predict y using x test
+reg_y_pred = reg_ml.predict(reg_x_test)
+
+reg = figure(height=600, width=700, title="Actual vs. Predicted")
+reg.scatter(x=reg_y_test, y=reg_y_pred)
+print("R2 score: ", r2_score(reg_y_test, reg_y_pred))
+
+# organizing panels of display
+tab1 = Panel(child=visualization_layout, title="Data Exploration")
+tab2 = Panel(child=reg, title="Multivariable Regression")
+tabs = Tabs(tabs=[tab1, tab2])
 
 update()  # initial load of the data
 curdoc().add_root(tabs)
