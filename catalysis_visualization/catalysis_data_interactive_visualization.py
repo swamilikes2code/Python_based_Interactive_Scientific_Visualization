@@ -1,11 +1,11 @@
 from bokeh.core.enums import SizingMode
 from bokeh.models.annotations import Title
-from matplotlib.pyplot import xlabel, ylabel
+from matplotlib.pyplot import title, xlabel, ylabel
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel
+from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, MultiSelect
 from bokeh.plotting import figure, curdoc
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -243,6 +243,27 @@ visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 
 # REGRESSION MODEL
 # TODO: Add selection tools
+reg_x_choices = {
+    "AR flow": "Ar_flow",
+    "CH4 flow": "CH4_flow",
+    "O2 flow": "O2_flow",
+    "CT": "CT",
+    "M2 mol": "M2_mol",
+    "M3 mol": "M3_mol"
+}
+reg_y_choices = {
+    "CarbonMonoOxide_y": "COy",
+    "CH4_conv": "CH4_conv",
+    "C2y": "C2y"
+}
+reg_select_x = MultiSelect(title="X value", options=sorted(
+    reg_x_choices.keys()), size=len(reg_x_choices))
+reg_select_y = Select(title="Y value", options=sorted(reg_y_choices.keys()))
+
+reg_controls = [reg_select_x, reg_select_y]
+# for control in reg_controls:
+#     control.on_change("value")
+reg_inputs = column(*reg_controls, width=320)
 # Prepare x and y values
 reg_x = df_catalysis_dataset[["Ar_flow", "CH4_flow",
                               "O2_flow", "CT", "M2_mol", "M3_mol"]].values
@@ -261,10 +282,11 @@ reg.scatter(x=reg_y_test, y=reg_y_pred)
 reg.xaxis.axis_label = "Actual"
 reg.yaxis.axis_label = "Predicted"
 reg.title = "R2 score: " + (str)(r2_score(reg_y_test, reg_y_pred))
+regression_layout = column([row(reg_inputs, reg)], sizing_mode="scale_both")
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
-tab2 = Panel(child=reg, title="Multivariable Regression")
+tab2 = Panel(child=regression_layout, title="Multivariable Regression")
 tabs = Tabs(tabs=[tab1, tab2])
 
 update()  # initial load of the data
