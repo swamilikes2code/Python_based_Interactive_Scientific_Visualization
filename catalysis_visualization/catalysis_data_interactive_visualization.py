@@ -256,9 +256,11 @@ reg_ml.fit(reg_x_train, reg_y_train)
 # Predict y using x test
 reg_y_pred = reg_ml.predict(reg_x_test)
 
-reg = figure(height=600, width=700, title="Actual vs. Predicted")
+reg = figure(height=600, width=700)
 reg.scatter(x=reg_y_test, y=reg_y_pred)
-print("R2 score: ", r2_score(reg_y_test, reg_y_pred))
+reg.xaxis.axis_label = "Actual"
+reg.yaxis.axis_label = "Predicted"
+reg.title = "R2 score: " + (str)(r2_score(reg_y_test, reg_y_pred))
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
