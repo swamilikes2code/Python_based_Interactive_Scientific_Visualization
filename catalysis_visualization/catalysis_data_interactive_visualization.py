@@ -242,7 +242,8 @@ def update_histogram(attr, old, new):
 visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 
 # REGRESSION MODEL
-# TODO: Add selection tools
+
+# Selection tools
 reg_x_choices = {
     "AR flow": "Ar_flow",
     "CH4 flow": "CH4_flow",
@@ -254,6 +255,7 @@ reg_x_choices = {
 reg_y_choices = {
     "CarbonMonoOxide_y": "COy",
     "CH4_conv": "CH4_conv",
+    "CO2y": "CO2y",
     "C2y": "C2y"
 }
 reg_select_x = MultiSelect(title="X value", options=sorted(
@@ -261,28 +263,39 @@ reg_select_x = MultiSelect(title="X value", options=sorted(
 reg_select_y = Select(title="Y value", options=sorted(reg_y_choices.keys()))
 
 reg_controls = [reg_select_x, reg_select_y]
-# for control in reg_controls:
-#     control.on_change("value")
+for control in reg_controls:
+    control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=320)
-# Prepare x and y values
-reg_x = df_catalysis_dataset[["Ar_flow", "CH4_flow",
-                              "O2_flow", "CT", "M2_mol", "M3_mol"]].values
-reg_y = df_catalysis_dataset["COy"].values
-# Split into training and test
-reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
-    reg_x, reg_y, test_size=0.2, random_state=0)
-# Training model
-reg_ml = LinearRegression()
-reg_ml.fit(reg_x_train, reg_y_train)
-# Predict y using x test
-reg_y_pred = reg_ml.predict(reg_x_test)
+# Create column data for the plot
+reg_source = ColumnDataSource(data=dict(y_test=[], y_pred=[]))
 
 reg = figure(height=600, width=700)
-reg.scatter(x=reg_y_test, y=reg_y_pred)
+reg.scatter(x="y_test", y="y_pred", source=reg_source)
 reg.xaxis.axis_label = "Actual"
 reg.yaxis.axis_label = "Predicted"
-reg.title = "R2 score: " + (str)(r2_score(reg_y_test, reg_y_pred))
+reg.title = "Actual vs. Predicted"
 regression_layout = column([row(reg_inputs, reg)], sizing_mode="scale_both")
+
+
+def update_regression():
+    # print(reg_select_x.value, reg_select_y.value)
+    x_name = []
+    for choice in reg_select_x.value:
+        x_name.append(reg_x_choices[choice])
+    y_name = reg_y_choices[reg_select_y.value]
+    print(x_name, y_name)
+    reg_x = df_catalysis_dataset[x_name].values
+    reg_y = df_catalysis_dataset[y_name].values
+    # Split into training and test
+    reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
+        reg_x, reg_y, test_size=0.2, random_state=0)
+    # Training model
+    reg_ml = LinearRegression()
+    reg_ml.fit(reg_x_train, reg_y_train)
+    # Predict y using x test
+    reg_y_pred = reg_ml.predict(reg_x_test)
+    reg_source.data = dict(y_test=reg_y_test, y_pred=reg_y_pred)
+
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
