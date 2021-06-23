@@ -244,13 +244,26 @@ visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 # REGRESSION MODEL
 
 # Selection tools
+# M1 atom number, M2 atom number, M3 atom number,
+# Support Id, M2 mol, M3 mol, m1 percent mol,
+# m2 percent mol, m3 percent mol, temp, total flow, argon flow, Ch4 flow, O2 flow, CT
 reg_x_choices = {
-    "AR flow": "Ar_flow",
+    "M1 atom number": "M1_atom_number",
+    "M2 atom number": "M2_atom_number",
+    "M3 atom number": "M3_atom_number",
+    "Support Id": "Support_ID",
+    "M2 mol": "M2_mol",
+    "M3 mol": "M3_mol",
+    "M1 percent mol": "M1_mol_percentage",
+    "M2 percent mol": "M2_mol_percentage",
+    "M3 percent mol": "M3_mol_percentage",
+    "Temperature": "Temp",
+    "Total flow": "Total_flow",
+    "Argon flow": "Ar_flow",
     "CH4 flow": "CH4_flow",
     "O2 flow": "O2_flow",
-    "CT": "CT",
-    "M2 mol": "M2_mol",
-    "M3 mol": "M3_mol"
+    "CT": "CT"
+
 }
 reg_y_choices = {
     "CarbonMonoOxide_y": "COy",
