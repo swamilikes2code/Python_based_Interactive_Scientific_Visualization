@@ -242,7 +242,11 @@ l = column([row(inputs, layout)], sizing_mode="scale_both")
 
 ## Adding the correlation matrix
 # Copy x-axis values into new df
-df_corr = df_catalysis_dataset[["Ar_flow","CH4_flow","O2_flow","CT","M2_mol","M3_mol"]]
+df_corr = df_catalysis_dataset[
+    ["CT","Ar_flow","CH4_flow","O2_flow","Total_flow","Support_ID",
+    "M2_mol","M3_mol","M1_atom_number","M2_atom_number","M3_atom_number",
+    "M1_mol_percentage","M2_mol_percentage","M3_mol_percentage"]
+    ]
 corr_matrix = df_corr.corr()
 
 ## AXIS LABELS FOR PLOT
@@ -256,7 +260,7 @@ source_corr = ColumnDataSource(df)
 ## FINDING LOWEST AND HIGHEST OF CORRELATION VALUES
 low_df_corr_min = df.correlation.min()
 high_df_corr_min = df.correlation.max()
-no_of_colors = len(df.correlation.unique())
+no_of_colors = 7
 
 ### PLOT PARTICULARS
 ## CHOOSING DEFAULT COLORS
@@ -286,7 +290,7 @@ c.axis.major_label_text_font_size = "10pt"
 c.xaxis.major_label_orientation = np.pi/2
 
 ## SETTING UP HEATMAP RECTANGLES
-cir = c.rect(x="level_0", y="parameters", width=1, height=1,source=source_corr,fill_color={'field': 'correlation', 'transform': mapper},line_color="white")
+cir = c.rect(x="level_0", y="parameters", width=1, height=1,source=source_corr,fill_color={'field': 'correlation', 'transform': mapper},line_color=None)
 
 ## SETTING UP COLOR BAR
 color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt",ticker=BasicTicker(desired_num_ticks=10),formatter=PrintfTickFormatter(format="%.1f"),label_standoff=6, border_line_color=None, location=(0, 0))
