@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Div, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -271,7 +271,8 @@ reg_y_choices = {
 }
 reg_select_x = MultiSelect(title="X value", options=sorted(
     reg_x_choices.keys()), size=len(reg_x_choices))
-reg_select_y = Select(title="Y value", options=sorted(reg_y_choices.keys()))
+reg_select_y = Select(title="Y value", options=sorted(
+    reg_y_choices.keys()), value="CarbonMonoOxide_y")
 
 reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
@@ -314,15 +315,18 @@ def update_regression():
     reg_ml = LinearRegression()
     reg_ml.fit(reg_x_train, reg_y_train)
     # Predict y using x test
-    reg_y_pred = reg_ml.predict(reg_x_test)
-    reg_source.data = dict(y_test=reg_y_test, y_pred=reg_y_pred)
-    reg_RMSE_source.data["data"] = [111, 1111, 1111, 111]
+    reg_y_train_pred = reg_ml.predict(reg_x_train)
+    reg_y_test_pred = reg_ml.predict(reg_x_test)
+    reg_source.data = dict(y_test=reg_y_test, y_pred=reg_y_test_pred)
+    # Update data in the table
+    reg_RMSE_source.data["data"] = [
+        r2_score(reg_y_train, reg_y_train_pred), r2_score(reg_y_test, reg_y_test_pred), 1111, 111]
 
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
-tab2 = Panel(child=regression_layout, title="Multivariable Regression")
-tabs = Tabs(tabs=[tab1, tab2])
+tab3 = Panel(child=regression_layout, title="Multivariable Regression")
+tabs = Tabs(tabs=[tab1, tab3])
 
 update()  # initial load of the data
 curdoc().add_root(tabs)
