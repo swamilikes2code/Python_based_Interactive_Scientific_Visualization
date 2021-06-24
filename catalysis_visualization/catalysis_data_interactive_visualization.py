@@ -1,11 +1,12 @@
 from bokeh.core.enums import SizingMode
+from bokeh.core.property.dataspec import field
 from bokeh.models.annotations import Title
 from matplotlib.pyplot import title, xlabel, ylabel
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, MultiSelect
+from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -244,9 +245,6 @@ visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 # REGRESSION MODEL
 
 # Selection tools
-# M1 atom number, M2 atom number, M3 atom number,
-# Support Id, M2 mol, M3 mol, m1 percent mol,
-# m2 percent mol, m3 percent mol, temp, total flow, argon flow, Ch4 flow, O2 flow, CT
 reg_x_choices = {
     "M1 atom number": "M1_atom_number",
     "M2 atom number": "M2_atom_number",
@@ -278,16 +276,26 @@ reg_select_y = Select(title="Y value", options=sorted(reg_y_choices.keys()))
 reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
-reg_inputs = column(*reg_controls, width=320)
+reg_inputs = column(*reg_controls, width=250)
 # Create column data for the plot
 reg_source = ColumnDataSource(data=dict(y_test=[], y_pred=[]))
-
+# Table to display R^2 and RMSE
+reg_RMSE_source = ColumnDataSource(data=dict(
+    tabs=["R^2 for Training set", "R^2 for Testing set",
+          "RMSE for Training set", "RMSE for Testing set"],
+    data=["", "", "", ""]))
+reg_RMSE_column = [TableColumn(field="tabs"), TableColumn(field="data")]
+reg_RMSE_data_table = DataTable(
+    source=reg_RMSE_source, columns=reg_RMSE_column, header_row=False, index_position=None, width=250)
+# Create figure to display the scatter plot
 reg = figure(height=600, width=700)
 reg.scatter(x="y_test", y="y_pred", source=reg_source)
 reg.xaxis.axis_label = "Actual"
 reg.yaxis.axis_label = "Predicted"
 reg.title = "Actual vs. Predicted"
-regression_layout = column([row(reg_inputs, reg)], sizing_mode="scale_both")
+
+regression_layout = column(
+    [row(column(reg_inputs, reg_RMSE_data_table), reg)], sizing_mode="scale_both")
 
 
 def update_regression():
@@ -308,6 +316,7 @@ def update_regression():
     # Predict y using x test
     reg_y_pred = reg_ml.predict(reg_x_test)
     reg_source.data = dict(y_test=reg_y_test, y_pred=reg_y_pred)
+    reg_RMSE_source.data["data"] = [111, 1111, 1111, 111]
 
 
 # organizing panels of display
