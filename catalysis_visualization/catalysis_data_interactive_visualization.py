@@ -1,3 +1,4 @@
+import math
 from bokeh.core.enums import SizingMode
 from bokeh.core.property.dataspec import field
 from bokeh.models.annotations import Title
@@ -10,7 +11,7 @@ from bokeh.models import ColumnDataSource, Div, Select, Slider, BoxSelectTool, L
 from bokeh.plotting import figure, curdoc
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_squared_error
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
@@ -320,7 +321,11 @@ def update_regression():
     reg_source.data = dict(y_test=reg_y_test, y_pred=reg_y_test_pred)
     # Update data in the table
     reg_RMSE_source.data["data"] = [
-        r2_score(reg_y_train, reg_y_train_pred), r2_score(reg_y_test, reg_y_test_pred), 1111, 111]
+        r2_score(reg_y_train, reg_y_train_pred),
+        r2_score(reg_y_test, reg_y_test_pred),
+        math.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
+        math.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
+    ]
 
 
 # organizing panels of display
