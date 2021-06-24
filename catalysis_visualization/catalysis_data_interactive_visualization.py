@@ -3,10 +3,9 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter
-from bokeh.plotting import figure, curdoc
+from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, CustomJS
+from bokeh.plotting import figure, curdoc, output_file
 from bokeh.palettes import inferno, magma, viridis, gray, cividis, turbo
-from bokeh.models.callbacks import CustomJS
 
 
 # Import dataset
@@ -295,6 +294,13 @@ cir = c.rect(x="level_0", y="parameters", width=1, height=1,source=source_corr,f
 ## SETTING UP COLOR BAR
 color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt",ticker=BasicTicker(desired_num_ticks=10),formatter=PrintfTickFormatter(format="%.1f"),label_standoff=6, border_line_color=None, location=(0, 0))
 c.add_layout(color_bar, 'right')
+
+def change_color():
+    mapper.palette = COLOR_SCHEME[select_color.value]
+    cir.glyph.fill_color = {'field':'correlation','transform':mapper}
+    color_bar.color_mapper = mapper
+
+select_color.on_change('value',lambda attr,old,new: change_color())
 
 #organizing panels of diaply
 tab1=Panel(child = l, title="Data Exploration")
