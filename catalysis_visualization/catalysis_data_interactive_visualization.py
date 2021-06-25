@@ -280,7 +280,8 @@ for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=250)
 # Create column data for the plot
-reg_source = ColumnDataSource(data=dict(y_test=[], y_pred=[]))
+reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
+reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 # Table to display R^2 and RMSE
 reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training set", "R^2 for Testing set",
@@ -300,15 +301,26 @@ reg_coeff_column = [
 ]
 reg_coeff_data_table = DataTable(
     source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=250)
-# Create figure to display the scatter plot
-reg = figure(height=500, width=600, toolbar_location="above")
-reg.scatter(x="y_test", y="y_pred", source=reg_source)
-reg.xaxis.axis_label = "Actual"
-reg.yaxis.axis_label = "Predicted"
-reg.title = "Actual vs. Predicted"
+# Create figure to display the scatter plot for training set
+reg_training = figure(height=500, width=600, toolbar_location="above")
+reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
+reg_training.xaxis.axis_label = "Actual"
+reg_training.yaxis.axis_label = "Predicted"
+reg_training.title = "Actual vs. Predicted"
+# Create figure to display the scatter plot for testing set
+reg_testing = figure(height=500, width=600, toolbar_location="above")
+reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
+reg_testing.xaxis.axis_label = "Actual"
+reg_testing.yaxis.axis_label = "Predicted"
+reg_testing.title = "Actual vs. Predicted"
+
+# Adding tabs for regression plots
+reg_tab1 = Panel(child=reg_training, title="Training Dataset")
+reg_tab2 = Panel(child=reg_testing, title="Testing Dataset")
+reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
 
 regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), reg, reg_coeff_data_table)], sizing_mode="scale_both")
+    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both")
 
 
 def update_regression():
@@ -330,7 +342,10 @@ def update_regression():
     # Predict y using x test
     reg_y_train_pred = reg_ml.predict(reg_x_train)
     reg_y_test_pred = reg_ml.predict(reg_x_test)
-    reg_source.data = dict(y_test=reg_y_test, y_pred=reg_y_test_pred)
+    reg_training_source.data = dict(
+        y_actual=reg_y_train, y_predict=reg_y_train_pred)
+    reg_testing_source.data = dict(
+        y_actual=reg_y_test, y_predict=reg_y_test_pred)
     # Update data in the table
     reg_RMSE_source.data["data"] = [
         r2_score(reg_y_train, reg_y_train_pred),
