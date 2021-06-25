@@ -286,18 +286,29 @@ reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training set", "R^2 for Testing set",
           "RMSE for Training set", "RMSE for Testing set"],
     data=["", "", "", ""]))
-reg_RMSE_column = [TableColumn(field="tabs"), TableColumn(field="data")]
+reg_RMSE_column = [
+    TableColumn(field="tabs"),
+    TableColumn(field="data")
+]
 reg_RMSE_data_table = DataTable(
     source=reg_RMSE_source, columns=reg_RMSE_column, header_row=False, index_position=None, width=250)
+# Table to display coefficients
+reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
+reg_coeff_column = [
+    TableColumn(field="Variables"),
+    TableColumn(field="Coefficients")
+]
+reg_coeff_data_table = DataTable(
+    source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=250)
 # Create figure to display the scatter plot
-reg = figure(height=600, width=700)
+reg = figure(height=500, width=600, toolbar_location="above")
 reg.scatter(x="y_test", y="y_pred", source=reg_source)
 reg.xaxis.axis_label = "Actual"
 reg.yaxis.axis_label = "Predicted"
 reg.title = "Actual vs. Predicted"
 
 regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), reg)], sizing_mode="scale_both")
+    [row(column(reg_inputs, reg_RMSE_data_table), reg, reg_coeff_data_table)], sizing_mode="scale_both")
 
 
 def update_regression():
@@ -306,7 +317,8 @@ def update_regression():
     for choice in reg_select_x.value:
         x_name.append(reg_x_choices[choice])
     y_name = reg_y_choices[reg_select_y.value]
-    print(x_name, y_name)
+    print("x values: ", x_name)
+    print("y value: ", y_name)
     reg_x = df_catalysis_dataset[x_name].values
     reg_y = df_catalysis_dataset[y_name].values
     # Split into training and test
@@ -326,6 +338,8 @@ def update_regression():
         math.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
         math.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
     ]
+    reg_coeff_source.data = dict(Variables=x_name, Coefficients=reg_ml.coef_)
+    print(reg_coeff_source.data)
 
 
 # organizing panels of display
