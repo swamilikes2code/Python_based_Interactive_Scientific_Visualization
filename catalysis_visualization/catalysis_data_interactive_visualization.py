@@ -1,13 +1,9 @@
 import math
-from bokeh.core.enums import SizingMode
-from bokeh.core.property.dataspec import field
-from bokeh.models.annotations import Title
-from matplotlib.pyplot import title, xlabel, ylabel
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -278,21 +274,21 @@ reg_select_y = Select(title="Y value", options=sorted(
 reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
-reg_inputs = column(*reg_controls, width=250)
+reg_inputs = column(*reg_controls, width=200)
 # Create column data for the plot
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 # Table to display R^2 and RMSE
 reg_RMSE_source = ColumnDataSource(data=dict(
-    tabs=["R^2 for Training set", "R^2 for Testing set",
-          "RMSE for Training set", "RMSE for Testing set"],
+    tabs=["R^2 for Training", "R^2 for Testing",
+          "RMSE for Training", "RMSE for Testing"],
     data=["", "", "", ""]))
 reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
 ]
 reg_RMSE_data_table = DataTable(
-    source=reg_RMSE_source, columns=reg_RMSE_column, header_row=False, index_position=None, width=250)
+    source=reg_RMSE_source, columns=reg_RMSE_column, header_row=False, index_position=None, width=200)
 # Table to display coefficients
 reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
 reg_coeff_column = [
@@ -300,7 +296,7 @@ reg_coeff_column = [
     TableColumn(field="Coefficients")
 ]
 reg_coeff_data_table = DataTable(
-    source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=250)
+    source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=200)
 # Create figure to display the scatter plot for training set
 reg_training = figure(height=500, width=600, toolbar_location="above")
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
@@ -347,13 +343,14 @@ def update_regression():
     reg_testing_source.data = dict(
         y_actual=reg_y_test, y_predict=reg_y_test_pred)
     # Update data in the table
-    reg_RMSE_source.data["data"] = [
+    reg_RMSE_source.data["data"] = np.around([
         r2_score(reg_y_train, reg_y_train_pred),
         r2_score(reg_y_test, reg_y_test_pred),
         math.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
         math.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
-    ]
-    reg_coeff_source.data = dict(Variables=x_name, Coefficients=reg_ml.coef_)
+    ], decimals=6)
+    reg_coeff_source.data = dict(
+        Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
     print(reg_coeff_source.data)
 
 
