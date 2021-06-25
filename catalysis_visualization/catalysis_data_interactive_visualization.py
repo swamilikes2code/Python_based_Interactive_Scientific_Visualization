@@ -89,7 +89,7 @@ TOOLTIPS = [
 ]
 
 # tools in the toolbar
-TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset"
+TOOLS = "undo,redo,pan,wheel_zoom,box_select,lasso_select,reset"
 
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(
