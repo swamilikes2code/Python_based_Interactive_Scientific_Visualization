@@ -258,7 +258,6 @@ reg_x_choices = {
     "CH4 flow": "CH4_flow",
     "O2 flow": "O2_flow",
     "CT": "CT"
-
 }
 reg_y_choices = {
     "CarbonMonoOxide_y": "COy",
@@ -266,10 +265,12 @@ reg_y_choices = {
     "CO2y": "CO2y",
     "C2y": "C2y"
 }
-reg_select_x = MultiSelect(title="X value", options=sorted(
-    reg_x_choices.keys()), size=len(reg_x_choices))
-reg_select_y = Select(title="Y value", options=sorted(
-    reg_y_choices.keys()), value="CarbonMonoOxide_y")
+reg_select_x = MultiSelect(title="X value",
+                           options=sorted(reg_x_choices.keys()),
+                           size=len(reg_x_choices))
+reg_select_y = Select(title="Y value",
+                      options=sorted(reg_y_choices.keys()),
+                      value="CarbonMonoOxide_y")
 
 reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
@@ -282,7 +283,7 @@ reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training", "R^2 for Testing",
           "RMSE for Training", "RMSE for Testing"],
-    data=["", "", "", ""]))
+    data=[None, None, None, None]))
 reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
@@ -297,18 +298,19 @@ reg_coeff_column = [
 ]
 reg_coeff_data_table = DataTable(
     source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=200)
+
 # Create figure to display the scatter plot for training set
-reg_training = figure(height=500, width=600, toolbar_location="above")
+reg_training = figure(height=500, width=600,
+                      toolbar_location="above", title="Actual vs. Predicted")
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
-reg_training.title = "Actual vs. Predicted"
 # Create figure to display the scatter plot for testing set
-reg_testing = figure(height=500, width=600, toolbar_location="above")
+reg_testing = figure(height=500, width=600,
+                     toolbar_location="above", title="Actual vs. Predicted")
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
-reg_testing.title = "Actual vs. Predicted"
 
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training, title="Training Dataset")
