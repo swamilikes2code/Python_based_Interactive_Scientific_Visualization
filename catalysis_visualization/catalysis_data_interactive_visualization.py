@@ -267,7 +267,8 @@ reg_y_choices = {
 }
 reg_select_x = MultiSelect(title="X value",
                            options=sorted(reg_x_choices.keys()),
-                           size=len(reg_x_choices))
+                           size=len(reg_x_choices),
+                           value=["Argon flow"])
 reg_select_y = Select(title="Y value",
                       options=sorted(reg_y_choices.keys()),
                       value="CarbonMonoOxide_y")
@@ -305,16 +306,37 @@ reg_training = figure(height=500, width=600,
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
+# TODO: add histogram for training set
+reg_training_hist, reg_training_edges = np.histogram(
+    reg_training_source.data["y_actual"], bins=20)
+reg_training_hori_hist = figure(toolbar_location=None, width=reg_training.width,
+                                height=100, x_range=reg_training.x_range, y_range=(0, max(reg_training_hist)*1.1),
+                                min_border=10, min_border_left=50, y_axis_location="right")
+reg_training_hori_hist_bar = reg_training_hori_hist.quad(
+    bottom=0, left=reg_training_edges[:-1], right=reg_training_edges[1:], top=reg_training_hist)
+
+reg_training_layout = column(reg_training, reg_training_hori_hist)
+
 # Create figure to display the scatter plot for testing set
 reg_testing = figure(height=500, width=600,
                      toolbar_location="above", title="Actual vs. Predicted")
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
+# TODO: add histogram for testing set
+reg_testing_hist, reg_testing_edges = np.histogram(
+    reg_testing_source.data["y_actual"], bins=20)
+reg_testing_hori_hist = figure(toolbar_location=None, width=reg_testing.width,
+                               height=100, x_range=reg_testing.x_range, y_range=(0, max(reg_testing_hist)*1.1),
+                               min_border=10, min_border_left=50, y_axis_location="right")
+reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(
+    bottom=0, left=reg_testing_edges[:-1], right=reg_testing_edges[1:], top=reg_testing_hist)
+
+reg_testing_layout = column(reg_testing, reg_testing_hori_hist)
 
 # Adding tabs for regression plots
-reg_tab1 = Panel(child=reg_training, title="Training Dataset")
-reg_tab2 = Panel(child=reg_testing, title="Testing Dataset")
+reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
+reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
 reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
 
 regression_layout = column(
@@ -354,6 +376,18 @@ def update_regression():
     reg_coeff_source.data = dict(
         Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
     print(reg_coeff_source.data)
+    # update histogram
+    global reg_training_hist, reg_training_edges, reg_testing_hist, reg_testing_edges
+    reg_training_hist, reg_training_edges = np.histogram(reg_y_train, bins=20)
+    reg_training_hori_hist.y_range.end = max(reg_training_hist)*1.1
+    reg_training_hori_hist_bar.data_source.data["top"] = reg_training_hist
+    reg_training_hori_hist_bar.data_source.data["right"] = reg_training_edges[1:]
+    reg_training_hori_hist_bar.data_source.data["left"] = reg_training_edges[:-1]
+    reg_testing_hist, reg_testing_edges = np.histogram(reg_y_test, bins=20)
+    reg_testing_hori_hist.y_range.end = max(reg_testing_hist)*1.1
+    reg_testing_hori_hist_bar.data_source.data["top"] = reg_testing_hist
+    reg_testing_hori_hist_bar.data_source.data["right"] = reg_testing_edges[1:]
+    reg_testing_hori_hist_bar.data_source.data["left"] = reg_testing_edges[:-1]
 
 
 # organizing panels of display
@@ -362,6 +396,7 @@ tab3 = Panel(child=regression_layout, title="Multivariable Regression")
 tabs = Tabs(tabs=[tab1, tab3])
 
 update()  # initial load of the data
+update_regression()
 curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
