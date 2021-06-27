@@ -83,7 +83,7 @@ TOOLTIPS = [
 ]
 
 # tools in the toolbar
-TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset"
+TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
 
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(
@@ -242,23 +242,23 @@ l = column([row(inputs, layout)], sizing_mode="scale_both")
 ## Adding the correlation matrix
 # Copy x-axis values into new df
 df_corr = df_catalysis_dataset[
-    ["CT","Ar_flow","CH4_flow","O2_flow","Total_flow","Support_ID",
+    ["CT","Ar_flow","CH4_flow","O2_flow","Total_flow","Support_ID","Temp",
     "M2_mol","M3_mol","M1_atom_number","M2_atom_number","M3_atom_number",
     "M1_mol_percentage","M2_mol_percentage","M3_mol_percentage"]
     ]
 corr_matrix = df_corr.corr()
 
 ## AXIS LABELS FOR PLOT
-df = pd.DataFrame(corr_matrix)
-df = df.set_index(df.columns).rename_axis('parameters', axis=1)
-df.index.name = 'level_0'
-common_axes_val = list(df.index)
-df = pd.DataFrame(df.stack(), columns=['correlation']).reset_index()
-source_corr = ColumnDataSource(df)
+df_corr = pd.DataFrame(corr_matrix)
+df_corr = df_corr.set_index(df_corr.columns).rename_axis('parameters', axis=1)
+df_corr.index.name = 'level_0'
+common_axes_val = list(df_corr.index)
+df_corr = pd.DataFrame(df_corr.stack(), columns=['correlation']).reset_index()
+source_corr = ColumnDataSource(df_corr)
 
 ## FINDING LOWEST AND HIGHEST OF CORRELATION VALUES
-low_df_corr_min = df.correlation.min()
-high_df_corr_min = df.correlation.max()
+low_df_corr_min = df_corr.correlation.min()
+high_df_corr_min = df_corr.correlation.max()
 no_of_colors = 7
 
 ### PLOT PARTICULARS
@@ -266,34 +266,31 @@ no_of_colors = 7
 COLOR_SCHEME = {
     'Cividis':cividis(no_of_colors),
     'Gray':gray(no_of_colors),
-    'Inferno':inferno(no_of_colors),
-    'Magma':magma(no_of_colors),
     'Viridis':viridis(no_of_colors),
-    'Turbo':turbo(no_of_colors),
 }
 
-select_color = Select(title='Color Palette',value='Magma', options=list(COLOR_SCHEME.keys()), width=200, height=50)
+select_color = Select(title='Color Palette',value='Cividis', options=list(COLOR_SCHEME.keys()), width=200, height=50)
 
-mapper = LinearColorMapper(palette= magma(no_of_colors), low=low_df_corr_min, high=high_df_corr_min)
+mapper = LinearColorMapper(palette= cividis(no_of_colors), low=low_df_corr_min, high=high_df_corr_min)
 
 ## SETTING UP THE PLOT
-c = figure(title="Correlation Matrix",x_range=common_axes_val, y_range=list((common_axes_val)),x_axis_location="below",toolbar_location=None,
+c_corr = figure(title="Correlation Matrix",x_range=common_axes_val, y_range=list((common_axes_val)),x_axis_location="below",toolbar_location=None,
             plot_width=700, plot_height=600, tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
 
 
 ## SETTING UP PLOT PROPERTIES
-c.grid.grid_line_color = None
-c.axis.axis_line_color = None
-c.axis.major_tick_line_color = None
-c.axis.major_label_text_font_size = "10pt"
-c.xaxis.major_label_orientation = np.pi/2
+c_corr.grid.grid_line_color = None
+c_corr.axis.axis_line_color = None
+c_corr.axis.major_tick_line_color = None
+c_corr.axis.major_label_text_font_size = "10pt"
+c_corr.xaxis.major_label_orientation = np.pi/2
 
 ## SETTING UP HEATMAP RECTANGLES
-cir = c.rect(x="level_0", y="parameters", width=1, height=1,source=source_corr,fill_color={'field': 'correlation', 'transform': mapper},line_color=None)
+cir = c_corr.rect(x="level_0", y="parameters", width=1, height=1,source=source_corr,fill_color={'field': 'correlation', 'transform': mapper},line_color=None)
 
 ## SETTING UP COLOR BAR
 color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt",ticker=BasicTicker(desired_num_ticks=10),formatter=PrintfTickFormatter(format="%.1f"),label_standoff=6, border_line_color=None, location=(0, 0))
-c.add_layout(color_bar, 'right')
+c_corr.add_layout(color_bar, 'right')
 
 def change_color():
     mapper.palette = COLOR_SCHEME[select_color.value]
@@ -304,7 +301,7 @@ select_color.on_change('value',lambda attr,old,new: change_color())
 
 #organizing panels of diaply
 tab1=Panel(child = l, title="Data Exploration")
-tab2 = Panel(child=column(select_color,c),title = "Correlation Matrix")
+tab2 = Panel(child=column(select_color,c_corr),title = "Correlation Matrix")
 tabs=Tabs(tabs=[tab1,tab2])
 
 update()  # initial load of the data
