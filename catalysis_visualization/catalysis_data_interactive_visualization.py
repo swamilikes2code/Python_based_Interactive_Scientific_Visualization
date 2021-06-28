@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Slope, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis
 from sklearn.model_selection import train_test_split
@@ -435,6 +435,11 @@ reg_testing_vert_hist_bar = reg_testing_vert_hist.quad(bottom=reg_testing_vedges
 reg_testing_layout = gridplot([[reg_testing, reg_testing_vert_hist],
                                [reg_testing_hori_hist, None]], merge_tools=True)
 
+# Adding line(s) of best fit
+regression_line = Slope()
+reg_training.add_layout(regression_line)
+reg_testing.add_layout(regression_line)
+
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
 reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
@@ -476,6 +481,16 @@ def update_regression():
     reg_coeff_source.data = dict(
         Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
     # print(reg_coeff_source.data)
+
+    # Regression Line Part 1(linear)
+    reg_slope = reg_ml.coef_[0] # Takes the first element of the array
+    reg_intercept = reg_ml.intercept_
+    # Make the regression line
+    regression_line.gradient = reg_slope
+    regression_line.y_intercept = reg_intercept
+    regression_line.line_color = "red"
+    regression_line.line_width = 2.1
+
     # update histogram
     # global reg_training_hist, reg_training_edges, reg_testing_hist, reg_testing_edges
     reg_training_hhist, reg_training_hedges = np.histogram(reg_y_train,
