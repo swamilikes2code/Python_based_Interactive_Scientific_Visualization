@@ -1,11 +1,14 @@
-from bokeh.core.enums import SizingMode
+import math
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, CustomJS
+from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, CustomJS, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc, output_file
 from bokeh.palettes import inferno, magma, viridis, gray, cividis, turbo
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error
 
 
 # Import dataset
@@ -13,14 +16,15 @@ df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
 
 # Removing the Blank names from the data
 df_catalysis_dataset.set_index(df_catalysis_dataset.index)
-df_catalysis_dataset.drop("Blank",axis=0)
+df_catalysis_dataset.drop("Blank", axis=0)
 
-# Calculating error percentage 
+# Calculating error percentage
 
-#Sum of columns to compare with CH4_conv
-df_catalysis_dataset["Sum_y"]= df_catalysis_dataset.loc[:,"C2H6y":"CO2y"].sum(axis=1) 
-df_catalysis_dataset["error_ch4_conv"]=abs((df_catalysis_dataset["Sum_y"]-df_catalysis_dataset["CH4_conv"])/
-                                            df_catalysis_dataset["CH4_conv"])*100
+# Sum of columns to compare with CH4_conv
+df_catalysis_dataset["Sum_y"] = df_catalysis_dataset.loc[:,
+                                                         "C2H6y":"CO2y"].sum(axis=1)
+df_catalysis_dataset["error_ch4_conv"] = abs((df_catalysis_dataset["Sum_y"]-df_catalysis_dataset["CH4_conv"]) /
+                                             df_catalysis_dataset["CH4_conv"])*100
 
 # Determine key values for Select Tool. More details in the Notebook.
 
@@ -66,7 +70,7 @@ slider_C2y = Slider(title="Minimum value of C2y",
                     start=0.06, end=21.03, value=4.0, step=0.1)
 slider_temp = Slider(title="Minimum value of Temperature",
                      start=700.0, end=900.0, value=800.0, step=50.0)
-slider_error = Slider(title="Maximum Error Permitted", 
+slider_error = Slider(title="Maximum Error Permitted",
                       start=0.0, end=100.0, step=0.5, value=37.0)
 select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(
     sorted_unique_ch4_to_o2.keys()), value="6")
@@ -89,7 +93,7 @@ TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
 source = ColumnDataSource(
     data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
-p = figure(height=600, width=700, title="", tools=TOOLS,
+p = figure(height=600, width=700, title="Data Exploration", tools=TOOLS,
            toolbar_location="above", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).select_every_mousemove = False
 p.select(LassoSelectTool).select_every_mousemove = False
@@ -154,7 +158,7 @@ vh1 = pv.quad(
 vh2 = pv.quad(
     left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
 
-layout = gridplot([[p, pv], [ph, None]], merge_tools=False)
+layout = gridplot([[p, pv], [ph, None]], merge_tools=True)
 
 
 # Brought in update for the histogram selections attempt
@@ -162,10 +166,8 @@ def update():
     df = select_data()
     x_name = axis_map_x[select_x_axis.value]
     y_name = axis_map_y[select_y_axis.value]
-
     p.xaxis.axis_label = select_x_axis.value
     p.yaxis.axis_label = select_y_axis.value
-    p.title.text = 'Data Exploration'
     source.data = dict(
         x=df[x_name],
         y=df[y_name],
@@ -206,7 +208,7 @@ def update():
 
 
 controls = [slider_methane_conversion, slider_C2y, slider_temp,
-            slider_error,select_ch4_to_o2, select_x_axis, select_y_axis]
+            slider_error, select_ch4_to_o2, select_x_axis, select_y_axis]
 for control in controls:
     control.on_change('value', lambda attr, old, new: update())
 
@@ -236,8 +238,8 @@ def update_histogram(attr, old, new):
     vh1.data_source.data["right"] = vhist1
     # vh2.data_source.data["right"] = -vhist2
 
+visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 
-l = column([row(inputs, layout)], sizing_mode="scale_both")
 
 ## Adding the correlation matrix
 # Copy x-axis values into new df
@@ -299,12 +301,166 @@ def change_color():
 
 select_color.on_change('value',lambda attr,old,new: change_color())
 
-#organizing panels of diaply
-tab1=Panel(child = l, title="Data Exploration")
+
+## REGRESSION MODEL
+
+# Selection tools
+reg_x_choices = {
+    "M1 atom number": "M1_atom_number",
+    "M2 atom number": "M2_atom_number",
+    "M3 atom number": "M3_atom_number",
+    "Support Id": "Support_ID",
+    "M2 mol": "M2_mol",
+    "M3 mol": "M3_mol",
+    "M1 percent mol": "M1_mol_percentage",
+    "M2 percent mol": "M2_mol_percentage",
+    "M3 percent mol": "M3_mol_percentage",
+    "Temperature": "Temp",
+    "Total flow": "Total_flow",
+    "Argon flow": "Ar_flow",
+    "CH4 flow": "CH4_flow",
+    "O2 flow": "O2_flow",
+    "CT": "CT"
+}
+reg_y_choices = {
+    "CarbonMonoOxide_y": "COy",
+    "CH4_conv": "CH4_conv",
+    "CO2y": "CO2y",
+    "C2y": "C2y"
+}
+reg_select_x = MultiSelect(title="X value",
+                           options=sorted(reg_x_choices.keys()),
+                           size=len(reg_x_choices),
+                           value=["Argon flow"])
+reg_select_y = Select(title="Y value",
+                      options=sorted(reg_y_choices.keys()),
+                      value="CarbonMonoOxide_y")
+
+reg_controls = [reg_select_x, reg_select_y]
+for control in reg_controls:
+    control.on_change("value", lambda attr, old, new: update_regression())
+reg_inputs = column(*reg_controls, width=200)
+# Create column data for the plot
+reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
+reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
+# Table to display R^2 and RMSE
+reg_RMSE_source = ColumnDataSource(data=dict(
+    tabs=["R^2 for Training", "R^2 for Testing",
+          "RMSE for Training", "RMSE for Testing"],
+    data=[None, None, None, None]))
+reg_RMSE_column = [
+    TableColumn(field="tabs"),
+    TableColumn(field="data")
+]
+reg_RMSE_data_table = DataTable(
+    source=reg_RMSE_source, columns=reg_RMSE_column, header_row=False, index_position=None, width=200)
+# Table to display coefficients
+reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
+reg_coeff_column = [
+    TableColumn(field="Variables"),
+    TableColumn(field="Coefficients")
+]
+reg_coeff_data_table = DataTable(
+    source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=200)
+
+# Create figure to display the scatter plot for training set
+reg_training = figure(height=500, width=600,
+                      toolbar_location="above", title="Actual vs. Predicted")
+reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
+reg_training.xaxis.axis_label = "Actual"
+reg_training.yaxis.axis_label = "Predicted"
+# TODO: add histogram for training set
+reg_training_hist, reg_training_edges = np.histogram(
+    reg_training_source.data["y_actual"], bins=20)
+reg_training_hori_hist = figure(toolbar_location=None, width=reg_training.width,
+                                height=100, x_range=reg_training.x_range, y_range=(0, max(reg_training_hist)*1.1),
+                                min_border=10, min_border_left=50, y_axis_location="right")
+reg_training_hori_hist_bar = reg_training_hori_hist.quad(
+    bottom=0, left=reg_training_edges[:-1], right=reg_training_edges[1:], top=reg_training_hist)
+
+reg_training_layout = column(reg_training, reg_training_hori_hist)
+
+# Create figure to display the scatter plot for testing set
+reg_testing = figure(height=500, width=600,
+                     toolbar_location="above", title="Actual vs. Predicted")
+reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
+reg_testing.xaxis.axis_label = "Actual"
+reg_testing.yaxis.axis_label = "Predicted"
+# TODO: add histogram for testing set
+reg_testing_hist, reg_testing_edges = np.histogram(
+    reg_testing_source.data["y_actual"], bins=20)
+reg_testing_hori_hist = figure(toolbar_location=None, width=reg_testing.width,
+                               height=100, x_range=reg_testing.x_range, y_range=(0, max(reg_testing_hist)*1.1),
+                               min_border=10, min_border_left=50, y_axis_location="right")
+reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(
+    bottom=0, left=reg_testing_edges[:-1], right=reg_testing_edges[1:], top=reg_testing_hist)
+
+reg_testing_layout = column(reg_testing, reg_testing_hori_hist)
+
+# Adding tabs for regression plots
+reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
+reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
+reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
+
+regression_layout = column(
+    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both")
+
+
+def update_regression():
+    # print(reg_select_x.value, reg_select_y.value)
+    x_name = []
+    for choice in reg_select_x.value:
+        x_name.append(reg_x_choices[choice])
+    y_name = reg_y_choices[reg_select_y.value]
+    print("x values: ", x_name)
+    print("y value: ", y_name)
+    reg_x = df_catalysis_dataset[x_name].values
+    reg_y = df_catalysis_dataset[y_name].values
+    # Split into training and test
+    reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
+        reg_x, reg_y, test_size=0.2, random_state=0)
+    # Training model
+    reg_ml = LinearRegression()
+    reg_ml.fit(reg_x_train, reg_y_train)
+    # Predict y using x test
+    reg_y_train_pred = reg_ml.predict(reg_x_train)
+    reg_y_test_pred = reg_ml.predict(reg_x_test)
+    reg_training_source.data = dict(
+        y_actual=reg_y_train, y_predict=reg_y_train_pred)
+    reg_testing_source.data = dict(
+        y_actual=reg_y_test, y_predict=reg_y_test_pred)
+    # Update data in the table
+    reg_RMSE_source.data["data"] = np.around([
+        r2_score(reg_y_train, reg_y_train_pred),
+        r2_score(reg_y_test, reg_y_test_pred),
+        math.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
+        math.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
+    ], decimals=6)
+    reg_coeff_source.data = dict(
+        Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
+    print(reg_coeff_source.data)
+    # update histogram
+    global reg_training_hist, reg_training_edges, reg_testing_hist, reg_testing_edges
+    reg_training_hist, reg_training_edges = np.histogram(reg_y_train, bins=20)
+    reg_training_hori_hist.y_range.end = max(reg_training_hist)*1.1
+    reg_training_hori_hist_bar.data_source.data["top"] = reg_training_hist
+    reg_training_hori_hist_bar.data_source.data["right"] = reg_training_edges[1:]
+    reg_training_hori_hist_bar.data_source.data["left"] = reg_training_edges[:-1]
+    reg_testing_hist, reg_testing_edges = np.histogram(reg_y_test, bins=20)
+    reg_testing_hori_hist.y_range.end = max(reg_testing_hist)*1.1
+    reg_testing_hori_hist_bar.data_source.data["top"] = reg_testing_hist
+    reg_testing_hori_hist_bar.data_source.data["right"] = reg_testing_edges[1:]
+    reg_testing_hori_hist_bar.data_source.data["left"] = reg_testing_edges[:-1]
+
+
+# organizing panels of display
+tab1 = Panel(child=visualization_layout, title="Data Exploration")
 tab2 = Panel(child=column(select_color,c_corr),title = "Correlation Matrix")
-tabs=Tabs(tabs=[tab1,tab2])
+tab3 = Panel(child=regression_layout, title="Multivariable Regression")
+tabs = Tabs(tabs=[tab1, tab2, tab3])
 
 update()  # initial load of the data
+update_regression()
 curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
