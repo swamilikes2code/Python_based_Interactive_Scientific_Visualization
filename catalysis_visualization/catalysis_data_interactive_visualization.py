@@ -364,8 +364,8 @@ reg_RMSE_data_table = DataTable(
 # Table to display coefficients
 reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
 reg_coeff_column = [
-    TableColumn(field="Variables"),
-    TableColumn(field="Coefficients")
+    TableColumn(field="Variables", title="Variables"),
+    TableColumn(field="Coefficients", title="Coefficients")
 ]
 reg_coeff_data_table = DataTable(
     source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=200)
