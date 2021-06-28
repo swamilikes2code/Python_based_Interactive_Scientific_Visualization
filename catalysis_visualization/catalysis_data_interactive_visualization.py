@@ -349,13 +349,16 @@ reg_select_y = Select(title="Y value",
                       options=sorted(reg_y_choices.keys()),
                       value="CarbonMonoOxide_y")
 reg_line_of_best_fit = Select(title="Line of best fit",
-                              options=sorted(reg_line_of_best_fit_choices.keys()),
+                              options=sorted(
+                                  reg_line_of_best_fit_choices.keys()),
                               value="")
 
 reg_controls = [reg_select_x, reg_select_y, reg_line_of_best_fit]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
+
+reg_TOOLTIPS = [("Measurement Error", "0")]
 
 # Create column data for the plot
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -381,7 +384,7 @@ reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_colu
                                  index_position=None, header_row=True, width=200)
 
 # Create figure to display the scatter plot for training set
-reg_training = figure(height=500, width=600,
+reg_training = figure(height=500, width=600, tooltips=reg_TOOLTIPS,
                       toolbar_location="above", title="Actual vs. Predicted")
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
@@ -416,7 +419,7 @@ reg_training_layout = gridplot([[reg_training, reg_training_vert_hist],
                                 [reg_training_hori_hist, None]], merge_tools=True)
 
 # Create figure to display the scatter plot for testing set
-reg_testing = figure(height=500, width=600,
+reg_testing = figure(height=500, width=600, tooltips=reg_TOOLTIPS,
                      toolbar_location="above", title="Actual vs. Predicted")
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
