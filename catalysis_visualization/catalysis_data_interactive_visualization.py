@@ -3,9 +3,9 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, CustomJS, MultiSelect, DataTable, TableColumn
-from bokeh.plotting import figure, curdoc, output_file
-from bokeh.palettes import inferno, magma, viridis, gray, cividis, turbo
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.plotting import figure, curdoc
+from bokeh.palettes import viridis, gray, cividis
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
@@ -27,7 +27,6 @@ df_catalysis_dataset["error_ch4_conv"] = abs((df_catalysis_dataset["Sum_y"]-df_c
                                              df_catalysis_dataset["CH4_conv"])*100
 
 # Determine key values for Select Tool. More details in the Notebook.
-
 unique_temp = (df_catalysis_dataset['Temp']
                .sort_values()
                .astype(str)
@@ -64,20 +63,23 @@ axis_map_y = {
 }
 
 # Create Input controls
-slider_methane_conversion = Slider(
-    title="Minimum Methane conversion value", value=20, start=1, end=46, step=1)
+slider_methane_conversion = Slider(title="Minimum Methane conversion value",
+                                   value=20, start=1, end=46, step=1)
 slider_C2y = Slider(title="Minimum value of C2y",
                     start=0.06, end=21.03, value=4.0, step=0.1)
 slider_temp = Slider(title="Minimum value of Temperature",
                      start=700.0, end=900.0, value=800.0, step=50.0)
 slider_error = Slider(title="Maximum Error Permitted",
                       start=0.0, end=100.0, step=0.5, value=37.0)
-select_ch4_to_o2 = Select(title="CH4 to O2", options=sorted(
-    sorted_unique_ch4_to_o2.keys()), value="6")
-select_x_axis = Select(title="X Axis", options=sorted(
-    axis_map_x.keys()), value="Argon Flow")
-select_y_axis = Select(title="Y Axis", options=sorted(
-    axis_map_y.keys()), value="CarbonDiOxide_y")
+select_ch4_to_o2 = Select(title="CH4 to O2",
+                          options=sorted(sorted_unique_ch4_to_o2.keys()),
+                          value="6")
+select_x_axis = Select(title="X Axis",
+                       options=sorted(axis_map_x.keys()),
+                       value="Argon Flow")
+select_y_axis = Select(title="Y Axis",
+                       options=sorted(axis_map_y.keys()),
+                       value="CarbonDiOxide_y")
 
 TOOLTIPS = [
     ("M1", "@M1"),
@@ -90,8 +92,7 @@ TOOLTIPS = [
 TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
 
 # Create Column Data Source that will be used by the plot
-source = ColumnDataSource(
-    data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
+source = ColumnDataSource(data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
 p = figure(height=600, width=700, title="Data Exploration", tools=TOOLS,
            toolbar_location="above", tooltips=TOOLTIPS)
@@ -115,7 +116,6 @@ def select_data():
     return selected
 
 
-# Repositioned the todo so that the select_data() function could be used by methods
 # the horizontal histogram
 hhist, hedges = np.histogram(
     select_data()[axis_map_x[select_x_axis.value]], bins=10)
@@ -123,8 +123,8 @@ hzeros = np.zeros(len(hedges)-1)
 
 LINE_ARGS = dict(color="#3A5785", line_color=None)
 
-ph = figure(toolbar_location=None, width=p.width, height=100, x_range=p.x_range, y_range=(
-    0, (max(hhist)*1.1)), min_border=10, min_border_left=50, y_axis_location="right")
+ph = figure(toolbar_location=None, width=p.width, height=100, x_range=p.x_range,
+            y_range=(0, (max(hhist)*1.1)), min_border=10, min_border_left=50, y_axis_location="right")
 ph.xgrid.grid_line_color = None
 ph.yaxis.major_label_orientation = np.pi/4
 ph.background_fill_color = "#fafafa"
@@ -143,8 +143,8 @@ vhist, vedges = np.histogram(
     select_data()[axis_map_y[select_y_axis.value]], bins=10)
 vzeros = np.zeros(len(vedges)-1)
 
-pv = figure(toolbar_location=None, width=100, height=p.height, x_range=(
-    0, (max(vhist)*1.1)), y_range=p.y_range, min_border=10, y_axis_location="right")
+pv = figure(toolbar_location=None, width=100, height=p.height,
+            x_range=(0, (max(vhist)*1.1)), y_range=p.y_range, min_border=10, y_axis_location="right")
 pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
 pv.background_fill_color = "#fafafa"
@@ -238,19 +238,20 @@ def update_histogram(attr, old, new):
     vh1.data_source.data["right"] = vhist1
     # vh2.data_source.data["right"] = -vhist2
 
+
 visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 
 
-## Adding the correlation matrix
+# Adding the correlation matrix
 # Copy x-axis values into new df
 df_corr = df_catalysis_dataset[
-    ["CT","Ar_flow","CH4_flow","O2_flow","Total_flow","Support_ID","Temp",
-    "M2_mol","M3_mol","M1_atom_number","M2_atom_number","M3_atom_number",
-    "M1_mol_percentage","M2_mol_percentage","M3_mol_percentage"]
-    ]
+    ["CT", "Ar_flow", "CH4_flow", "O2_flow", "Total_flow", "Support_ID", "Temp",
+     "M2_mol", "M3_mol", "M1_atom_number", "M2_atom_number", "M3_atom_number",
+     "M1_mol_percentage", "M2_mol_percentage", "M3_mol_percentage"]
+]
 corr_matrix = df_corr.corr()
 
-## AXIS LABELS FOR PLOT
+# AXIS LABELS FOR PLOT
 df_corr = pd.DataFrame(corr_matrix)
 df_corr = df_corr.set_index(df_corr.columns).rename_axis('parameters', axis=1)
 df_corr.index.name = 'level_0'
@@ -258,51 +259,57 @@ common_axes_val = list(df_corr.index)
 df_corr = pd.DataFrame(df_corr.stack(), columns=['correlation']).reset_index()
 source_corr = ColumnDataSource(df_corr)
 
-## FINDING LOWEST AND HIGHEST OF CORRELATION VALUES
+# FINDING LOWEST AND HIGHEST OF CORRELATION VALUES
 low_df_corr_min = df_corr.correlation.min()
 high_df_corr_min = df_corr.correlation.max()
 no_of_colors = 7
 
-### PLOT PARTICULARS
-## CHOOSING DEFAULT COLORS
+# PLOT PARTICULARS
+# CHOOSING DEFAULT COLORS
 COLOR_SCHEME = {
-    'Cividis':cividis(no_of_colors),
-    'Gray':gray(no_of_colors),
-    'Viridis':viridis(no_of_colors),
+    'Cividis': cividis(no_of_colors),
+    'Gray': gray(no_of_colors),
+    'Viridis': viridis(no_of_colors),
 }
 
-select_color = Select(title='Color Palette',value='Cividis', options=list(COLOR_SCHEME.keys()), width=200, height=50)
+select_color = Select(title='Color Palette', value='Cividis',
+                      options=list(COLOR_SCHEME.keys()), width=200, height=50)
 
-mapper = LinearColorMapper(palette= cividis(no_of_colors), low=low_df_corr_min, high=high_df_corr_min)
+mapper = LinearColorMapper(palette=cividis(no_of_colors),
+                           low=low_df_corr_min, high=high_df_corr_min)
 
-## SETTING UP THE PLOT
-c_corr = figure(title="Correlation Matrix",x_range=common_axes_val, y_range=list((common_axes_val)),x_axis_location="below",toolbar_location=None,
-            plot_width=700, plot_height=600, tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
+# SETTING UP THE PLOT
+c_corr = figure(title="Correlation Matrix", x_range=common_axes_val, y_range=list((common_axes_val)), x_axis_location="below", toolbar_location=None,
+                plot_width=700, plot_height=600, tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
 
 
-## SETTING UP PLOT PROPERTIES
+# SETTING UP PLOT PROPERTIES
 c_corr.grid.grid_line_color = None
 c_corr.axis.axis_line_color = None
 c_corr.axis.major_tick_line_color = None
 c_corr.axis.major_label_text_font_size = "10pt"
 c_corr.xaxis.major_label_orientation = np.pi/2
 
-## SETTING UP HEATMAP RECTANGLES
-cir = c_corr.rect(x="level_0", y="parameters", width=1, height=1,source=source_corr,fill_color={'field': 'correlation', 'transform': mapper},line_color=None)
+# SETTING UP HEATMAP RECTANGLES
+cir = c_corr.rect(x="level_0", y="parameters", width=1, height=1, source=source_corr,
+                  fill_color={'field': 'correlation', 'transform': mapper}, line_color=None)
 
-## SETTING UP COLOR BAR
-color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt",ticker=BasicTicker(desired_num_ticks=10),formatter=PrintfTickFormatter(format="%.1f"),label_standoff=6, border_line_color=None, location=(0, 0))
+# SETTING UP COLOR BAR
+color_bar = ColorBar(color_mapper=mapper, major_label_text_font_size="5pt", ticker=BasicTicker(desired_num_ticks=10),
+                     formatter=PrintfTickFormatter(format="%.1f"), label_standoff=6, border_line_color=None, location=(0, 0))
 c_corr.add_layout(color_bar, 'right')
+
 
 def change_color():
     mapper.palette = COLOR_SCHEME[select_color.value]
-    cir.glyph.fill_color = {'field':'correlation','transform':mapper}
+    cir.glyph.fill_color = {'field': 'correlation', 'transform': mapper}
     color_bar.color_mapper = mapper
 
-select_color.on_change('value',lambda attr,old,new: change_color())
+
+select_color.on_change('value', lambda attr, old, new: change_color())
 
 
-## REGRESSION MODEL
+# REGRESSION MODEL
 
 # Selection tools
 reg_x_choices = {
@@ -340,6 +347,7 @@ reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
+
 # Create column data for the plot
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -407,13 +415,12 @@ regression_layout = column(
 
 
 def update_regression():
-    # print(reg_select_x.value, reg_select_y.value)
     x_name = []
     for choice in reg_select_x.value:
         x_name.append(reg_x_choices[choice])
     y_name = reg_y_choices[reg_select_y.value]
-    print("x values: ", x_name)
-    print("y value: ", y_name)
+    # print("x values: ", x_name)
+    # print("y value: ", y_name)
     reg_x = df_catalysis_dataset[x_name].values
     reg_y = df_catalysis_dataset[y_name].values
     # Split into training and test
@@ -438,9 +445,9 @@ def update_regression():
     ], decimals=6)
     reg_coeff_source.data = dict(
         Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
-    print(reg_coeff_source.data)
+    # print(reg_coeff_source.data)
     # update histogram
-    global reg_training_hist, reg_training_edges, reg_testing_hist, reg_testing_edges
+    # global reg_training_hist, reg_training_edges, reg_testing_hist, reg_testing_edges
     reg_training_hist, reg_training_edges = np.histogram(reg_y_train, bins=20)
     reg_training_hori_hist.y_range.end = max(reg_training_hist)*1.1
     reg_training_hori_hist_bar.data_source.data["top"] = reg_training_hist
@@ -455,7 +462,7 @@ def update_regression():
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
-tab2 = Panel(child=column(select_color,c_corr),title = "Correlation Matrix")
+tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
 tab3 = Panel(child=regression_layout, title="Multivariable Regression")
 tabs = Tabs(tabs=[tab1, tab2, tab3])
 
