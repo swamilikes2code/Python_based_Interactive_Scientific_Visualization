@@ -389,7 +389,8 @@ reg_training_vhist, reg_training_vedges = np.histogram(reg_training_source.data[
 reg_training_hori_hist = figure(toolbar_location=None, width=reg_training.width,
                                 height=100, x_range=reg_training.x_range, y_range=(0, max(reg_training_hhist)*1.1),
                                 min_border=10, y_axis_location="right")
-# reg_training_hori_hist.yaxis.major_label_orientation = np.pi/4
+reg_training_hori_hist.xgrid.grid_line_color = None
+reg_training_hori_hist.yaxis.major_label_orientation = np.pi/4
 reg_training_hori_hist_bar = reg_training_hori_hist.quad(bottom=0, left=reg_training_hedges[:-1],
                                                          right=reg_training_hedges[1:], top=reg_training_hhist)
 
@@ -397,7 +398,8 @@ reg_training_hori_hist_bar = reg_training_hori_hist.quad(bottom=0, left=reg_trai
 reg_training_vert_hist = figure(toolbar_location=None, width=100, height=reg_training.height,
                                 x_range=(0, (max(reg_training_vhist)*1.1)), y_range=reg_training.y_range,
                                 min_border=10, y_axis_location="right")
-# reg_training_vert_hist.yaxis.major_label_orientation = np.pi/4
+reg_training_vert_hist.ygrid.grid_line_color = None
+reg_training_vert_hist.xaxis.major_label_orientation = np.pi/4
 reg_training_vert_hist_bar = reg_training_vert_hist.quad(left=0, bottom=reg_training_vedges[:-1],
                                                          top=reg_training_vedges[1:], right=reg_training_vhist)
 
@@ -422,6 +424,8 @@ reg_testing_vhist, reg_testing_vedges = np.histogram(reg_testing_source.data["y_
 reg_testing_hori_hist = figure(toolbar_location=None, width=reg_testing.width,
                                height=100, x_range=reg_testing.x_range, y_range=(0, max(reg_testing_hhist)*1.1),
                                min_border=10, min_border_left=50, y_axis_location="right")
+reg_testing_hori_hist.xgrid.grid_line_color = None
+reg_testing_hori_hist.yaxis.major_label_orientation = np.pi/4
 reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
                                                        right=reg_testing_hedges[1:], top=reg_testing_hhist)
 
@@ -429,6 +433,8 @@ reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(bottom=0, left=reg_testin
 reg_testing_vert_hist = figure(toolbar_location=None, width=100, height=reg_testing.height,
                                x_range=(0, (max(reg_testing_vhist)*1.1)), y_range=reg_testing.y_range,
                                min_border=10, y_axis_location="right")
+reg_testing_vert_hist.ygrid.grid_line_color = None
+reg_testing_vert_hist.xaxis.major_label_orientation = np.pi/4
 reg_testing_vert_hist_bar = reg_testing_vert_hist.quad(bottom=reg_testing_vedges[:-1], left=0,
                                                        right=reg_testing_vhist, top=reg_testing_vedges[1:])
 
