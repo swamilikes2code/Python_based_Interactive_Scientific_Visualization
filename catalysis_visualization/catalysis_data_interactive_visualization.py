@@ -11,7 +11,7 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 
 # Import dataset
-df_catalysis_dataset = pd.read_csv("data/OCM-data.csv", index_col=0, header=0)
+df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv", index_col=0, header=0)
 
 # Removing the Blank names from the data
 df_catalysis_dataset.set_index(df_catalysis_dataset.index)
