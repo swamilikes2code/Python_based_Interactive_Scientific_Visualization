@@ -1,4 +1,3 @@
-import math
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
@@ -440,8 +439,8 @@ def update_regression():
     reg_RMSE_source.data["data"] = np.around([
         r2_score(reg_y_train, reg_y_train_pred),
         r2_score(reg_y_test, reg_y_test_pred),
-        math.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
-        math.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
+        np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
+        np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
     ], decimals=6)
     reg_coeff_source.data = dict(
         Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
