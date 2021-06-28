@@ -335,6 +335,12 @@ reg_y_choices = {
     "CO2y": "CO2y",
     "C2y": "C2y"
 }
+reg_line_of_best_fit_choices = {
+    "": "",
+    "Linear": 1,
+    "Quadratic": 2,
+    "Cubic": 3
+}
 reg_select_x = MultiSelect(title="X value",
                            options=sorted(reg_x_choices.keys()),
                            size=len(reg_x_choices),
@@ -342,8 +348,11 @@ reg_select_x = MultiSelect(title="X value",
 reg_select_y = Select(title="Y value",
                       options=sorted(reg_y_choices.keys()),
                       value="CarbonMonoOxide_y")
+reg_line_of_best_fit = Select(title="Line of best fit",
+                              options=sorted(reg_line_of_best_fit_choices.keys()),
+                              value="")
 
-reg_controls = [reg_select_x, reg_select_y]
+reg_controls = [reg_select_x, reg_select_y, reg_line_of_best_fit]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
@@ -360,8 +369,8 @@ reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
 ]
-reg_RMSE_data_table = DataTable(
-    source=reg_RMSE_source, columns=reg_RMSE_column, header_row=False, index_position=None, width=200)
+reg_RMSE_data_table = DataTable(source=reg_RMSE_source, columns=reg_RMSE_column,
+                                header_row=False, index_position=None, width=200)
 # Table to display coefficients
 reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
 reg_coeff_column = [
@@ -378,7 +387,7 @@ reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
 
-# TODO: add histogram for training set
+# Histograms for training set
 # Prepare data for both training histograms
 reg_training_hhist, reg_training_hedges = np.histogram(reg_training_source.data["y_actual"],
                                                        bins=20)
@@ -413,7 +422,7 @@ reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
 
-# TODO: add histogram for testing set
+# Histograms for testing set
 # Prepare data for both tesing histograms
 reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_source.data["y_actual"],
                                                      bins=20)
