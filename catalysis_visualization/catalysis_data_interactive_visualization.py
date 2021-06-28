@@ -11,7 +11,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 
 # Import dataset
-df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv", index_col=0, header=0)
+df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
+                                   index_col=0, header=0)
 
 # Removing the Blank names from the data
 df_catalysis_dataset.set_index(df_catalysis_dataset.index)
@@ -376,16 +377,32 @@ reg_training = figure(height=500, width=600,
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
-# TODO: add histogram for training set
-reg_training_hist, reg_training_edges = np.histogram(
-    reg_training_source.data["y_actual"], bins=20)
-reg_training_hori_hist = figure(toolbar_location=None, width=reg_training.width,
-                                height=100, x_range=reg_training.x_range, y_range=(0, max(reg_training_hist)*1.1),
-                                min_border=10, min_border_left=50, y_axis_location="right")
-reg_training_hori_hist_bar = reg_training_hori_hist.quad(
-    bottom=0, left=reg_training_edges[:-1], right=reg_training_edges[1:], top=reg_training_hist)
 
-reg_training_layout = column(reg_training, reg_training_hori_hist)
+# TODO: add histogram for training set
+# Prepare data for both training histograms
+reg_training_hhist, reg_training_hedges = np.histogram(reg_training_source.data["y_actual"],
+                                                       bins=20)
+reg_training_vhist, reg_training_vedges = np.histogram(reg_training_source.data["y_predict"],
+                                                       bins=20)
+
+# Horizontal histogram for training
+reg_training_hori_hist = figure(toolbar_location=None, width=reg_training.width,
+                                height=100, x_range=reg_training.x_range, y_range=(0, max(reg_training_hhist)*1.1),
+                                min_border=10, y_axis_location="right")
+# reg_training_hori_hist.yaxis.major_label_orientation = np.pi/4
+reg_training_hori_hist_bar = reg_training_hori_hist.quad(bottom=0, left=reg_training_hedges[:-1],
+                                                         right=reg_training_hedges[1:], top=reg_training_hhist)
+
+# Vertical histogram for training
+reg_training_vert_hist = figure(toolbar_location=None, width=100, height=reg_training.height,
+                                x_range=(0, (max(reg_training_vhist)*1.1)), y_range=reg_training.y_range,
+                                min_border=10, y_axis_location="right")
+# reg_training_vert_hist.yaxis.major_label_orientation = np.pi/4
+reg_training_vert_hist_bar = reg_training_vert_hist.quad(left=0, bottom=reg_training_vedges[:-1],
+                                                         top=reg_training_vedges[1:], right=reg_training_vhist)
+
+reg_training_layout = gridplot([[reg_training, reg_training_vert_hist],
+                                [reg_training_hori_hist, None]], merge_tools=True)
 
 # Create figure to display the scatter plot for testing set
 reg_testing = figure(height=500, width=600,
@@ -393,16 +410,30 @@ reg_testing = figure(height=500, width=600,
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
-# TODO: add histogram for testing set
-reg_testing_hist, reg_testing_edges = np.histogram(
-    reg_testing_source.data["y_actual"], bins=20)
-reg_testing_hori_hist = figure(toolbar_location=None, width=reg_testing.width,
-                               height=100, x_range=reg_testing.x_range, y_range=(0, max(reg_testing_hist)*1.1),
-                               min_border=10, min_border_left=50, y_axis_location="right")
-reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(
-    bottom=0, left=reg_testing_edges[:-1], right=reg_testing_edges[1:], top=reg_testing_hist)
 
-reg_testing_layout = column(reg_testing, reg_testing_hori_hist)
+# TODO: add histogram for testing set
+# Prepare data for both tesing histograms
+reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_source.data["y_actual"],
+                                                     bins=20)
+reg_testing_vhist, reg_testing_vedges = np.histogram(reg_testing_source.data["y_predict"],
+                                                     bins=20)
+
+# Horizontal histogram for testing
+reg_testing_hori_hist = figure(toolbar_location=None, width=reg_testing.width,
+                               height=100, x_range=reg_testing.x_range, y_range=(0, max(reg_testing_hhist)*1.1),
+                               min_border=10, min_border_left=50, y_axis_location="right")
+reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
+                                                       right=reg_testing_hedges[1:], top=reg_testing_hhist)
+
+# Vertical histogram for testing
+reg_testing_vert_hist = figure(toolbar_location=None, width=100, height=reg_testing.height,
+                               x_range=(0, (max(reg_testing_vhist)*1.1)), y_range=reg_testing.y_range,
+                               min_border=10, y_axis_location="right")
+reg_testing_vert_hist_bar = reg_testing_vert_hist.quad(bottom=reg_testing_vedges[:-1], left=0,
+                                                       right=reg_testing_vhist, top=reg_testing_vedges[1:])
+
+reg_testing_layout = gridplot([[reg_testing, reg_testing_vert_hist],
+                               [reg_testing_hori_hist, None]], merge_tools=True)
 
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
@@ -447,16 +478,31 @@ def update_regression():
     # print(reg_coeff_source.data)
     # update histogram
     # global reg_training_hist, reg_training_edges, reg_testing_hist, reg_testing_edges
-    reg_training_hist, reg_training_edges = np.histogram(reg_y_train, bins=20)
-    reg_training_hori_hist.y_range.end = max(reg_training_hist)*1.1
-    reg_training_hori_hist_bar.data_source.data["top"] = reg_training_hist
-    reg_training_hori_hist_bar.data_source.data["right"] = reg_training_edges[1:]
-    reg_training_hori_hist_bar.data_source.data["left"] = reg_training_edges[:-1]
-    reg_testing_hist, reg_testing_edges = np.histogram(reg_y_test, bins=20)
-    reg_testing_hori_hist.y_range.end = max(reg_testing_hist)*1.1
-    reg_testing_hori_hist_bar.data_source.data["top"] = reg_testing_hist
-    reg_testing_hori_hist_bar.data_source.data["right"] = reg_testing_edges[1:]
-    reg_testing_hori_hist_bar.data_source.data["left"] = reg_testing_edges[:-1]
+    reg_training_hhist, reg_training_hedges = np.histogram(reg_y_train,
+                                                           bins=20)
+    reg_training_vhist, reg_training_vedges = np.histogram(reg_y_train_pred,
+                                                           bins=20)
+    reg_training_hori_hist.y_range.end = max(reg_training_hhist)*1.1
+    reg_training_hori_hist_bar.data_source.data["top"] = reg_training_hhist
+    reg_training_hori_hist_bar.data_source.data["right"] = reg_training_hedges[1:]
+    reg_training_hori_hist_bar.data_source.data["left"] = reg_training_hedges[:-1]
+    reg_training_vert_hist.x_range.end = max(reg_training_vhist)*1.1
+    reg_training_vert_hist_bar.data_source.data["right"] = reg_training_vhist
+    reg_training_vert_hist_bar.data_source.data["bottom"] = reg_training_vedges[:-1]
+    reg_training_vert_hist_bar.data_source.data["top"] = reg_training_vedges[1:]
+
+    reg_testing_hhist, reg_testing_hedges = np.histogram(reg_y_test,
+                                                         bins=20)
+    reg_testing_vhist, reg_testing_vedges = np.histogram(reg_y_test_pred,
+                                                         bins=20)
+    reg_testing_hori_hist.y_range.end = max(reg_testing_hhist)*1.1
+    reg_testing_hori_hist_bar.data_source.data["top"] = reg_testing_hhist
+    reg_testing_hori_hist_bar.data_source.data["right"] = reg_testing_hedges[1:]
+    reg_testing_hori_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
+    reg_testing_vert_hist.x_range.end = max(reg_testing_vhist)*1.1
+    reg_testing_vert_hist_bar.data_source.data["right"] = reg_testing_vhist
+    reg_testing_vert_hist_bar.data_source.data["bottom"] = reg_testing_vedges[:-1]
+    reg_testing_vert_hist_bar.data_source.data["top"] = reg_testing_vedges[1:]
 
 
 # organizing panels of display
