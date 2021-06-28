@@ -368,8 +368,8 @@ reg_coeff_column = [
     TableColumn(field="Variables", title="Variables"),
     TableColumn(field="Coefficients", title="Coefficients")
 ]
-reg_coeff_data_table = DataTable(
-    source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=200)
+reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_column,
+                                 index_position=None, header_row=True, width=200)
 
 # Create figure to display the scatter plot for training set
 reg_training = figure(height=500, width=600,
@@ -390,18 +390,18 @@ reg_training_hori_hist = figure(toolbar_location=None, width=reg_training.width,
                                 height=100, x_range=reg_training.x_range, y_range=(0, max(reg_training_hhist)*1.1),
                                 min_border=10, y_axis_location="right")
 reg_training_hori_hist.xgrid.grid_line_color = None
-reg_training_hori_hist.yaxis.major_label_orientation = np.pi/4
+reg_training_hori_hist.yaxis.major_label_orientation = "horizontal"
 reg_training_hori_hist_bar = reg_training_hori_hist.quad(bottom=0, left=reg_training_hedges[:-1],
                                                          right=reg_training_hedges[1:], top=reg_training_hhist)
 
 # Vertical histogram for training
 reg_training_vert_hist = figure(toolbar_location=None, width=100, height=reg_training.height,
-                                x_range=(0, (max(reg_training_vhist)*1.1)), y_range=reg_training.y_range,
+                                x_range=((max(reg_training_vhist)*1.1), 0), y_range=reg_training.y_range,
                                 min_border=10, y_axis_location="right")
 reg_training_vert_hist.ygrid.grid_line_color = None
-reg_training_vert_hist.xaxis.major_label_orientation = np.pi/4
-reg_training_vert_hist_bar = reg_training_vert_hist.quad(left=0, bottom=reg_training_vedges[:-1],
-                                                         top=reg_training_vedges[1:], right=reg_training_vhist)
+reg_training_vert_hist.xaxis.major_label_orientation = np.pi/2
+reg_training_vert_hist_bar = reg_training_vert_hist.quad(left=reg_training_vhist, bottom=reg_training_vedges[:-1],
+                                                         top=reg_training_vedges[1:], right=0)
 
 reg_training_layout = gridplot([[reg_training, reg_training_vert_hist],
                                 [reg_training_hori_hist, None]], merge_tools=True)
@@ -425,7 +425,7 @@ reg_testing_hori_hist = figure(toolbar_location=None, width=reg_testing.width,
                                height=100, x_range=reg_testing.x_range, y_range=(0, max(reg_testing_hhist)*1.1),
                                min_border=10, min_border_left=50, y_axis_location="right")
 reg_testing_hori_hist.xgrid.grid_line_color = None
-reg_testing_hori_hist.yaxis.major_label_orientation = np.pi/4
+reg_testing_hori_hist.yaxis.major_label_orientation = "horizontal"
 reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
                                                        right=reg_testing_hedges[1:], top=reg_testing_hhist)
 
@@ -434,9 +434,9 @@ reg_testing_vert_hist = figure(toolbar_location=None, width=100, height=reg_test
                                x_range=(0, (max(reg_testing_vhist)*1.1)), y_range=reg_testing.y_range,
                                min_border=10, y_axis_location="right")
 reg_testing_vert_hist.ygrid.grid_line_color = None
-reg_testing_vert_hist.xaxis.major_label_orientation = np.pi/4
-reg_testing_vert_hist_bar = reg_testing_vert_hist.quad(bottom=reg_testing_vedges[:-1], left=0,
-                                                       right=reg_testing_vhist, top=reg_testing_vedges[1:])
+reg_testing_vert_hist.xaxis.major_label_orientation = np.pi/2
+reg_testing_vert_hist_bar = reg_testing_vert_hist.quad(bottom=reg_testing_vedges[:-1], left=reg_testing_vhist,
+                                                       right=0, top=reg_testing_vedges[1:])
 
 reg_testing_layout = gridplot([[reg_testing, reg_testing_vert_hist],
                                [reg_testing_hori_hist, None]], merge_tools=True)
@@ -492,8 +492,8 @@ def update_regression():
     reg_training_hori_hist_bar.data_source.data["top"] = reg_training_hhist
     reg_training_hori_hist_bar.data_source.data["right"] = reg_training_hedges[1:]
     reg_training_hori_hist_bar.data_source.data["left"] = reg_training_hedges[:-1]
-    reg_training_vert_hist.x_range.end = max(reg_training_vhist)*1.1
-    reg_training_vert_hist_bar.data_source.data["right"] = reg_training_vhist
+    reg_training_vert_hist.x_range.start = max(reg_training_vhist)*1.1
+    reg_training_vert_hist_bar.data_source.data["left"] = reg_training_vhist
     reg_training_vert_hist_bar.data_source.data["bottom"] = reg_training_vedges[:-1]
     reg_training_vert_hist_bar.data_source.data["top"] = reg_training_vedges[1:]
 
@@ -505,8 +505,8 @@ def update_regression():
     reg_testing_hori_hist_bar.data_source.data["top"] = reg_testing_hhist
     reg_testing_hori_hist_bar.data_source.data["right"] = reg_testing_hedges[1:]
     reg_testing_hori_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
-    reg_testing_vert_hist.x_range.end = max(reg_testing_vhist)*1.1
-    reg_testing_vert_hist_bar.data_source.data["right"] = reg_testing_vhist
+    reg_testing_vert_hist.x_range.start = max(reg_testing_vhist)*1.1
+    reg_testing_vert_hist_bar.data_source.data["left"] = reg_testing_vhist
     reg_testing_vert_hist_bar.data_source.data["bottom"] = reg_testing_vedges[:-1]
     reg_testing_vert_hist_bar.data_source.data["top"] = reg_testing_vedges[1:]
 
