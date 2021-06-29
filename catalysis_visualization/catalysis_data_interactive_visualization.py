@@ -336,12 +336,6 @@ reg_y_choices = {
     "CO2y": "CO2y",
     "C2y": "C2y"
 }
-reg_line_of_best_fit_choices = {
-    "": "",
-    "Linear": 1,
-    "Quadratic": 2,
-    "Cubic": 3
-}
 reg_select_x = MultiSelect(title="X value",
                            options=sorted(reg_x_choices.keys()),
                            size=len(reg_x_choices),
@@ -349,17 +343,11 @@ reg_select_x = MultiSelect(title="X value",
 reg_select_y = Select(title="Y value",
                       options=sorted(reg_y_choices.keys()),
                       value="CarbonMonoOxide_y")
-reg_line_of_best_fit = Select(title="Line of best fit",
-                              options=sorted(
-                                  reg_line_of_best_fit_choices.keys()),
-                              value="")
 
 reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
-
-reg_TOOLTIPS = [("Measurement Error", "0")]
 
 # Create column data for the plot
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -385,8 +373,8 @@ reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_colu
                                  index_position=None, header_row=True, width=200)
 
 # Create figure to display the scatter plot for training set
-reg_training = figure(height=500, width=600,
-                      toolbar_location="above", title="Actual vs. Predicted")
+reg_training = figure(height=600, width=700, toolbar_location="above",
+                      title="Actual vs. Predicted")
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
@@ -409,8 +397,8 @@ reg_training_hist_bar = reg_training_hist.quad(bottom=0, left=reg_training_hedge
 reg_training_layout = column(reg_training, reg_training_hist)
 
 # Create figure to display the scatter plot for testing set
-reg_testing = figure(height=500, width=600,
-                     toolbar_location="above", title="Actual vs. Predicted")
+reg_testing = figure(height=600, width=700, toolbar_location="above",
+                     title="Actual vs. Predicted")
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
@@ -435,16 +423,20 @@ reg_testing_layout = column(reg_testing, reg_testing_hist)
 # Adding line(s) of best fit
 regression_line = Slope()
 # reg_training.add_layout(regression_line)
-reg_testing.add_layout(regression_line)
+# reg_testing.add_layout(regression_line)
 
 reg_deg = 1  # degree for regression line
 
 # data source for training line of best fit
 reg_training_line_source = ColumnDataSource(data=dict(x=[], y=[]))
-reg_training.line(x="x", y="y", source=reg_training_line_source, color="red",line_width=1.5)
+reg_training.line(x="x", y="y", source=reg_training_line_source,
+                  color="red", line_width=1.5, legend_label="Line of Best Fit")
+reg_training.legend.click_policy = "hide"
 
 reg_testing_line_source = ColumnDataSource(data=dict(x=[], y=[]))
-reg_testing.line(x="x", y="y", source=reg_testing_line_source, color="red",line_width=1.5)
+reg_testing.line(x="x", y="y", source=reg_testing_line_source,
+                 color="red", line_width=1.5, legend_label="Line of Best Fit")
+reg_testing.legend.click_policy = "hide"
 
 
 # Adding tabs for regression plots
@@ -485,8 +477,8 @@ def update_regression():
         np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
         np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
     ], decimals=6)
-    reg_coeff_source.data = dict(
-        Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
+    reg_coeff_source.data = dict(Variables=x_name,
+                                 Coefficients=np.around(reg_ml.coef_, decimals=6))
     # print(reg_coeff_source.data)
 
     # Regrssion line of best fit using numpy(Training dataset)
