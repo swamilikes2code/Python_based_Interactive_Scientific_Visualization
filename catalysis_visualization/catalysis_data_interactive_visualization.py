@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Slope, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis
 from sklearn.model_selection import train_test_split
@@ -11,7 +11,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 
 
 # Import dataset
-df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv", index_col=0, header=0)
+df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
+                                   index_col=0, header=0)
 
 # Removing the Blank names from the data
 df_catalysis_dataset.set_index(df_catalysis_dataset.index)
@@ -334,6 +335,12 @@ reg_y_choices = {
     "CO2y": "CO2y",
     "C2y": "C2y"
 }
+reg_line_of_best_fit_choices = {
+    "": "",
+    "Linear": 1,
+    "Quadratic": 2,
+    "Cubic": 3
+}
 reg_select_x = MultiSelect(title="X value",
                            options=sorted(reg_x_choices.keys()),
                            size=len(reg_x_choices),
@@ -341,11 +348,17 @@ reg_select_x = MultiSelect(title="X value",
 reg_select_y = Select(title="Y value",
                       options=sorted(reg_y_choices.keys()),
                       value="CarbonMonoOxide_y")
+reg_line_of_best_fit = Select(title="Line of best fit",
+                              options=sorted(
+                                  reg_line_of_best_fit_choices.keys()),
+                              value="")
 
 reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
+
+reg_TOOLTIPS = [("Measurement Error", "0")]
 
 # Create column data for the plot
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -359,16 +372,16 @@ reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
 ]
-reg_RMSE_data_table = DataTable(
-    source=reg_RMSE_source, columns=reg_RMSE_column, header_row=False, index_position=None, width=200)
+reg_RMSE_data_table = DataTable(source=reg_RMSE_source, columns=reg_RMSE_column,
+                                header_row=False, index_position=None, width=200)
 # Table to display coefficients
 reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
 reg_coeff_column = [
     TableColumn(field="Variables", title="Variables"),
     TableColumn(field="Coefficients", title="Coefficients")
 ]
-reg_coeff_data_table = DataTable(
-    source=reg_coeff_source, columns=reg_coeff_column, index_position=None, header_row=True, width=200)
+reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_column,
+                                 index_position=None, header_row=True, width=200)
 
 # Create figure to display the scatter plot for training set
 reg_training = figure(height=500, width=600,
@@ -376,16 +389,23 @@ reg_training = figure(height=500, width=600,
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
-# TODO: add histogram for training set
-reg_training_hist, reg_training_edges = np.histogram(
-    reg_training_source.data["y_actual"], bins=20)
-reg_training_hori_hist = figure(toolbar_location=None, width=reg_training.width,
-                                height=100, x_range=reg_training.x_range, y_range=(0, max(reg_training_hist)*1.1),
-                                min_border=10, min_border_left=50, y_axis_location="right")
-reg_training_hori_hist_bar = reg_training_hori_hist.quad(
-    bottom=0, left=reg_training_edges[:-1], right=reg_training_edges[1:], top=reg_training_hist)
 
-reg_training_layout = column(reg_training, reg_training_hori_hist)
+# Histograms for training set
+# Prepare data for both training histograms
+reg_training_hhist, reg_training_hedges = np.histogram(reg_training_source.data["y_actual"],
+                                                       bins=20)
+
+# Horizontal histogram for training
+reg_training_hist = figure(toolbar_location=None, width=reg_training.width,
+                           height=100, x_range=(min(reg_training_hedges[:-1])*1.1, max(reg_training_hedges[1:])*1.1),
+                           y_range=(0, max(reg_training_hhist)*1.1), min_border=10, y_axis_location="right",
+                           title="Error Histogram")
+reg_training_hist.xgrid.grid_line_color = None
+reg_training_hist.yaxis.major_label_orientation = np.pi/4
+reg_training_hist_bar = reg_training_hist.quad(bottom=0, left=reg_training_hedges[:-1],
+                                               right=reg_training_hedges[1:], top=reg_training_hhist)
+
+reg_training_layout = column(reg_training, reg_training_hist)
 
 # Create figure to display the scatter plot for testing set
 reg_testing = figure(height=500, width=600,
@@ -393,16 +413,28 @@ reg_testing = figure(height=500, width=600,
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
-# TODO: add histogram for testing set
-reg_testing_hist, reg_testing_edges = np.histogram(
-    reg_testing_source.data["y_actual"], bins=20)
-reg_testing_hori_hist = figure(toolbar_location=None, width=reg_testing.width,
-                               height=100, x_range=reg_testing.x_range, y_range=(0, max(reg_testing_hist)*1.1),
-                               min_border=10, min_border_left=50, y_axis_location="right")
-reg_testing_hori_hist_bar = reg_testing_hori_hist.quad(
-    bottom=0, left=reg_testing_edges[:-1], right=reg_testing_edges[1:], top=reg_testing_hist)
 
-reg_testing_layout = column(reg_testing, reg_testing_hori_hist)
+# Histograms for testing set
+# Prepare data for both tesing histograms
+reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_source.data["y_actual"],
+                                                     bins=20)
+
+# Horizontal histogram for testing
+reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width,
+                          height=100, x_range=(min(reg_testing_hedges[:-1])*1.1, max(reg_testing_hedges[1:])*1.1),
+                          y_range=(0, max(reg_testing_hhist)*1.1), min_border=10, y_axis_location="right",
+                          title="Error Histogram")
+reg_testing_hist.xgrid.grid_line_color = None
+reg_testing_hist.yaxis.major_label_orientation = np.pi/4
+reg_testing_hist_bar = reg_testing_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
+                                             right=reg_testing_hedges[1:], top=reg_testing_hhist)
+
+reg_testing_layout = column(reg_testing, reg_testing_hist)
+
+# Adding line(s) of best fit
+regression_line = Slope()
+reg_training.add_layout(regression_line)
+reg_testing.add_layout(regression_line)
 
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
@@ -445,18 +477,46 @@ def update_regression():
     reg_coeff_source.data = dict(
         Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
     # print(reg_coeff_source.data)
+
+    # Regression Line Part 1(linear)
+    reg_slope = reg_ml.coef_[0]  # Takes the first element of the array
+    reg_intercept = reg_ml.intercept_
+    # Make the regression line
+    regression_line.gradient = reg_slope
+    regression_line.y_intercept = reg_intercept
+    regression_line.line_color = "red"
+    regression_line.line_width = 2.1
+
     # update histogram
-    # global reg_training_hist, reg_training_edges, reg_testing_hist, reg_testing_edges
-    reg_training_hist, reg_training_edges = np.histogram(reg_y_train, bins=20)
-    reg_training_hori_hist.y_range.end = max(reg_training_hist)*1.1
-    reg_training_hori_hist_bar.data_source.data["top"] = reg_training_hist
-    reg_training_hori_hist_bar.data_source.data["right"] = reg_training_edges[1:]
-    reg_training_hori_hist_bar.data_source.data["left"] = reg_training_edges[:-1]
-    reg_testing_hist, reg_testing_edges = np.histogram(reg_y_test, bins=20)
-    reg_testing_hori_hist.y_range.end = max(reg_testing_hist)*1.1
-    reg_testing_hori_hist_bar.data_source.data["top"] = reg_testing_hist
-    reg_testing_hori_hist_bar.data_source.data["right"] = reg_testing_edges[1:]
-    reg_testing_hori_hist_bar.data_source.data["left"] = reg_testing_edges[:-1]
+    # training set
+    reg_training_diff = []
+    reg_training_zip = zip(reg_y_train_pred, reg_y_train)
+    for pred, train in reg_training_zip:
+        reg_training_diff.append(pred - train)
+
+    reg_training_hhist, reg_training_hedges = np.histogram(reg_training_diff,
+                                                           bins=20)
+    reg_training_hist.y_range.end = max(reg_training_hhist)*1.1
+    reg_training_hist.x_range.start = min(reg_training_hedges[:-1])*1.1
+    reg_training_hist.x_range.end = max(reg_training_hedges[1:])*1.1
+    reg_training_hist_bar.data_source.data["top"] = reg_training_hhist
+    reg_training_hist_bar.data_source.data["right"] = reg_training_hedges[1:]
+    reg_training_hist_bar.data_source.data["left"] = reg_training_hedges[:-1]
+
+    # testing set
+    reg_testing_diff = []
+    reg_testing_zip = zip(reg_y_test_pred, reg_y_test)
+    for pred, train in reg_testing_zip:
+        reg_testing_diff.append(pred - train)
+
+    reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_diff,
+                                                         bins=20)
+    reg_testing_hist.y_range.end = max(reg_testing_hhist)*1.1
+    reg_testing_hist.x_range.start = min(reg_testing_hedges[:-1])*1.1
+    reg_testing_hist.x_range.end = max(reg_testing_hedges[1:])*1.1
+    reg_testing_hist_bar.data_source.data["top"] = reg_testing_hhist
+    reg_testing_hist_bar.data_source.data["right"] = reg_testing_hedges[1:]
+    reg_testing_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
 
 
 # organizing panels of display
