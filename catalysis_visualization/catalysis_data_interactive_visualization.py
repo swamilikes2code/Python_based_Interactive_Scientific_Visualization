@@ -353,7 +353,7 @@ reg_line_of_best_fit = Select(title="Line of best fit",
                                   reg_line_of_best_fit_choices.keys()),
                               value="")
 
-reg_controls = [reg_select_x, reg_select_y, reg_line_of_best_fit]
+reg_controls = [reg_select_x, reg_select_y]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
