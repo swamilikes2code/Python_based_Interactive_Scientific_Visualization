@@ -8,6 +8,7 @@ from bokeh.palettes import viridis, gray, cividis
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
+import matplotlib.pyplot as plt
 
 
 # Import dataset
@@ -431,9 +432,10 @@ reg_testing_layout = column(reg_testing, reg_testing_hori_hist)
 
 # Adding line(s) of best fit
 regression_line = Slope()
-reg_training.add_layout(regression_line)
+# reg_training.add_layout(regression_line)
 reg_testing.add_layout(regression_line)
 
+reg_deg = 1 # degree for regression line
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
 reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
@@ -484,6 +486,14 @@ def update_regression():
     regression_line.y_intercept = reg_intercept
     regression_line.line_color = "red"
     regression_line.line_width = 2.1
+
+    # Regrssion line 2 (Only for training) using numpy
+    par = np.polyfit(reg_y_train, reg_y_train_pred, deg =reg_deg, full=True)
+    slope=par[0][0]
+    intercept=par[0][1]
+    y_predicted = [slope*i + intercept  for i in reg_y_train]
+    reg_training.line(reg_y_train,y_predicted,color="red")
+
 
     # update histogram
     # training set
