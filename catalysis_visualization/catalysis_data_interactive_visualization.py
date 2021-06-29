@@ -397,11 +397,11 @@ reg_training_hhist, reg_training_hedges = np.histogram(reg_training_source.data[
 
 # Horizontal histogram for training
 reg_training_hist = figure(toolbar_location=None, width=reg_training.width,
-                           height=100, x_range=reg_training.x_range,
-                           y_range=(0, max(reg_training_hhist)*1.1),
-                           min_border=10, y_axis_location="right",
+                           height=100, x_range=(min(reg_training_hedges[:-1])*1.1, max(reg_training_hedges[1:])*1.1),
+                           y_range=(0, max(reg_training_hhist)*1.1), min_border=10, y_axis_location="right",
                            title="Error Histogram")
 reg_training_hist.xgrid.grid_line_color = None
+reg_training_hist.yaxis.major_label_orientation = np.pi/4
 reg_training_hist_bar = reg_training_hist.quad(bottom=0, left=reg_training_hedges[:-1],
                                                right=reg_training_hedges[1:], top=reg_training_hhist)
 
@@ -421,11 +421,11 @@ reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_source.data["y_
 
 # Horizontal histogram for testing
 reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width,
-                          height=100, x_range=reg_testing.x_range,
-                          y_range=(0, max(reg_testing_hhist)*1.1),
-                          min_border=10, min_border_left=50, y_axis_location="right",
+                          height=100, x_range=(min(reg_testing_hedges[:-1])*1.1, max(reg_testing_hedges[1:])*1.1),
+                          y_range=(0, max(reg_testing_hhist)*1.1), min_border=10, y_axis_location="right",
                           title="Error Histogram")
 reg_testing_hist.xgrid.grid_line_color = None
+reg_testing_hist.yaxis.major_label_orientation = np.pi/4
 reg_testing_hist_bar = reg_testing_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
                                              right=reg_testing_hedges[1:], top=reg_testing_hhist)
 
@@ -497,6 +497,8 @@ def update_regression():
     reg_training_hhist, reg_training_hedges = np.histogram(reg_training_diff,
                                                            bins=20)
     reg_training_hist.y_range.end = max(reg_training_hhist)*1.1
+    reg_training_hist.x_range.start = min(reg_training_hedges[:-1])*1.1
+    reg_training_hist.x_range.end = max(reg_training_hedges[1:])*1.1
     reg_training_hist_bar.data_source.data["top"] = reg_training_hhist
     reg_training_hist_bar.data_source.data["right"] = reg_training_hedges[1:]
     reg_training_hist_bar.data_source.data["left"] = reg_training_hedges[:-1]
@@ -510,6 +512,8 @@ def update_regression():
     reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_diff,
                                                          bins=20)
     reg_testing_hist.y_range.end = max(reg_testing_hhist)*1.1
+    reg_testing_hist.x_range.start = min(reg_testing_hedges[:-1])*1.1
+    reg_testing_hist.x_range.end = max(reg_testing_hedges[1:])*1.1
     reg_testing_hist_bar.data_source.data["top"] = reg_testing_hhist
     reg_testing_hist_bar.data_source.data["right"] = reg_testing_hedges[1:]
     reg_testing_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
