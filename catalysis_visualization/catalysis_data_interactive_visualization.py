@@ -398,7 +398,7 @@ reg_training_hhist, reg_training_hedges = np.histogram(reg_training_source.data[
 
 # Horizontal histogram for training
 reg_training_hist = figure(toolbar_location=None, width=reg_training.width,
-                           height=100, x_range=(min(reg_training_hedges[:-1])*1.1, max(reg_training_hedges[1:])*1.1),
+                           height=300, x_range=(min(reg_training_hedges[:-1])*1.1, max(reg_training_hedges[1:])*1.1),
                            y_range=(0, max(reg_training_hhist)*1.1), min_border=10, y_axis_location="right",
                            title="Error Histogram")
 reg_training_hist.xgrid.grid_line_color = None
@@ -422,7 +422,7 @@ reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_source.data["y_
 
 # Horizontal histogram for testing
 reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width,
-                          height=100, x_range=(min(reg_testing_hedges[:-1])*1.1, max(reg_testing_hedges[1:])*1.1),
+                          height=300, x_range=(min(reg_testing_hedges[:-1])*1.1, max(reg_testing_hedges[1:])*1.1),
                           y_range=(0, max(reg_testing_hhist)*1.1), min_border=10, y_axis_location="right",
                           title="Error Histogram")
 reg_testing_hist.xgrid.grid_line_color = None
@@ -437,7 +437,12 @@ regression_line = Slope()
 # reg_training.add_layout(regression_line)
 reg_testing.add_layout(regression_line)
 
-reg_deg = 1 # degree for regression line
+reg_deg = 1  # degree for regression line
+
+# data source for training line of best fit
+reg_training_line_source = ColumnDataSource(data=dict(x=[], y=[]))
+reg_training.line(x="x", y="y", source=reg_training_line_source, color="red")
+
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
 reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
@@ -490,12 +495,12 @@ def update_regression():
     regression_line.line_width = 2.1
 
     # Regrssion line 2 (Only for training) using numpy
-    par = np.polyfit(reg_y_train, reg_y_train_pred, deg =reg_deg, full=True)
-    slope=par[0][0]
-    intercept=par[0][1]
-    y_predicted = [slope*i + intercept  for i in reg_y_train]
-    reg_training.line(reg_y_train,y_predicted,color="red")
-
+    par = np.polyfit(reg_y_train, reg_y_train_pred, deg=reg_deg, full=True)
+    slope = par[0][0]
+    intercept = par[0][1]
+    y_predicted = [slope*i + intercept for i in reg_y_train]
+    reg_training_line_source.data = dict(x=reg_y_train, y=y_predicted)
+    # reg_training.line(reg_y_train, y_predicted, color="red")
 
     # update histogram
     # training set
