@@ -441,7 +441,11 @@ reg_deg = 1  # degree for regression line
 
 # data source for training line of best fit
 reg_training_line_source = ColumnDataSource(data=dict(x=[], y=[]))
-reg_training.line(x="x", y="y", source=reg_training_line_source, color="red")
+reg_training.line(x="x", y="y", source=reg_training_line_source, color="red",line_width=1.5)
+
+reg_testing_line_source = ColumnDataSource(data=dict(x=[], y=[]))
+reg_testing.line(x="x", y="y", source=reg_testing_line_source, color="red",line_width=1.5)
+
 
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
@@ -485,22 +489,19 @@ def update_regression():
         Variables=x_name, Coefficients=np.around(reg_ml.coef_, decimals=6))
     # print(reg_coeff_source.data)
 
-    # Regression Line Part 1(linear)
-    reg_slope = reg_ml.coef_[0]  # Takes the first element of the array
-    reg_intercept = reg_ml.intercept_
-    # Make the regression line
-    regression_line.gradient = reg_slope
-    regression_line.y_intercept = reg_intercept
-    regression_line.line_color = "red"
-    regression_line.line_width = 2.1
+    # Regrssion line of best fit using numpy(Training dataset)
+    par_training = np.polyfit(reg_y_train, reg_y_train_pred, deg=1, full=True)
+    slope_training = par_training[0][0]
+    intercept_training = par_training[0][1]
+    y_predicted_training = [slope_training*i + intercept_training for i in reg_y_train]
+    reg_training_line_source.data = dict(x=reg_y_train, y=y_predicted_training)
 
-    # Regrssion line 2 (Only for training) using numpy
-    par = np.polyfit(reg_y_train, reg_y_train_pred, deg=reg_deg, full=True)
-    slope = par[0][0]
-    intercept = par[0][1]
-    y_predicted = [slope*i + intercept for i in reg_y_train]
-    reg_training_line_source.data = dict(x=reg_y_train, y=y_predicted)
-    # reg_training.line(reg_y_train, y_predicted, color="red")
+    # Regression Line of Best Fit (Testing dataset)
+    par_testing = np.polyfit(reg_y_test, reg_y_test_pred, deg=1, full=True)
+    slope_testing = par_testing[0][0]
+    intercept_testing = par_testing[0][1]
+    y_predicted_testing = [slope_testing*i + intercept_testing for i in reg_y_test]
+    reg_testing_line_source.data = dict(x=reg_y_test, y=y_predicted_testing)
 
     # update histogram
     # training set
