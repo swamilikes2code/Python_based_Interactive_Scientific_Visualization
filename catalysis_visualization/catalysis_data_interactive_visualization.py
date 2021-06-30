@@ -365,7 +365,7 @@ reg_coeff_column = [
     TableColumn(field="Coefficients", title="Coefficients")
 ]
 reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_column,
-                                 index_position=None, header_row=True, width=200)
+                                 index_position=None, header_row=True, width=250)
 
 # Create figure to display the scatter plot for training set
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
