@@ -53,9 +53,22 @@ The interactive webpage can be found here:
 * [Flask](https://pypi.org/project/Flask/) - Used to embed interactive Bokeh applications in a HTML
 
 ## Authors
-* **Anna Moragne** - *Developer* - [annamoragne](https://github.com/annamoragne)
 
-* **Brian Lucas** - *Developer* - [cariocabrian](https://github.com/cariocabrian)
+* Class of 2021
+
+    - **Timothy Odom** - *Core Developer* - [too223](https://github.com/too223)
+    
+    - **Xu Chen** - *Core Developer* - [xuc323](https://github.com/xuc323)
+
+    - **Neel Surya** - *Design, Implementation and UI/UX Developer* - [Neel-Surya](https://github.com/Neel-Surya)
+
+    - **Alex Outkou** - *UI/UX and HTML Developer* - [ado323](https://github.com/ado323)
+    
+* Class of 2020
+
+    - **Anna Moragne** - *Core Developer* - [annamoragne](https://github.com/annamoragne)
+
+    - **Brian Lucas** - *Design, Implementation and UI/UX Developer* - [cariocabrian](https://github.com/cariocabrian)
 
 * **Raghuram Thiagarajan** - *Project Lead* - [swamilikes2code](https://github.com/swamilikes2code)
 
