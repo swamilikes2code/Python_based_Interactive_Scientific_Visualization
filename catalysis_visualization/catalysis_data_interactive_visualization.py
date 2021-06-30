@@ -2,14 +2,12 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Slope, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
-import matplotlib.pyplot as plt
-
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
@@ -349,9 +347,6 @@ for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
 
-# Create column data for the plot
-reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
-reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 # Table to display R^2 and RMSE
 reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training", "R^2 for Testing",
@@ -373,68 +368,58 @@ reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_colu
                                  index_position=None, header_row=True, width=200)
 
 # Create figure to display the scatter plot for training set
+reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 reg_training = figure(height=600, width=700, toolbar_location="above",
                       title="Actual vs. Predicted")
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
 
-# Histograms for training set
-# Prepare data for both training histograms
+# Histogram for training set
 reg_training_hhist, reg_training_hedges = np.histogram(reg_training_source.data["y_actual"],
                                                        bins=20)
-
-# Horizontal histogram for training
-reg_training_hist = figure(toolbar_location=None, width=reg_training.width,
-                           height=300, x_range=(min(reg_training_hedges[:-1])*1.1, max(reg_training_hedges[1:])*1.1),
-                           y_range=(0, max(reg_training_hhist)*1.1), min_border=10, y_axis_location="right",
-                           title="Error Histogram")
+reg_training_hist = figure(toolbar_location=None, width=reg_training.width, title="Error Histogram",
+                           height=250, x_range=(min(reg_training_hedges[:-1])*1.1, max(reg_training_hedges[1:])*1.1),
+                           y_range=(0, max(reg_training_hhist)*1.1), min_border=10, y_axis_location="right")
 reg_training_hist.xgrid.grid_line_color = None
-reg_training_hist.yaxis.major_label_orientation = np.pi/4
+reg_training_hist.yaxis.major_label_orientation = "horizontal"
 reg_training_hist_bar = reg_training_hist.quad(bottom=0, left=reg_training_hedges[:-1],
                                                right=reg_training_hedges[1:], top=reg_training_hhist)
 
 reg_training_layout = column(reg_training, reg_training_hist)
 
 # Create figure to display the scatter plot for testing set
+reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
 reg_testing = figure(height=600, width=700, toolbar_location="above",
                      title="Actual vs. Predicted")
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
 
-# Histograms for testing set
-# Prepare data for both tesing histograms
+# Histogram for testing set
 reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_source.data["y_actual"],
                                                      bins=20)
-
-# Horizontal histogram for testing
-reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width,
-                          height=300, x_range=(min(reg_testing_hedges[:-1])*1.1, max(reg_testing_hedges[1:])*1.1),
-                          y_range=(0, max(reg_testing_hhist)*1.1), min_border=10, y_axis_location="right",
-                          title="Error Histogram")
+reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width, title="Error Histogram",
+                          height=250, x_range=(min(reg_testing_hedges[:-1])*1.1, max(reg_testing_hedges[1:])*1.1),
+                          y_range=(0, max(reg_testing_hhist)*1.1), min_border=10, y_axis_location="right")
 reg_testing_hist.xgrid.grid_line_color = None
-reg_testing_hist.yaxis.major_label_orientation = np.pi/4
+reg_testing_hist.yaxis.major_label_orientation = "horizontal"
 reg_testing_hist_bar = reg_testing_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
                                              right=reg_testing_hedges[1:], top=reg_testing_hhist)
 
 reg_testing_layout = column(reg_testing, reg_testing_hist)
 
-# Adding line(s) of best fit
-regression_line = Slope()
-# reg_training.add_layout(regression_line)
-# reg_testing.add_layout(regression_line)
+# Support Lines
+# trend line
+reg_training_trend_source = ColumnDataSource(data=dict(x=[], y=[]))
+reg_training.line(x="x", y="y", source=reg_training_trend_source,
+                  color="black", line_width=2, legend_label="Trend Line")
 
-reg_deg = 1  # degree for regression line
+reg_testing_trend_source = ColumnDataSource(data=dict(x=[], y=[]))
+reg_testing.line(x="x", y="y", source=reg_testing_trend_source,
+                 color="black", line_width=2, legend_label="Trend Line")
 
-# data source for trend line
-reg_training_trend_source = ColumnDataSource(data=dict(x=[],y=[]))
-reg_training.line(x="x",y="y",source=reg_training_trend_source,color="black",line_width=2,legend_label="Trend Line")
-
-reg_testing_trend_source = ColumnDataSource(data=dict(x=[],y=[]))
-reg_testing.line(x="x",y="y",source=reg_testing_trend_source,color="black",line_width=2,legend_label="Trend Line")
-
-# data source for training line of best fit
+# line of best fit
 reg_training_line_source = ColumnDataSource(data=dict(x=[], y=[]))
 reg_training.line(x="x", y="y", source=reg_training_line_source,
                   color="red", line_width=1.5, legend_label="Line of Best Fit")
@@ -444,10 +429,9 @@ reg_testing.line(x="x", y="y", source=reg_testing_line_source,
                  color="red", line_width=1.5, legend_label="Line of Best Fit")
 
 reg_training.legend.click_policy = "hide"
-reg_training.legend.location="top_left"
+reg_training.legend.location = "top_left"
 reg_testing.legend.click_policy = "hide"
-reg_testing.legend.location="top_left"
-
+reg_testing.legend.location = "top_left"
 
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
@@ -459,12 +443,11 @@ regression_layout = column(
 
 
 def update_regression():
+    # get selected values from selectors
     x_name = []
     for choice in reg_select_x.value:
         x_name.append(reg_x_choices[choice])
     y_name = reg_y_choices[reg_select_y.value]
-    # print("x values: ", x_name)
-    # print("y value: ", y_name)
     reg_x = df_catalysis_dataset[x_name].values
     reg_y = df_catalysis_dataset[y_name].values
     # Split into training and test
@@ -491,30 +474,32 @@ def update_regression():
                                  Coefficients=np.around(reg_ml.coef_, decimals=6))
 
     # Trend line for training
-    reg_training_trend_source.data=dict(
-        x=np.linspace(start=min(reg_y_train),stop=max(reg_y_train)),
-        y=np.linspace(start=min(reg_y_train_pred),stop=max(reg_y_train_pred)))
+    reg_training_trend_source.data = dict(
+        x=np.linspace(start=min(reg_y_train), stop=max(reg_y_train)),
+        y=np.linspace(start=min(reg_y_train_pred), stop=max(reg_y_train_pred)))
 
     # Trend line for testing
-    reg_testing_trend_source.data=dict(
+    reg_testing_trend_source.data = dict(
         x=np.linspace(start=min(reg_y_test), stop=max(reg_y_test)),
-        y=np.linspace(start=min(reg_y_test_pred),stop=max(reg_y_test_pred)))
+        y=np.linspace(start=min(reg_y_test_pred), stop=max(reg_y_test_pred)))
 
     # Regrssion line of best fit using numpy(Training dataset)
     par_training = np.polyfit(reg_y_train, reg_y_train_pred, deg=1, full=True)
     slope_training = par_training[0][0]
     intercept_training = par_training[0][1]
-    y_predicted_training = [slope_training*i + intercept_training for i in reg_y_train]
+    y_predicted_training = [slope_training*i +
+                            intercept_training for i in reg_y_train]
     reg_training_line_source.data = dict(x=reg_y_train, y=y_predicted_training)
 
     # Regression Line of Best Fit (Testing dataset)
     par_testing = np.polyfit(reg_y_test, reg_y_test_pred, deg=1, full=True)
     slope_testing = par_testing[0][0]
     intercept_testing = par_testing[0][1]
-    y_predicted_testing = [slope_testing*i + intercept_testing for i in reg_y_test]
+    y_predicted_testing = [slope_testing*i +
+                           intercept_testing for i in reg_y_test]
     reg_testing_line_source.data = dict(x=reg_y_test, y=y_predicted_testing)
 
-    # update histogram
+    # Update histograms
     # training set
     reg_training_diff = []
     reg_training_zip = zip(reg_y_train_pred, reg_y_train)
