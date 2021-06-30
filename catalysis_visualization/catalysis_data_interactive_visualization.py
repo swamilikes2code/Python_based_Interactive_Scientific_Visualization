@@ -488,7 +488,7 @@ def update_regression():
     # Trend line for testing
     reg_testing_trend_interval = np.linspace(
         start=max(min(reg_y_test), min(reg_y_test_pred)),
-        end=min(max(reg_y_test), max(reg_y_test_pred))
+        stop=min(max(reg_y_test), max(reg_y_test_pred))
     )
     reg_testing_trend_source.data = dict(
         x=reg_testing_trend_interval,
