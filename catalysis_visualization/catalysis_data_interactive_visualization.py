@@ -143,7 +143,7 @@ vhist, vedges = np.histogram(
 vzeros = np.zeros(len(vedges)-1)
 
 pv = figure(toolbar_location=None, width=100, height=p.height,
-            x_range=(0, (max(vhist)*1.1)), y_range=p.y_range, min_border=10, y_axis_location="right")
+            x_range=(0, (max(vhist)*1.1)), y_range=p.y_range, min_border=10, y_axis_location="left")
 pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
 pv.background_fill_color = "#fafafa"
