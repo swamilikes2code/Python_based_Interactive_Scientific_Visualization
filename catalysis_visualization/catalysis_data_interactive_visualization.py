@@ -413,11 +413,11 @@ reg_testing_layout = column(reg_testing, reg_testing_hist)
 # trend line
 reg_training_trend_source = ColumnDataSource(data=dict(x=[], y=[]))
 reg_training.line(x="x", y="y", source=reg_training_trend_source,
-                  color="black", line_width=2, legend_label="Trend Line")
+                  color="black", line_width=2, legend_label="y = x")
 
 reg_testing_trend_source = ColumnDataSource(data=dict(x=[], y=[]))
 reg_testing.line(x="x", y="y", source=reg_testing_trend_source,
-                 color="black", line_width=2, legend_label="Trend Line")
+                 color="black", line_width=2, legend_label="y = x")
 
 # line of best fit
 reg_training_line_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -476,14 +476,24 @@ def update_regression():
                                  Coefficients=np.around(reg_ml.coef_, decimals=6))
 
     # Trend line for training
+    reg_training_trend_interval = np.linspace(
+        start=max(min(reg_y_train), min(reg_y_train_pred)),
+        stop=min(max(reg_y_train), max(reg_y_train_pred))
+    )
     reg_training_trend_source.data = dict(
-        x=np.linspace(start=min(reg_y_train), stop=max(reg_y_train)),
-        y=np.linspace(start=min(reg_y_train_pred), stop=max(reg_y_train_pred)))
+        x=reg_training_trend_interval,
+        y=reg_training_trend_interval
+    )
 
     # Trend line for testing
+    reg_testing_trend_interval = np.linspace(
+        start=max(min(reg_y_test), min(reg_y_test_pred)),
+        end=min(max(reg_y_test), max(reg_y_test_pred))
+    )
     reg_testing_trend_source.data = dict(
-        x=np.linspace(start=min(reg_y_test), stop=max(reg_y_test)),
-        y=np.linspace(start=min(reg_y_test_pred), stop=max(reg_y_test_pred)))
+        x=reg_testing_trend_interval,
+        y=reg_testing_trend_interval
+    )
 
     # Regrssion line of best fit using numpy(Training dataset)
     par_training = np.polyfit(reg_y_train, reg_y_train_pred, deg=1, full=True)
