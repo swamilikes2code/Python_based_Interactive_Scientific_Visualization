@@ -44,6 +44,8 @@ The interactive webpage can be found here:
 
 * [Sequential_Reactions](https://srrweb.cc.lehigh.edu/app/sliders_reaction_kinetics) - Sequential Reactions example
 
+* [Catalysis Data Science Model](https://srrweb.cc.lehigh.edu/app/catalysis_data_interactive_visualization) - Catalysis Data Science Model example
+
 ## Built With
 
 * [Bokeh](https://docs.bokeh.org/en/latest/) - The visualization library used
