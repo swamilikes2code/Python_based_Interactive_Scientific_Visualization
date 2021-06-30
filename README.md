@@ -52,6 +52,8 @@ The interactive webpage can be found here:
 
 * [Flask](https://pypi.org/project/Flask/) - Used to embed interactive Bokeh applications in a HTML
 
+* [Scikit-learn](https://scikit-learn.org/stable/index.html) - The regression library used
+
 ## Authors
 
 * Class of 2021
