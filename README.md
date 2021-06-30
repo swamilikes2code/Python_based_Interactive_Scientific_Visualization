@@ -54,6 +54,8 @@ The interactive webpage can be found here:
 
 * [Scikit-learn](https://scikit-learn.org/stable/index.html) - The regression library used
 
+* [Pandas](https://pandas.pydata.org/pandas-docs/stable/index.html) - Used to generate correlation between attributes
+
 ## Authors
 
 * Class of 2021
