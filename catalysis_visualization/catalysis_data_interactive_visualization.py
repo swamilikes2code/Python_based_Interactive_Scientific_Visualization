@@ -430,8 +430,10 @@ reg_testing.line(x="x", y="y", source=reg_testing_line_source,
 
 reg_training.legend.click_policy = "hide"
 reg_training.legend.location = "top_left"
+reg_training.legend.background_fill_alpha = 0.5
 reg_testing.legend.click_policy = "hide"
 reg_testing.legend.location = "top_left"
+reg_testing.legend.background_fill_alpha = 0.5
 
 # Adding tabs for regression plots
 reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
