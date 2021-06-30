@@ -427,16 +427,26 @@ regression_line = Slope()
 
 reg_deg = 1  # degree for regression line
 
+# data source for trend line
+reg_training_trend_source = ColumnDataSource(data=dict(x=[],y=[]))
+reg_training.line(x="x",y="y",source=reg_training_trend_source,color="black",line_width=2,legend_label="Trend Line")
+
+reg_testing_trend_source = ColumnDataSource(data=dict(x=[],y=[]))
+reg_testing.line(x="x",y="y",source=reg_testing_trend_source,color="black",line_width=2,legend_label="Trend Line")
+
 # data source for training line of best fit
 reg_training_line_source = ColumnDataSource(data=dict(x=[], y=[]))
 reg_training.line(x="x", y="y", source=reg_training_line_source,
                   color="red", line_width=1.5, legend_label="Line of Best Fit")
-reg_training.legend.click_policy = "hide"
 
 reg_testing_line_source = ColumnDataSource(data=dict(x=[], y=[]))
 reg_testing.line(x="x", y="y", source=reg_testing_line_source,
                  color="red", line_width=1.5, legend_label="Line of Best Fit")
+
+reg_training.legend.click_policy = "hide"
+reg_training.legend.location="top_left"
 reg_testing.legend.click_policy = "hide"
+reg_testing.legend.location="top_left"
 
 
 # Adding tabs for regression plots
@@ -479,7 +489,16 @@ def update_regression():
     ], decimals=6)
     reg_coeff_source.data = dict(Variables=x_name,
                                  Coefficients=np.around(reg_ml.coef_, decimals=6))
-    # print(reg_coeff_source.data)
+
+    # Trend line for training
+    reg_training_trend_source.data=dict(
+        x=np.linspace(start=min(reg_y_train),stop=max(reg_y_train)),
+        y=np.linspace(start=min(reg_y_train_pred),stop=max(reg_y_train_pred)))
+
+    # Trend line for testing
+    reg_testing_trend_source.data=dict(
+        x=np.linspace(start=min(reg_y_test), stop=max(reg_y_test)),
+        y=np.linspace(start=min(reg_y_test_pred),stop=max(reg_y_test_pred)))
 
     # Regrssion line of best fit using numpy(Training dataset)
     par_training = np.polyfit(reg_y_train, reg_y_train_pred, deg=1, full=True)
