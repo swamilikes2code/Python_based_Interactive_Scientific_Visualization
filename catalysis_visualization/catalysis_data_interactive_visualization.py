@@ -472,7 +472,7 @@ def update_regression():
         np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
         np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
     ], decimals=6)
-    reg_coeff_source.data = dict(Variables=x_name,
+    reg_coeff_source.data = dict(Variables=reg_select_x.value,
                                  Coefficients=np.around(reg_ml.coef_, decimals=6))
 
     # Trend line for training
