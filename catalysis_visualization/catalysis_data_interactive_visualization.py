@@ -126,7 +126,7 @@ ph = figure(toolbar_location=None, width=p.width, height=100, x_range=p.x_range,
             y_range=(0, (max(hhist)*1.1)), min_border=10, min_border_left=50, y_axis_location="right")
 ph.xgrid.grid_line_color = None
 ph.yaxis.major_label_orientation = np.pi/4
-ph.background_fill_color = "#fafafa"
+# ph.background_fill_color = "#fafafa"
 
 # histogram to reflect the data points
 hh = ph.quad(bottom=0, left=hedges[:-1], right=hedges[1:],
@@ -143,10 +143,10 @@ vhist, vedges = np.histogram(
 vzeros = np.zeros(len(vedges)-1)
 
 pv = figure(toolbar_location=None, width=100, height=p.height,
-            x_range=(0, (max(vhist)*1.1)), y_range=p.y_range, min_border=10, y_axis_location="right")
+            x_range=(0, (max(vhist)*1.1)), y_range=p.y_range, min_border=10, y_axis_location="left")
 pv.ygrid.grid_line_color = None
 pv.xaxis.major_label_orientation = np.pi/4
-pv.background_fill_color = "#fafafa"
+# pv.background_fill_color = "#fafafa"
 
 # histogram to reflect the data points
 vv = pv.quad(left=0, bottom=vedges[:-1], top=vedges[1:],
@@ -350,8 +350,9 @@ reg_inputs = column(*reg_controls, width=200)
 # Table to display R^2 and RMSE
 reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training", "R^2 for Testing",
-          "RMSE for Training", "RMSE for Testing"],
-    data=[None, None, None, None]))
+          "RMSE for Training", "RMSE for Testing", 
+          "Training Offset", "Testing Offset"],
+    data=[None, None, None, None,None,None]))
 reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
@@ -365,7 +366,7 @@ reg_coeff_column = [
     TableColumn(field="Coefficients", title="Coefficients")
 ]
 reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_column,
-                                 index_position=None, header_row=True, width=200)
+                                 index_position=None, header_row=True, width=250)
 
 # Create figure to display the scatter plot for training set
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -413,11 +414,11 @@ reg_testing_layout = column(reg_testing, reg_testing_hist)
 # trend line
 reg_training_trend_source = ColumnDataSource(data=dict(x=[], y=[]))
 reg_training.line(x="x", y="y", source=reg_training_trend_source,
-                  color="black", line_width=2, legend_label="Trend Line")
+                  color="black", line_width=2, legend_label="y = x")
 
 reg_testing_trend_source = ColumnDataSource(data=dict(x=[], y=[]))
 reg_testing.line(x="x", y="y", source=reg_testing_trend_source,
-                 color="black", line_width=2, legend_label="Trend Line")
+                 color="black", line_width=2, legend_label="y = x")
 
 # line of best fit
 reg_training_line_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -465,25 +466,26 @@ def update_regression():
         y_actual=reg_y_train, y_predict=reg_y_train_pred)
     reg_testing_source.data = dict(
         y_actual=reg_y_test, y_predict=reg_y_test_pred)
-    # Update data in the table
-    reg_RMSE_source.data["data"] = np.around([
-        r2_score(reg_y_train, reg_y_train_pred),
-        r2_score(reg_y_test, reg_y_test_pred),
-        np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
-        np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
-    ], decimals=6)
-    reg_coeff_source.data = dict(Variables=x_name,
-                                 Coefficients=np.around(reg_ml.coef_, decimals=6))
 
     # Trend line for training
+    reg_training_trend_interval = np.linspace(
+        start=max(min(reg_y_train), min(reg_y_train_pred)),
+        stop=min(max(reg_y_train), max(reg_y_train_pred))
+    )
     reg_training_trend_source.data = dict(
-        x=np.linspace(start=min(reg_y_train), stop=max(reg_y_train)),
-        y=np.linspace(start=min(reg_y_train_pred), stop=max(reg_y_train_pred)))
+        x=reg_training_trend_interval,
+        y=reg_training_trend_interval
+    )
 
     # Trend line for testing
+    reg_testing_trend_interval = np.linspace(
+        start=max(min(reg_y_test), min(reg_y_test_pred)),
+        stop=min(max(reg_y_test), max(reg_y_test_pred))
+    )
     reg_testing_trend_source.data = dict(
-        x=np.linspace(start=min(reg_y_test), stop=max(reg_y_test)),
-        y=np.linspace(start=min(reg_y_test_pred), stop=max(reg_y_test_pred)))
+        x=reg_testing_trend_interval,
+        y=reg_testing_trend_interval
+    )
 
     # Regrssion line of best fit using numpy(Training dataset)
     par_training = np.polyfit(reg_y_train, reg_y_train_pred, deg=1, full=True)
@@ -500,6 +502,18 @@ def update_regression():
     y_predicted_testing = [slope_testing*i +
                            intercept_testing for i in reg_y_test]
     reg_testing_line_source.data = dict(x=reg_y_test, y=y_predicted_testing)
+
+    # Update data in the table
+    reg_RMSE_source.data["data"] = np.around([
+        r2_score(reg_y_train, reg_y_train_pred),
+        r2_score(reg_y_test, reg_y_test_pred),
+        np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
+        np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred)),
+        intercept_training,
+        intercept_testing
+    ], decimals=6)
+    reg_coeff_source.data = dict(Variables=reg_select_x.value,
+                                 Coefficients=np.around(reg_ml.coef_, decimals=6))
 
     # Update histograms
     # training set
