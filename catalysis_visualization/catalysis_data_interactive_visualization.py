@@ -350,8 +350,9 @@ reg_inputs = column(*reg_controls, width=200)
 # Table to display R^2 and RMSE
 reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training", "R^2 for Testing",
-          "RMSE for Training", "RMSE for Testing"],
-    data=[None, None, None, None]))
+          "RMSE for Training", "RMSE for Testing", 
+          "Training Offset", "Testing Offset"],
+    data=[None, None, None, None,None,None]))
 reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
@@ -465,15 +466,6 @@ def update_regression():
         y_actual=reg_y_train, y_predict=reg_y_train_pred)
     reg_testing_source.data = dict(
         y_actual=reg_y_test, y_predict=reg_y_test_pred)
-    # Update data in the table
-    reg_RMSE_source.data["data"] = np.around([
-        r2_score(reg_y_train, reg_y_train_pred),
-        r2_score(reg_y_test, reg_y_test_pred),
-        np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
-        np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred))
-    ], decimals=6)
-    reg_coeff_source.data = dict(Variables=reg_select_x.value,
-                                 Coefficients=np.around(reg_ml.coef_, decimals=6))
 
     # Trend line for training
     reg_training_trend_interval = np.linspace(
@@ -510,6 +502,18 @@ def update_regression():
     y_predicted_testing = [slope_testing*i +
                            intercept_testing for i in reg_y_test]
     reg_testing_line_source.data = dict(x=reg_y_test, y=y_predicted_testing)
+
+    # Update data in the table
+    reg_RMSE_source.data["data"] = np.around([
+        r2_score(reg_y_train, reg_y_train_pred),
+        r2_score(reg_y_test, reg_y_test_pred),
+        np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
+        np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred)),
+        intercept_training,
+        intercept_testing
+    ], decimals=6)
+    reg_coeff_source.data = dict(Variables=reg_select_x.value,
+                                 Coefficients=np.around(reg_ml.coef_, decimals=6))
 
     # Update histograms
     # training set
