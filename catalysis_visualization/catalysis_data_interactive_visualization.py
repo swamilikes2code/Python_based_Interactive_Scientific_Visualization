@@ -351,23 +351,15 @@ reg_inputs = column(*reg_controls, width=200)
 # Table to display R^2 and RMSE
 reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training", "R^2 for Testing",
-          "RMSE for Training", "RMSE for Testing", 
-          "Training Offset", "Testing Offset"],
-    data=[None, None, None, None,None,None]))
+          "RMSE for Training", "RMSE for Testing"],
+    data=[None, None, None, None]))
 reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
 ]
 reg_RMSE_data_table = DataTable(source=reg_RMSE_source, columns=reg_RMSE_column,
                                 header_row=False, index_position=None, width=200)
-# Table to display coefficients
-reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
-reg_coeff_column = [
-    TableColumn(field="Variables", title="Variables"),
-    TableColumn(field="Coefficients", title="Coefficients")
-]
-reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_column,
-                                 index_position=None, header_row=True, width=250)
+
 
 # Create figure to display the scatter plot for training set
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -388,7 +380,19 @@ reg_training_hist.yaxis.major_label_orientation = "horizontal"
 reg_training_hist_bar = reg_training_hist.quad(bottom=0, left=reg_training_hedges[:-1],
                                                right=reg_training_hedges[1:], top=reg_training_hhist)
 
-reg_training_layout = column(reg_training, reg_training_hist)
+# Table to display training coefficients
+reg_coeff_training_source = ColumnDataSource(
+    data=dict(Variables=[], Coefficients=[]))
+reg_coeff_training_column = [
+    TableColumn(field="Variables", title="Variables"),
+    TableColumn(field="Coefficients", title="Coefficients")
+]
+reg_coeff_training_data_table = DataTable(source=reg_coeff_training_source, columns=reg_coeff_training_column,
+                                          index_position=None, header_row=True, width=250)
+
+# training layout
+reg_training_layout = row(
+    column(reg_training, reg_training_hist), reg_coeff_training_data_table)
 
 # Create figure to display the scatter plot for testing set
 reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -409,7 +413,19 @@ reg_testing_hist.yaxis.major_label_orientation = "horizontal"
 reg_testing_hist_bar = reg_testing_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
                                              right=reg_testing_hedges[1:], top=reg_testing_hhist)
 
-reg_testing_layout = column(reg_testing, reg_testing_hist)
+# Table to display testing coefficients
+reg_coeff_testing_source = ColumnDataSource(
+    data=dict(Variables=[], Coefficients=[]))
+reg_coeff_testing_column = [
+    TableColumn(field="Variables", title="Variables"),
+    TableColumn(field="Coefficients", title="Coefficients")
+]
+reg_coeff_testing_data_table = DataTable(source=reg_coeff_testing_source, columns=reg_coeff_testing_column,
+                                         index_position=None, header_row=True, width=250)
+
+# testing layout
+reg_testing_layout = row(
+    column(reg_testing, reg_testing_hist), reg_coeff_testing_data_table)
 
 # Support Lines
 # trend line
@@ -443,14 +459,16 @@ reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
 reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
 
 regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both")
+    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs)], sizing_mode="scale_both")
 
 
 def update_regression():
     # get selected values from selectors
-    x_name = []
+    x_name = []  # list of attributes
+    x_name_coef_key = []  # list of attributes in full name
     for choice in reg_select_x.value:
         x_name.append(reg_x_choices[choice])
+        x_name_coef_key.append(choice)
     y_name = reg_y_choices[reg_select_y.value]
     reg_x = df_catalysis_dataset[x_name].values
     reg_y = df_catalysis_dataset[y_name].values
@@ -511,11 +529,21 @@ def update_regression():
         r2_score(reg_y_test, reg_y_test_pred),
         np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
         np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred)),
-        intercept_training,
-        intercept_testing
-    ], decimals=6)
-    reg_coeff_source.data = dict(Variables=reg_select_x.value,
-                                 Coefficients=np.around(reg_ml.coef_, decimals=6))
+    ], decimals=4)
+
+    # Update coefficients
+    x_name_coef_key.append("Intercept")
+    coeff_training = []
+    coeff_testing = []
+    for coe in reg_ml.coef_:
+        coeff_training.append(coe)
+        coeff_testing.append(coe)
+    coeff_training.append(intercept_training)
+    coeff_testing.append(intercept_testing)
+    reg_coeff_training_source.data = dict(Variables=x_name_coef_key,
+                                          Coefficients=np.around(coeff_training, decimals=4))
+    reg_coeff_testing_source.data = dict(Variables=x_name_coef_key,
+                                         Coefficients=np.around(coeff_testing, decimals=4))
 
     # Update histograms
     # training set
