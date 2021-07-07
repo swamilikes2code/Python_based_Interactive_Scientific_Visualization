@@ -454,9 +454,10 @@ def update_regression():
     y_name = reg_y_choices[reg_select_y.value]
     reg_x = df_catalysis_dataset[x_name].values
     reg_y = df_catalysis_dataset[y_name].values
+    standardized_reg_x = preprocessing.StandardScaler().fit_transform(reg_x)
     # Split into training and test
     reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
-        reg_x, reg_y, test_size=0.2, random_state=0)
+        standardized_reg_x, reg_y, test_size=0.2, random_state=0)
     # Training model
     reg_ml = LinearRegression()
     reg_ml.fit(reg_x_train, reg_y_train)
