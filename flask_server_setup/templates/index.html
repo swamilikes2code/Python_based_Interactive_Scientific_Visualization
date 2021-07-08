@@ -10,7 +10,7 @@
     <style>
         body {
     margin: 0;
-    background: #292929;
+    background: #fff;
     font-family: 'Work Sans', sans-serif;
     font-weight: 400;
 }
@@ -47,7 +47,8 @@ nav ul {
 nav li {
     display:inline-block;
     margin: 0 35px;
-    padding-top: 34px
+    padding-top: 34px;
+    position: relative;
 }
 
 nav a {
@@ -59,7 +60,24 @@ nav a {
 
 nav a:hover {
     color: #000
+}
 
+nav a::before {
+    content: '';
+    display: block;
+    height: 5px;
+    width: 100%;
+    background-color: #444;
+
+    position:absolute;
+    top: 0;
+    width: 0%;
+}
+
+nav a hover::before {
+    top: 0;
+    width:0%;
+    transition: all ease-in-out 250ms;
 }
     </style>
 </head>
