@@ -335,6 +335,11 @@ reg_y_choices = {
     "CO2y": "CO2y",
     "C2y": "C2y"
 }
+reg_model_choices = {
+    "Linear": 1,
+    "Quadratic": 2,
+    "Cubic": 3
+}
 reg_select_x = MultiSelect(title="X value",
                            options=sorted(reg_x_choices.keys()),
                            size=len(reg_x_choices),
@@ -342,8 +347,11 @@ reg_select_x = MultiSelect(title="X value",
 reg_select_y = Select(title="Y value",
                       options=sorted(reg_y_choices.keys()),
                       value="CarbonMonoOxide_y")
+reg_select_model = Select(title="Models",
+                          options=list(reg_model_choices.keys()),
+                          value="Linear")
 
-reg_controls = [reg_select_x, reg_select_y]
+reg_controls = [reg_select_x, reg_select_y, reg_select_model]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
