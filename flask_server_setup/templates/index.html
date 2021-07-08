@@ -19,13 +19,42 @@
     width: 80%;
     margin: 0 auto;
 }
+
+header {
+    background: #bdbcbb;
+}
+
+Header::after {
+    content: '';
+    display: table;
+    clear:both;
+}
+.logo {
+    float:left;
+    padding: 10px 0;
+}
+
+nav {float: right;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style:none;
+}
+
+nav li {
+    display:inline-block;
+    margin-left: 70px;
+    padding-top: 23px
+}
     </style>
 </head>
 
 <body>
     <header>
         <div class="container">
-            <img src="Logo.JPG" alt="logo" class="logo">
+            <img src="flask_server_setup/templates/.JPG" alt="logo" class="logo">
         </div>
         <nav>
             <ul>
