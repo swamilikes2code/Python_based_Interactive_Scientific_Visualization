@@ -375,8 +375,8 @@ reg_coeff_column = [
     TableColumn(field="Variables", title="Variables"),
     TableColumn(field="Coefficients", title="Coefficients")
 ]
-reg_coeff_training_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_column,
-                                          index_position=None, header_row=True, width=250)
+reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_column,
+                                 index_position=None, header_row=True, width=250)
 
 # Create figure to display the scatter plot for training set
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
@@ -454,7 +454,7 @@ reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
 reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
 
 regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_training_data_table)], sizing_mode="scale_both")
+    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both")
 
 
 def update_regression():
@@ -475,10 +475,7 @@ def update_regression():
         degree=reg_model_choices[reg_select_model.value])
     reg_x_train = reg_pre_process.fit_transform(reg_x_train)
     reg_x_test = reg_pre_process.fit_transform(reg_x_test)
-    # array of variable names
-    x_name_coef_key = reg_pre_process.get_feature_names(x_name)
     # Training model
-    reg_deg = reg_model_choices[reg_select_model.value]
     reg_ml = LinearRegression()
     reg_ml.fit(reg_x_train, reg_y_train)
     # Predict y using x test
@@ -489,6 +486,7 @@ def update_regression():
     reg_testing_source.data = dict(
         y_actual=reg_y_test, y_predict=reg_y_test_pred)
 
+    # Trend lines
     # Trend line for training
     reg_training_trend_interval = np.linspace(
         start=max(min(reg_y_train), min(reg_y_train_pred)),
@@ -509,6 +507,7 @@ def update_regression():
         y=reg_testing_trend_interval
     )
 
+    # Line of best fit
     # Regrssion line of best fit using numpy(Training dataset)
     par_training = np.polyfit(reg_y_train, reg_y_train_pred, deg=1, full=True)
     slope_training = par_training[0][0]
@@ -534,6 +533,8 @@ def update_regression():
     ], decimals=4)
 
     # Update coefficients
+    # array of variable names
+    x_name_coef_key = reg_pre_process.get_feature_names(x_name)
     x_name_coef_key.append("Training Offset")
     x_name_coef_key.append("Testing Offset")
     reg_coeff = list(reg_ml.coef_)
