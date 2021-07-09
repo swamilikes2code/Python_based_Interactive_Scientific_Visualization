@@ -460,13 +460,12 @@ regression_layout = column(
 def update_regression():
     # get selected values from selectors
     x_name = []  # list of attributes
-    # x_name_coef_key = []  # list of attributes in full name
     for choice in reg_select_x.value:
         x_name.append(reg_x_choices[choice])
-        # x_name_coef_key.append(choice)
     y_name = reg_y_choices[reg_select_y.value]
     reg_x = df_catalysis_dataset[x_name].values
     reg_y = df_catalysis_dataset[y_name].values
+    # normalize data
     standardized_reg_x = StandardScaler().fit_transform(reg_x)
     # Split into training and test
     reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
@@ -476,6 +475,7 @@ def update_regression():
         degree=reg_model_choices[reg_select_model.value])
     reg_x_train = reg_pre_process.fit_transform(reg_x_train)
     reg_x_test = reg_pre_process.fit_transform(reg_x_test)
+    # array of variable names
     x_name_coef_key = reg_pre_process.get_feature_names(x_name)
     # Training model
     reg_ml = LinearRegression()
