@@ -80,7 +80,8 @@ nav a hover::after {
 
 .tile {
     font-family: 'Segoe UI';
-    color: rgb(85, 85, 85);
+    font-size: 125%;
+    color: #555;
     max-width: 80rem;
     margin: 0 auto;
     background-color: #ffffff;
@@ -106,6 +107,21 @@ nav a hover::after {
 }
 .clearfix {
     clear:both;
+}
+.flexwrap {
+    display:flex;
+    width: 100%;
+}
+.flexcol {
+    border:3px; 
+    border-style:solid; 
+    border-color:#000000; 
+    padding: 10px;
+    width: 50%;
+    background: #999797
+}
+.head2 {
+    color:#000;
 }
     </style>
 </head>
@@ -167,16 +183,18 @@ nav a hover::after {
     <br><br><!--INCLUDE TWO SPACE BREAKS IN BETWEEN EVERY PARAGRAPH BOX-->
 
     <!-------MODELS------------------------------------------------------>
+    <hr>
 
-    <h1 style="font-family:Arial; font-size:500%;">Models:</h1><!--THIS IS THE TITLE FOR THE MODELS-->
+    
+    <h1 class="head1">Models:</h1><!--THIS IS THE TITLE FOR THE MODELS-->
     <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
-
+<div class="flexwrap">
     <!--REACTION KINETICS DIVISION-->
-    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+    <div class="flexcol">
 
-        <h1 style="font-family:Arial; font-size:300%; text-decoration:underline;">Reaction Kinetics:</h1>
+        <h2 class="head2">Reaction Kinetics:</h2>
 
-        <p style="font-size:200%; font-family:Helvetica;" align="justify">Reaction kinetics is the branch of chemistry concerned with the rate of transformation of reactant into product. Reaction rate is generally expressed in terms of concentration per unit time. This program allows you to see the change in A, B, and C concentrations as you change the orders and initial k-constants.</p>
+        <p style=font-size:200%; font-family:Helvetica; align="justify">Reaction kinetics is the branch of chemistry concerned with the rate of transformation of reactant into product. Reaction rate is generally expressed in terms of concentration per unit time. This program allows you to see the change in A, B, and C concentrations as you change the orders and initial k-constants.</p>
 
         <link style="font-size:300% ;font-family:Arial;" target="_blank"><a href="sliders_reaction_kinetics">CLICK HERE TO VIEW</a></link>
 
@@ -185,16 +203,16 @@ nav a hover::after {
     <br><br>
 
     <!--ZECC DIVISION-->
-    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+    <div class="flexwrap">
 
-        <h1 style="font-family:Arial; font-size:300%; text-decoration:underline;">Zero Energy Cooling Chamber:</h1>
+        <h2 style="head2">Zero Energy Cooling Chamber:</h2>
 
         <p style="font-size:200%; font-family:Helvetica;" align="justify">This program allows you to create a Zero Energy Cooling Chamber with your chosen specified dimensions, material and location for the chamber. A Zero Energy Cooling Chamber is an eco-friendly and cost-effective way of storing food. Usually used in hot climates, it uses passive evaporation to cool down the food storage chamber. Click to see more information.</p>
 
         <link style="font-size:500%; font-family:Arial;" target="_blank"><a href="ZECC">CLICK HERE TO VIEW</a></link>
 
     </div>
-
+</div>
     <br><br>
 
     <!--SIR DIVISION-->
