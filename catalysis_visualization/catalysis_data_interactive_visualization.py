@@ -535,11 +535,9 @@ def update_regression():
     # Update coefficients
     # array of variable names
     x_name_coef_key = reg_pre_process.get_feature_names(x_name)
-    x_name_coef_key.append("Training Offset")
-    x_name_coef_key.append("Testing Offset")
+    x_name_coef_key.append("Intercept")
     reg_coeff = list(reg_ml.coef_)
-    reg_coeff.append(intercept_training)
-    reg_coeff.append(intercept_testing)
+    reg_coeff.append(reg_ml.intercept_)
     reg_coeff_source.data = dict(Variables=x_name_coef_key,
                                  Coefficients=np.around(reg_coeff, decimals=4))
 
