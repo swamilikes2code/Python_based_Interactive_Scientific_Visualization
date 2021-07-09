@@ -485,11 +485,15 @@ def update_regression():
     reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
         standardized_reg_x, reg_y, test_size=0.2, random_state=0)
     # Training model
+    reg_deg = reg_model_choices[reg_select_model.value]
+    polyreg = preprocessing.PolynomialFeatures(degree=reg_deg)
+    poly_reg_x_train = polyreg.fit_transform(reg_x_train)
+    polyreg.fit(reg_x_train,reg_y_train)
     reg_ml = LinearRegression()
-    reg_ml.fit(reg_x_train, reg_y_train)
+    reg_ml.fit(poly_reg_x_train, reg_y_train)
     # Predict y using x test
-    reg_y_train_pred = reg_ml.predict(reg_x_train)
-    reg_y_test_pred = reg_ml.predict(reg_x_test)
+    reg_y_train_pred = reg_ml.predict(poly_reg_x_train)
+    reg_y_test_pred = reg_ml.predict(polyreg.fit_transform(reg_x_test))
     reg_training_source.data = dict(
         y_actual=reg_y_train, y_predict=reg_y_train_pred)
     reg_testing_source.data = dict(
