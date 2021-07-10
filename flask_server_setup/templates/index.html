@@ -122,7 +122,7 @@ nav a hover::after {
     border-color:#fff; 
     padding: 10px;
     width: 50%;
-    background: #262626
+    background: #262626;
 }
 .head2 {
     font-size: 200%;
@@ -144,9 +144,10 @@ nav a hover::after {
     top: 50%;
     left: 50%;
     margin-right: -50%;
-    transform: translate(-50%, -50%)
+    transform: translate(-50%, -50%);
 }
 .dark {
+    text-align:center;
     font-family: 'Segoe UI';
     font-size: 200%;
     color:#f0f0f0; 
@@ -157,11 +158,17 @@ nav a hover::after {
     background: #262626
 }
 .button {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
     text-decoration: none;
     color: #31A6FF;
     font-family: "proxima nova";
     font-weight: 200;
-    font-size:20px;
+    font-size:150%;
     text-align:center;
     background-color: #fff;
 
@@ -170,7 +177,7 @@ nav a hover::after {
     padding: 10px 80px;
 
     -webkit-transition-duration: 300ms;
-    transition-duration:200ms;
+    transition-duration:300ms;
 }
 .button:hover {
     background-color: #31A6FF;
