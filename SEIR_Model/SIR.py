@@ -145,6 +145,9 @@ recovery_slider=Slider(title="Rate of Recovery", value=gamma, start=0, end=.3, s
 death_rate_slide=Slider(title="Death Rate for Infection", value=death_rate_S, start=0, end=0.5, step=0.001, margin=(0, 5, 0, 20))
 testing_rate=Slider(title="Rate of Increase of Testing", value=test_rate_inc, start=1, end=5, step=0.1, margin=(0, 5, 0, 20))
 vaccine_slide=Slider(title="Time at Which the Vaccine is Introduced", value=t_vac, start=0, end=365, step=1, margin=(0, 5, 0, 20))
+# Initial vaccination rate
+vaccination_rate_t0 = 0.01
+vaccination_rate_slider=Slider(title="Rate of Vaccination in the Population", value=vaccination_rate_t0, start=0.001, end=0.02, step=0.001, margin=(0, 5, 0, 20))
 hosp_space_slide=Slider(title="Additional Hospital Beds / Ventilators", value=0, start=0, end=60, step=5, margin=(0, 5, 0, 20))
 return_rate_slide=Slider(title="Rate at which  Individuals Lose Immunity", value=return_rate, start=0, end=1, step=0.01, margin=(0, 5, 20, 20))
 
