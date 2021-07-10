@@ -176,7 +176,7 @@ def update_data(attr, old, new): #when slider values are adjusted this function 
     ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, vaccination_rate_t, A_infect_rate, A_k_infect, S_infect_rate, beta_S_h, recov_rate, gamma_hosp, nat_death, death_rate, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate, vaccine, health_cap))
     S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y
     sourcePops.data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h,  R=R, D=D, hc=([health_cap]*365))
-    data_for_table.data=dict(names=rate_names, values=[nat_birth, nat_death, N, A_infect_rate, beta_A_k, S_infect_rate, beta_S_h, return_rate, E_to_I_forA, E_to_I_forS, "0.001*t*"+str(test_rate), hosp, recov_rate, gamma_hosp, death_rate, death_rate_hosp, .01, 1-sd])
+    data_for_table.data=dict(names=rate_names, values=[nat_birth, nat_death, N, A_infect_rate, beta_A_k, S_infect_rate, beta_S_h, return_rate, E_to_I_forA, E_to_I_forS, "0.001*t*"+str(test_rate), hosp, recov_rate, gamma_hosp, death_rate, death_rate_hosp, np.around(vaccination_rate_t, 3), 1-sd])
 
 #this calls the update_data function when slider values are adjusted
 updates=[S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, A_infection_rate_slide, vaccine_slide, vaccination_rate_slider, hosp_space_slide, return_rate_slide, A_k_infection_rate_slide]
