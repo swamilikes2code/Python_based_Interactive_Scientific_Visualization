@@ -53,11 +53,11 @@ nav a {
     color: rgb(255, 251, 251);
     text-decoration: none;
     text-transform: uppercase;
-    font-size: 18px;
+    font-size: 20px;
 }
 
 nav a:hover {
-    color: rgb(26, 180, 201);
+    color: #31A6FF;
     background: rgb(14, 12, 12);
 }
 
@@ -126,7 +126,7 @@ nav a hover::after {
 }
 .head2 {
     font-size: 200%;
-    color:#fff;
+    color:#f0f0f0;
     text-decoration:underline;
     text-align: center;
 }
@@ -145,6 +145,36 @@ nav a hover::after {
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%)
+}
+.dark {
+    font-family: 'Segoe UI';
+    font-size: 200%;
+    color:#f0f0f0; 
+    border:3px; 
+    border-style:solid; 
+    border-color:#fff; 
+    padding: 10px;
+    background: #262626
+}
+.button {
+    text-decoration: none;
+    color: #31A6FF;
+    font-family: "proxima nova";
+    font-weight: 200;
+    font-size:20px;
+    text-align:center;
+    background-color: #fff;
+
+    border: solid 2px #31A6FF;
+    border-radius: 50px;
+    padding: 10px 80px;
+
+    -webkit-transition-duration: 300ms;
+    transition-duration:200ms;
+}
+.button:hover {
+    background-color: #31A6FF;
+    color: #fff;
 }
     </style>
 </head>
@@ -175,6 +205,7 @@ nav a hover::after {
          </div>
          <div class="video">
               <iframe src="https://player.vimeo.com/video/447232810" style= float:right; width="640" height="328" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+              <p><a href="https://vimeo.com/447232810">STEM Learning Through Visualization Presentation</a> from <a href="https://vimeo.com/user121275255">Brian Lucas</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
         </div>
           </p>
           <br><br><br>
@@ -241,7 +272,7 @@ nav a hover::after {
     <!--Catalysis DIVISION-->
     <div class="flexcol">
 
-        <h2 class="head2">Catalysis Data Exploration and Machine Learning Model:</h2>
+        <h2 class="head2">Catalysis Data Science Model:</h2>
 
         <p>This model allows the user to visually explore the distribution of the catalysis dataset which contains several thousand experimental datapoints replicating the catalytic reaction called Oxidative Coupling of Methane. The user can then build their own multivariate regression model using any combination of inputs to predict output features such as ethane, ethylene, carbon dioxide, and carbon monoxide yield.</p>
 
@@ -249,6 +280,12 @@ nav a hover::after {
 
     </div>
 </div>
+<div class="dark">
+<h3>The Github repository containing all code and documentation related to this project can be found below:</h3>
+<br>
+<a href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization" class="button">Github Repository</a>
+</div>
+
     <br><br>
 
     <!--AKNOWLEDGEMENT DIVISION-->
@@ -271,10 +308,7 @@ nav a hover::after {
 
 <foot>
 
-    <br>
-
-    <p><a href="https://vimeo.com/447232810">STEM Learning Through Visualization Presentation</a> from <a href="https://vimeo.com/user121275255">Brian Lucas</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
-
+    
 </foot>
 
 </html>
