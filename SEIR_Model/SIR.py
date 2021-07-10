@@ -58,9 +58,9 @@ hcr=1 #health capacity effecting the recovery rate
 t = np.linspace(0, 365, 365) #365 days
 t_vac=365 #time at which vaccine is introduced
 
-def vac_freq(t_vac, current_time): #function that gives the vaccine rate, it will be 0 before the vaccine is introduced and 0.01 after the vaccine is introduced
+def vac_freq(t_vac, current_time, vaccination_rate): #function that gives the vaccine rate, it will be 0 before the vaccine is introduced and 0.01 after the vaccine is introduced
     #vf=(.01*exp(10*(current_time-t_vac)))/(1+exp(10*(current_time-t_vac)))
-    vf=0.1*(math.atan(current_time-t_vac)+(math.pi/2))
+    vf=vaccination_rate*(math.atan(current_time-t_vac)+(math.pi/2))
     return vf
 
 def health_cap_effect(health_capacity, Is_h): #function that shows death rates and recovery rates being effected if hospital capacity is surpased
@@ -70,9 +70,9 @@ def health_cap_effect(health_capacity, Is_h): #function that shows death rates a
     return hcd, hcr    
 
 # The SIR model differential equations.
-def deriv(t, y, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity):
+def deriv(t, y, N, vaccination_rate, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity):
     S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = y
-    v_freq=vac_freq(t_vac, t)
+    v_freq=vac_freq(t_vac, t, vaccination_rate)
     test_rate=.001*t*test_rate_inc
     hce=health_cap_effect(health_capacity, Is_h)
     #below are the 8 ODEs for each of the 8 classes 
@@ -89,7 +89,7 @@ def deriv(t, y, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, 
 # Initial conditions vector
 y0 = S0, E0, Ia_uk0, Ia_k0, Is_nh0, Is_h0, R0, D0
 # Integrate the SIR equations over the time grid, t.
-ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity))
+ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, vaccination_rate, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity))
 S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y #solving the system of ODEs
 #Creating a data source for all of class values over time 
 sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h, R=R, D=D, hc=([health_capacity]*365)))
@@ -170,7 +170,7 @@ def update_data(attr, old, new): #when slider values are adjusted this function 
     return_rate=return_rate_slide.value
     
     #re-solving the system of ODEs with the new parameter values from the sliders
-    ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, A_infect_rate, A_k_infect, S_infect_rate, beta_S_h, recov_rate, gamma_hosp, nat_death, death_rate, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate, vaccine, health_cap))
+    ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, vaccination_rate, A_infect_rate, A_k_infect, S_infect_rate, beta_S_h, recov_rate, gamma_hosp, nat_death, death_rate, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate, vaccine, health_cap))
     S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y
     sourcePops.data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h,  R=R, D=D, hc=([health_cap]*365))
     data_for_table.data=dict(names=rate_names, values=[nat_birth, nat_death, N, A_infect_rate, beta_A_k, S_infect_rate, beta_S_h, return_rate, E_to_I_forA, E_to_I_forS, "0.001*t*"+str(test_rate), hosp, recov_rate, gamma_hosp, death_rate, death_rate_hosp, .01, 1-sd])
@@ -230,7 +230,7 @@ plot.add_layout(labels)
 plot.renderers.append(graph_renderer)
 
 #solving the system of ODEs with original parameters to determine size of nodes
-ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity))
+ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, vaccination_rate, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, gamma, gamma_hosp, nat_death, death_rate_S, death_rate_hosp, E_to_I_forA, E_to_I_forS, return_rate, sd, test_rate_inc, t_vac, health_capacity))
 Sb, Eb, Ia_ukb, Ia_kb, Is_nhb, Is_hb, Rb, Db = ret.y
 
 #creating slider for the time
