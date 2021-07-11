@@ -573,6 +573,9 @@ def update_regression():
     reg_testing_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
 
 
+# UNSUPERVISED LEARNING
+
+
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
 tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
