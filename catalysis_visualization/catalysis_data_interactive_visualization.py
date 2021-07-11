@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.cluster import KMeans
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
@@ -605,7 +606,17 @@ for control in unsuper_learn_controls:
                       new: update_unsuper_learning())
 unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 
-unsuper_learn_layout = column(unsuper_learn_inputs, sizing_mode="scale_both")
+# k clustering plot
+unsuper_learn_k_cluster_source = ColumnDataSource(data=dict())
+unsuper_learn_k_cluster_model = figure(height=600, width=700, toolbar_location="above",
+                                       title="Visualizing Clustering")
+unsuper_learn_k_cluster_model.scatter(source=unsuper_learn_k_cluster_source)
+
+# elbow method plot
+
+
+unsuper_learn_layout = column(row(
+    unsuper_learn_inputs, unsuper_learn_k_cluster_model), sizing_mode="scale_both")
 
 
 def update_unsuper_learning():
