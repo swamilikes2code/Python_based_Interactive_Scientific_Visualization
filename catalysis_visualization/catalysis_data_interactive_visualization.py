@@ -573,14 +573,51 @@ def update_regression():
     reg_testing_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
 
 
-# UNSUPERVISED LEARNING
+# UNSUPERVISED LEARNING MODEL
+
+# selection tools
+unsuper_learn_x_choices = {
+    "M1 atom number": "M1_atom_number",
+    "M2 atom number": "M2_atom_number",
+    "M3 atom number": "M3_atom_number",
+    "Support Id": "Support_ID",
+    "M2 mol": "M2_mol",
+    "M3 mol": "M3_mol",
+    "M1 percent mol": "M1_mol_percentage",
+    "M2 percent mol": "M2_mol_percentage",
+    "M3 percent mol": "M3_mol_percentage",
+    "Temperature": "Temp",
+    "Total flow": "Total_flow",
+    "Argon flow": "Ar_flow",
+    "CH4 flow": "CH4_flow",
+    "O2 flow": "O2_flow",
+    "CT": "CT"
+}
+
+unsuper_learn_select_x = MultiSelect(title="X value",
+                                     options=sorted(reg_x_choices.keys()),
+                                     size=len(reg_x_choices),
+                                     value=["Argon flow"])
+
+unsuper_learn_controls = [unsuper_learn_select_x]
+for control in unsuper_learn_controls:
+    control.on_change("value", lambda attr, old,
+                      new: update_unsuper_learning())
+unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
+
+unsuper_learn_layout = column(unsuper_learn_inputs, sizing_mode="scale_both")
+
+
+def update_unsuper_learning():
+    print("Hello")
 
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
 tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
 tab3 = Panel(child=regression_layout, title="Multivariable Regression")
-tabs = Tabs(tabs=[tab1, tab2, tab3])
+tab4 = Panel(child=unsuper_learn_layout, title="Unsupervised Learning")
+tabs = Tabs(tabs=[tab1, tab2, tab3, tab4])
 
 update()  # initial load of the data
 update_regression()
