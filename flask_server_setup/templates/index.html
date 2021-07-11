@@ -208,12 +208,50 @@ nav a hover::after {
     overflow: hidden;
     padding: 70px 0;
     box-sizing: border-box;
-    background-color: #fbeec1;
+    background-color: #111110;
 }
 .inner_footer{
-
+    display: block;
+    margin:0 auto;
+    width:1100px;
+    height:100%;
 }
-
+.inner_footer .logo_container {
+    width: 35%;
+    float: left;
+    height: 100%;
+    display: block;
+}
+.inner_footer .logo_container img{
+    width: 65px;
+    height: auto;
+}
+.inner_footer .footer_third{
+    width:calc(21.6666666667% - 20px);
+    margin-right: 10px;
+    float: left;
+    height: 100%;
+}
+.inner_footer .footer_third:last-child{
+    margin-right:0;
+}
+.inner_footer .footer_third h1{
+    font-family: 'work sans', sans-serif;
+    font-size: 22px;
+    color: white;
+    display: block;
+    width: 100%;
+}
+.inner_footer .footer_third p{
+    font-family: 'work sans', sans-serif;
+    font-size: 18px;
+    color: white;
+    display: block;
+    font-weight: 200;
+    width: 100%;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+}
     </style>
 </head>
 
@@ -332,6 +370,11 @@ nav a hover::after {
        <div class="inner_footer">
             <div class="logo_container">
                 <img src="Logo.JPG">
+            </div>
+
+            <div class="footer_third">
+                <h1> Faculty & External Advisors</h1>
+                <p> Dr. Vincent Grassi, Dr. Srinivas Rangarajan, Dr. Raghu Thiagarajan, Dr. Lori Herz, Dr. Angela Brown, Steve Anthony</p>
             </div>
        </div>
    </div>
