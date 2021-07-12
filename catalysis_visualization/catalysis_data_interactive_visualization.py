@@ -614,10 +614,14 @@ unsuper_learn_k_cluster_model.scatter(
     x="x", y="y", source=unsuper_learn_k_cluster_source)
 
 # elbow method plot
+unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
+unsuper_learn_elbow_model = figure(height=600, width=700, toolbar_location="above",
+                                   title="Rlbow Method")
+unsuper_learn_elbow_model.line(x="x", y="y", source=unsuper_learn_elbow_source)
 
-
+# layout
 unsuper_learn_layout = column(row(
-    unsuper_learn_inputs, unsuper_learn_k_cluster_model), sizing_mode="scale_both")
+    unsuper_learn_inputs, column(unsuper_learn_k_cluster_model, unsuper_learn_elbow_model)), sizing_mode="scale_both")
 
 
 def update_unsuper_learning():
@@ -626,10 +630,19 @@ def update_unsuper_learning():
     for choice in unsuper_learn_select_x.value:
         x_name.append(unsuper_learn_x_choices[choice])
     unsuper_learn_x = df_catalysis_dataset[x_name].values
-    unsuper_learn_kmeans = KMeans(n_clusters=5, random_state=0).fit(unsuper_learn_x)
-    print(unsuper_learn_kmeans.cluster_centers_)
-    unsuper_learn_k_cluster_source.data = dict(
-        x=unsuper_learn_x[:, 0], y=unsuper_learn_x[:, 1])
+    unsuper_learn_kmeans = KMeans(
+        n_clusters=5, random_state=0).fit(unsuper_learn_x)
+    unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_x[:, 0],
+                                               y=unsuper_learn_x[:, 1])
+    print(unsuper_learn_x[:, 0], len(unsuper_learn_x[:, 0]))
+    print(unsuper_learn_x[:, 1], len(unsuper_learn_x[:, 1]))
+    # elbow
+    Error = []
+    for i in range(1, 11):
+        kmeans = KMeans(n_clusters=i).fit(unsuper_learn_x)
+        kmeans.fit(unsuper_learn_x)
+        Error.append(kmeans.inertia_)
+    unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
 
 
 # organizing panels of display
