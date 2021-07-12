@@ -607,10 +607,11 @@ for control in unsuper_learn_controls:
 unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 
 # k clustering plot
-unsuper_learn_k_cluster_source = ColumnDataSource(data=dict())
+unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[]))
 unsuper_learn_k_cluster_model = figure(height=600, width=700, toolbar_location="above",
                                        title="Visualizing Clustering")
-unsuper_learn_k_cluster_model.scatter(source=unsuper_learn_k_cluster_source)
+unsuper_learn_k_cluster_model.scatter(
+    x="x", y="y", source=unsuper_learn_k_cluster_source)
 
 # elbow method plot
 
@@ -620,7 +621,15 @@ unsuper_learn_layout = column(row(
 
 
 def update_unsuper_learning():
-    print("Hello")
+    # get selected values from selectors
+    x_name = []  # list of attributes
+    for choice in unsuper_learn_select_x.value:
+        x_name.append(unsuper_learn_x_choices[choice])
+    unsuper_learn_x = df_catalysis_dataset[x_name].values
+    unsuper_learn_kmeans = KMeans(n_clusters=5, random_state=0).fit(unsuper_learn_x)
+    print(unsuper_learn_kmeans.cluster_centers_)
+    unsuper_learn_k_cluster_source.data = dict(
+        x=unsuper_learn_x[:, 0], y=unsuper_learn_x[:, 1])
 
 
 # organizing panels of display
