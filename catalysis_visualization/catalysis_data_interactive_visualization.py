@@ -631,11 +631,12 @@ def update_unsuper_learning():
         x_name.append(unsuper_learn_x_choices[choice])
     unsuper_learn_x = df_catalysis_dataset[x_name].values
     unsuper_learn_kmeans = KMeans(
-        n_clusters=5, random_state=0).fit(unsuper_learn_x)
+        n_clusters=5, random_state=0).fit_predict(unsuper_learn_x)
+    print(unsuper_learn_kmeans)
     unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_x[:, 0],
                                                y=unsuper_learn_x[:, 1])
-    print(unsuper_learn_x[:, 0], len(unsuper_learn_x[:, 0]))
-    print(unsuper_learn_x[:, 1], len(unsuper_learn_x[:, 1]))
+    # print(unsuper_learn_x[:, 0], len(unsuper_learn_x[:, 0]))
+    # print(unsuper_learn_x[:, 1], len(unsuper_learn_x[:, 1]))
     # elbow
     Error = []
     for i in range(1, 11):
