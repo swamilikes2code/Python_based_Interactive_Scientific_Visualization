@@ -10,6 +10,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.cluster import KMeans
+from sklearn.svm import SVC
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
@@ -645,6 +646,51 @@ def update_unsuper_learning():
         Error.append(kmeans.inertia_)
     unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
 
+
+# CLASSIFICATION MODEL
+svm_x_choices = {
+    "M1 atom number": "M1_atom_number",
+    "M2 atom number": "M2_atom_number",
+    "M3 atom number": "M3_atom_number",
+    "Support Id": "Support_ID",
+    "M2 mol": "M2_mol",
+    "M3 mol": "M3_mol",
+    "M1 percent mol": "M1_mol_percentage",
+    "M2 percent mol": "M2_mol_percentage",
+    "M3 percent mol": "M3_mol_percentage",
+    "Temperature": "Temp",
+    "Total flow": "Total_flow",
+    "Argon flow": "Ar_flow",
+    "CH4 flow": "CH4_flow",
+    "O2 flow": "O2_flow",
+    "CT": "CT"
+}
+
+svm_choices = {
+    "Linear":"linear",
+    "Polynomial":"poly",
+    "RBF":"rbf",
+    "Sigmoid":"sigmoid"
+}
+
+svm_select_x = MultiSelect(title="Choose Inputs",
+                                     options=sorted(svm_x_choices.keys()),
+                                     size=len(svm_x_choices),
+                                     value=["Argon flow"])
+
+svm_select_model = Select(title="Models",
+                          options=list(svm_choices.keys()),
+                          value="Linear")
+
+svm_controls = [svm_select_x, svm_select_model]
+for control in svm_controls:
+    control.on_change("value", lambda attr, old, new: update_classification())
+svm_inputs = column(*svm_controls, width=200)
+
+def update_classification():
+    x_name = []  # list of attributes
+    for choice in reg_select_x.value:
+        x_name.append(reg_x_choices[choice])
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
