@@ -595,12 +595,13 @@ unsuper_learn_x_choices = {
     "CT": "CT"
 }
 
-unsuper_learn_select_x = MultiSelect(title="X value",
-                                     options=sorted(reg_x_choices.keys()),
-                                     size=len(reg_x_choices),
-                                     value=["Argon flow"])
+unsuper_learn_select_x = MultiSelect(title="X value", options=sorted(unsuper_learn_x_choices.keys()),
+                                     size=len(unsuper_learn_x_choices), value=["Argon flow"])
+unsuper_learn_k_cluster_select = Slider(title="K", start=1, end=11,
+                                        value=4, step=1)
 
-unsuper_learn_controls = [unsuper_learn_select_x]
+unsuper_learn_controls = [unsuper_learn_select_x,
+                          unsuper_learn_k_cluster_select]
 for control in unsuper_learn_controls:
     control.on_change("value", lambda attr, old,
                       new: update_unsuper_learning())
@@ -610,8 +611,8 @@ unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[]))
 unsuper_learn_k_cluster_model = figure(height=600, width=700, toolbar_location="above",
                                        title="Visualizing Clustering")
-unsuper_learn_k_cluster_model.scatter(
-    x="x", y="y", source=unsuper_learn_k_cluster_source,color={'field': 'x', 'transform': LinearColorMapper(palette=cividis(5))})
+unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,
+                                      color={'field': 'x', 'transform': LinearColorMapper(palette=cividis(5))})
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -630,13 +631,12 @@ def update_unsuper_learning():
     for choice in unsuper_learn_select_x.value:
         x_name.append(unsuper_learn_x_choices[choice])
     unsuper_learn_x = df_catalysis_dataset[x_name].values
-    unsuper_learn_kmeans = KMeans(
-        n_clusters=5, random_state=0).fit_predict(unsuper_learn_x)
-    print(unsuper_learn_kmeans)
+    unsuper_learn_kmeans = KMeans(n_clusters=unsuper_learn_k_cluster_select.value,
+                                  random_state=0).fit_predict(unsuper_learn_x)
     unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_x[:, 0],
                                                y=unsuper_learn_x[:, 1])
-    # print(unsuper_learn_x[:, 0], len(unsuper_learn_x[:, 0]))
-    # print(unsuper_learn_x[:, 1], len(unsuper_learn_x[:, 1]))
+    print(unsuper_learn_kmeans)
+
     # elbow
     Error = []
     for i in range(1, 11):
