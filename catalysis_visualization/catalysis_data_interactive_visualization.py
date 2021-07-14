@@ -658,35 +658,31 @@ unsuper_learn_layout = column(row(unsuper_learn_inputs,
 
 
 def update_unsuper_learning():
-    # get selected values from selectors
-    x_name = []  # list of attributes
-    for choice in unsuper_learn_select_x.value:
-        x_name.append(unsuper_learn_x_choices[choice])
-    unsuper_learn_x = df_catalysis_dataset[x_name].values
-
-    std_x = StandardScaler().fit_transform(unsuper_learn_x)
-
     # k means
     unsuper_learn_kmeans = KMeans(n_clusters=unsuper_learn_k_cluster_select.value,
-                                  random_state=0).fit_predict(std_x)
-    unsuper_learn_k_cluster_source.data = dict(x=std_x[:, 0],
-                                               y=std_x[:, 1],
+                                  random_state=0).fit_predict(unsuper_learn_std_df)
+    xax = unsuper_learn_attributes.index(
+        unsuper_learn_x_choices[unsuper_learn_select_x.value])
+    yax = unsuper_learn_attributes.index(
+        unsuper_learn_x_choices[unsuper_learn_select_y.value])
+    unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_std_df[:, xax],
+                                               y=unsuper_learn_std_df[:, yax],
                                                c=unsuper_learn_kmeans)
-    # print(len(unsuper_learn_kmeans), unsuper_learn_kmeans)
+    unsuper_learn_k_cluster_model.xaxis.axis_label = unsuper_learn_select_x.value
+    unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
     # d.glyph.color = {'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))}
 
     # elbow
     Error = []
     for i in range(1, 11):
         kmeans = KMeans(n_clusters=i)
-        kmeans.fit(std_x)
+        kmeans.fit(unsuper_learn_std_df)
         Error.append(kmeans.inertia_)
     unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
 
     # PCA
     pca = PCA(n_components=unsuper_learn_PCA_select.value)
-    principalComponents = pca.fit_transform(std_x)
-    print(principalComponents[:, 0], principalComponents[:, 1])
+    principalComponents = pca.fit_transform(unsuper_learn_std_df)
     unsuper_learn_PCA_source.data = dict(x=principalComponents[:, 0],
                                          y=principalComponents[:, 1])
     unsuper_learn_PCA_hist_source.data = dict(x=range(1, pca.n_components_+1),
@@ -702,6 +698,7 @@ tabs = Tabs(tabs=[tab1, tab2, tab3, tab4])
 
 update()  # initial load of the data
 update_regression()
+update_unsuper_learning()
 curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
