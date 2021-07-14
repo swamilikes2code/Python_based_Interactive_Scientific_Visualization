@@ -616,7 +616,7 @@ unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
 unsuper_learn_k_cluster_model = figure(height=600, width=700, toolbar_location="above",
                                        title="Visualizing Clustering")
 d = unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,
-                                      color={'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))})
+                                          color={'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))})
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -632,10 +632,16 @@ unsuper_learn_PCA_model = figure(height=600, width=700, toolbar_location="above"
                                  title="PCA")
 unsuper_learn_PCA_model.scatter(x="x", y="y", source=unsuper_learn_PCA_source)
 
+# histogram
+unsuper_learn_PCA_hist_source = ColumnDataSource(data=dict(x=[], y=[]))
+unsuper_learn_PCA_hist_model = figure(height=600, width=700, toolbar_location="above",
+                                      title="Hist")
+unsuper_learn_PCA_hist_model.scatter(
+    x="x", y="y", source=unsuper_learn_PCA_hist_source)
 
 # layout
 unsuper_learn_layout = column(row(unsuper_learn_inputs,
-                                  column(unsuper_learn_k_cluster_model, unsuper_learn_elbow_model, unsuper_learn_PCA_model)),
+                                  column(unsuper_learn_k_cluster_model, unsuper_learn_elbow_model, unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
                               sizing_mode="scale_both")
 
 
@@ -668,8 +674,8 @@ def update_unsuper_learning():
     print(principalComponents[:, 0], principalComponents[:, 1])
     unsuper_learn_PCA_source.data = dict(x=principalComponents[:, 0],
                                          y=principalComponents[:, 1])
-    # unsuper_learn_PCA_source.data = dict(x=range(1, pca.n_components_+1),
-    #                                      y=pca.explained_variance_ratio_)
+    unsuper_learn_PCA_hist_source.data = dict(x=range(1, pca.n_components_+1),
+                                              y=pca.explained_variance_ratio_)
 
 
 # organizing panels of display
