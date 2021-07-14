@@ -612,11 +612,11 @@ for control in unsuper_learn_controls:
 unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 
 # k clustering plot
-unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[]))
+unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
 unsuper_learn_k_cluster_model = figure(height=600, width=700, toolbar_location="above",
                                        title="Visualizing Clustering")
 unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,
-                                      color={'field': 'x', 'transform': LinearColorMapper(palette=cividis(5))})
+                                      color={'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))})
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -648,7 +648,8 @@ def update_unsuper_learning():
     unsuper_learn_kmeans = KMeans(n_clusters=unsuper_learn_k_cluster_select.value,
                                   random_state=0).fit_predict(unsuper_learn_x)
     unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_x[:, 0],
-                                               y=unsuper_learn_x[:, 1])
+                                               y=unsuper_learn_x[:, 1],
+                                               c=unsuper_learn_kmeans)
     # print(len(unsuper_learn_kmeans), unsuper_learn_kmeans)
 
     # elbow
