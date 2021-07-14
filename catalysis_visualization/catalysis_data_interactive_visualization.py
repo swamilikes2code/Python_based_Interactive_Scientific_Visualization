@@ -10,6 +10,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
@@ -599,9 +600,12 @@ unsuper_learn_select_x = MultiSelect(title="X value", options=sorted(unsuper_lea
                                      size=len(unsuper_learn_x_choices), value=["Argon flow"])
 unsuper_learn_k_cluster_select = Slider(title="K", start=1, end=11,
                                         value=4, step=1)
+unsuper_learn_PCA_select = Slider(title="# of PCA", start=1, end=15,
+                                        value=4, step=1)
 
 unsuper_learn_controls = [unsuper_learn_select_x,
-                          unsuper_learn_k_cluster_select]
+                          unsuper_learn_k_cluster_select,
+                          unsuper_learn_PCA_select]
 for control in unsuper_learn_controls:
     control.on_change("value", lambda attr, old,
                       new: update_unsuper_learning())
@@ -619,10 +623,20 @@ unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
 unsuper_learn_elbow_model = figure(height=600, width=700, toolbar_location="above",
                                    title="Elbow Method")
 unsuper_learn_elbow_model.line(x="x", y="y", source=unsuper_learn_elbow_source)
+unsuper_learn_elbow_model.xaxis.axis_label = "Number of Clusters, k"
+unsuper_learn_elbow_model.yaxis.axis_label = "Error"
+
+# PCA plot
+unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[]))
+unsuper_learn_PCA_model = figure(height=600, width=700, toolbar_location="above",
+                                 title="PCA")
+unsuper_learn_PCA_model.scatter(x="x", y="y", source=unsuper_learn_PCA_source)
+
 
 # layout
-unsuper_learn_layout = column(row(
-    unsuper_learn_inputs, column(unsuper_learn_k_cluster_model, unsuper_learn_elbow_model)), sizing_mode="scale_both")
+unsuper_learn_layout = column(row(unsuper_learn_inputs,
+                                  column(unsuper_learn_k_cluster_model, unsuper_learn_elbow_model, unsuper_learn_PCA_model)),
+                              sizing_mode="scale_both")
 
 
 def update_unsuper_learning():
@@ -635,15 +649,25 @@ def update_unsuper_learning():
                                   random_state=0).fit_predict(unsuper_learn_x)
     unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_x[:, 0],
                                                y=unsuper_learn_x[:, 1])
-    print(unsuper_learn_kmeans)
+    # print(len(unsuper_learn_kmeans), unsuper_learn_kmeans)
 
     # elbow
     Error = []
     for i in range(1, 11):
-        kmeans = KMeans(n_clusters=i).fit(unsuper_learn_x)
+        kmeans = KMeans(n_clusters=i)
         kmeans.fit(unsuper_learn_x)
         Error.append(kmeans.inertia_)
     unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
+
+    # PCA
+    std_x = StandardScaler().fit_transform(unsuper_learn_x)
+    pca = PCA(n_components=unsuper_learn_PCA_select.value)
+    principalComponents = pca.fit_transform(std_x)
+    print(principalComponents[:, 0], principalComponents[:, 1])
+    unsuper_learn_PCA_source.data = dict(x=principalComponents[:, 0],
+                                         y=principalComponents[:, 1])
+    # unsuper_learn_PCA_source.data = dict(x=range(1, pca.n_components_+1),
+    #                                      y=pca.explained_variance_ratio_)
 
 
 # organizing panels of display
