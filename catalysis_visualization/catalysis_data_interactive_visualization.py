@@ -629,9 +629,10 @@ unsuper_learn_elbow_model.yaxis.axis_label = "Error"
 # PCA plot
 unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[]))
 unsuper_learn_PCA_model = figure(height=600, width=700, toolbar_location="above",
-                                 title="PCA")
+                                 title="Principal Component Analysis")
 unsuper_learn_PCA_model.scatter(x="x", y="y", source=unsuper_learn_PCA_source)
-
+unsuper_learn_PCA_model.xaxis.axis_label = "Principal Component 1"
+unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
 # histogram
 unsuper_learn_PCA_hist_source = ColumnDataSource(data=dict(x=[], y=[]))
 unsuper_learn_PCA_hist_model = figure(height=600, width=700, toolbar_location="above",
