@@ -596,6 +596,14 @@ unsuper_learn_x_choices = {
     "CT": "CT"
 }
 
+# standard dataset
+# use to find the index
+unsuper_learn_attributes = list(unsuper_learn_x_choices.values())
+# the dataset without names
+unsuper_learn_std_df = StandardScaler().fit_transform(
+    df_catalysis_dataset[unsuper_learn_attributes].values)
+
+# selectors
 unsuper_learn_select_x = Select(title="X axis", value="Argon flow",
                                 options=sorted(unsuper_learn_x_choices.keys()))
 unsuper_learn_select_y = Select(title="Y axis", value="CT",
