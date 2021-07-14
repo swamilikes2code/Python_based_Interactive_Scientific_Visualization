@@ -666,6 +666,8 @@ svm_x_choices = {
     "CT": "CT"
 }
 
+svm_target = df_catalysis_dataset["C2s"]
+
 svm_choices = {
     "Linear":"linear",
     "Polynomial":"poly",
@@ -687,10 +689,19 @@ for control in svm_controls:
     control.on_change("value", lambda attr, old, new: update_classification())
 svm_inputs = column(*svm_controls, width=200)
 
+classification_svm_source = ColumnDataSource(data=dict(x=[], y=[]))
+classification_svm_model = figure(height=600, width=700, toolbar_location="above",
+                                       title="SVM")
+# unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,color={'field': 'x', 'transform': LinearColorMapper(palette=cividis(5))})
+
 def update_classification():
     x_name = []  # list of attributes
     for choice in reg_select_x.value:
         x_name.append(reg_x_choices[choice])
+    svm_x = df_catalysis_dataset[x_name].values
+    X_train, X_test, y_train, y_test = train_test_split(svm_x, svm_target, train_size=0.8, random_state = 0)
+    svclassifier = SVC(kernel="linear").fit(X_train,y_train)
+    svclassifier_pred = svclassifier.predict(X_test)
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
