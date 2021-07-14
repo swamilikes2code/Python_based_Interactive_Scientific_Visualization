@@ -596,14 +596,17 @@ unsuper_learn_x_choices = {
     "CT": "CT"
 }
 
-unsuper_learn_select_x = MultiSelect(title="X value", options=sorted(unsuper_learn_x_choices.keys()),
-                                     size=len(unsuper_learn_x_choices), value=["Argon flow"])
+unsuper_learn_select_x = Select(title="X axis", value="Argon flow",
+                                options=sorted(unsuper_learn_x_choices.keys()))
+unsuper_learn_select_y = Select(title="Y axis", value="CT",
+                                options=sorted(unsuper_learn_x_choices.keys()))
 unsuper_learn_k_cluster_select = Slider(title="K", start=1, end=11,
                                         value=4, step=1)
 unsuper_learn_PCA_select = Slider(title="# of PCA", start=1, end=15,
                                         value=4, step=1)
 
 unsuper_learn_controls = [unsuper_learn_select_x,
+                          unsuper_learn_select_y,
                           unsuper_learn_k_cluster_select,
                           unsuper_learn_PCA_select]
 for control in unsuper_learn_controls:
@@ -652,10 +655,14 @@ def update_unsuper_learning():
     for choice in unsuper_learn_select_x.value:
         x_name.append(unsuper_learn_x_choices[choice])
     unsuper_learn_x = df_catalysis_dataset[x_name].values
+
+    std_x = StandardScaler().fit_transform(unsuper_learn_x)
+
+    # k means
     unsuper_learn_kmeans = KMeans(n_clusters=unsuper_learn_k_cluster_select.value,
-                                  random_state=0).fit_predict(unsuper_learn_x)
-    unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_x[:, 0],
-                                               y=unsuper_learn_x[:, 1],
+                                  random_state=0).fit_predict(std_x)
+    unsuper_learn_k_cluster_source.data = dict(x=std_x[:, 0],
+                                               y=std_x[:, 1],
                                                c=unsuper_learn_kmeans)
     # print(len(unsuper_learn_kmeans), unsuper_learn_kmeans)
     # d.glyph.color = {'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))}
@@ -664,12 +671,11 @@ def update_unsuper_learning():
     Error = []
     for i in range(1, 11):
         kmeans = KMeans(n_clusters=i)
-        kmeans.fit(unsuper_learn_x)
+        kmeans.fit(std_x)
         Error.append(kmeans.inertia_)
     unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
 
     # PCA
-    std_x = StandardScaler().fit_transform(unsuper_learn_x)
     pca = PCA(n_components=unsuper_learn_PCA_select.value)
     principalComponents = pca.fit_transform(std_x)
     print(principalComponents[:, 0], principalComponents[:, 1])
