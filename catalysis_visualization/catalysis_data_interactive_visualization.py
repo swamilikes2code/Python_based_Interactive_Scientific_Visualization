@@ -7,7 +7,7 @@ from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.cluster import KMeans
 from sklearn.svm import SVC
@@ -666,7 +666,8 @@ svm_x_choices = {
     "CT": "CT"
 }
 
-svm_target = df_catalysis_dataset["C2s"]
+df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s']>=50.0, True, False)
+svm_target = df_catalysis_dataset["classifier"]
 
 svm_choices = {
     "Linear":"linear",
@@ -689,29 +690,59 @@ for control in svm_controls:
     control.on_change("value", lambda attr, old, new: update_classification())
 svm_inputs = column(*svm_controls, width=200)
 
+# Table to display coefficients
+class_cm_source = ColumnDataSource(
+    data=dict(x=[], y=[]))
+class_cm_column = [
+    TableColumn(field="Variables", title="Variables"),
+    TableColumn(field="Coefficients", title="Coefficients")
+]
+class_cm_row = [
+    
+]
+class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column,
+                                 index_position=None, header_row=True, width=250)
+
 classification_svm_source = ColumnDataSource(data=dict(x=[], y=[]))
 classification_svm_model = figure(height=600, width=700, toolbar_location="above",
                                        title="SVM")
-# unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,color={'field': 'x', 'transform': LinearColorMapper(palette=cividis(5))})
+classification_svm_model.scatter(x="x", y="y", source=classification_svm_source,color = "red")
+
+svm_layout = column([row(svm_inputs, classification_svm_model,class_cm_data_table)],sizing_mode="scale_both")
 
 def update_classification():
     x_name = []  # list of attributes
-    for choice in reg_select_x.value:
-        x_name.append(reg_x_choices[choice])
+    for choice in svm_select_x.value:
+        x_name.append(svm_x_choices[choice])
     svm_x = df_catalysis_dataset[x_name].values
+    svm_x = StandardScaler().fit_transform(svm_x)
     X_train, X_test, y_train, y_test = train_test_split(svm_x, svm_target, train_size=0.8, random_state = 0)
-    svclassifier = SVC(kernel="linear").fit(X_train,y_train)
-    svclassifier_pred = svclassifier.predict(X_test)
+    svclassifier = SVC(kernel=svm_choices[svm_select_model.value],C=1, 
+                        decision_function_shape='ovo',
+                        gamma=1,degree=2).fit(X_train,y_train)
+    y_test_pred = svclassifier.predict(X_test)
+    y_train_pred = svclassifier.predict(X_train)
+    classification_svm_source.data = dict(x = X_train,y=y_train_pred)
+    accuracy_lin = svclassifier.score(X_test, y_test)
+    print("Accuracy Linear Kernel:",accuracy_lin)
+    cm = confusion_matrix(y_test, y_test_pred)
+    confusion = pd.DataFrame(data = cm,
+                            columns= ["Actual C2s over 50","Actual C2s below 50"],
+                            index = ["Predicted C2s over 50","Predicted C2s below 50"])
+    print(confusion)
+    print(classification_report(y_test, y_test_pred))
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
 tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
 tab3 = Panel(child=regression_layout, title="Multivariable Regression")
 tab4 = Panel(child=unsuper_learn_layout, title="Unsupervised Learning")
-tabs = Tabs(tabs=[tab1, tab2, tab3, tab4])
+tab5 = Panel(child=svm_layout, title ="Classification Methods")
+tabs = Tabs(tabs=[tab1, tab2, tab3, tab4,tab5])
 
 update()  # initial load of the data
 update_regression()
+update_classification()
 curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
