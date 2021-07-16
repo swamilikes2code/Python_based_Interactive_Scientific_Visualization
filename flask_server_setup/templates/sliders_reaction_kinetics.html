@@ -98,8 +98,15 @@ nav a:hover::before {
     font-weight: bold;
     font-family: 'Segoe UI';
 }
+.head2 {
+    text-align: center;
+    color: #000;
+    font-size: 200%;
+    font-family: 'Segoe UI';
+}
 .questions {
-    width: 100%;
+    width: auto;
+    margin: auto;
     font-family: 'Segoe UI';
     color:#484848;
     font-weight: 600;
@@ -111,7 +118,7 @@ nav a:hover::before {
     background: #E8E8E8;
     border-radius: 30px;
     max-width: 85rem;
-    text-align: center;
+    
 
 }
     </style>
@@ -157,7 +164,7 @@ nav a:hover::before {
 
     {{bokeh_script_sliders_reaction_kinetics|safe}}
 
-    <h2 class="head1">Supplemental Questions</h2>
+    <h2 class="head2">Supplemental Questions</h2>
     <div class="questions">
         <p> <ol>
             <li>Where do the maxes occur relative to each other? Why is this the case? </li>
