@@ -61,7 +61,6 @@ nav a {
 
 nav a:hover {
     color: #31A6FF;
-    background: rgb(14, 12, 12);
 }
 nav a::before {
     content: '';
@@ -69,13 +68,16 @@ nav a::before {
     height:5px;
     width: 100%;
     background-color: #31A6FF;
+
+    position:absolute;
+    width: 100%;
+    top: 0;
 }
 
 nav a hover::before {
     content: '';
     display: block;
     height: 5px;
-    width: 100%;
     background-color: #444;
 
     position:absolute;
