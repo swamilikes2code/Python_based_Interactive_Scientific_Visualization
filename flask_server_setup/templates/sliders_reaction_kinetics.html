@@ -79,7 +79,7 @@ nav a:hover::before {
     font-size: 110%;
     color: #555;
     font-weight: 600;
-    max-width: 80rem;
+    max-width: 90rem;
     margin: 0 auto;
     background-color: #ffffff;
 }
@@ -128,9 +128,10 @@ nav a:hover::before {
         <h1 class="head1">Reaction Kinetics</h1>
         <div class="para1">
             <p> This is a simple example of a sequential set of reactions where a reactant "A" first undergoes a reaction to form B, the desired product. However, B undergoes a further (undesired) reaction to form C. It's a classical prototype of complex reactions we see all the time in natural (biological processes) and engineered reaction systems (chemical refineries, pharmaceuticals, etc.). As engineers, we would like to optimize the system to maximize the concentration of the desired product B. This, however, depends on a number of factors such as: 
-                <ol> <li>how fast each reaction occurs for a unit concentration (determined by rate constant k for each reaction)</li> <li> How sensitive the rate of consumption of A or B is to their concentration (determined by the order of reaction, greater the order more sensitive the reaction is to the concentration of the reactants)</li><li> How long you let the reactions take place.</li> </ol> Note that 1 and 2 are natural properties of the reaction system (i.e. you do not have control over it) while 3 is a variable that the engineer sets.</p>
+                <ol> <li>how fast each reaction occurs for a unit concentration (determined by rate constant k for each reaction)</li> <li> How sensitive the rate of consumption of A or B is to their concentration (determined by the order of reaction, greater the order more sensitive the reaction is to the concentration of the reactants)</li><li> How long you let the reactions take place.</li> </ol> </p>
            </div>
            <div class="video">
+            <p>Note that 1 and 2 are natural properties of the reaction system (i.e. you do not have control over it) while 3 is a variable that the engineer sets.</p>
             <p>Play around with the module below by varying rate constants and the order to see how the concentration of A, B, and C changes with time. Can you come up with an explanation for what you see?  When should you stop the reaction to maximize B if the rate constants and order were all 1.0? How does this time change if the first reaction becomes faster or becomes more sensitive to concentration? How does this time change if the second reaction becomes faster or becomes more sensitive to concentration?</p>
       </div>
    
@@ -141,7 +142,7 @@ nav a:hover::before {
      <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
 
     {{bokeh_script_sliders_reaction_kinetics|safe}}
-    
+    <div>
     <p style="font-size:180%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">
 Q1. Where do the maxes occur relative to each other? Why is this the case?
 <br><br>
@@ -162,7 +163,7 @@ Q6. Approximately, where would you expect to find the maximums for a hypothetica
 Q7. The process for producing B requires that B is collected after 4 seconds have passed. What values of k and order would give you a maximum for B at t=4 seconds?
 <br><br>
 <p>
-    
+</div> 
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" width="1200" height="400" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 
 
