@@ -70,26 +70,15 @@ nav a::before {
     background-color: #31A6FF;
 
     position:absolute;
-    width: 100%;
-    top: 0;
-}
-
-nav a hover::before {
-    content: '';
-    display: block;
-    height: 5px;
-    background-color: #444;
-
-    position:absolute;
-    top: 0;
     width: 0%;
-}
-
-nav a hover::after {
     top: 0;
-    width:100%;
     transition: all ease-in-out 250ms;
 }
+
+nav a:hover::before {
+   width: 100%;
+}
+
 
 .tile {
     font-family: 'Segoe UI';
