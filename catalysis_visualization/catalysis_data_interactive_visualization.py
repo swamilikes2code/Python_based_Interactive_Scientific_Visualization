@@ -624,14 +624,14 @@ unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 
 # k clustering plot
 unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
-unsuper_learn_k_cluster_model = figure(height=600, width=700, toolbar_location="above",
+unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
                                        title="Visualizing Clustering")
-d = unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,
+d = unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source, fill_alpha=0.5, line_color=None, size=8,
                                           color={'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))})
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
-unsuper_learn_elbow_model = figure(height=600, width=700, toolbar_location="above",
+unsuper_learn_elbow_model = figure(height=400, width=500, toolbar_location="above",
                                    title="Elbow Method")
 unsuper_learn_elbow_model.line(x="x", y="y", source=unsuper_learn_elbow_source)
 unsuper_learn_elbow_model.xaxis.axis_label = "Number of Clusters, k"
@@ -639,25 +639,38 @@ unsuper_learn_elbow_model.yaxis.axis_label = "Error"
 
 # PCA plot
 unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[]))
-unsuper_learn_PCA_model = figure(height=600, width=700, toolbar_location="above",
+unsuper_learn_PCA_model = figure(height=400, width=500, toolbar_location="above",
                                  title="Principal Component Analysis")
-unsuper_learn_PCA_model.scatter(x="x", y="y", source=unsuper_learn_PCA_source)
+unsuper_learn_PCA_model.scatter(x="x", y="y", fill_alpha=0.5, line_color=None,
+                                size=5, source=unsuper_learn_PCA_source)
 unsuper_learn_PCA_model.xaxis.axis_label = "Principal Component 1"
 unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
 
 # histogram
 unsuper_learn_PCA_hist_source = ColumnDataSource(data=dict(x=[], y=[]))
-unsuper_learn_PCA_hist_model = figure(height=600, width=700, toolbar_location="above",
+unsuper_learn_PCA_hist_model = figure(height=400, width=500, toolbar_location="above",
                                       title="Hist")
-unsuper_learn_PCA_hist_model.scatter(
-    x="x", y="y", source=unsuper_learn_PCA_hist_source)
+unsuper_learn_PCA_hist_model.scatter(x="x", y="y", fill_alpha=0.5, line_color=None,
+                                     size=10, source=unsuper_learn_PCA_hist_source)
 unsuper_learn_PCA_hist_model.xaxis.axis_label = "Principal Components"
 unsuper_learn_PCA_hist_model.yaxis.axis_label = "Variance %"
 
 # layout
 unsuper_learn_layout = column(row(unsuper_learn_inputs,
-                                  column(unsuper_learn_k_cluster_model, unsuper_learn_elbow_model, unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
+                                  column(unsuper_learn_k_cluster_model,
+                                         unsuper_learn_elbow_model),
+                                  column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
                               sizing_mode="scale_both")
+
+
+def kmean_preset():
+    # elbow
+    Error = []
+    for i in range(1, 11):
+        kmeans = KMeans(n_clusters=i)
+        kmeans.fit(unsuper_learn_std_df)
+        Error.append(kmeans.inertia_)
+    unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
 
 
 def update_unsuper_learning():
@@ -674,14 +687,9 @@ def update_unsuper_learning():
     unsuper_learn_k_cluster_model.xaxis.axis_label = unsuper_learn_select_x.value
     unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
     # d.glyph.color = {'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))}
-
-    # elbow
-    Error = []
-    for i in range(1, 11):
-        kmeans = KMeans(n_clusters=i)
-        kmeans.fit(unsuper_learn_std_df)
-        Error.append(kmeans.inertia_)
-    unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
+    print("x: ", np.unique(unsuper_learn_k_cluster_source.data["x"]))
+    print("y: ", np.unique(unsuper_learn_k_cluster_source.data["y"]))
+    print("c: ", np.unique(unsuper_learn_k_cluster_source.data["c"]))
 
     # PCA
     pca = PCA(n_components=unsuper_learn_PCA_select.value)
@@ -702,6 +710,7 @@ tabs = Tabs(tabs=[tab1, tab2, tab3, tab4])
 update()  # initial load of the data
 update_regression()
 update_unsuper_learning()
+kmean_preset()
 curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
