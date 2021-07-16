@@ -8,17 +8,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Zero Energy Cooling Chamber</title>
-
+   
+    <style>
+    body {
+        margin: 0;
+        background: #fff;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 400;
+           }
+            .container {
+        width: 80%;
+        margin: 0 auto;
+    }
+    
+    header {
+        background: #262626;
+        height: 90px;
+    }
+    
+    Header::after {
+        content: '';
+        display: table;
+        clear:both;
+    }
+    .logo {
+        float:left;
+        padding: 10px 0;
+        border: 3px solid #fff; 
+    }
+    
+    nav {float: right;
+    }
+    
+    nav ul {
+        margin: 0;
+        padding: 0;
+        list-style:none;
+    }
+    
+    nav li {
+        display:inline-block;
+        margin: left 70px;
+        margin: 0 35px;
+        padding-top: 34px;
+        position: relative;
+    }
+    
+    nav a {
+        color: rgb(255, 251, 251);
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 20px;
+    }
+    
+    nav a:hover {
+        color: #31A6FF;
+    }
+    nav a::before {
+        content: '';
+        display: block;
+        height:5px;
+        width: 100%;
+        background-color: #31A6FF;
+    
+        position:absolute;
+        width: 0%;
+        top: 0;
+        transition: all ease-in-out 250ms;
+    }
+    
+    nav a:hover::before {
+       width: 100%;
+    }
+.tile {
+    font-family: 'Segoe UI';
+    font-size: 110%;
+    color: #555;
+    font-weight: 600;
+    max-width: 80rem;
+    margin: 0 auto;
+    background-color: #ffffff;
+}
+.head1 {
+    text-align: center;
+    color: #000;
+    font-size: 300%;
+    padding: 1 rem;
+}
+</style>
 </head>
     
 
 <body>
-    
+    <header>
+        <div class="container">
+            <img src="/templates/Logo.JPG" alt="logo" class="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="app">Home</a></li>
+                <li><a href="sliders_reaction_kinetics">Reaction Kinetics</a></li>
+                <li><a href="ZECC">ZECC</a></li>
+                <li><a href="SIR">SIR</a></li>
+                <li><a href="catalysis_data_interactive_visualization">Catalysis</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="tile">
+        <h1 class="head1">Zero Energy Cooling Chamber</h1>
+        
     <img src="flask_server_setup/templates/evap-cooling.jpg" alt="ZECC Diagram" width="500" height="333">
-
-    <h1 style="font-family:Arial; font-size:500%;">Zero Energy Cooling Chamber</h1>
-
-    <link><a href="/app">Homepage</a></link>
     
     <p style="font-size:200%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.<br>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.<br>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.<br>
 
