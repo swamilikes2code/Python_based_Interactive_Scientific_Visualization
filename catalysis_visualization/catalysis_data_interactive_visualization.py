@@ -628,7 +628,7 @@ unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
 unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
                                        title="Visualizing Clustering", tooltips=[('Cluster', '@c')])
 d = unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source, fill_alpha=0.5, line_color=None, size=8,
-                                          color={'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))})
+                                          color={'field': 'c', 'transform': LinearColorMapper(palette=magma(unsuper_learn_k_cluster_select.value))})
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
