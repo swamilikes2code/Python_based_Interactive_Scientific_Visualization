@@ -97,6 +97,20 @@ nav a:hover::before {
     font-size: 300%;
     font-weight: bold;
     font-family: 'Segoe UI';
+}
+.questions {
+    width: 100%;
+    font-family: 'Segoe UI';
+    color:#484848;
+    font-weight: 600;
+    border:3px; 
+    font-size: 110%;
+    border-style:solid; 
+    border-color:#fff; 
+    padding: 10px;
+    width: 50%;
+    background: #E8E8E8;
+    border-radius: 30px;
 
 }
     </style>
@@ -132,6 +146,8 @@ nav a:hover::before {
                 <li>How does this time change if the second reaction becomes faster or becomes more sensitive to concentration?</li></ul></p>
            </div>
            </div>
+
+    
         
    
 
@@ -139,6 +155,21 @@ nav a:hover::before {
      <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
 
     {{bokeh_script_sliders_reaction_kinetics|safe}}
+
+    <h2 class="head1">Supplemental Questions</h2>
+    <div class="questions">
+        <p> <ol>
+            <li>Where do the maxes occur relative to each other? Why is this the case? </li>
+            <li>What values of each parameter will result in B reaching its highest possible value? At what time will it reach this value? </li>
+            <li>What is the maximum value of C? For what values of parameters will C reach this value the soonest?</li>
+            <li>Which parameter would have the greatest effects on the concentration of B? Why?</li>
+            <ul> <li>For a hypothetical reaction: k_AB = 8, k_BC = 0.02, Order_AB = 1, Order_BC = 5:</li>
+            <li>For a hypothetical reaction: k_AB = 8, k_BC = 2, Order_AB = 1, Order_BC = 1:</li></ul>
+            <li>How quickly could you maximize B? Is it better to maximize B early or late in the reaction? Why?</li>
+            <li>Approximately, where would you expect to find the maximums for a hypothetical reaction: k_AB = 4, k_BC = 2, Order_AB = 1, Order_ BC = 1?</li>
+            <li>The process for producing B requires that B is collected after 4 seconds have passed. What values of k and order would give you a maximum for B at t=4 seconds?</li>
+        </ol></p>
+    </div>
   <!--  <div>
     <p style="font-size:180%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">
 Q1. Where do the maxes occur relative to each other? Why is this the case?
