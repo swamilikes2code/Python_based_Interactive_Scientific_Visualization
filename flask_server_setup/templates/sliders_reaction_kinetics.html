@@ -2,13 +2,111 @@
 <html>
 <head>
     <title>Reaction Kinetics</title>
+    <style>
+        .container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+header {
+    background: #262626;
+    height: 90px;
+}
+
+Header::after {
+    content: '';
+    display: table;
+    clear:both;
+}
+.logo {
+    float:left;
+    padding: 10px 0;
+    border: 3px solid #fff; 
+}
+
+nav {float: right;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style:none;
+}
+
+nav li {
+    display:inline-block;
+    margin: 0 35px;
+    padding-top: 34px;
+    position: relative;
+}
+
+nav a {
+    color: rgb(255, 251, 251);
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 20px;
+}
+
+nav a:hover {
+    color: #31A6FF;
+    background: rgb(14, 12, 12);
+}
+
+nav a hover::before {
+    content: '';
+    display: block;
+    height: 5px;
+    width: 100%;
+    background-color: #444;
+
+    position:absolute;
+    top: 0;
+    width: 0%;
+}
+
+nav a hover::after {
+    top: 0;
+    width:100%;
+    transition: all ease-in-out 250ms;
+}
+
+.tile {
+    font-family: 'Segoe UI';
+    font-size: 110%;
+    color: #555;
+    font-weight: 600;
+    max-width: 80rem;
+    margin: 0 auto;
+    background-color: #ffffff;
+}
+.head1 {
+    text-align: center;
+    color: #000;
+    font-size: 300%;
+    padding: 1 rem;
+}
+
+    </style>
 </head>
 
 <body>
-
-    <h1 style="font-family:Arial; font-size:500%;">Reaction Kinetics</h1>
-
-    <link><a href="/app">Homepage</a></link>
+    <header>
+        <div class="container">
+            <img src="/templates/Logo.JPG" alt="logo" class="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="app">Home</a></li>
+                <li><a href="sliders_reaction_kinetics">Reaction Kinetics</a></li>
+                <li><a href="ZECC">ZECC</a></li>
+                <li><a href="SIR">SIR</a></li>
+                <li><a href="catalysis_data_interactive_visualization">Catalysis</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="tile">
+        <h1 class="head1">Reaction Kinetics</h1>
+   
 
     <p style="font-size:180%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">This is a simple example of a sequential set of reactions where a reactant "A" first undergoes a reaction to form B, the desired product. However, B undergoes a further (undesired) reaction to form C. It's a classical prototype of complex reactions we see all the time in natural (biological processes) and engineered reaction systems (chemical refineries, pharmaceuticals, etc.). As engineers, we would like to optimize the system to maximize the concentration of the desired product B. This, however, depends on a number of factors such as: (1) how fast each reaction occurs for a unit concentration (determined by rate constant k for each reaction), (2) how sensitive the rate of consumption of A or B is to their concentration (determined by the order of reaction, greater the order more sensitive the reaction is to the concentration of the reactants), and (3) how long you let the reactions take place. Note that 1 and 2 are natural properties of the reaction system (i.e. you do not have control over it) while 3 is a variable that the engineer sets. <br><br> Play around with the module below by varying rate constants and the order to see how the concentration of A, B, and C changes with time. Can you come up with an explanation for what you see?  When should you stop the reaction to maximize B if the rate constants and order were all 1.0? How does this time change if the first reaction becomes faster or becomes more sensitive to concentration? How does this time change if the second reaction becomes faster or becomes more sensitive to concentration? </p> 
 
