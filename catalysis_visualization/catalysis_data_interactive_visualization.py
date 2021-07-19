@@ -4,7 +4,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
 from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, CategoricalColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
-from bokeh.palettes import viridis, gray, cividis, Colorblind6, magma, Colorblind
+from bokeh.palettes import viridis, gray, cividis, Category20
 from bokeh.transform import factor_cmap
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -624,11 +624,12 @@ for control in unsuper_learn_controls:
 unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 
 # k clustering plot
-unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
+COLORS = Category20[11]
+unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[],color =[]))
 unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
                                        title="Visualizing Clustering", tooltips=[('Cluster', '@c')])
-d = unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source, fill_alpha=0.5, line_color=None, size=8,
-                                          color={'field': 'c', 'transform': LinearColorMapper(palette=magma(unsuper_learn_k_cluster_select.value))})
+d = unsuper_learn_k_cluster_model.circle(x="x", y="y", source=unsuper_learn_k_cluster_source, fill_alpha=0.5, line_color=None, size=8,
+                                          color="color")
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -687,15 +688,11 @@ def update_unsuper_learning():
                                                c=unsuper_learn_kmeans)
     unsuper_learn_k_cluster_model.xaxis.axis_label = unsuper_learn_select_x.value
     unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
-    # d.glyph.color = {'field': 'c', 'transform': LinearColorMapper(palette=cividis(unsuper_learn_k_cluster_select.value))}
+
     # Coloring clusters
-    # new = pd.DataFrame(data =unsuper_learn_k_cluster_source.data)
-    # new["c"]= new["c"].astype(str)
-    # print(new['c'].unique())
-    # city_colors = factor_cmap("c", palette=magma(unsuper_learn_k_cluster_select.value), factors=new["c"].unique())
-    # print(city_colors)
-    # d.data_source = unsuper_learn_k_cluster_source
-    # d.glyph.fill_color = city_colors
+    groups = pd.Categorical(unsuper_learn_k_cluster_source.data['c'])
+    unsuper_learn_k_cluster_source.data['color'] =[COLORS[xx] for xx in groups.codes]
+    
     print("x: ", np.unique(unsuper_learn_k_cluster_source.data["x"]))
     print("y: ", np.unique(unsuper_learn_k_cluster_source.data["y"]))
     print("c: ", np.unique(unsuper_learn_k_cluster_source.data["c"]))
