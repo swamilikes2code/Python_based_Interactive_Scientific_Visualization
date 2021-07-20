@@ -602,7 +602,7 @@ unsuper_learn_x_choices = {
 unsuper_learn_attributes = list(unsuper_learn_x_choices.values())
 # the dataset without names
 unsuper_learn_std_df = StandardScaler().fit_transform(
-    df_catalysis_dataset[unsuper_learn_attributes].values)
+    df_catalysis_dataset[unsuper_learn_attributes])
 
 # selectors
 unsuper_learn_select_x = Select(title="X axis", value="Argon flow",
@@ -611,7 +611,7 @@ unsuper_learn_select_y = Select(title="Y axis", value="CT",
                                 options=sorted(unsuper_learn_x_choices.keys()))
 unsuper_learn_k_cluster_select = Slider(title="K", start=1, end=11,
                                         value=4, step=1)
-unsuper_learn_PCA_select = Slider(title="# of PCA", start=1, end=15,
+unsuper_learn_PCA_select = Slider(title="# of PCA", start=2, end=15,
                                         value=4, step=1)
 
 unsuper_learn_controls = [unsuper_learn_select_x,
@@ -625,11 +625,12 @@ unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 
 # k clustering plot
 COLORS = Category20[11]
-unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[],color =[]))
+unsuper_learn_k_cluster_source = ColumnDataSource(
+    data=dict(x=[], y=[], c=[], color=[]))
 unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
                                        title="Visualizing Clustering", tooltips=[('Cluster', '@c')])
-d = unsuper_learn_k_cluster_model.circle(x="x", y="y", source=unsuper_learn_k_cluster_source, fill_alpha=0.5, line_color=None, size=8,
-                                          color="color")
+unsuper_learn_k_cluster_model.circle(x="x", y="y", source=unsuper_learn_k_cluster_source,
+                                     fill_alpha=0.5, line_color=None, size=8, color="color")
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -640,11 +641,11 @@ unsuper_learn_elbow_model.xaxis.axis_label = "Number of Clusters, k"
 unsuper_learn_elbow_model.yaxis.axis_label = "Error"
 
 # PCA plot
-unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[]))
+unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
 unsuper_learn_PCA_model = figure(height=400, width=500, toolbar_location="above",
                                  title="Principal Component Analysis")
-unsuper_learn_PCA_model.scatter(x="x", y="y", fill_alpha=0.5, line_color=None,
-                                size=5, source=unsuper_learn_PCA_source)
+unsuper_learn_PCA_model.circle(x="x", y="y", fill_alpha=0.5, line_color=None,
+                               size=5, source=unsuper_learn_PCA_source, color="c")
 unsuper_learn_PCA_model.xaxis.axis_label = "Principal Component 1"
 unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
 
@@ -683,25 +684,23 @@ def update_unsuper_learning():
         unsuper_learn_x_choices[unsuper_learn_select_x.value])
     yax = unsuper_learn_attributes.index(
         unsuper_learn_x_choices[unsuper_learn_select_y.value])
-    unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_std_df[:, xax],
-                                               y=unsuper_learn_std_df[:, yax],
-                                               c=unsuper_learn_kmeans)
-    unsuper_learn_k_cluster_model.xaxis.axis_label = unsuper_learn_select_x.value
-    unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
 
     # Coloring clusters
-    groups = pd.Categorical(unsuper_learn_k_cluster_source.data['c'])
-    unsuper_learn_k_cluster_source.data['color'] =[COLORS[xx] for xx in groups.codes]
-    
-    print("x: ", np.unique(unsuper_learn_k_cluster_source.data["x"]))
-    print("y: ", np.unique(unsuper_learn_k_cluster_source.data["y"]))
-    print("c: ", np.unique(unsuper_learn_k_cluster_source.data["c"]))
+    groups = pd.Categorical(unsuper_learn_kmeans)
+    colors_df = [COLORS[xx] for xx in groups.codes]
+    unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_std_df[:, xax],
+                                               y=unsuper_learn_std_df[:, yax],
+                                               c=unsuper_learn_kmeans,
+                                               color=colors_df)
+    unsuper_learn_k_cluster_model.xaxis.axis_label = unsuper_learn_select_x.value
+    unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
 
     # PCA
     pca = PCA(n_components=unsuper_learn_PCA_select.value)
     principalComponents = pca.fit_transform(unsuper_learn_std_df)
     unsuper_learn_PCA_source.data = dict(x=principalComponents[:, 0],
-                                         y=principalComponents[:, 1])
+                                         y=principalComponents[:, 1],
+                                         c=colors_df)
     unsuper_learn_PCA_hist_source.data = dict(x=range(1, pca.n_components_+1),
                                               y=pca.explained_variance_ratio_)
 
