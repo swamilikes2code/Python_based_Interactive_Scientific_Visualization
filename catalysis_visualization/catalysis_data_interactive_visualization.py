@@ -397,8 +397,10 @@ reg_training_hist = figure(toolbar_location=None, width=reg_training.width, titl
                            y_range=(0, max(reg_training_hhist)*1.1), min_border=10, y_axis_location="right")
 reg_training_hist.xgrid.grid_line_color = None
 reg_training_hist.yaxis.major_label_orientation = "horizontal"
-reg_training_hist_bar = reg_training_hist.quad(bottom=0, left=reg_training_hedges[:-1],
-                                               right=reg_training_hedges[1:], top=reg_training_hhist)
+reg_training_hist_source = ColumnDataSource(
+    data=dict(top=[], left=[], right=[]))
+reg_training_hist.quad(bottom=0, left="left", right="right",
+                       top="top", source=reg_training_hist_source)
 
 # training layout
 reg_training_layout = column(reg_training, reg_training_hist)
@@ -419,8 +421,10 @@ reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width, title=
                           y_range=(0, max(reg_testing_hhist)*1.1), min_border=10, y_axis_location="right")
 reg_testing_hist.xgrid.grid_line_color = None
 reg_testing_hist.yaxis.major_label_orientation = "horizontal"
-reg_testing_hist_bar = reg_testing_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
-                                             right=reg_testing_hedges[1:], top=reg_testing_hhist)
+reg_testing_hist_source = ColumnDataSource(
+    data=dict(top=[], left=[], right=[]))
+reg_testing_hist.quad(bottom=0, left="left", right="right",
+                      top="top", source=reg_testing_hist_source)
 
 # testing layout
 reg_testing_layout = column(reg_testing, reg_testing_hist)
@@ -556,9 +560,9 @@ def update_regression():
     reg_training_hist.y_range.end = max(reg_training_hhist)*1.1
     reg_training_hist.x_range.start = min(reg_training_hedges[:-1])*1.1
     reg_training_hist.x_range.end = max(reg_training_hedges[1:])*1.1
-    reg_training_hist_bar.data_source.data["top"] = reg_training_hhist
-    reg_training_hist_bar.data_source.data["right"] = reg_training_hedges[1:]
-    reg_training_hist_bar.data_source.data["left"] = reg_training_hedges[:-1]
+    reg_training_hist_source.data = dict(top=reg_training_hhist,
+                                         right=reg_training_hedges[1:],
+                                         left=reg_training_hedges[:-1])
 
     # testing set
     reg_testing_diff = []
@@ -571,9 +575,9 @@ def update_regression():
     reg_testing_hist.y_range.end = max(reg_testing_hhist)*1.1
     reg_testing_hist.x_range.start = min(reg_testing_hedges[:-1])*1.1
     reg_testing_hist.x_range.end = max(reg_testing_hedges[1:])*1.1
-    reg_testing_hist_bar.data_source.data["top"] = reg_testing_hhist
-    reg_testing_hist_bar.data_source.data["right"] = reg_testing_hedges[1:]
-    reg_testing_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
+    reg_testing_hist_source.data = dict(top=reg_testing_hhist,
+                                        right=reg_testing_hedges[1:],
+                                        left=reg_testing_hedges[:-1])
 
 
 # UNSUPERVISED LEARNING MODEL
@@ -650,11 +654,12 @@ unsuper_learn_PCA_model.xaxis.axis_label = "Principal Component 1"
 unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
 
 # histogram
-unsuper_learn_PCA_hist_source = ColumnDataSource(data=dict(x=[], y=[]))
+unsuper_learn_PCA_hist_source = ColumnDataSource(
+    data=dict(top=[], left=[], right=[]))
 unsuper_learn_PCA_hist_model = figure(height=400, width=500, toolbar_location="above",
                                       title="Hist")
-unsuper_learn_PCA_hist_model.scatter(x="x", y="y", fill_alpha=0.5, line_color=None,
-                                     size=10, source=unsuper_learn_PCA_hist_source)
+unsuper_learn_PCA_hist_model.quad(top="top", left="left", right="right",
+                                  bottom=0, source=unsuper_learn_PCA_hist_source)
 unsuper_learn_PCA_hist_model.xaxis.axis_label = "Principal Components"
 unsuper_learn_PCA_hist_model.yaxis.axis_label = "Variance %"
 
@@ -701,8 +706,14 @@ def update_unsuper_learning():
     unsuper_learn_PCA_source.data = dict(x=principalComponents[:, 0],
                                          y=principalComponents[:, 1],
                                          c=colors_df)
-    unsuper_learn_PCA_hist_source.data = dict(x=range(1, pca.n_components_+1),
-                                              y=pca.explained_variance_ratio_)
+    left = []
+    right = []
+    for i in range(1, pca.n_components_+1):
+        left.append(i-0.25)
+        right.append(i+0.25)
+    unsuper_learn_PCA_hist_source.data = dict(top=pca.explained_variance_ratio_,
+                                              left=left,
+                                              right=right)
 
 
 # organizing panels of display
