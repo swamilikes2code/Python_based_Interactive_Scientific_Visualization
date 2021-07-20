@@ -97,7 +97,7 @@
     font-family: 'Segoe UI';
 }
 
-.questions {
+.flexwrap {
     display: flex;
     width: auto;
     margin: auto;
@@ -120,6 +120,28 @@
 .flexcol1 {
     padding:0 10px;
     width:39%;
+}
+.head2 {
+    text-align: center;
+    color: #000;
+    font-size: 250%;
+    font-weight: 600;
+    font-family: 'Segoe UI';
+}
+.questions {
+    width: auto;
+    margin: auto;
+    font-family: 'Segoe UI';
+    color:#484848;
+    font-weight: 600;
+    border:3px; 
+    font-size: 130%;
+    border-style:solid; 
+    border-color:#fff; 
+    padding: 10px;
+    background: #E8E8E8;
+    border-radius: 30px;
+    max-width: 85rem;
 }
 </style>
 </head>
@@ -163,18 +185,16 @@
 
     </div>
 
-    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
-
-        <ur>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</p>
-        </ur>
-
-        <p style="font-size:200%; font-family:Helvetica;" align="justify">With this given information, optimize the ZECC as much as possible and create a self sufficient system.</p>
-
+    <h2 class="head2">Points to Consider</h2>
+    <div class="questions">
+        <p> <ul>
+            <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
+            <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
+            <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
+            <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
+            <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
+            <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
+        </ul></p>
     </div>
 
     <br>
