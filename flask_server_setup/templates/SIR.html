@@ -80,39 +80,33 @@
     width: 100%;
  }
  
- .tile {
-     font-family: 'Segoe UI';
-     font-size: 110%;
-     color: #555;
-     font-weight: 600;
-     max-width: 85rem;
-     margin: 0 auto;
-     background-color: #E8E8E8;
-     border-radius: 30px;
- }
  .head1 {
-     text-align: center;
-     color: #000;
-     font-size: 300%;
-     padding: 1 rem;
+    text-align: center;
+    color: #000;
+    font-size: 300%;
+    font-weight: bold;
+    font-family: 'Segoe UI';
  }
+ .flexwrap {
+    display:flex;
+    width: auto;
+    margin: auto;
+    font-family: 'Segoe UI';
+    max-width: 90rem;
+}
+.flexcol {
+    color:#484848;
+    font-weight: 600;
+    border:3px; 
+    font-size: 130%;
+    border-style:solid; 
+    border-color:#fff; 
+    padding: 10px;
+    width: 50%;
+    background: #E8E8E8;
+    border-radius: 30px;
+}
  
- .para1 {
-     float: left;
-     width:50%;
- }
- .video {
-     float:right;
-     margin-left: 2%;
-     width:47%;
- }
- 
- .video p {
-     width:100%;
- }
- .clearfix {
-     clear:both;
- }
      </style>
 </head>
 
@@ -131,19 +125,20 @@
             </ul>
         </nav>
     </header>
-    <div class="tile">
-        <h1 class="head1">SIR Infectious Disease Model</h1>
+    <h1 class="head1">Reaction Kinetics</h1>
+    <div class="flexwrap">
+        <div class="flexcol">
+        <p>Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
         </div>
-   
-        <p style="font-size:200%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
-
-        <p style="font-size:200%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">
+        <div class="flexcol">
+        <p>
             <b>How to use:</b>
             Use play button to watch the spread of disease over time.
             Place the slider at a specific time to see the spread of disease at a specific time.
             Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.
         </p>
-
+    </div>
+    </div>
         {{bokeh_script_SIR|safe}}
     
     <div>
