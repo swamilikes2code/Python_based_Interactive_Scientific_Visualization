@@ -657,7 +657,8 @@ unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
 unsuper_learn_PCA_hist_source = ColumnDataSource(
     data=dict(top=[], left=[], right=[]))
 unsuper_learn_PCA_hist_model = figure(height=400, width=500, toolbar_location="above",
-                                      title="Hist")
+                                      title="PCA Histogram")
+unsuper_learn_PCA_hist_model.y_range.start = 0
 unsuper_learn_PCA_hist_model.quad(top="top", left="left", right="right",
                                   bottom=0, source=unsuper_learn_PCA_hist_source)
 unsuper_learn_PCA_hist_model.xaxis.axis_label = "Principal Components"
