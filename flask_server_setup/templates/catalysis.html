@@ -79,17 +79,6 @@
  nav a:hover::before {
     width: 100%;
  }
- 
- .tile {
-     font-family: 'Segoe UI';
-     font-size: 110%;
-     color: #555;
-     font-weight: 600;
-     max-width: 85rem;
-     margin: 0 auto;
-     background-color: #E8E8E8;
-     border-radius: 30px;
- }
  .head1 {
      text-align: center;
      color: #000;
@@ -97,22 +86,32 @@
      padding: 1 rem;
  }
  
- .para1 {
-     float: left;
-     width:50%;
+ .head1 {
+    text-align: center;
+    color: #000;
+    font-size: 300%;
+    font-weight: bold;
+    font-family: 'Segoe UI';
  }
- .video {
-     float:right;
-     margin-left: 2%;
-     width:47%;
- }
- 
- .video p {
-     width:100%;
- }
- .clearfix {
-     clear:both;
- }
+ .flexwrap {
+    display:flex;
+    width: auto;
+    margin: auto;
+    font-family: 'Segoe UI';
+    max-width: 90rem;
+}
+.flexcol {
+    color:#484848;
+    font-weight: 600;
+    border:3px; 
+    font-size: 130%;
+    border-style:solid; 
+    border-color:#fff; 
+    padding: 10px;
+    width: 50%;
+    background: #E8E8E8;
+    border-radius: 30px;
+}
      </style>
 </head>
 
@@ -131,16 +130,18 @@
                 </ul>
             </nav>
         </header>
-        <div class="tile">
-            <h1 class="head1">Catalysis Data Science Model</h1>
+        <h1 class="head1">SIR Infectious Disease Model</h1>
+        <div class="flexwrap">
+            <div class="flexcol">
+            <p style="line-height: 1.5;">In this visualization you will be able to go through three different sections:<ol><li><b>The Data Exploration tab</b> will allow you to understand the large dataset and see trends in it through scatter plots and histograms.</li><li><b>The Correlation Matrix tab</b> will allow you to interact with a matrix which shows the relationship between all the different inputs in the data set.</li><li><b> The Regression tab </b>will allow you to essentially build your own multivariate regression through picking your own inputs and selecting what output you want. </li></ol></p>
+            </div>
+            <div class="flexcol">
+            <p>
+                <b style="text-align: center;">How to use:</b>
+                Utilize the many different sliders and drop downs in these different tabs to see how the data and regression changes. 
+            </ol></p>
         </div>
-   
-        <p style="font-size:200%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify"> In this visualization you will be able to go through three different sections:<br><b>The Data Exploration tab</b> will allow you to understand the large dataset and see trends in it through scatter plots and histograms. <br><b>The Correlation Matrix tab</b> will allow you to interact with a matrix which shows the relationship between all the different inputs in the data set.<br><b> The Regression tab </b>will allow you to essentially build your own multivariate regression through picking your own inputs and selecting what output you want. .</p>
-
-        <p style="font-size:200%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">
-            <b>How to use:</b>
-            Utilize the many different sliders and drop downs in these different tabs to see how the data and regression changes. 
-        </p>
+        </div>
 
         {{bokeh_script_catalysis_data_interactive_visualization|safe}}
     
