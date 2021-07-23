@@ -654,11 +654,17 @@ unsuper_learn_PCA_hist_model.quad(top="top", left="left", right="right",
 unsuper_learn_PCA_hist_model.xaxis.axis_label = "Principal Components"
 unsuper_learn_PCA_hist_model.yaxis.axis_label = "Variance %"
 
+# loading table
+unsuper_loading_source = ColumnDataSource(data=dict())
+unsuper_loading_table = DataTable(source=unsuper_loading_source,
+                                  header_row=True, index_position=None)
+
 # layout
 unsuper_learn_layout = column(row(unsuper_learn_inputs,
                                   column(unsuper_learn_k_cluster_model,
                                          unsuper_learn_elbow_model),
                                   column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
+                              unsuper_loading_table,
                               sizing_mode="scale_both")
 
 
@@ -705,6 +711,18 @@ def update_unsuper_learning():
     unsuper_learn_PCA_hist_source.data = dict(top=pca.explained_variance_ratio_,
                                               left=left,
                                               right=right)
+
+    # loadings
+    loadings = np.around(pca.components_.T, decimals=10)
+    num_pc = pca.n_components_
+    pc_list = ["PC"+str(i) for i in range(1, num_pc+1)]
+    loadings_df = pd.DataFrame(loadings, columns=pc_list,
+                               index=list(unsuper_learn_x_choices.keys()))
+    loadings_df = loadings_df.reset_index().rename(
+        columns={"index": "Variables"})
+    Columns = [TableColumn(field=Ci, title=Ci) for Ci in loadings_df.columns]
+    unsuper_loading_source.data = loadings_df
+    unsuper_loading_table.columns = Columns
 
 
 # organizing panels of display
