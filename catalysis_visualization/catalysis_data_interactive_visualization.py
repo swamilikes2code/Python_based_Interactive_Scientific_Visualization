@@ -667,7 +667,7 @@ svm_x_choices = {
 }
 
 df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s']>=50.0, True, False)
-svm_target = df_catalysis_dataset["classifier"]
+svm_target = df_catalysis_dataset["classifier"].values
 
 svm_choices = {
     "Linear":"linear",
@@ -702,7 +702,7 @@ class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column,
                                   header_row=True, width=400,index_position = None)
 
 classification_svm_source = ColumnDataSource(data=dict(x=[], y=[],c=[]))
-classification_svm_model = figure(height=500, width=600, toolbar_location="above",
+classification_svm_model = figure(height=500, width=600, toolbar_location="above",tooltips=[('Parameters:','@c') ],
                                        title="SVM")
 classification_svm_model.scatter(x="x", y="y", source=classification_svm_source,color = "red")
 
@@ -712,18 +712,17 @@ def update_classification():
     x_name = []  # list of attributes
     for choice in svm_select_x.value:
         x_name.append(svm_x_choices[choice])
-    svm_x = df_catalysis_dataset[x_name].values
-    svm_x = StandardScaler().fit_transform(svm_x)
+    svm_x = df_catalysis_dataset[x_name]
     X_train, X_test, y_train, y_test = train_test_split(svm_x, svm_target, train_size=0.8, random_state = 0)
     svclassifier = SVC(kernel=svm_choices[svm_select_model.value],C=1, 
                         decision_function_shape='ovr',
                         gamma=1,degree=2).fit(X_train,y_train)
     y_test_pred = svclassifier.predict(X_test)
     y_train_pred = svclassifier.predict(X_train)
-    classification_svm_source.data = dict(x = X_train,y=y_train_pred)
+    classification_svm_source.data = dict(x = df_catalysis_dataset["Temp"],y=df_catalysis_dataset["Ar_flow"],c=svm_target)
     accuracy_lin = svclassifier.score(X_test, y_test)
     print("Accuracy Linear Kernel:",accuracy_lin)
-    cm = confusion_matrix(y_test, y_test_pred)
+    cm = confusion_matrix(y_test_pred, y_test)
     confusion = pd.DataFrame(data = cm,
                             columns= ["Actual C2s over 50","Actual C2s below 50"],
                             index =  ["Predicted C2s over 50","Predicted C2s below 50"])
@@ -748,7 +747,7 @@ def update_classification():
     print(support_vectors_per_class)
     support_vectors = svclassifier.support_vectors_
     print(support_vectors)
-    # classification_svm_model.circle(x=support_vectors[:,0], y=support_vectors[:,1], color='blue',fill_alpha = 0.3)
+    # classification_svm_model.scatter(x=support_vectors[:,0], y=support_vectors[:,1], color='black',fill_alpha = 0.3)
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
