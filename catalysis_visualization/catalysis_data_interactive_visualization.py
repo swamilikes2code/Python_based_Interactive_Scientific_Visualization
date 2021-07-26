@@ -12,6 +12,7 @@ from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from bokeh.models.widgets.tables import ScientificFormatter
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
@@ -698,8 +699,9 @@ def update_unsuper_learning():
     unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
 
     # PCA
-    pca = PCA(n_components=unsuper_learn_PCA_select.value)
-    principalComponents = pca.fit_transform(unsuper_learn_std_df)
+    pca = PCA(n_components=unsuper_learn_PCA_select.value).fit(
+        unsuper_learn_std_df)
+    principalComponents = pca.transform(unsuper_learn_std_df)
     unsuper_learn_PCA_source.data = dict(x=principalComponents[:, 0],
                                          y=principalComponents[:, 1],
                                          c=colors_df)
@@ -713,14 +715,17 @@ def update_unsuper_learning():
                                               right=right)
 
     # loadings
-    loadings = np.around(pca.components_.T, decimals=10)
+    loadings = pca.components_.T
     num_pc = pca.n_components_
     pc_list = ["PC"+str(i) for i in range(1, num_pc+1)]
     loadings_df = pd.DataFrame(loadings, columns=pc_list,
                                index=list(unsuper_learn_x_choices.keys()))
+    print(loadings_df)
+    Columns = [TableColumn(field=Ci, title=Ci, formatter=ScientificFormatter(
+        precision=3)) for Ci in loadings_df.columns]
     loadings_df = loadings_df.reset_index().rename(
         columns={"index": "Variables"})
-    Columns = [TableColumn(field=Ci, title=Ci) for Ci in loadings_df.columns]
+    Columns.insert(0, TableColumn(field="Variables", title="Variables"))
     unsuper_loading_source.data = loadings_df
     unsuper_loading_table.columns = Columns
 
