@@ -667,7 +667,8 @@ svm_x_choices = {
 }
 
 df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s']>=50.0, True, False)
-svm_target = df_catalysis_dataset["classifier"].values
+class_sample_data = df_catalysis_dataset.sample(frac = 0.25,random_state = 1)
+svm_target = class_sample_data["classifier"].values
 
 svm_choices = {
     "Linear":"linear",
@@ -676,7 +677,7 @@ svm_choices = {
     "Sigmoid":"sigmoid"
 }
 
-svm_select_x = MultiSelect(title="Choose Inputs",
+svm_select_x = MultiSelect(title="Choose Training Features",
                                      options=sorted(svm_x_choices.keys()),
                                      size=len(svm_x_choices),
                                      value=["Argon flow"])
@@ -685,7 +686,15 @@ svm_select_model = Select(title="Models",
                           options=list(svm_choices.keys()),
                           value="Linear")
 
-svm_controls = [svm_select_x, svm_select_model]
+select_class_x_axis = Select(title="X-axis",
+                             options = sorted(svm_x_choices.keys()),
+                             value = "CH4 flow")
+
+select_class_y_axis = Select(title="Y-axis",
+                             options = sorted(svm_x_choices.keys()),
+                             value = "Temperature")
+
+svm_controls = [svm_select_x, svm_select_model,select_class_x_axis,select_class_y_axis]
 for control in svm_controls:
     control.on_change("value", lambda attr, old, new: update_classification())
 svm_inputs = column(*svm_controls, width=200)
@@ -712,14 +721,16 @@ def update_classification():
     x_name = []  # list of attributes
     for choice in svm_select_x.value:
         x_name.append(svm_x_choices[choice])
-    svm_x = df_catalysis_dataset[x_name]
+    svm_x = class_sample_data[x_name]
     X_train, X_test, y_train, y_test = train_test_split(svm_x, svm_target, train_size=0.8, random_state = 0)
     svclassifier = SVC(kernel=svm_choices[svm_select_model.value],C=1, 
                         decision_function_shape='ovr',
                         gamma=1,degree=2).fit(X_train,y_train)
     y_test_pred = svclassifier.predict(X_test)
     y_train_pred = svclassifier.predict(X_train)
-    classification_svm_source.data = dict(x = df_catalysis_dataset["Temp"],y=df_catalysis_dataset["Ar_flow"],c=svm_target)
+    classification_svm_model.xaxis.axis_label = select_class_x_axis.value
+    classification_svm_model.yaxis.axis_label = select_class_y_axis.value
+    classification_svm_source.data = dict(x = class_sample_data[svm_x_choices[select_class_x_axis.value]],y=class_sample_data[svm_x_choices[select_class_y_axis.value]],c=svm_target)
     accuracy_lin = svclassifier.score(X_test, y_test)
     print("Accuracy Linear Kernel:",accuracy_lin)
     cm = confusion_matrix(y_test_pred, y_test)
