@@ -299,12 +299,12 @@ nav a:hover::before {
 }
 
 .flexcol2 {
-    width: 38%;
+    width: 33%;
     height:auto;
     margin: auto;
 }
 .flexcol3 {
-    width:61%;
+    width:66%;
     height: auto;
     margin: auto;
 }
@@ -548,8 +548,14 @@ nav a:hover::before {
 
 </body>
 <div class="footer">
+        <div class="flexcol1">
+            <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" style="margin: 5px;">
+        </div>
+        <div class="flexcol1">
+            <h2 style="text-align:center; font-size: 300%; font-weight: 250; color: #fff;"> Acknowledgements</h2>
+        </div>
+        <div class="flexwrap">
         <div class="flexcol2">
-        <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" style="margin: 5px;">
       <br>
       <h3 style="text-align:center; font-size: 225%; font-weight: 250; color: #fff;"> Faculty & External Advisors</h3>
            <div class="flexwrap"> 
@@ -570,6 +576,7 @@ nav a:hover::before {
         <div class="flexcol3">
 
         </div>
+    </div>
 </div>
 <!---------------------------------------------------------------------------------->
 
