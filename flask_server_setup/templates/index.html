@@ -17,6 +17,7 @@
 .container {
     width: 80%;
     margin: 0 auto;
+    position: relative;
 }
 
 header {
@@ -32,6 +33,10 @@ Header::after {
 .logo {
     float:left;
     padding: 10px 0; 
+    width:350px;
+    height:75px;
+    position: absolute;
+    left: 5%;
 }
 
 nav {float: right;
@@ -362,7 +367,7 @@ nav a:hover::before {
 <body>
     <header>
         <div class="container">
-            <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" class="logo" style="width:300px;height:70px;">
+            <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" class="logo">
         </div>
         <nav>
             <ul>
