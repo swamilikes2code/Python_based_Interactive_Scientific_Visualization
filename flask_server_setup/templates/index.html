@@ -281,12 +281,17 @@ nav a:hover::before {
     padding: 10px;
 }
 .flexcol1 {
+    position: relative;
     color: #ddd;
     padding: 10px;
     width: 50%;
     background: #262626;
     height:auto;
     font-family: 'work sans', sans-serif;
+}
+.flexcol1 img{
+    position:absolute;
+    right:0;
 }
 
 .flexcol2 {
@@ -539,7 +544,7 @@ nav a:hover::before {
       <br> <br>
       <h2 style="text-align:center; font-size: 225%; font-weight: 250; color: #fff;"> Faculty & External Advisors</h2>
            <div class="flexwrap"> 
-                <div class="flexcol1" style="float: right">
+                <div class="flexcol1">
                     <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic"> <br>
                     <img src="{{url_for('static', filename='Raghu.jpg')}}" alt= "Raghu" class="footerpic"> <br>
                     <img src="{{url_for('static', filename='grassi1.jpg')}}" alt= "Dr. Grassi" class="footerpic"> <br>
