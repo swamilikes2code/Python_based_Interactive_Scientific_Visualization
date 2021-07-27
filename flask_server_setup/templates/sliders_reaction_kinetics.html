@@ -26,8 +26,9 @@ Header::after {
 }
 .logo {
     float:left;
-    padding: 10px 0;
-    border: 3px solid #fff; 
+    padding: 10px 0; 
+    width:350px;
+    height:100%;
 }
 
 nav {float: right;
@@ -130,7 +131,7 @@ nav a:hover::before {
 <body>
     <header>
         <div class="container">
-            <img src="/templates/Logo.JPG" alt="logo" class="logo">
+            <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" class="logo">
         </div>
         <nav>
             <ul>
