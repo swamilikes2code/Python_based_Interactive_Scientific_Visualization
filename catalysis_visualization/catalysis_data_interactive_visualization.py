@@ -623,7 +623,7 @@ COLORS = Category20[11]
 unsuper_learn_k_cluster_source = ColumnDataSource(
     data=dict(x=[], y=[], c=[], color=[]))
 unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
-                                       title="Visualizing Clustering", tooltips=[('Cluster', '@c')])
+                                       title="Visualizing Clustering")
 unsuper_learn_k_cluster_model.circle(x="x", y="y", source=unsuper_learn_k_cluster_source,
                                      fill_alpha=0.5, line_color=None, size=8, color="color")
 
