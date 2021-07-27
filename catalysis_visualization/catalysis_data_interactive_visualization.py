@@ -734,6 +734,7 @@ def update_classification():
     accuracy_lin = svclassifier.score(X_test, y_test)
     print("Accuracy Linear Kernel:",accuracy_lin)
     cm = confusion_matrix(y_test, y_test_pred)
+    tn, fp, fn, tp = confusion_matrix(y_test,y_test_pred).ravel()
     confusion = pd.DataFrame(data = cm,
                             columns= ["Actual C2s over 40","Actual C2s below 40"],
                             index =  ["Predicted C2s over 40","Predicted C2s below 40"])
