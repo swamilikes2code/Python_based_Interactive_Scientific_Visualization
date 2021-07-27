@@ -666,8 +666,8 @@ svm_x_choices = {
     "CT": "CT"
 }
 
-df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s']>=50.0, True, False)
-class_sample_data = df_catalysis_dataset.sample(frac = 0.25,random_state = 1)
+df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s']>=40.0, True, False)
+class_sample_data = df_catalysis_dataset.sample(frac = 0.40,random_state = 79)
 svm_target = class_sample_data["classifier"].values
 
 svm_choices = {
@@ -704,8 +704,8 @@ class_cm_source = ColumnDataSource(
     data=dict(x=[], y=[],z=[]))
 class_cm_column = [
     TableColumn(field="z",title=""),
-    TableColumn(field="x", title="Actual C2s over 50"),
-    TableColumn(field="y", title="Actual C2s under 50")
+    TableColumn(field="x", title="Actual C2s over 40"),
+    TableColumn(field="y", title="Actual C2s under 40")
 ]
 class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column,
                                   header_row=True, width=400,index_position = None)
@@ -733,14 +733,18 @@ def update_classification():
     classification_svm_source.data = dict(x = class_sample_data[svm_x_choices[select_class_x_axis.value]],y=class_sample_data[svm_x_choices[select_class_y_axis.value]],c=svm_target)
     accuracy_lin = svclassifier.score(X_test, y_test)
     print("Accuracy Linear Kernel:",accuracy_lin)
-    cm = confusion_matrix(y_test_pred, y_test)
+    cm = confusion_matrix(y_test, y_test_pred)
     confusion = pd.DataFrame(data = cm,
-                            columns= ["Actual C2s over 50","Actual C2s below 50"],
-                            index =  ["Predicted C2s over 50","Predicted C2s below 50"])
-    confusion.insert(loc=0, column=" ", value= ["Predicted C2s over 50","Predicted C2s below 50"])
+                            columns= ["Actual C2s over 40","Actual C2s below 40"],
+                            index =  ["Predicted C2s over 40","Predicted C2s below 40"])
+    confusion.insert(loc=0, column=" ", value= ["Predicted C2s over 40","Predicted C2s below 40"])
+    confusion.iloc[0,1] = tp
+    confusion.iloc[1,1] = fn
+    confusion.iloc[0,2] = fp
+    confusion.iloc[1,2] = tn
     class_cm_source.data = dict(
-        x=confusion["Actual C2s over 50"],
-        y = confusion["Actual C2s below 50"],
+        x=confusion["Actual C2s over 40"],
+        y = confusion["Actual C2s below 40"],
         z = confusion.iloc[:,0]
     )
     # class_cm_source = ColumnDataSource(confusion)
