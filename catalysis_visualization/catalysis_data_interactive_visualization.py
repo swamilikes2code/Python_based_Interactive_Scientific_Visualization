@@ -880,7 +880,7 @@ tab3 = Panel(child=regression_layout, title="Multivariable Regression")
 tab4 = Panel(child=unsuper_learn_layout, title="Unsupervised Learning")
 tab5 = Panel(child=svm_layout, title ="Classification Methods")
 tab6 = Panel(child=text_descriptions, title="Model Description")
-tabs = Tabs(tabs=[tab1, tab2, tab3, tab4, tab5, tab6])
+tabs = Tabs(tabs=[tab6, tab1, tab2, tab3, tab4, tab5])
 
 update()  # initial load of the data
 update_regression()
