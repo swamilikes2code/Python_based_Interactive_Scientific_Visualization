@@ -688,11 +688,11 @@ svm_select_model = Select(title="Models",
 
 select_class_x_axis = Select(title="X-axis",
                              options = sorted(svm_x_choices.keys()),
-                             value = "CH4 flow")
+                             value = "O2 flow")
 
 select_class_y_axis = Select(title="Y-axis",
                              options = sorted(svm_x_choices.keys()),
-                             value = "Temperature")
+                             value = "CH4 flow")
 
 svm_controls = [svm_select_x, svm_select_model,select_class_x_axis,select_class_y_axis]
 for control in svm_controls:
@@ -748,7 +748,6 @@ def update_classification():
     classification_svm_model.yaxis.axis_label = select_class_y_axis.value
     classification_svm_source.data = dict(x = class_sample_data[svm_x_choices[select_class_x_axis.value]],
                                           y=class_sample_data[svm_x_choices[select_class_y_axis.value]],
-                                        #   c=svm_target,
                                           color = np.where(class_sample_data['classifier']==1, "red", "blue") )
     cm = confusion_matrix(y_test, y_test_pred)
     tn, fp, fn, tp = confusion_matrix(y_test,y_test_pred).ravel()
@@ -775,18 +774,11 @@ def update_classification():
     ], decimals=4)
     print(x_name)
     print(svm_select_model.value)
-    # class_cm_source = ColumnDataSource(confusion)
-    # print(svclassifier.decision_function(X_train))
-    # print(report.dtype)
     # Get support vector indices
     support_vector_indices = svclassifier.support_
-    # print(support_vector_indices)
     # Get number of support vectors per class
     support_vectors_per_class = svclassifier.n_support_
-    # print(support_vectors_per_class)
     support_vectors = svclassifier.support_vectors_
-    # print(support_vectors)
-    # classification_svm_model.scatter(x=support_vectors[:,0], y=support_vectors[:,1], color='black',fill_alpha = 0.3)
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
