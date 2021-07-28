@@ -103,6 +103,10 @@
     line-height: 1.5;
     margin: auto;
 }
+.flexwrap1 {
+    display: flex;
+    width: auto;
+}
 .flexcol {
     width: 28%;
     margin-left: 20px;
@@ -181,14 +185,14 @@ li{
         </div>
         </div>
         
-        <div class=flexwrap>
+        <div class=flexwrap1>
             <div class=flexcol3>
         <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:40rem; ">
             <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
          </div>
         </div>
             <div class=flexcol3>
-                <iframe src="{{url_for('static', filename='Zero Energy Cooling Chamber.pdf')}}" style= "background-color: #E8E8E8; border:solid 3px #000; padding: 10px;">Loading…</iframe>
+                <iframe src="{{url_for('static', filename='Zero Energy Cooling Chamber.pdf')}}" style= "background-color: #E8E8E8; border:solid 3px #000; padding: 10px;border-radius: 30px; width:auto;margin:auto;max-width:40rem;">Loading…</iframe>
             </div>
         </div>
             
