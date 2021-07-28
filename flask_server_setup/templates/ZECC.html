@@ -8,21 +8,197 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Zero Energy Cooling Chamber</title>
+   
+    <style>
+    body {
+        margin: 0;
+        background: #fff;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 400;
+           }
+            .container {
+        width: 80%;
+        margin: 0 auto;
+    }
+    
+    header {
+        background: #262626;
+        height: 90px;
+    }
+    
+    Header::after {
+        content: '';
+        display: table;
+        clear:both;
+    }
+    .logo {
+    float:left;
+    padding: 10px 0; 
+    width:350px;
+    height:100%;
+}
+    
+    nav {float: right;
+    }
+    
+    nav ul {
+        margin: 0;
+        padding: 0;
+        list-style:none;
+    }
+    
+    nav li {
+        display:inline-block;
+        margin: left 70px;
+        margin: 0 35px;
+        padding-top: 34px;
+        position: relative;
+    }
+    
+    nav a {
+        color: rgb(255, 251, 251);
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 20px;
+    }
+    
+    nav a:hover {
+        color: #31A6FF;
+    }
+    nav a::before {
+        content: '';
+        display: block;
+        height:5px;
+        width: 100%;
+        background-color: #31A6FF;
+    
+        position:absolute;
+        width: 0%;
+        top: 0;
+        transition: all ease-in-out 250ms;
+    }
+    
+    nav a:hover::before {
+       width: 100%;
+    }
 
+.head1 {
+    text-align: center;
+    color: #000;
+    font-size: 300%;
+    font-weight: bold;
+    font-family: 'Segoe UI';
+}
+
+.flexwrap {
+    display: flex;
+    width: auto;
+    font-family: 'Segoe UI';
+    color:#484848;
+    font-weight: 600; 
+    font-size: 130%;
+    padding: 10px;
+    background: #E8E8E8;
+    gap: 2em;
+    line-height: 1.5;
+    margin: auto;
+}
+.flexwrap1 {
+    display: flex;
+    width: auto;
+    max-width: 85rem;
+    margin: auto;
+}
+.flexcol {
+    width: 28%;
+    margin-left: 20px;
+}
+.flexcol1 {
+    width:41%;
+}
+.flexcol2 {
+    width:30%;
+    margin-right: 20px;
+}
+.head2 {
+    text-align: center;
+    color: #000;
+    font-size: 250%;
+    font-weight: 600;
+    font-family: 'Segoe UI';
+}
+.questions {
+    width: auto;
+    margin: auto;
+    font-family: 'Segoe UI';
+    color:#484848;
+    font-weight: 600;
+    border:3px; 
+    font-size: 130%;
+    border-style:solid; 
+    border-color:#000; 
+    padding: 10px;
+    background: #E8E8E8;
+    border-radius: 30px;
+    max-width: 85rem;
+}
+li{
+  margin: 10px 0;
+}
+.center {
+    display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
+  height: 450px;
+}
+
+.flexcol3 {
+    width: 50%;
+}
+</style>
 </head>
     
 
 <body>
-    
-    <img src="flask_server_setup/templates/evap-cooling.jpg" alt="ZECC Diagram" width="500" height="333">
-
-    <h1 style="font-family:Arial; font-size:500%;">Zero Energy Cooling Chamber</h1>
-
-    <link><a href="/app">Homepage</a></link>
-    
-    <p style="font-size:200%; font-family:Helvetica; border:3px; border-style:solid; border-color:#000000; padding: 1em;" align="justify">Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.<br>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.<br>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.<br>
-
-    </p>
+    <header>
+        <div class="container">
+            <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" class="logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="app">Home</a></li>
+                <li><a href="sliders_reaction_kinetics">Reaction Kinetics</a></li>
+                <li><a href="ZECC">ZECC</a></li>
+                <li><a href="SIR">SIR</a></li>
+                <li><a href="catalysis_data_interactive_visualization">Catalysis</a></li>
+            </ul>
+        </nav>
+    </header>
+        <h1 class="head1">Zero Energy Cooling Chamber</h1>
+        <div class="flexwrap">
+            <div class="flexcol">
+           <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
+            </div>
+          <div class="flexcol1"> <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
+        </div> 
+        <div class="flexcol2">
+            <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
+        </div>
+        </div>
+        
+        <div class=flexwrap1>
+            <div class=flexcol3>
+        <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; ">
+            <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
+         </div>
+        </div>
+            <div class=flexcol3>
+                <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; ">
+                <iframe src="{{url_for('static', filename='Zero Energy Cooling Chamber.pdf')}}" style= "display:block; width: 600px;height: 450px; margin-left: auto; margin-right: auto;">Loading…</iframe>
+                </div>
+            </div>
+        </div>
             
     <br>
     <br>
@@ -33,18 +209,16 @@
 
     </div>
 
-    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
-
-        <ur>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</p>
-        </ur>
-
-        <p style="font-size:200%; font-family:Helvetica;" align="justify">With this given information, optimize the ZECC as much as possible and create a self sufficient system.</p>
-
+    <h2 class="head2">Points to Consider</h2>
+    <div class="questions">
+        <p> <ul>
+            <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
+            <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
+            <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
+            <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
+            <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
+            <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
+        </ul></p>
     </div>
 
     <br>
