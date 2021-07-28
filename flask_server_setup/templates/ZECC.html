@@ -146,6 +146,10 @@ li{
   width: 600px;
   height: 450px;
 }
+
+.flexcol3 {
+    width: 50%;
+}
 </style>
 </head>
     
@@ -177,9 +181,16 @@ li{
         </div>
         </div>
         
+        <div class=flexwrap>
+            <div class=flexcol3>
         <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:40rem; ">
             <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
          </div>
+        </div>
+            <div class=flexcol3>
+                <iframe src="{{url_for('static', filename='Zero Energy Cooling Chamber.pdf')}}" style= "background-color: #E8E8E8; border:solid 3px #000; padding: 10px;">Loading…</iframe>
+            </div>
+        </div>
             
     <br>
     <br>
