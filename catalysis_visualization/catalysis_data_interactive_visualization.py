@@ -1,3 +1,4 @@
+from bokeh.models.widgets.markups import Div
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
@@ -727,12 +728,21 @@ def update_unsuper_learning():
     unsuper_loading_table.columns = Columns
 
 
+# Text Description of the Model
+div1 = Div(text="The Data Exploration section allows for one to understand the distribution of the data set being used. One will be able to play with different things such as minimum temperature, minimum methane conversion, and minimum error to see how the data changes. ", margin=(20, 20, 10, 20), width=750)
+div2 = Div(text="The Correlation Matrix shows how strong the correlation is between all the different features in the dataset. This is important because depending on the strength of correlation, one can make useful predictions about a potential regression. ", margin=(10, 20, 10, 20), width=750)
+div3 = Div(text="The Multivariable Regression section allows for one to build their own regression model. The objective of the model is to show how good certain features are in predicting an output. This is achieved by a parity plot which shows the “actual” on the x axis and “predicted” on the “y axis”. Furthermore, while choosing the different features to go into the model, the user will be able to see many evaluation metrics such as R^2, regression coefficients, and an error histogram. ", margin=(10, 20, 10, 20), width=750)
+div4 = Div(text="The Unsupervised Learning section will introduce two techniques. These are clustering analysis and principal component analysis. The objective of the clustering plot is to try to group similar data points within the data set. To help with the clustering plot, an elbow plot is also included to help indicate the ideal number of clusters in the plot. The objective of principal component analysis is to reduce the dimensionality of a large dataset into a few key components which still explain most of the information in the dataset. In this section, we show this through the PCA plot which plots the first two principal components, and through a histogram which explains how much information each principal component accounts for. ", margin=(10, 20, 10, 20), width=750)
+div5 = Div(text="The Classification section will show ways in which the data is partitioned into different “classes”. With the dataset being used, the classes are a good catalyst and a bad catalyst. This is achieved through a support vector machine model. Within the model, one can choose between 4 kernels and see how the data changes. Furthermore, there are evaluation metrics included in the form of a classification report and confusion matrix. ", margin=(10, 20, 10, 20), width=750)
+text_descriptions = column(div1, div2, div3, div4, div5)
+
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
 tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
 tab3 = Panel(child=regression_layout, title="Multivariable Regression")
 tab4 = Panel(child=unsuper_learn_layout, title="Unsupervised Learning")
-tabs = Tabs(tabs=[tab1, tab2, tab3, tab4])
+tab6 = Panel(child=text_descriptions, title="Model Description")
+tabs = Tabs(tabs=[tab1, tab2, tab3, tab4, tab6])
 
 update()  # initial load of the data
 update_regression()
