@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn,Div
 from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error, r2_score
+from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error, r2_score, recall_score, f1_score
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.cluster import KMeans
 from sklearn.svm import SVC
@@ -680,7 +680,7 @@ svm_choices = {
 svm_select_x = MultiSelect(title="Choose Training Features",
                                      options=sorted(svm_x_choices.keys()),
                                      size=len(svm_x_choices),
-                                     value=["Argon flow"])
+                                     value=["Argon flow","Temperature","O2 flow"])
 
 svm_select_model = Select(title="Models",
                           options=list(svm_choices.keys()),
@@ -707,15 +707,31 @@ class_cm_column = [
     TableColumn(field="x", title="Actual C2s over 40"),
     TableColumn(field="y", title="Actual C2s under 40")
 ]
-class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column,
+class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column,height = 100,
                                   header_row=True, width=400,index_position = None)
 
-classification_svm_source = ColumnDataSource(data=dict(x=[], y=[],c=[]))
-classification_svm_model = figure(height=500, width=600, toolbar_location="above",tooltips=[('Parameters:','@c') ],
+classification_svm_source = ColumnDataSource(data=dict(x=[], y=[],color=[]))
+classification_svm_model = figure(height=500, width=600, toolbar_location="above",
                                        title="SVM")
-classification_svm_model.scatter(x="x", y="y", source=classification_svm_source,color = "red")
+classification_svm_model.scatter(x="x", y="y", source=classification_svm_source,color = "color")
 
-svm_layout = column([row(svm_inputs,classification_svm_model, class_cm_data_table)],sizing_mode="scale_both")
+# Table to display Recall, Accuracy and others
+class_scores_source = ColumnDataSource(data=dict(
+    tabs=["Accuracy", "Recall","F-Measure","Sensitivity","Specificity"],
+    data=[None, None, None,None,None]))
+class_scores_column = [
+    TableColumn(field="tabs"),
+    TableColumn(field="data")
+]
+class_scores_table = DataTable(source=class_scores_source, columns=class_scores_column,
+                                header_row=False, index_position=None, width=400)
+
+svm_layout = column([row(svm_inputs,classification_svm_model, 
+                    column(
+                    Div(text = "<b>Confusion Matrix</b>"),
+                    class_cm_data_table,
+                    Div(text = "<b>Evaluation Metrics</b>"),
+                    class_scores_table))],sizing_mode="scale_both")
 
 def update_classification():
     x_name = []  # list of attributes
@@ -730,9 +746,10 @@ def update_classification():
     y_train_pred = svclassifier.predict(X_train)
     classification_svm_model.xaxis.axis_label = select_class_x_axis.value
     classification_svm_model.yaxis.axis_label = select_class_y_axis.value
-    classification_svm_source.data = dict(x = class_sample_data[svm_x_choices[select_class_x_axis.value]],y=class_sample_data[svm_x_choices[select_class_y_axis.value]],c=svm_target)
-    accuracy_lin = svclassifier.score(X_test, y_test)
-    print("Accuracy Linear Kernel:",accuracy_lin)
+    classification_svm_source.data = dict(x = class_sample_data[svm_x_choices[select_class_x_axis.value]],
+                                          y=class_sample_data[svm_x_choices[select_class_y_axis.value]],
+                                        #   c=svm_target,
+                                          color = np.where(class_sample_data['classifier']==1, "red", "blue") )
     cm = confusion_matrix(y_test, y_test_pred)
     tn, fp, fn, tp = confusion_matrix(y_test,y_test_pred).ravel()
     confusion = pd.DataFrame(data = cm,
@@ -748,21 +765,27 @@ def update_classification():
         y = confusion["Actual C2s below 40"],
         z = confusion.iloc[:,0]
     )
+
+    class_scores_source.data["data"] = np.around([
+        svclassifier.score(X_test, y_test),
+        recall_score(y_test, y_test_pred),
+        f1_score(y_test,y_test_pred),
+        (tp/(tp+fn)),
+        (tn/(tn+fp))
+    ], decimals=4)
+    print(x_name)
+    print(svm_select_model.value)
     # class_cm_source = ColumnDataSource(confusion)
-    print(svclassifier.decision_function(X_train))
-    print(confusion)
-    print(classification_report(y_test, y_test_pred))
-    report = classification_report(y_test,y_test_pred)
+    # print(svclassifier.decision_function(X_train))
     # print(report.dtype)
-    # print(report)
     # Get support vector indices
     support_vector_indices = svclassifier.support_
-    print(support_vector_indices)
+    # print(support_vector_indices)
     # Get number of support vectors per class
     support_vectors_per_class = svclassifier.n_support_
-    print(support_vectors_per_class)
+    # print(support_vectors_per_class)
     support_vectors = svclassifier.support_vectors_
-    print(support_vectors)
+    # print(support_vectors)
     # classification_svm_model.scatter(x=support_vectors[:,0], y=support_vectors[:,1], color='black',fill_alpha = 0.3)
 
 # organizing panels of display
