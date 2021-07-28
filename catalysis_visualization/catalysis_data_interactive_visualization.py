@@ -620,12 +620,11 @@ unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 
 # k clustering plot
 COLORS = Category20[11]
-unsuper_learn_k_cluster_source = ColumnDataSource(
-    data=dict(x=[], y=[], c=[], color=[]))
+unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
 unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
-                                       title="Visualizing Clustering", tooltips=[('Cluster', '@c')])
+                                       title="Visualizing Clustering")
 unsuper_learn_k_cluster_model.circle(x="x", y="y", source=unsuper_learn_k_cluster_source,
-                                     fill_alpha=0.5, line_color=None, size=8, color="color")
+                                     fill_alpha=0.5, line_color=None, size=8, color="c")
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -693,8 +692,7 @@ def update_unsuper_learning():
     colors_df = [COLORS[xx] for xx in groups.codes]
     unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_std_df[:, xax],
                                                y=unsuper_learn_std_df[:, yax],
-                                               c=unsuper_learn_kmeans,
-                                               color=colors_df)
+                                               c=colors_df)
     unsuper_learn_k_cluster_model.xaxis.axis_label = unsuper_learn_select_x.value
     unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
 
@@ -720,9 +718,8 @@ def update_unsuper_learning():
     pc_list = ["PC"+str(i) for i in range(1, num_pc+1)]
     loadings_df = pd.DataFrame(loadings, columns=pc_list,
                                index=list(unsuper_learn_x_choices.keys()))
-    print(loadings_df)
-    Columns = [TableColumn(field=Ci, title=Ci, formatter=ScientificFormatter(
-        precision=3)) for Ci in loadings_df.columns]
+    Columns = [TableColumn(field=Ci, title=Ci, formatter=ScientificFormatter(precision=3))
+               for Ci in loadings_df.columns]
     loadings_df = loadings_df.reset_index().rename(
         columns={"index": "Variables"})
     Columns.insert(0, TableColumn(field="Variables", title="Variables"))
