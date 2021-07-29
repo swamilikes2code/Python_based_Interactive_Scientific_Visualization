@@ -149,7 +149,7 @@ li{
     display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 600px;
+  width: 700px;
   height: 450px;
 }
 
@@ -176,6 +176,9 @@ li{
         </nav>
     </header>
         <h1 class="head1">Zero Energy Cooling Chamber</h1>
+        <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 20px;">
+            <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
+         </div>
         <div class="flexwrap">
             <div class="flexcol">
            <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
@@ -186,19 +189,10 @@ li{
             <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
         </div>
         </div>
-        
-        <div class=flexwrap1>
-            <div class=flexcol3>
-        <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; ">
-            <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
-         </div>
-        </div>
-            <div class=flexcol3>
-                <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; ">
+    
+                <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; margin-top: 20px; ">
                 <iframe src="{{url_for('static', filename='ZECC ppt.pdf')}}" style= "display:block; width: 600px;height: 450px; margin-left: auto; margin-right: auto;">Loading…</iframe>
                 </div>
-            </div>
-        </div>
             
     <br>
     <br>
