@@ -1,13 +1,20 @@
+from bokeh.models.widgets.markups import Div
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, CategoricalColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
-from bokeh.palettes import viridis, gray, cividis
+from bokeh.palettes import viridis, gray, cividis, Category20
+from bokeh.transform import factor_cmap
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error, r2_score, recall_score, f1_score
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
+from sklearn.cluster import KMeans
+from sklearn.svm import SVC
+from sklearn.decomposition import PCA
+from bokeh.models.widgets.tables import ScientificFormatter
 
 # Import dataset
 df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
@@ -241,6 +248,8 @@ def update_histogram(attr, old, new):
 visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 
 
+# CORRELATION MATRIX
+
 # Adding the correlation matrix
 # Copy x-axis values into new df
 df_corr = df_catalysis_dataset[
@@ -334,6 +343,11 @@ reg_y_choices = {
     "CO2y": "CO2y",
     "C2y": "C2y"
 }
+reg_model_choices = {
+    "Linear": 1,
+    "Quadratic": 2,
+    "Cubic": 3
+}
 reg_select_x = MultiSelect(title="X value",
                            options=sorted(reg_x_choices.keys()),
                            size=len(reg_x_choices),
@@ -341,8 +355,11 @@ reg_select_x = MultiSelect(title="X value",
 reg_select_y = Select(title="Y value",
                       options=sorted(reg_y_choices.keys()),
                       value="CarbonMonoOxide_y")
+reg_select_model = Select(title="Models",
+                          options=list(reg_model_choices.keys()),
+                          value="Linear")
 
-reg_controls = [reg_select_x, reg_select_y]
+reg_controls = [reg_select_x, reg_select_y, reg_select_model]
 for control in reg_controls:
     control.on_change("value", lambda attr, old, new: update_regression())
 reg_inputs = column(*reg_controls, width=200)
@@ -350,17 +367,18 @@ reg_inputs = column(*reg_controls, width=200)
 # Table to display R^2 and RMSE
 reg_RMSE_source = ColumnDataSource(data=dict(
     tabs=["R^2 for Training", "R^2 for Testing",
-          "RMSE for Training", "RMSE for Testing", 
-          "Training Offset", "Testing Offset"],
-    data=[None, None, None, None,None,None]))
+          "RMSE for Training", "RMSE for Testing"],
+    data=[None, None, None, None]))
 reg_RMSE_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
 ]
 reg_RMSE_data_table = DataTable(source=reg_RMSE_source, columns=reg_RMSE_column,
                                 header_row=False, index_position=None, width=200)
+
 # Table to display coefficients
-reg_coeff_source = ColumnDataSource(data=dict(Variables=[], Coefficients=[]))
+reg_coeff_source = ColumnDataSource(
+    data=dict(Variables=[], Coefficients=[]))
 reg_coeff_column = [
     TableColumn(field="Variables", title="Variables"),
     TableColumn(field="Coefficients", title="Coefficients")
@@ -377,16 +395,17 @@ reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
 
 # Histogram for training set
-reg_training_hhist, reg_training_hedges = np.histogram(reg_training_source.data["y_actual"],
-                                                       bins=20)
 reg_training_hist = figure(toolbar_location=None, width=reg_training.width, title="Error Histogram",
-                           height=250, x_range=(min(reg_training_hedges[:-1])*1.1, max(reg_training_hedges[1:])*1.1),
-                           y_range=(0, max(reg_training_hhist)*1.1), min_border=10, y_axis_location="right")
+                           height=250, min_border=10, y_axis_location="right")
+reg_training_hist.y_range.start = 0
 reg_training_hist.xgrid.grid_line_color = None
 reg_training_hist.yaxis.major_label_orientation = "horizontal"
-reg_training_hist_bar = reg_training_hist.quad(bottom=0, left=reg_training_hedges[:-1],
-                                               right=reg_training_hedges[1:], top=reg_training_hhist)
+reg_training_hist_source = ColumnDataSource(
+    data=dict(top=[], left=[], right=[]))
+reg_training_hist.quad(bottom=0, left="left", right="right",
+                       top="top", source=reg_training_hist_source)
 
+# training layout
 reg_training_layout = column(reg_training, reg_training_hist)
 
 # Create figure to display the scatter plot for testing set
@@ -398,16 +417,17 @@ reg_testing.xaxis.axis_label = "Actual"
 reg_testing.yaxis.axis_label = "Predicted"
 
 # Histogram for testing set
-reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_source.data["y_actual"],
-                                                     bins=20)
 reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width, title="Error Histogram",
-                          height=250, x_range=(min(reg_testing_hedges[:-1])*1.1, max(reg_testing_hedges[1:])*1.1),
-                          y_range=(0, max(reg_testing_hhist)*1.1), min_border=10, y_axis_location="right")
+                          height=250, min_border=10, y_axis_location="right")
+reg_testing_hist.y_range.start = 0
 reg_testing_hist.xgrid.grid_line_color = None
 reg_testing_hist.yaxis.major_label_orientation = "horizontal"
-reg_testing_hist_bar = reg_testing_hist.quad(bottom=0, left=reg_testing_hedges[:-1],
-                                             right=reg_testing_hedges[1:], top=reg_testing_hhist)
+reg_testing_hist_source = ColumnDataSource(
+    data=dict(top=[], left=[], right=[]))
+reg_testing_hist.quad(bottom=0, left="left", right="right",
+                      top="top", source=reg_testing_hist_source)
 
+# testing layout
 reg_testing_layout = column(reg_testing, reg_testing_hist)
 
 # Support Lines
@@ -447,15 +467,22 @@ regression_layout = column(
 
 def update_regression():
     # get selected values from selectors
-    x_name = []
+    x_name = []  # list of attributes
     for choice in reg_select_x.value:
         x_name.append(reg_x_choices[choice])
     y_name = reg_y_choices[reg_select_y.value]
     reg_x = df_catalysis_dataset[x_name].values
     reg_y = df_catalysis_dataset[y_name].values
+    # normalize data
+    standardized_reg_x = StandardScaler().fit_transform(reg_x)
     # Split into training and test
     reg_x_train, reg_x_test, reg_y_train, reg_y_test = train_test_split(
-        reg_x, reg_y, test_size=0.2, random_state=0)
+        standardized_reg_x, reg_y, test_size=0.2, random_state=0)
+    # Transform data into polynomial features
+    reg_pre_process = PolynomialFeatures(
+        degree=reg_model_choices[reg_select_model.value])
+    reg_x_train = reg_pre_process.fit_transform(reg_x_train)
+    reg_x_test = reg_pre_process.fit_transform(reg_x_test)
     # Training model
     reg_ml = LinearRegression()
     reg_ml.fit(reg_x_train, reg_y_train)
@@ -467,6 +494,7 @@ def update_regression():
     reg_testing_source.data = dict(
         y_actual=reg_y_test, y_predict=reg_y_test_pred)
 
+    # Trend lines
     # Trend line for training
     reg_training_trend_interval = np.linspace(
         start=max(min(reg_y_train), min(reg_y_train_pred)),
@@ -487,6 +515,7 @@ def update_regression():
         y=reg_testing_trend_interval
     )
 
+    # Line of best fit
     # Regrssion line of best fit using numpy(Training dataset)
     par_training = np.polyfit(reg_y_train, reg_y_train_pred, deg=1, full=True)
     slope_training = par_training[0][0]
@@ -509,11 +538,16 @@ def update_regression():
         r2_score(reg_y_test, reg_y_test_pred),
         np.sqrt(mean_squared_error(reg_y_train, reg_y_train_pred)),
         np.sqrt(mean_squared_error(reg_y_test, reg_y_test_pred)),
-        intercept_training,
-        intercept_testing
-    ], decimals=6)
-    reg_coeff_source.data = dict(Variables=reg_select_x.value,
-                                 Coefficients=np.around(reg_ml.coef_, decimals=6))
+    ], decimals=4)
+
+    # Update coefficients
+    # array of variable names
+    x_name_coef_key = reg_pre_process.get_feature_names(x_name)
+    x_name_coef_key.append("Intercept")
+    reg_coeff = list(reg_ml.coef_)
+    reg_coeff.append(reg_ml.intercept_)
+    reg_coeff_source.data = dict(Variables=x_name_coef_key,
+                                 Coefficients=np.around(reg_coeff, decimals=4))
 
     # Update histograms
     # training set
@@ -524,12 +558,9 @@ def update_regression():
 
     reg_training_hhist, reg_training_hedges = np.histogram(reg_training_diff,
                                                            bins=20)
-    reg_training_hist.y_range.end = max(reg_training_hhist)*1.1
-    reg_training_hist.x_range.start = min(reg_training_hedges[:-1])*1.1
-    reg_training_hist.x_range.end = max(reg_training_hedges[1:])*1.1
-    reg_training_hist_bar.data_source.data["top"] = reg_training_hhist
-    reg_training_hist_bar.data_source.data["right"] = reg_training_hedges[1:]
-    reg_training_hist_bar.data_source.data["left"] = reg_training_hedges[:-1]
+    reg_training_hist_source.data = dict(top=reg_training_hhist,
+                                         right=reg_training_hedges[1:],
+                                         left=reg_training_hedges[:-1])
 
     # testing set
     reg_testing_diff = []
@@ -539,22 +570,323 @@ def update_regression():
 
     reg_testing_hhist, reg_testing_hedges = np.histogram(reg_testing_diff,
                                                          bins=20)
-    reg_testing_hist.y_range.end = max(reg_testing_hhist)*1.1
-    reg_testing_hist.x_range.start = min(reg_testing_hedges[:-1])*1.1
-    reg_testing_hist.x_range.end = max(reg_testing_hedges[1:])*1.1
-    reg_testing_hist_bar.data_source.data["top"] = reg_testing_hhist
-    reg_testing_hist_bar.data_source.data["right"] = reg_testing_hedges[1:]
-    reg_testing_hist_bar.data_source.data["left"] = reg_testing_hedges[:-1]
+    reg_testing_hist_source.data = dict(top=reg_testing_hhist,
+                                        right=reg_testing_hedges[1:],
+                                        left=reg_testing_hedges[:-1])
+
+
+# UNSUPERVISED LEARNING MODEL
+
+# selection tools
+unsuper_learn_x_choices = {
+    "M1 atom number": "M1_atom_number",
+    "M2 atom number": "M2_atom_number",
+    "M3 atom number": "M3_atom_number",
+    "Support Id": "Support_ID",
+    "M2 mol": "M2_mol",
+    "M3 mol": "M3_mol",
+    "M1 percent mol": "M1_mol_percentage",
+    "M2 percent mol": "M2_mol_percentage",
+    "M3 percent mol": "M3_mol_percentage",
+    "Temperature": "Temp",
+    "Total flow": "Total_flow",
+    "Argon flow": "Ar_flow",
+    "CH4 flow": "CH4_flow",
+    "O2 flow": "O2_flow",
+    "CT": "CT"
+}
+
+# standard dataset
+# use to find the index
+unsuper_learn_attributes = list(unsuper_learn_x_choices.values())
+# the dataset without names
+unsuper_learn_std_df = StandardScaler().fit_transform(
+    df_catalysis_dataset[unsuper_learn_attributes].values)
+
+# selectors
+unsuper_learn_select_x = Select(title="X axis", value="Argon flow",
+                                options=sorted(unsuper_learn_x_choices.keys()))
+unsuper_learn_select_y = Select(title="Y axis", value="CT",
+                                options=sorted(unsuper_learn_x_choices.keys()))
+unsuper_learn_k_cluster_select = Slider(title="K", start=1, end=11,
+                                        value=4, step=1)
+unsuper_learn_PCA_select = Slider(title="# of PCA", start=2, end=15,
+                                        value=4, step=1)
+
+unsuper_learn_controls = [unsuper_learn_select_x,
+                          unsuper_learn_select_y,
+                          unsuper_learn_k_cluster_select,
+                          unsuper_learn_PCA_select]
+for control in unsuper_learn_controls:
+    control.on_change("value", lambda attr, old,
+                      new: update_unsuper_learning())
+unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
+
+# k clustering plot
+COLORS = Category20[11]
+unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
+unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
+                                       title="Visualizing Clustering")
+unsuper_learn_k_cluster_model.circle(x="x", y="y", source=unsuper_learn_k_cluster_source,
+                                     fill_alpha=0.5, line_color=None, size=8, color="c")
+
+# elbow method plot
+unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
+unsuper_learn_elbow_model = figure(height=400, width=500, toolbar_location="above",
+                                   title="Elbow Method")
+unsuper_learn_elbow_model.line(x="x", y="y", source=unsuper_learn_elbow_source)
+unsuper_learn_elbow_model.xaxis.axis_label = "Number of Clusters, k"
+unsuper_learn_elbow_model.yaxis.axis_label = "Error"
+
+# PCA plot
+unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
+unsuper_learn_PCA_model = figure(height=400, width=500, toolbar_location="above",
+                                 title="Principal Component Analysis")
+unsuper_learn_PCA_model.circle(x="x", y="y", fill_alpha=0.5, line_color=None,
+                               size=5, source=unsuper_learn_PCA_source, color="c")
+unsuper_learn_PCA_model.xaxis.axis_label = "Principal Component 1"
+unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
+
+# histogram
+unsuper_learn_PCA_hist_source = ColumnDataSource(
+    data=dict(top=[], left=[], right=[]))
+unsuper_learn_PCA_hist_model = figure(height=400, width=500, toolbar_location="above",
+                                      title="PCA Histogram")
+unsuper_learn_PCA_hist_model.y_range.start = 0
+unsuper_learn_PCA_hist_model.quad(top="top", left="left", right="right",
+                                  bottom=0, source=unsuper_learn_PCA_hist_source)
+unsuper_learn_PCA_hist_model.xaxis.axis_label = "Principal Components"
+unsuper_learn_PCA_hist_model.yaxis.axis_label = "Variance %"
+
+# loading table
+unsuper_loading_source = ColumnDataSource(data=dict())
+unsuper_loading_table = DataTable(source=unsuper_loading_source,
+                                  header_row=True, index_position=None)
+
+# layout
+unsuper_learn_layout = column(row(unsuper_learn_inputs,
+                                  column(unsuper_learn_k_cluster_model,
+                                         unsuper_learn_elbow_model),
+                                  column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
+                              unsuper_loading_table,
+                              sizing_mode="scale_both")
+
+
+def kmean_preset():
+    # elbow
+    Error = []
+    for i in range(1, 11):
+        kmeans = KMeans(n_clusters=i)
+        kmeans.fit(unsuper_learn_std_df)
+        Error.append(kmeans.inertia_)
+    unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
+
+
+def update_unsuper_learning():
+    # k means
+    unsuper_learn_kmeans = KMeans(n_clusters=unsuper_learn_k_cluster_select.value,
+                                  random_state=0).fit_predict(unsuper_learn_std_df)
+    xax = unsuper_learn_attributes.index(
+        unsuper_learn_x_choices[unsuper_learn_select_x.value])
+    yax = unsuper_learn_attributes.index(
+        unsuper_learn_x_choices[unsuper_learn_select_y.value])
+
+    # Coloring clusters
+    groups = pd.Categorical(unsuper_learn_kmeans)
+    colors_df = [COLORS[xx] for xx in groups.codes]
+    unsuper_learn_k_cluster_source.data = dict(x=unsuper_learn_std_df[:, xax],
+                                               y=unsuper_learn_std_df[:, yax],
+                                               c=colors_df)
+    unsuper_learn_k_cluster_model.xaxis.axis_label = unsuper_learn_select_x.value
+    unsuper_learn_k_cluster_model.yaxis.axis_label = unsuper_learn_select_y.value
+
+    # PCA
+    pca = PCA(n_components=unsuper_learn_PCA_select.value).fit(
+        unsuper_learn_std_df)
+    principalComponents = pca.transform(unsuper_learn_std_df)
+    unsuper_learn_PCA_source.data = dict(x=principalComponents[:, 0],
+                                         y=principalComponents[:, 1],
+                                         c=colors_df)
+    left = []
+    right = []
+    for i in range(1, pca.n_components_+1):
+        left.append(i-0.25)
+        right.append(i+0.25)
+    unsuper_learn_PCA_hist_source.data = dict(top=pca.explained_variance_ratio_,
+                                              left=left,
+                                              right=right)
+
+    # loadings
+    loadings = pca.components_.T
+    num_pc = pca.n_components_
+    pc_list = ["PC"+str(i) for i in range(1, num_pc+1)]
+    loadings_df = pd.DataFrame(loadings, columns=pc_list,
+                               index=list(unsuper_learn_x_choices.keys()))
+    Columns = [TableColumn(field=Ci, title=Ci, formatter=ScientificFormatter(precision=3))
+               for Ci in loadings_df.columns]
+    loadings_df = loadings_df.reset_index().rename(
+        columns={"index": "Variables"})
+    Columns.insert(0, TableColumn(field="Variables", title="Variables"))
+    unsuper_loading_source.data = loadings_df
+    unsuper_loading_table.columns = Columns
+
+
+
+    
+# CLASSIFICATION MODEL
+svm_x_choices = {
+    "M1 atom number": "M1_atom_number",
+    "M2 atom number": "M2_atom_number",
+    "M3 atom number": "M3_atom_number",
+    "Support Id": "Support_ID",
+    "M2 mol": "M2_mol",
+    "M3 mol": "M3_mol",
+    "M1 percent mol": "M1_mol_percentage",
+    "M2 percent mol": "M2_mol_percentage",
+    "M3 percent mol": "M3_mol_percentage",
+    "Temperature": "Temp",
+    "Total flow": "Total_flow",
+    "Argon flow": "Ar_flow",
+    "CH4 flow": "CH4_flow",
+    "O2 flow": "O2_flow",
+    "CT": "CT"
+}
+
+df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s']>=40.0, True, False)
+class_sample_data = df_catalysis_dataset.sample(frac = 0.40,random_state = 79)
+svm_target = class_sample_data["classifier"].values
+
+svm_choices = {
+    "Linear":"linear",
+    "Polynomial":"poly",
+    "RBF":"rbf",
+    "Sigmoid":"sigmoid"
+}
+
+svm_select_x = MultiSelect(title="Choose Training Features",
+                                     options=sorted(svm_x_choices.keys()),
+                                     size=len(svm_x_choices),
+                                     value=["Argon flow","Temperature","O2 flow"])
+
+svm_select_model = Select(title="Models",
+                          options=list(svm_choices.keys()),
+                          value="Linear")
+
+select_class_x_axis = Select(title="X-axis",
+                             options = sorted(svm_x_choices.keys()),
+                             value = "O2 flow")
+
+select_class_y_axis = Select(title="Y-axis",
+                             options = sorted(svm_x_choices.keys()),
+                             value = "CH4 flow")
+
+svm_controls = [svm_select_x, svm_select_model,select_class_x_axis,select_class_y_axis]
+for control in svm_controls:
+    control.on_change("value", lambda attr, old, new: update_classification())
+svm_inputs = column(*svm_controls, width=200)
+
+# Table to display coefficients
+class_cm_source = ColumnDataSource(
+    data=dict(x=[], y=[],z=[]))
+class_cm_column = [
+    TableColumn(field="z",title=""),
+    TableColumn(field="x", title="Actual C2s over 40"),
+    TableColumn(field="y", title="Actual C2s under 40")
+]
+class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column,height = 100,
+                                  header_row=True, width=400,index_position = None)
+
+classification_svm_source = ColumnDataSource(data=dict(x=[], y=[],color=[]))
+classification_svm_model = figure(height=500, width=600, toolbar_location="above",
+                                       title="SVM")
+classification_svm_model.scatter(x="x", y="y", source=classification_svm_source,color = "color")
+
+# Table to display Recall, Accuracy and others
+class_scores_source = ColumnDataSource(data=dict(
+    tabs=["Accuracy", "Recall","F-Measure","Sensitivity","Specificity"],
+    data=[None, None, None,None,None]))
+class_scores_column = [
+    TableColumn(field="tabs"),
+    TableColumn(field="data")
+]
+class_scores_table = DataTable(source=class_scores_source, columns=class_scores_column,
+                                header_row=False, index_position=None, width=400)
+
+svm_layout = column([row(svm_inputs,classification_svm_model, 
+                    column(
+                    Div(text = "<b>Confusion Matrix</b>"),
+                    class_cm_data_table,
+                    Div(text = "<b>Evaluation Metrics</b>"),
+                    class_scores_table))],sizing_mode="scale_both")
+
+def update_classification():
+    x_name = []  # list of attributes
+    for choice in svm_select_x.value:
+        x_name.append(svm_x_choices[choice])
+    svm_x = class_sample_data[x_name]
+    X_train, X_test, y_train, y_test = train_test_split(svm_x, svm_target, train_size=0.8, random_state = 0)
+    svclassifier = SVC(kernel=svm_choices[svm_select_model.value],C=1, 
+                        decision_function_shape='ovr',
+                        gamma=1,degree=2).fit(X_train,y_train)
+    y_test_pred = svclassifier.predict(X_test)
+    y_train_pred = svclassifier.predict(X_train)
+    classification_svm_model.xaxis.axis_label = select_class_x_axis.value
+    classification_svm_model.yaxis.axis_label = select_class_y_axis.value
+    classification_svm_source.data = dict(x = class_sample_data[svm_x_choices[select_class_x_axis.value]],
+                                          y=class_sample_data[svm_x_choices[select_class_y_axis.value]],
+                                          color = np.where(class_sample_data['classifier']==1, "red", "blue") )
+    cm = confusion_matrix(y_test, y_test_pred)
+    tn, fp, fn, tp = confusion_matrix(y_test,y_test_pred).ravel()
+    confusion = pd.DataFrame(data = cm,
+                            columns= ["Actual C2s over 40","Actual C2s below 40"],
+                            index =  ["Predicted C2s over 40","Predicted C2s below 40"])
+    confusion.insert(loc=0, column=" ", value= ["Predicted C2s over 40","Predicted C2s below 40"])
+    confusion.iloc[0,1] = tp
+    confusion.iloc[1,1] = fn
+    confusion.iloc[0,2] = fp
+    confusion.iloc[1,2] = tn
+    class_cm_source.data = dict(
+        x=confusion["Actual C2s over 40"],
+        y = confusion["Actual C2s below 40"],
+        z = confusion.iloc[:,0]
+    )
+
+    class_scores_source.data["data"] = np.around([
+        svclassifier.score(X_test, y_test),
+        recall_score(y_test, y_test_pred),
+        f1_score(y_test,y_test_pred),
+        (tp/(tp+fn)),
+        (tn/(tn+fp))
+    ], decimals=4)
+    # Get support vector indices
+    support_vector_indices = svclassifier.support_
+    # Get number of support vectors per class
+    support_vectors_per_class = svclassifier.n_support_
+    support_vectors = svclassifier.support_vectors_    
+    
+# Text Description of the Model
+div1 = Div(text="The Data Exploration section allows for one to understand the distribution of the data set being used. One will be able to play with different things such as minimum temperature, minimum methane conversion, and minimum error to see how the data changes. ", margin=(20, 20, 10, 20), width=750)
+div2 = Div(text="The Correlation Matrix shows how strong the correlation is between all the different features in the dataset. This is important because depending on the strength of correlation, one can make useful predictions about a potential regression. ", margin=(10, 20, 10, 20), width=750)
+div3 = Div(text="The Multivariable Regression section allows for one to build their own regression model. The objective of the model is to show how good certain features are in predicting an output. This is achieved by a parity plot which shows the “actual” on the x axis and “predicted” on the “y axis”. Furthermore, while choosing the different features to go into the model, the user will be able to see many evaluation metrics such as R^2, regression coefficients, and an error histogram. ", margin=(10, 20, 10, 20), width=750)
+div4 = Div(text="The Unsupervised Learning section will introduce two techniques. These are clustering analysis and principal component analysis. The objective of the clustering plot is to try to group similar data points within the data set. To help with the clustering plot, an elbow plot is also included to help indicate the ideal number of clusters in the plot. The objective of principal component analysis is to reduce the dimensionality of a large dataset into a few key components which still explain most of the information in the dataset. In this section, we show this through the PCA plot which plots the first two principal components, and through a histogram which explains how much information each principal component accounts for. ", margin=(10, 20, 10, 20), width=750)
+div5 = Div(text="The Classification section will show ways in which the data is partitioned into different “classes”. With the dataset being used, the classes are a good catalyst and a bad catalyst. This is achieved through a support vector machine model. Within the model, one can choose between 4 kernels and see how the data changes. Furthermore, there are evaluation metrics included in the form of a classification report and confusion matrix. ", margin=(10, 20, 10, 20), width=750)
+text_descriptions = column(div1, div2, div3, div4, div5)
 
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
 tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
 tab3 = Panel(child=regression_layout, title="Multivariable Regression")
-tabs = Tabs(tabs=[tab1, tab2, tab3])
+tab4 = Panel(child=unsuper_learn_layout, title="Unsupervised Learning")
+tab5 = Panel(child=svm_layout, title ="Classification Methods")
+tab6 = Panel(child=text_descriptions, title="Model Description")
+tabs = Tabs(tabs=[tab6, tab1, tab2, tab3, tab4, tab5])
 
 update()  # initial load of the data
 update_regression()
+update_unsuper_learning()
+kmean_preset()
+update_classification()
 curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
