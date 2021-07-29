@@ -92,6 +92,7 @@ nav a:hover::before {
     width: 50%;
     background: #E8E8E8;
     border-radius: 30px;
+    margin: 0 20px;
 }
 
 .head1 {
@@ -127,8 +128,8 @@ nav a:hover::before {
     display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 500px;
-  height: 300px;
+  width: 700px;
+  height: 500px;
 }
 
     </style>
@@ -150,6 +151,9 @@ nav a:hover::before {
         </nav>
     </header>
     <h1 class="head1">Reaction Kinetics</h1>
+    <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 20px;">
+        <img src="{{url_for('static', filename='CSTR-rxn-sequence.jpg')}}" alt="logo" class="center">
+     </div>
     <div class="flexwrap">
         <div class="flexcol">
             <p> This is a simple example of a sequential set of reactions where a reactant "A" first undergoes a reaction to form B, the desired product. However, B undergoes a further (undesired) reaction to form C. It's a classical prototype of complex reactions we see all the time in natural (biological processes) and engineered reaction systems (chemical refineries, pharmaceuticals, etc.). As engineers, we would like to optimize the system to maximize the concentration of the desired product B. This, however, depends on a number of factors such as: 
@@ -164,9 +168,7 @@ nav a:hover::before {
                 <li>How does this time change if the second reaction becomes faster or becomes more sensitive to concentration?</li></ul></p>
            </div>
            </div>
-          <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:40rem; ">
-           <img src="{{url_for('static', filename='CSTR-rxn-sequence.jpg')}}" alt="logo" class="center">
-        </div>
+          
     
         
    
