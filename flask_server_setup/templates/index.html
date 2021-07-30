@@ -134,9 +134,11 @@ nav a:hover::before {
 }
 #catalysis.flexcol{
     position: relative;
+    height: 240px;
 }
 #SIR.flexcol{
     position: relative;
+    height:240px;
 }
 #ZECC.flexcol{
     position: relative;
@@ -340,6 +342,28 @@ nav a:hover::before {
     position: relative;
     height: auto;
 }
+.footerbutton {
+    margin: 5px 2px;
+    text-decoration: none;
+    font-family: "proxima nova";
+    font-weight: 200;
+    font-size:20px;
+    width: 20px;
+    text-align:center;
+    background-color: #31A6FF;
+    color: #fff;
+
+    border: solid 2px #31A6FF;
+    border-radius: 50px;
+    padding: 8px;
+
+    -webkit-transition-duration: 300ms;
+    transition-duration:300ms;
+}
+.footerbutton:hover {
+    color: #31A6FF;
+    background-color: #fff;
+}
 .fa {
   padding: 8px;
   font-size: 20px;
@@ -369,7 +393,7 @@ nav a:hover::before {
         </div>
         <nav>
             <ul>
-                <li><a href="app">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="sliders_reaction_kinetics">Reaction Kinetics</a></li>
                 <li><a href="ZECC">ZECC</a></li>
                 <li><a href="SIR">SIR</a></li>
@@ -462,7 +486,8 @@ nav a:hover::before {
         <div class="test">
         <h2 class="head2">Catalysis Data Science Model:</h2>
 
-        <p style="padding-right: 10px;">This model allows the user to visually explore the distribution of the catalysis dataset which contains several thousand experimental datapoints replicating the catalytic reaction called Oxidative Coupling of Methane. The user can then build their own multivariate regression model using any combination of inputs to predict output features such as ethane, ethylene, carbon dioxide, and carbon monoxide yield.</p>
+        <p style="padding-right: 10px;">Ever wonder how your email is classified as spam? How about how forecasting is done in fields such as business, medicine, and many others? The answer is data science and machine learning concepts. Data science and machine learning are emerging fields which are increasingly being used in the real world. Our module will introduce many of the basic key concepts of data science and machine learning which are used in many real world applications. 
+        </p>
         </div>
         <a href="catalysis_data_interactive_visualization" class="button1">Catalysis Model</a>
     </div>
@@ -471,64 +496,6 @@ nav a:hover::before {
 
     <br><br>
 
-  <!-- <div class="footer">
-      <div class="flexwrap">
-          <div class="flexcol2">
-            <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo">
-            <br> <br>
-            <h2 style="text-align:center; font-size: 225%; font-weight: 250"> Faculty & External Advisors</h2>
-          <div class="flexwrap">
-            <div class="flexcol1">
-                <img src="#" alt= "Prof R"> <br>
-                <img src="#" alt= "Raghu"> <br>
-                <img src="#" alt= "Dr. Grassi"> <br>
-                <img src="#" alt= "Steve"> <br>
-            </div>
-            <div class="flexcol1" style="text-align: left;">
-                <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator</p>
-                <p> <strong>Dr. Raghuram Thiagarajan</strong> <br> Project Lead</p>
-                <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead</p>
-                <p> <strong>Steve Anthony</strong> <br> Tech Assistant</p>
-            </div>
-        </div>  
-          </div>
-          <div style="width:66%">
-          <h2 style="text-align:center; font-size: 225%; font-weight: 250"> Developers</h2>
-          <div class="flexcol2">
-            <div class="flexwrap">
-                <div class="flexcol1">
-                    <img src="Neel.jpg" alt="Neel"> <br>
-                    <img src="Timothy.jpg" alt="Timothy"> <br>
-                    <img src="Xu.jpg" alt="Xu"> <br>
-                </div>
-                <div class="flexcol1" style="text-align: left;">
-                    <p> <strong>Neel Surya</strong> - Class of 2021 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/neel-surya-a6a4881b4/" class="fa fa-linkedin"></a> <a href="https://github.com/Neel-Surya" class="fa fa-github"></a></p>
-                    <p> <strong>Timothy Odom</strong> - Class of 2021<br> Core Developer <br> <a href="https://www.linkedin.com/in/timothy-odom-831218216at3/" class="fa fa-linkedin"></a> <a href="https://github.com/too223" class="fa fa-github"></a></p>
-                    <p> <strong> Xu Chen</strong> - Class of 2021 <br>Core Developer <br> <a href="https://www.linkedin.com/in/xu-chen-lu/" class="fa fa-linkedin"></a> <a href="https://github.com/xuc323" class="fa fa-github"></a></p>
-                </div>
-            </div>
-            
-          </div>
-          <div class="flexcol2">
-              <div class="flexwrap">
-                  <div class="flexcol1">
-                    <img src="Self.JPG" alt="Alex"> <br>
-                    <img src="#" alt="Anna"> <br>
-                    <img src="#" alt="Brian"> <br>
-                  </div>
-                  <div class="flexcol1">
-                    <p> <strong>Alex Outkou</strong> - Class of 2021<br> UI/UX and HTML Developer <br> <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> <a href="https://github.com/ado323" class="fa fa-github"></a></p> <br>
-                    <p> <strong>Anna Moragne</strong> - Class of 2020 <br> Core Developer <br><a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> <a href="https://github.com/annamoragne" class="fa fa-github"></a></p>
-                    <p> <strong>Brian Lucas</strong> - Class of 2020 <br> Design, Implementation and UI/UX Developer <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> <a href="https://github.com/cariocabrian" class="fa fa-github"></a></p>
-                  </div>
-              </div>
-          </div>
-        </div>
-      </div>
-     
-    -->
-    
-
 </body>
 
 <div class="footer1">
@@ -536,7 +503,7 @@ nav a:hover::before {
     <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" style="margin: 5px;">
 </div>
 <div class="flexcol6">
-    <h2 style="font-family: Segoe UI; text-align:center; text-decoration: underline; font-size: 300%; font-weight: 300; color: #fff;"> Acknowledgements</h2>
+    <h2 style="font-family: Segoe UI; text-align:center; font-size: 300%; font-weight: 500; color: #fff;"> Acknowledgements</h2>
 </div>
 </div>
 <div class="footer">
@@ -550,10 +517,10 @@ nav a:hover::before {
                     <img src="{{url_for('static', filename='steve.jpg')}}" alt= "Steve" class="footerpic"> <br><br><br><br><br><br>
                 </div>
                 <div class="flexcol1" style="float:left">
-                    <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator <br></p><br><br><br><br><br><br>
+                    <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator <br><br> <a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="footerbutton">Bio</a></p><br><br><br><br><br><br>
                     <p> <strong>Dr. Raghuram Thiagarajan</strong> <br> Project Lead <br> <a href="https://www.linkedin.com/in/raghuramt/" class="fa fa-linkedin"></a> <a href="https://github.com/swamilikes2code" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                    <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead</p><br><br><br><br><br><br>
-                    <p> <strong>Steve Anthony</strong> <br> Tech Assistant</p><br><br><br><br>
+                    <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="footerbutton">Memo</a></p><br><br><br><br><br><br>
+                    <p> <strong>Steve Anthony</strong> <br> Tech Assistant<br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p><br><br><br><br> 
                 </div>
             </div>    
         </div>

@@ -6,6 +6,7 @@
     <meta charset="utf-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Catalysis Data Science Model</title>
     <style>
@@ -112,7 +113,142 @@
     width: 50%;
     background: #E8E8E8;
     border-radius: 30px;
+    margin: 0 20px;
 }
+.head2 {
+    text-align: center;
+    color: #000;
+    font-size: 250%;
+    font-weight: 600;
+    font-family: 'Segoe UI';
+}
+.center {
+    display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 800px;
+  height: 450px;
+  padding: 10px;
+}
+.footer {
+    margin: 0;
+    padding: 0;
+    list-style:none;
+    text-decoration: none;
+    overflow: hidden;
+    padding: 30px 0;
+    box-sizing: border-box;
+    background-color: #262626;
+    display:flex;
+    width: 100%;
+    font-family: 'Segoe UI';
+    margin-top: -75px;
+}
+.footer1 {
+    margin: 0;
+    padding: 0;
+    list-style:none;
+    text-decoration: none;
+    overflow: hidden;
+    padding: 30px 0;
+    box-sizing: border-box;
+    background-color: #262626;
+    display:flex;
+    width: 100%;
+    font-family: 'Segoe UI';
+    margin-bottom: -75px;
+}
+.footerpic {
+    width: 110px;
+    height: 100px;
+    padding: 10px;
+}
+.flexcol1 {
+    position: relative;
+    color: #ddd;
+    padding: 10px;
+    width: 50%;
+    background: #262626;
+    height:auto;
+    font-family: 'work sans', sans-serif;
+}
+.flexcol1 p{
+    position:absolute;
+    left:0;
+}
+.flexcol1 img{
+    position:absolute;
+    right:0;
+}
+
+.flexcol2 {
+    width: 28%;
+    height:auto;
+    margin: auto;
+}
+.flexcol4 {
+    width: 32%;
+    height: auto;
+    margin: auto;
+}
+.flexcol3 {
+    width:40%;
+    height: auto;
+    margin: auto;
+    padding-right: 20px;
+}
+.flexcol5 {
+    width: 45%;
+    position: relative;
+    height: auto;
+    padding-left: 80px;
+}
+.flexcol6 {
+    width: 55%;
+    position: relative;
+    height: auto;
+}
+.footerbutton {
+    margin: 5px 2px;
+    text-decoration: none;
+    font-family: "proxima nova";
+    font-weight: 200;
+    font-size:20px;
+    width: 20px;
+    text-align:center;
+    background-color: #31A6FF;
+    color: #fff;
+
+    border: solid 2px #31A6FF;
+    border-radius: 50px;
+    padding: 8px;
+
+    -webkit-transition-duration: 300ms;
+    transition-duration:300ms;
+}
+.footerbutton:hover {
+    color: #31A6FF;
+    background-color: #fff;
+}
+.fa {
+  padding: 8px;
+  font-size: 20px;
+  width: 20px;
+  text-align: center;
+  text-decoration: none;
+  margin: 5px 2px;
+  border-radius: 50%;
+}
+.fa:hover {
+    opacity: 0.7;
+}
+.fa-linkedin {
+  background: #007bb5;
+  color: white;
+}
+.fa-github {
+    border:3px solid #521D91;
+} 
      </style>
 </head>
 
@@ -123,7 +259,7 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="app">Home</a></li>
+                    <li><a href="/">Home</a></li>
                     <li><a href="sliders_reaction_kinetics">Reaction Kinetics</a></li>
                     <li><a href="ZECC">ZECC</a></li>
                     <li><a href="SIR">SIR</a></li>
@@ -132,24 +268,113 @@
             </nav>
         </header>
         <h1 class="head1">Catalysis Data Science Model</h1>
+        <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 35px;">
+            <img src="{{url_for('static', filename='data science.jpg')}}" alt="ZECC Diagram" class="center">
+         </div>
         <div class="flexwrap">
             <div class="flexcol">
-            <p style="line-height: 1.5;">In this visualization you will be able to go through three different sections:<ol><li><b>The Data Exploration tab</b> will allow you to understand the large dataset and see trends in it through scatter plots and histograms.</li><li><b>The Correlation Matrix tab</b> will allow you to interact with a matrix which shows the relationship between all the different inputs in the data set.</li><li><b> The Regression tab </b>will allow you to essentially build your own multivariate regression through picking your own inputs and selecting what output you want. </li></ol></p>
+            <p style="line-height: 1.5;">The dataset utilized in our module is called the “Catalysis dataset”. It describes a reaction known as the oxidative coupling of methane. What happens is methane and oxygen react together to form the desired products(ethane and ethylene) and the undesired products(carbon dioxide and carbon monoxide). This dataset contains over 10,000 points that represent instances of the catalytic reaction detailed above.
+
+            </p>
             </div>
             <div class="flexcol">
-            <p>
-                <b style="text-align: center;">How to use:</b>
-                Utilize the many different sliders and drop downs in these different tabs to see how the data and regression changes. 
-            </ol></p>
+            <p style="line-height: 1.5">Due to its massive size, we apply data science and machine learning concepts such as multivariable regression, classification, clustering, and principal component analysis to uncover different trends within the data. To get a full understanding of all these concepts, it is important to utilize the interactivity of this module. Make sure to play out as many scenarios as possible to see how the data changes or how the performance of specific models change. 
+            </p>
         </div>
         </div>
 
         {{bokeh_script_catalysis_data_interactive_visualization|safe}}
-    
-    <div>
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" width="1200" height="400" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-    </div>
 
 
+        <h2 class="head2">Supplemental Questions</h2>
+        <div class="flexwrap">
+            <div class="flexcol">
+                <p> <strong>Introductory Questions</strong> 
+                <ol> 
+                <li> In the Data Exploration section, what combinations of methane conversion, temperature, and value of C2y will yield the most data points?</li>
+                <li> In the Correlation Matrix section, which two different features show the highest correlation between them? What could this indicate about how these features would perform in a regression model?</li>
+                </ol></p>
+                <p> <strong>Regression Section</strong> 
+                    <ol> 
+                    <li> As you select the different features and what outputs you want to go into the model, which combination of features and what output yields the best regression model? </li>
+                    <li> Looking at the model with all features selected, is it possible to tell which variables were the most important in predicting the output variable? If so, how would you do so and which are the most important variables? </li>
+                    <li> How does changing the type of regression from linear to quadratic to cubic affect the regression? </li>
+                    <li>  Is there any overfitting occurring in the regression model?</li>
+                    </ol></p>
+            </div>
+            <div class="flexcol">
+                <p> <strong>Unsupervised Learning Section</strong> 
+                    <ol> 
+                    <li> Is there a trend that can be noticed about the amount of variance explained by each principal component? How many principal components does it take to have at least 80 percent variance explained?</li>
+                    <li> According to the elbow plot, what is the ideal number of clusters(optimal k value) for the k-means clustering?</li>
+                    <li> As can be seen in the clustering plot, there is a lot of overlap between points and even clusters. What might this imply about the dataset used to build this plot?</li>
+                    </ol></p>
+                    <p> <strong>Classification Section</strong> 
+                        <ol> 
+                        <li> When selecting all features and selecting the linear kernel, how many C2s were predicted right?  How many were predicted wrong? </li>
+                        <li> Looking at the classification report, what are metrics such as precision, recall, and F1-score and how are they useful in evaluating classification models?</li>
+                        <li> Looking at the svm model, matrix, and report, which kernel performs the best? </li>
+                        </ol></p>
+            </div>
+        </div>
+
+        <br>
+    <br>
 </body>
+<div class="footer1">
+    <div class="flexcol5">
+        <img src="{{url_for('static', filename='Logo2.jpg')}}" alt="logo" style="margin: 5px;">
+    </div>
+    <div class="flexcol6">
+        <h2 style="font-family: Segoe UI; text-align:center; font-size: 300%; font-weight: 500; color: #fff;"> Acknowledgements</h2>
+    </div>
+    </div>
+    <div class="footer">
+            <div class="flexcol2">
+          <pre style="font-family: Segoi UI; text-align:center; font-size: 225%; font-weight: 250; color: #fff;">     Faculty & External Advisors:                                                  Developers:</pre>
+               <div class="flexwrap"> 
+                    <div class="flexcol1">
+                        <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic"> <br><br><br><br><br><br>
+                        <img src="{{url_for('static', filename='Raghu.jpg')}}" alt= "Raghu" class="footerpic"> <br><br><br><br><br><br>
+                        <img src="{{url_for('static', filename='grassi1.jpg')}}" alt= "Dr. Grassi" class="footerpic"> <br><br><br><br><br><br>
+                        <img src="{{url_for('static', filename='steve.jpg')}}" alt= "Steve" class="footerpic"> <br><br><br><br><br><br>
+                    </div>
+                    <div class="flexcol1" style="float:left">
+                        <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator <br><br> <a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="footerbutton">Bio</a></p><br><br><br><br><br><br>
+                        <p> <strong>Dr. Raghuram Thiagarajan</strong> <br> Project Lead <br> <a href="https://www.linkedin.com/in/raghuramt/" class="fa fa-linkedin"></a> <a href="https://github.com/swamilikes2code" class="fa fa-github"></a></p><br><br><br><br><br><br>
+                        <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="footerbutton">Memo</a></p><br><br><br><br><br><br>
+                        <p> <strong>Steve Anthony</strong> <br> Tech Assistant<br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p><br><br><br><br> 
+                    </div>
+                </div>    
+            </div>
+            <div class="flexcol4">
+                <div class="flexwrap">
+                    <div class="flexcol1">
+                        <img src="{{url_for('static', filename='Neel.jpg')}}" alt= "Neel" class="footerpic"> <br><br><br><br><br><br>
+                        <img src="{{url_for('static', filename='Timothy.jpg')}}" alt= "Timothy" class="footerpic"> <br><br><br><br><br><br>
+                        <img src="{{url_for('static', filename='Xu.jpg')}}" alt= "Xu" class="footerpic"> <br><br><br><br><br><br>
+                    </div>
+                    <div class="flexcol1" style="float:left">
+                        <p> <strong>Neel Surya</strong> - Class of 2021 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/neel-surya-a6a4881b4/" class="fa fa-linkedin"></a> <a href="https://github.com/Neel-Surya" class="fa fa-github"></a></p><br><br><br><br><br><br>
+                        <p> <strong>Timothy Odom</strong> - Class of 2021 <br> Core Developer <br> <a href="https://www.linkedin.com/in/timothy-odom-831218216at3/" class="fa fa-linkedin"></a> <a href="https://github.com/too223" class="fa fa-github"></a></p><br><br><br><br><br><br>
+                        <p> <strong>Xu Chen</strong> - Class of 2021 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/xu-chen-lu/" class="fa fa-linkedin"></a> <a href="https://github.com/xuc323" class="fa fa-github"></a></p><br><br><br><br><br><br>
+                    </div>
+                </div>    
+            </div>
+            <div class="flexcol3" style="padding-right:15px">
+                <div class="flexwrap">
+                    <div class="flexcol1">
+                        <img src="{{url_for('static', filename='Alex.jpg')}}" alt= "Alex" class="footerpic"> <br><br><br><br><br><br>
+                        <img src="{{url_for('static', filename='anna.jpg')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
+                        <img src="{{url_for('static', filename='brian.jpg')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
+                    </div>
+                    <div class="flexcol1" style="float:left">
+                        <p> <strong>Alex Outkou</strong> - Class of 2021 <br> UI/UX and HTML Developer <br> <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> <a href="https://github.com/ado323" class="fa fa-github"></a></p><br><br><br><br><br><br>
+                        <p> <strong>Anna Moragne</strong> - Class of 2020 <br> Core Developer <br> <a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> <a href="https://github.com/annamoragne" class="fa fa-github"></a></p><br><br><br><br><br><br>
+                        <p> <strong>Brian Lucas</strong> - Class of 2020 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> <a href="https://github.com/cariocabrian" class="fa fa-github"></a></p><br><br><br><br><br><br>
+                    </div>
+                </div>    
+            </div>
+    </div>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" style= "background-color: #262626" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 </html>
