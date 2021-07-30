@@ -1,3 +1,4 @@
+from enum import auto
 from bokeh.models.widgets.markups import Div
 import numpy as np
 import pandas as pd
@@ -717,13 +718,13 @@ def update_unsuper_learning():
                                               right=right)
 
     # loadings
-    loadings = pca.components_.T
+    # array = [ x if x > threshold else 0.0 for x in array ]
+    loadings = np.around(pca.components_.T, decimals=5)
     num_pc = pca.n_components_
     pc_list = ["PC"+str(i) for i in range(1, num_pc+1)]
     loadings_df = pd.DataFrame(loadings, columns=pc_list,
                                index=list(unsuper_learn_x_choices.keys()))
-    Columns = [TableColumn(field=Ci, title=Ci, formatter=ScientificFormatter(precision=3))
-               for Ci in loadings_df.columns]
+    Columns = [TableColumn(field=Ci, title=Ci) for Ci in loadings_df.columns]
     loadings_df = loadings_df.reset_index().rename(
         columns={"index": "Variables"})
     Columns.insert(0, TableColumn(field="Variables", title="Variables"))
@@ -867,7 +868,7 @@ def update_classification():
 # Text Description of the Model
 div1 = Div(text="The Data Exploration section allows for one to understand the distribution of the data set being used. One will be able to play with different things such as minimum temperature, minimum methane conversion, and minimum error to see how the data changes. ", margin=(20, 20, 10, 20), width=750)
 div2 = Div(text="The Correlation Matrix shows how strong the correlation is between all the different features in the dataset. This is important because depending on the strength of correlation, one can make useful predictions about a potential regression. ", margin=(10, 20, 10, 20), width=750)
-div3 = Div(text="The Multivariable Regression section allows for one to build their own regression model. The objective of the model is to show how good certain features are in predicting an output. This is achieved by a parity plot which shows the “actual” on the x axis and “predicted” on the “y axis”. Furthermore, while choosing the different features to go into the model, the user will be able to see many evaluation metrics such as R^2, regression coefficients, and an error histogram. ", margin=(10, 20, 10, 20), width=750)
+div3 = Div(text="The Multivariable Regression section allows for one to build their own regression model. The objective of the model is to show how good certain features are in predicting an output. This is achieved by a parity plot which shows the <strong>actual</strong> on the <strong>x axis</strong> and <strong>predicted</strong> on the <strong>y axis</strong>. Furthermore, while choosing the different features to go into the model, the user will be able to see many evaluation metrics such as R^2, regression coefficients, and an error histogram. ", margin=(10, 20, 10, 20), width=750)
 div4 = Div(text="The Unsupervised Learning section will introduce two techniques. These are clustering analysis and principal component analysis. The objective of the clustering plot is to try to group similar data points within the data set. To help with the clustering plot, an elbow plot is also included to help indicate the ideal number of clusters in the plot. The objective of principal component analysis is to reduce the dimensionality of a large dataset into a few key components which still explain most of the information in the dataset. In this section, we show this through the PCA plot which plots the first two principal components, and through a histogram which explains how much information each principal component accounts for. ", margin=(10, 20, 10, 20), width=750)
 div5 = Div(text="The Classification section will show ways in which the data is partitioned into different “classes”. With the dataset being used, the classes are a good catalyst and a bad catalyst. This is achieved through a support vector machine model. Within the model, one can choose between 4 kernels and see how the data changes. Furthermore, there are evaluation metrics included in the form of a classification report and confusion matrix. ", margin=(10, 20, 10, 20), width=750)
 text_descriptions = column(div1, div2, div3, div4, div5)
