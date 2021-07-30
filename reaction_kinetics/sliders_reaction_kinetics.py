@@ -134,7 +134,7 @@ for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_tim
 inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
 inputs_time = slider_time
 
-tab1 =Panel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Desktop")
+tab1 =Panel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
 tab2 =Panel(child=column(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Mobile")
 tabs = Tabs(tabs = [tab1, tab2])
 
