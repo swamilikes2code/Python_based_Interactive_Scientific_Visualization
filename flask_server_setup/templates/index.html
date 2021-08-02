@@ -114,6 +114,11 @@ nav a:hover::before {
     width: 100%;
     font-family: 'Segoe UI';
 }
+.flexwrap1 {
+    display:flex;
+    width: 100%;
+    font-family: 'Segoe UI';
+}
 .flexcol {
     color: #484848;
     border:3px; 
@@ -404,12 +409,10 @@ nav a:hover::before {
 .para1 {
     width:100%;
     margin: 0 7%;
-    display: block;
 }
 .video {
     margin:0 7%;
     width: 100%;
-    display: block;
 }
 
 }
@@ -539,7 +542,7 @@ nav a:hover::before {
 <div class="footer">
         <div class="flexcol2">
       <pre style="font-family: Segoi UI; text-align:center; font-size: 2.345vw; font-weight: 250; color: #fff;">     Faculty & External Advisors:                                                  Developers:</pre>
-           <div class="flexwrap"> 
+           <div class="flexwrap1"> 
                 <div class="flexcol1">
                     <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic"> <br><br><br><br><br><br>
                     <img src="{{url_for('static', filename='Raghu.jpg')}}" alt= "Raghu" class="footerpic"> <br><br><br><br><br><br>
@@ -555,7 +558,7 @@ nav a:hover::before {
             </div>    
         </div>
         <div class="flexcol4">
-            <div class="flexwrap">
+            <div class="flexwrap1">
                 <div class="flexcol1">
                     <img src="{{url_for('static', filename='Neel.jpg')}}" alt= "Neel" class="footerpic"> <br><br><br><br><br><br>
                     <img src="{{url_for('static', filename='Timothy.jpg')}}" alt= "Timothy" class="footerpic"> <br><br><br><br><br><br>
@@ -569,7 +572,7 @@ nav a:hover::before {
             </div>    
         </div>
         <div class="flexcol3" style="padding-right:15px">
-            <div class="flexwrap">
+            <div class="flexwrap1">
                 <div class="flexcol1">
                     <img src="{{url_for('static', filename='Alex.JPG')}}" alt= "Alex" class="footerpic"> <br><br><br><br><br><br>
                     <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
