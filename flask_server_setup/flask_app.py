@@ -5,7 +5,7 @@ from bokeh.client import pull_session
 from bokeh.embed import server_document
 
 #instantiate the flask app
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/app/static")
 
 #create index page function
 @app.route("/", methods=['GET'])
