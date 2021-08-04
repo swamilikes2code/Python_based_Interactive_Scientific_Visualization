@@ -898,9 +898,9 @@ tabs = Tabs(tabs=[tab6, tab1, tab2, tab3, tab4, tab5])
 
 update()  # initial load of the data
 update_regression()
-update_unsuper_learning()
+# update_unsuper_learning()
 kmean_preset()
-update_classification()
+# update_classification()
 curdoc().add_root(tabs)
 curdoc().title = "Catalysis Data"
 r.data_source.selected.on_change('indices', update_histogram)
