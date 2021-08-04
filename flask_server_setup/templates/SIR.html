@@ -16,79 +16,77 @@
      font-family: 'Work Sans', sans-serif;
      font-weight: 400;
         }
-        .container {
-    width: 85vw;
-    margin: 0 auto;
-    position: relative;
-}
-
-header {
-    background: #262626;
-    height: 5.86vw;
-}
-
-Header::after {
-    content: '';
-    display: table;
-    clear:both;
-}
-.logo {
+         .container {
+            width: 85vw;
+            margin: 0 auto;
+            position: relative;
+ }
+ 
+ header {
+     background: #262626;
+     height: 90px;
+ }
+ 
+ Header::after {
+     content: '';
+     display: table;
+     clear:both;
+ }
+ .logo {
     float:left;
-    padding: 0.651vw 0; 
-    width:22.79vw;
+    padding: 10px 0; 
+    width:350px;
     height:100%;
 }
-
-nav {float: right;
-}
-
-nav ul {
-    margin: 0;
-    padding: 0;
-    list-style:none;
-}
-
-nav li {
-    display:inline-block;
-    margin: left 3.56vw;
-    margin: 0 2.28vw;
-    padding-top: 2.21vw;
-    position: relative;
-    
-}
-
-nav a {
-    color: rgb(255, 251, 251);
-    text-decoration: none;
-    text-transform: uppercase;
-    font-size: 1.3vw;
-}
-
-nav a:hover {
-    color: #31A6FF;
-}
-nav a::before {
-    content: '';
-    display: block;
-    height:5px;
+ 
+ nav {float: right;
+ }
+ 
+ nav ul {
+     margin: 0;
+     padding: 0;
+     list-style:none;
+ }
+ 
+ nav li {
+     display:inline-block;
+     margin: left 70px;
+     margin: 0 35px;
+     padding-top: 34px;
+     position: relative;
+ }
+ 
+ nav a {
+     color: rgb(255, 251, 251);
+     text-decoration: none;
+     text-transform: uppercase;
+     font-size: 20px;
+ }
+ 
+ nav a:hover {
+     color: #31A6FF;
+ }
+ nav a::before {
+     content: '';
+     display: block;
+     height:5px;
+     width: 100%;
+     background-color: #31A6FF;
+ 
+     position:absolute;
+     width: 0%;
+     top: 0;
+     transition: all ease-in-out 250ms;
+ }
+ 
+ nav a:hover::before {
     width: 100%;
-    background-color: #31A6FF;
-
-    position:absolute;
-    width: 0%;
-    top: 0;
-    transition: all ease-in-out 250ms;
-}
-
-nav a:hover::before {
-   width: 100%;
-}
-
+ }
  
  .head1 {
     text-align: center;
     color: #000;
-    font-size: 3.125vw;
+    font-size: 300%;
     font-weight: bold;
     font-family: 'Segoe UI';
  }
@@ -100,22 +98,22 @@ nav a:hover::before {
     max-width: 85rem;
     color:#484848;
     font-weight: 600;
-    border:0.1953vw; 
-    font-size: 1.354vw;
+    border:3px; 
+    font-size: 130%;
     border-style:solid; 
     border-color:#000; 
-    padding: 0.651vw;
+    padding: 10px;
     background: #E8E8E8;
     border-radius: 30px;
 }
 .flexcol {
     color:#484848;
     font-weight: 600;
-    border:0.1953vw; 
-    font-size: 1.354vw;
+    border:3px; 
+    font-size: 130%;
     border-style:solid; 
     border-color:#000; 
-    padding: 0.651vw;
+    padding: 10px;
     width: 50%;
     background: #E8E8E8;
     border-radius: 30px;
@@ -124,14 +122,9 @@ nav a:hover::before {
     display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 52.083vw;
-  height: 29.297vw;
-  padding: 0.651vw;
-}
-.flexwrap {
-    display:flex;
-    width: 100%;
-    font-family: 'Segoe UI';
+  width: 800px;
+  height: 450px;
+  padding: 10px;
 }
 .footer {
     margin: 0;
@@ -139,13 +132,13 @@ nav a:hover::before {
     list-style:none;
     text-decoration: none;
     overflow: hidden;
-    padding: 1.953vw 0;
+    padding: 30px 0;
     box-sizing: border-box;
     background-color: #262626;
     display:flex;
     width: 100%;
     font-family: 'Segoe UI';
-    margin-top: -4.88vw;
+    margin-top: -75px;
 }
 .footer1 {
     margin: 0;
@@ -153,28 +146,27 @@ nav a:hover::before {
     list-style:none;
     text-decoration: none;
     overflow: hidden;
-    padding: 1.953vw 0;
+    padding: 30px 0;
     box-sizing: border-box;
     background-color: #262626;
     display:flex;
     width: 100%;
     font-family: 'Segoe UI';
-    margin-bottom: -4.883vw;
+    margin-bottom: -75px;
 }
 .footerpic {
-    width: 7.161vw;
-    height: 6.51vw;
-    padding: 0.65vw;
+    width: 110px;
+    height: 100px;
+    padding: 10px;
 }
 .flexcol1 {
     position: relative;
     color: #ddd;
-    padding: 0.65vw;
+    padding: 10px;
     width: 50%;
     background: #262626;
     height:auto;
     font-family: 'work sans', sans-serif;
-    font-size: 1.042vw;
 }
 .flexcol1 p{
     position:absolute;
@@ -199,25 +191,30 @@ nav a:hover::before {
     width:40%;
     height: auto;
     margin: auto;
-    padding-right: 1.3vw;
+    padding-right: 20px;
 }
 .flexcol5 {
     width: 45%;
     position: relative;
     height: auto;
-    padding-left: 5.21vw;
+    padding-left: 80px;
 }
 .flexcol6 {
     width: 55%;
     position: relative;
     height: auto;
 }
+.flexwrap {
+    display:flex;
+    width: 100%;
+    font-family: 'Segoe UI';
+}
 .footerbutton {
     margin: 5px 2px;
     text-decoration: none;
     font-family: "proxima nova";
     font-weight: 200;
-    font-size:1.302vw;
+    font-size:20px;
     width: 20px;
     text-align:center;
     background-color: #31A6FF;
@@ -225,7 +222,7 @@ nav a:hover::before {
 
     border: solid 2px #31A6FF;
     border-radius: 50px;
-    padding: 0.521vw;
+    padding: 8px;
 
     -webkit-transition-duration: 300ms;
     transition-duration:300ms;
@@ -235,9 +232,9 @@ nav a:hover::before {
     background-color: #fff;
 }
 .fa {
-  padding: 0.521vw;
-  font-size: 1.302vw;
-  width: 1.302vw;
+  padding: 8px;
+  font-size: 20px;
+  width: 20px;
   text-align: center;
   text-decoration: none;
   margin: 5px 2px;
@@ -251,18 +248,8 @@ nav a:hover::before {
   color: white;
 }
 .fa-github {
-    border:0.195vw solid #521D91;
+    border:3px solid #521D91;
 } 
-
-@media all and (max-width: 960px) {
-nav li {
-    padding-top: 0.325vw;
-}
-.flexwrap1 {
-    padding: 0 10px;
-    border-radius: 17px;
-}
-}
  
      </style>
 </head>
@@ -283,7 +270,7 @@ nav li {
         </nav>
     </header>
     <h1 class="head1">SIR Infectious Disease Model</h1>
-    <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
+    <div style="border:solid 3px #000; padding: 10px;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 35px;">
         <img src="{{url_for('static', filename='virus.jpg')}}" alt="ZECC Diagram" class="center">
      </div>
     <div class="flexwrap1">
@@ -303,15 +290,15 @@ nav li {
 </body>
 <div class="footer1">
     <div class="flexcol5">
-        <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" style="margin: 5px; width: 44.14vw; height: 8.854vw;">
+        <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" style="margin: 5px;">
     </div>
     <div class="flexcol6">
-        <h2 style="font-family: Segoe UI; text-align:center; font-size: 3.125vw; font-weight: 500; color: #fff;"> Acknowledgements</h2>
+        <h2 style="font-family: Segoe UI; text-align:center; font-size: 300%; font-weight: 500; color: #fff;"> Acknowledgements</h2>
     </div>
     </div>
     <div class="footer">
             <div class="flexcol2">
-          <pre style="font-family: Segoe UI; text-align:center; font-size: 2.345vw; font-weight: 250; color: #fff;">     Faculty & External Advisors:                                                  Developers:</pre>
+          <pre style="font-family: Segoi UI; text-align:center; font-size: 225%; font-weight: 250; color: #fff;">     Faculty & External Advisors:                                                  Developers:</pre>
                <div class="flexwrap"> 
                     <div class="flexcol1">
                         <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic"> <br><br><br><br><br><br>
