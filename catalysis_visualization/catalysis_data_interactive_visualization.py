@@ -1,10 +1,9 @@
-from enum import auto
 from bokeh.models.widgets.markups import Div
 import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, CategoricalColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis, Category20
 from bokeh.transform import factor_cmap
@@ -15,8 +14,8 @@ from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.cluster import KMeans
 from sklearn.svm import SVC
 from sklearn.decomposition import PCA
-from bokeh.models.widgets.tables import ScientificFormatter
 
+######################### prepare dataset #########################
 # Import dataset
 df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
                                    index_col=0, header=0)
@@ -33,6 +32,10 @@ df_catalysis_dataset["Sum_y"] = df_catalysis_dataset.loc[:,
 df_catalysis_dataset["error_ch4_conv"] = abs((df_catalysis_dataset["Sum_y"]-df_catalysis_dataset["CH4_conv"]) /
                                              df_catalysis_dataset["CH4_conv"])*100
 
+###########################################################################
+
+
+######################### data visualization model #########################
 # Determine key values for Select Tool. More details in the Notebook.
 unique_temp = (df_catalysis_dataset['Temp']
                .sort_values()
@@ -107,7 +110,6 @@ p.select(BoxSelectTool).select_every_mousemove = False
 p.select(LassoSelectTool).select_every_mousemove = False
 r = p.circle(x="x", y="y", source=source, size=7,
              color='mediumblue', line_color=None, fill_alpha=0.6)
-# r = p.scatter(x = "x",y="y",alpha=0.3)
 
 
 def select_data():
@@ -247,11 +249,10 @@ def update_histogram(attr, old, new):
 
 
 visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
+###########################################################################
 
 
-# CORRELATION MATRIX
-
-# Adding the correlation matrix
+######################### correlation matrix #########################
 # Copy x-axis values into new df
 df_corr = df_catalysis_dataset[
     ["CT", "Ar_flow", "CH4_flow", "O2_flow", "Total_flow", "Support_ID", "Temp",
@@ -316,10 +317,10 @@ def change_color():
 
 
 select_color.on_change('value', lambda attr, old, new: change_color())
+###########################################################################
 
 
-# REGRESSION MODEL
-
+######################### regression model #########################
 # Selection tools
 reg_x_choices = {
     "M1 atom number": "M1_atom_number",
@@ -575,9 +576,10 @@ def update_regression():
                                         right=reg_testing_hedges[1:],
                                         left=reg_testing_hedges[:-1])
 
+###########################################################################
 
-# UNSUPERVISED LEARNING MODEL
 
+######################### unsupervised learning model #########################
 # selection tools
 unsuper_learn_x_choices = {
     "M1 atom number": "M1_atom_number",
@@ -731,10 +733,10 @@ def update_unsuper_learning():
     unsuper_loading_source.data = loadings_df
     unsuper_loading_table.columns = Columns
 
+###########################################################################
 
 
-    
-# CLASSIFICATION MODEL
+######################### classification model #########################
 svm_x_choices = {
     "M1 atom number": "M1_atom_number",
     "M2 atom number": "M2_atom_number",
@@ -753,109 +755,116 @@ svm_x_choices = {
     "CT": "CT"
 }
 
-df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s']>=40.0, True, False)
-class_sample_data = df_catalysis_dataset.sample(frac = 0.40,random_state = 79)
+df_catalysis_dataset['classifier'] = np.where(df_catalysis_dataset['C2s'] >= 40.0,
+                                              True, False)
+class_sample_data = df_catalysis_dataset.sample(frac=0.40, random_state=79)
 svm_target = class_sample_data["classifier"].values
 
 svm_choices = {
-    "Linear":"linear",
-    "Polynomial":"poly",
-    "RBF":"rbf",
-    "Sigmoid":"sigmoid"
+    "Linear": "linear",
+    "Polynomial": "poly",
+    "RBF": "rbf",
+    "Sigmoid": "sigmoid"
 }
 
 svm_select_x = MultiSelect(title="Choose Training Features",
-                                     options=sorted(svm_x_choices.keys()),
-                                     size=len(svm_x_choices),
-                                     value=["Argon flow","Temperature","O2 flow"])
+                           options=sorted(svm_x_choices.keys()),
+                           size=len(svm_x_choices),
+                           value=["Argon flow", "Temperature", "O2 flow"])
 
 svm_select_model = Select(title="Models",
                           options=list(svm_choices.keys()),
                           value="Linear")
 
 select_class_x_axis = Select(title="X-axis",
-                             options = sorted(svm_x_choices.keys()),
-                             value = "O2 flow")
+                             options=sorted(svm_x_choices.keys()),
+                             value="O2 flow")
 
 select_class_y_axis = Select(title="Y-axis",
-                             options = sorted(svm_x_choices.keys()),
-                             value = "CH4 flow")
+                             options=sorted(svm_x_choices.keys()),
+                             value="CH4 flow")
 
-svm_controls = [svm_select_x, svm_select_model,select_class_x_axis,select_class_y_axis]
+svm_controls = [svm_select_x, svm_select_model,
+                select_class_x_axis, select_class_y_axis]
 for control in svm_controls:
     control.on_change("value", lambda attr, old, new: update_classification())
 svm_inputs = column(*svm_controls, width=200)
 
 # Table to display coefficients
 class_cm_source = ColumnDataSource(
-    data=dict(x=[], y=[],z=[]))
+    data=dict(x=[], y=[], z=[]))
 class_cm_column = [
-    TableColumn(field="z",title=""),
+    TableColumn(field="z", title=""),
     TableColumn(field="x", title="Actual C2s over 40"),
     TableColumn(field="y", title="Actual C2s under 40")
 ]
-class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column,height = 100,
-                                  header_row=True, width=400,index_position = None)
+class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column, height=100,
+                                header_row=True, width=400, index_position=None)
 
-classification_svm_source = ColumnDataSource(data=dict(x=[], y=[],color=[]))
+classification_svm_source = ColumnDataSource(data=dict(x=[], y=[], color=[]))
 classification_svm_model = figure(height=500, width=600, toolbar_location="above",
-                                       title="SVM")
-classification_svm_model.scatter(x="x", y="y", source=classification_svm_source,color = "color")
+                                  title="SVM")
+classification_svm_model.scatter(x="x", y="y", color="color",
+                                 source=classification_svm_source)
 
 # Table to display Recall, Accuracy and others
 class_scores_source = ColumnDataSource(data=dict(
-    tabs=["Accuracy", "Recall","F-Measure","Sensitivity","Specificity"],
-    data=[None, None, None,None,None]))
+    tabs=["Accuracy", "Recall", "F-Measure", "Sensitivity", "Specificity"],
+    data=[None, None, None, None, None]))
 class_scores_column = [
     TableColumn(field="tabs"),
     TableColumn(field="data")
 ]
 class_scores_table = DataTable(source=class_scores_source, columns=class_scores_column,
-                                header_row=False, index_position=None, width=400)
+                               header_row=False, index_position=None, width=400)
 
-svm_layout = column([row(svm_inputs,classification_svm_model, 
+svm_layout = column([row(svm_inputs, classification_svm_model,
                     column(
-                    Div(text = "<b>Confusion Matrix</b>"),
-                    class_cm_data_table,
-                    Div(text = "<b>Evaluation Metrics</b>"),
-                    class_scores_table))],sizing_mode="scale_both")
+                        Div(text="<b>Confusion Matrix</b>"),
+                        class_cm_data_table,
+                        Div(text="<b>Evaluation Metrics</b>"),
+                        class_scores_table))], sizing_mode="scale_both")
+
 
 def update_classification():
     x_name = []  # list of attributes
     for choice in svm_select_x.value:
         x_name.append(svm_x_choices[choice])
     svm_x = class_sample_data[x_name]
-    X_train, X_test, y_train, y_test = train_test_split(svm_x, svm_target, train_size=0.8, random_state = 0)
-    svclassifier = SVC(kernel=svm_choices[svm_select_model.value],C=1, 
-                        decision_function_shape='ovr',
-                        gamma=1,degree=2).fit(X_train,y_train)
+    X_train, X_test, y_train, y_test = train_test_split(svm_x, svm_target,
+                                                        train_size=0.8, random_state=0)
+    svclassifier = SVC(kernel=svm_choices[svm_select_model.value], C=1,
+                       decision_function_shape='ovr',
+                       gamma=1, degree=2).fit(X_train, y_train)
     y_test_pred = svclassifier.predict(X_test)
     y_train_pred = svclassifier.predict(X_train)
     classification_svm_model.xaxis.axis_label = select_class_x_axis.value
     classification_svm_model.yaxis.axis_label = select_class_y_axis.value
-    classification_svm_source.data = dict(x = class_sample_data[svm_x_choices[select_class_x_axis.value]],
+    classification_svm_source.data = dict(x=class_sample_data[svm_x_choices[select_class_x_axis.value]],
                                           y=class_sample_data[svm_x_choices[select_class_y_axis.value]],
-                                          color = np.where(class_sample_data['classifier']==1, "red", "blue") )
+                                          color=np.where(class_sample_data['classifier'] == 1, "red", "blue"))
     cm = confusion_matrix(y_test, y_test_pred)
-    tn, fp, fn, tp = confusion_matrix(y_test,y_test_pred).ravel()
-    confusion = pd.DataFrame(data = cm,
-                            columns= ["Actual C2s over 40","Actual C2s below 40"],
-                            index =  ["Predicted C2s over 40","Predicted C2s below 40"])
-    confusion.insert(loc=0, column=" ", value= ["Predicted C2s over 40","Predicted C2s below 40"])
-    confusion.iloc[0,1] = tp
-    confusion.iloc[1,1] = fn
-    confusion.iloc[0,2] = fp
-    confusion.iloc[1,2] = tn
+    tn, fp, fn, tp = confusion_matrix(y_test, y_test_pred).ravel()
+    confusion = pd.DataFrame(data=cm,
+                             columns=["Actual C2s over 40",
+                                      "Actual C2s below 40"],
+                             index=["Predicted C2s over 40", "Predicted C2s below 40"])
+    confusion.insert(loc=0, column=" ",
+                     value=["Predicted C2s over 40", "Predicted C2s below 40"])
+    confusion.iloc[0, 1] = tp
+    confusion.iloc[1, 1] = fn
+    confusion.iloc[0, 2] = fp
+    confusion.iloc[1, 2] = tn
     class_cm_source.data = dict(
         x=confusion["Actual C2s over 40"],
-        y = confusion["Actual C2s below 40"],
-        z = confusion.iloc[:,0]
+        y=confusion["Actual C2s below 40"],
+        z=confusion.iloc[:, 0]
     )
 
     class_scores_source.data["data"] = np.around([
         svclassifier.score(X_test, y_test),
         recall_score(y_test, y_test_pred),
-        f1_score(y_test,y_test_pred),
+        f1_score(y_test, y_test_pred),
         (tp/(tp+fn)),
         (tn/(tn+fp))
     ], decimals=4)
@@ -863,9 +872,12 @@ def update_classification():
     support_vector_indices = svclassifier.support_
     # Get number of support vectors per class
     support_vectors_per_class = svclassifier.n_support_
-    support_vectors = svclassifier.support_vectors_    
-    
-# Text Description of the Model
+    support_vectors = svclassifier.support_vectors_
+
+###########################################################################
+
+
+######################### text description #########################
 div1 = Div(text="The Data Exploration section allows for one to understand the distribution of the data set being used. One will be able to play with different things such as minimum temperature, minimum methane conversion, and minimum error to see how the data changes. ", margin=(20, 20, 10, 20), width=750)
 div2 = Div(text="The Correlation Matrix shows how strong the correlation is between all the different features in the dataset. This is important because depending on the strength of correlation, one can make useful predictions about a potential regression. ", margin=(10, 20, 10, 20), width=750)
 div3 = Div(text="The Multivariable Regression section allows for one to build their own regression model. The objective of the model is to show how good certain features are in predicting an output. This is achieved by a parity plot which shows the <strong>actual</strong> on the <strong>x axis</strong> and <strong>predicted</strong> on the <strong>y axis</strong>. Furthermore, while choosing the different features to go into the model, the user will be able to see many evaluation metrics such as R^2, regression coefficients, and an error histogram. ", margin=(10, 20, 10, 20), width=750)
@@ -873,13 +885,14 @@ div4 = Div(text="The Unsupervised Learning section will introduce two techniques
 div5 = Div(text="The Classification section will show ways in which the data is partitioned into different “classes”. With the dataset being used, the classes are a good catalyst and a bad catalyst. This is achieved through a support vector machine model. Within the model, one can choose between 4 kernels and see how the data changes. Furthermore, there are evaluation metrics included in the form of a classification report and confusion matrix. ", margin=(10, 20, 10, 20), width=750)
 text_descriptions = column(div1, div2, div3, div4, div5)
 
+###########################################################################
 
 # organizing panels of display
 tab1 = Panel(child=visualization_layout, title="Data Exploration")
 tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
 tab3 = Panel(child=regression_layout, title="Multivariable Regression")
 tab4 = Panel(child=unsuper_learn_layout, title="Unsupervised Learning")
-tab5 = Panel(child=svm_layout, title ="Classification Methods")
+tab5 = Panel(child=svm_layout, title="Classification Methods")
 tab6 = Panel(child=text_descriptions, title="Model Description")
 tabs = Tabs(tabs=[tab6, tab1, tab2, tab3, tab4, tab5])
 
