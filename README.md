@@ -86,6 +86,7 @@ This project is licensed under the GNU General Public License
 
 ## Acknowledgments
 
+* [Bokeh_CorrelationMatrix](https://github.com/raghavsikaria/Bokeh_CorrelationMatrix)
 * Python Community
 * PyData Ann Arbor Meetup
 * Bokeh Visualization Library
