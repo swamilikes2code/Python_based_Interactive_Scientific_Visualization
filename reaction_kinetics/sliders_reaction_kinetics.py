@@ -105,7 +105,7 @@ slider_order_BC = Slider(title="order_BC"+" (initial: "+str(k_BC_start)+")", val
 start_time = 0.0
 end_time = 8.0
 time_step = 0.1
-slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step)
+slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step, width=500)
 
 def animate_update():
     current_time = slider_time.value + time_step
@@ -148,12 +148,12 @@ def animate():
         animate_button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
 
-animate_button = Button(label='► Play', width=60)
+animate_button = Button(label='► Play', width=50)
 animate_button.on_event('button_click', animate)
 
 # Set up layouts and add to document
 inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
-inputs_time = row(slider_time, animate_button)
+inputs_time = column(animate_button, slider_time )
 
 tab1 =Panel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
 tab2 =Panel(child=column(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Mobile")
