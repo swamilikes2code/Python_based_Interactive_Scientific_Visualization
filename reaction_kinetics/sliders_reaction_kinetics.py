@@ -104,10 +104,11 @@ slider_order_AB = Slider(title="order_AB"+" (initial: "+str(order_AB_start)+")",
 slider_order_BC = Slider(title="order_BC"+" (initial: "+str(k_BC_start)+")", value=order_BC_start, start=1, end=5, step=1)
 start_time = 0.0
 end_time = 8.0
-slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=0.1)
+time_step = 0.1
+slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step)
 
 def animate_update():
-    current_time = slider_time.value + 0.1
+    current_time = slider_time.value + time_step
     if current_time > end_time:
         current_time = start_time
     slider_time.value = current_time
@@ -137,10 +138,22 @@ def update_data(attrname, old, new):
 
 for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_time]:
     w.on_change('value', update_data)
+    
+def animate():
+    global callback_id
+    if button.label == '► Play':
+        button.label = '❚❚ Pause'
+        callback_id = curdoc().add_periodic_callback(animate_update, time_step*1000.0) # s to milliseconds conversion
+    else:
+        button.label = '► Play'
+        curdoc().remove_periodic_callback(callback_id)
+
+animate_button = Button(label='► Play', width=60)
+animate_button.on_event('button_click', animate)
 
 # Set up layouts and add to document
 inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
-inputs_time = slider_time
+inputs_time = row(slider_time, animate_button)
 
 tab1 =Panel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
 tab2 =Panel(child=column(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Mobile")
