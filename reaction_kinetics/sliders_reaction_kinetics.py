@@ -140,11 +140,4 @@ tabs = Tabs(tabs = [tab1, tab2])
 
 curdoc().add_root(tabs)
 
-# setup row_layout_flag. If row_layout_flag is 1, layout is row format. If not equal to 1 it will display in column fromat
-#row_layout_flag = 1
-#if (row_layout_flag == 1):
-#    curdoc().add_root(row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)))
-#else:
-#    curdoc().add_root(gridplot([[inputs_reaction, plot_conc], [None, column(plot_vbar, inputs_time, height=475)]]))
-
 curdoc().title = "Sequential_Reactions"
