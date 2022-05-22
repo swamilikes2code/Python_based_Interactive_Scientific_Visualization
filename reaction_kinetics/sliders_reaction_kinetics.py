@@ -12,7 +12,7 @@ from scipy.integrate import odeint
 
 from bokeh.io import curdoc
 from bokeh.layouts import row, column, gridplot
-from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool, Grid, LinearAxis, Tabs, Panel
+from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool, Grid, LinearAxis, Tabs, Panel, Button
 from bokeh.plotting import figure
 from bokeh.palettes import Blues8
 
@@ -141,11 +141,11 @@ for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_tim
     
 def animate():
     global callback_id
-    if button.label == '► Play':
-        button.label = '❚❚ Pause'
+    if animate_button.label == '► Play':
+        animate_button.label = '❚❚ Pause'
         callback_id = curdoc().add_periodic_callback(animate_update, time_step*1000.0) # s to milliseconds conversion
     else:
-        button.label = '► Play'
+        animate_button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
 
 animate_button = Button(label='► Play', width=60)
