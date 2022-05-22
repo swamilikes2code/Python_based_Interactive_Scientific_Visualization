@@ -102,7 +102,15 @@ slider_k_AB = Slider(title="k_AB"+" (initial: "+str(k_AB_start)+")", value=k_AB_
 slider_k_BC = Slider(title="k_BC"+" (initial: "+str(k_BC_start)+")", value=k_BC_start, start=0.02, end=2.0, step=0.02)
 slider_order_AB = Slider(title="order_AB"+" (initial: "+str(order_AB_start)+")", value=order_AB_start, start=1, end=5, step=1)
 slider_order_BC = Slider(title="order_BC"+" (initial: "+str(k_BC_start)+")", value=order_BC_start, start=1, end=5, step=1)
-slider_time = Slider(title="Time Slider (s)", value=0.0, start=0.0, end=8.0, step=0.1)
+start_time = 0.0
+end_time = 8.0
+slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=0.1)
+
+def animate_update():
+    current_time = slider_time.value + 0.1
+    if current_time > end_time:
+        current_time = start_time
+    slider_time.value = current_time
 
 def update_data(attrname, old, new):
 
