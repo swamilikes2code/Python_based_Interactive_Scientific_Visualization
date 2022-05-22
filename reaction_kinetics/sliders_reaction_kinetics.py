@@ -12,7 +12,7 @@ from scipy.integrate import odeint
 
 from bokeh.io import curdoc
 from bokeh.layouts import row, column, gridplot
-from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool, Grid, LinearAxis, Tabs, Panel
+from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool, Grid, LinearAxis, Tabs, Panel, Button
 from bokeh.plotting import figure
 from bokeh.palettes import Blues8
 
@@ -102,7 +102,16 @@ slider_k_AB = Slider(title="k_AB"+" (initial: "+str(k_AB_start)+")", value=k_AB_
 slider_k_BC = Slider(title="k_BC"+" (initial: "+str(k_BC_start)+")", value=k_BC_start, start=0.02, end=2.0, step=0.02)
 slider_order_AB = Slider(title="order_AB"+" (initial: "+str(order_AB_start)+")", value=order_AB_start, start=1, end=5, step=1)
 slider_order_BC = Slider(title="order_BC"+" (initial: "+str(k_BC_start)+")", value=order_BC_start, start=1, end=5, step=1)
-slider_time = Slider(title="Time Slider (s)", value=0.0, start=0.0, end=8.0, step=0.1)
+start_time = 0.0
+end_time = 8.0
+time_step = 0.1
+slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step, width=500)
+
+def animate_update():
+    current_time = slider_time.value + time_step
+    if current_time > end_time:
+        current_time = start_time
+    slider_time.value = current_time
 
 def update_data(attrname, old, new):
 
@@ -129,22 +138,27 @@ def update_data(attrname, old, new):
 
 for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_time]:
     w.on_change('value', update_data)
+    
+def animate():
+    global callback_id
+    if animate_button.label == '► Play':
+        animate_button.label = '❚❚ Pause'
+        callback_id = curdoc().add_periodic_callback(animate_update, time_step*1000.0) # s to milliseconds conversion
+    else:
+        animate_button.label = '► Play'
+        curdoc().remove_periodic_callback(callback_id)
+
+animate_button = Button(label='► Play', width=50)
+animate_button.on_event('button_click', animate)
 
 # Set up layouts and add to document
 inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
-inputs_time = slider_time
+inputs_time = column(animate_button, slider_time )
 
 tab1 =Panel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
 tab2 =Panel(child=column(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Mobile")
 tabs = Tabs(tabs = [tab1, tab2])
 
 curdoc().add_root(tabs)
-
-# setup row_layout_flag. If row_layout_flag is 1, layout is row format. If not equal to 1 it will display in column fromat
-#row_layout_flag = 1
-#if (row_layout_flag == 1):
-#    curdoc().add_root(row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)))
-#else:
-#    curdoc().add_root(gridplot([[inputs_reaction, plot_conc], [None, column(plot_vbar, inputs_time, height=475)]]))
 
 curdoc().title = "Sequential_Reactions"
