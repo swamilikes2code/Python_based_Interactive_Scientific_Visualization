@@ -1,12 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 import math
-from scipy.integrate import solve_ivp, odeint
+
 from bokeh.io import save, curdoc
 from bokeh.layouts import column, row
 from bokeh.model import Model
 from bokeh.models import CustomJS, Slider, Callback, Panel
 from bokeh.plotting import ColumnDataSource, figure, show
 import numpy as np
-
+from scipy.integrate import solve_ivp, odeint
 # three plots , co2 as y and z as x
 
 ###############    User generated - Slider initial value   ###############
@@ -29,9 +31,9 @@ chi = 0.0
 q_s0 = 3.40
 R = 8.314
 kT = 3.5 * (10 ** 3)  # calculate rA
-ρs = 880.0
+ps = 880.0
 deltH_co2 = 75.0  # calculate temeprature change
-ρg = 1.87  # 
+pg = 1.87  # 
 h = 13.8
 Cp_g = 37.55  # J/molK
 Cp_s = 1580.0  # J/molK
@@ -50,8 +52,8 @@ def find_aS(deltZ, r):
 #a_s = deltZ / r
 
 def find_theta(episl_r):
-    return ((1 - episl_r) * ρs * Cp_s + episl_r * ρg * Cp_g)
-#theta = (1 - episl_r) * ρs * Cp_s + episl_r * ρg * Cp_g
+    return ((1 - episl_r) * ps * Cp_s + episl_r * pg * Cp_g)
+#theta = (1 - episl_r) * ps * Cp_s + episl_r * pg * Cp_g
 
 
 # V = 100.0  # volume
@@ -90,7 +92,7 @@ def R_co2(T, c_co2, q):
 
 # Equation 2
 def ener_balan_part1(v0):
-    term = v0 * ρg * Cp_g
+    term = v0 * pg * Cp_g
     return (term)
 
 
@@ -99,11 +101,11 @@ def ener_balan(episl_r, V, r, v0):
     theta = find_theta(episl_r) 
     deltZ = find_Z(L, N)
     term = ener_balan_part1(v0)
-    return (term /  (theta * deltZ))# replace v0  * ρg* Cp_g / (theta * deltZ)
+    return (term /  (theta * deltZ))# replace v0  * pg* Cp_g / (theta * deltZ)
 
 
 def ener_balan2(episl_r):
-    return ((1 - episl_r) * ρs * deltH_co2)
+    return ((1 - episl_r) * ps * deltH_co2)
 
 
 def ener_balan3(V, r):
@@ -121,8 +123,8 @@ def mass_balan(episl_r, V, r, v0):
     return (v0 / (episl_r * deltZ))
 
 
-def masss_balan2(episl_r, ρs):
-    return ((1 - episl_r) * ρs)
+def masss_balan2(episl_r, ps):
+    return ((1 - episl_r) * ps)
 
 def deriv(t, y, params):
     T_n, co2_n, q_n, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12 = y # the rest of 12 vars a_n are not used, only for the success of solve_ivp
@@ -132,31 +134,31 @@ def deriv(t, y, params):
     T1 = -ener_balan(episl_r, V, r, v0) * T_n + ener_balan(episl_r, V, r, v0) * T0 + ener_balan2(episl_r) * (
         R_co2(T_n, co2_n, q_n)) + ener_balan3(V, r)
     co2_1 = -mass_balan(episl_r, V, r, v0) * co2_n + mass_balan(episl_r, V, r, v0) * c_co2_0 - (
-        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ρs)
+        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ps)
     q_1 = R_co2(T_n, co2_n, q_n)
 
     T2 = -ener_balan(episl_r, V, r, v0) * T_n + ener_balan(episl_r, V, r, v0) * T1 + ener_balan2(episl_r) * (
         R_co2(T_n, co2_n, q_n)) + ener_balan3(V, r)
     co2_2 = -mass_balan(episl_r, V, r, v0) * co2_n + mass_balan(episl_r, V, r, v0) * co2_1 - (
-        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ρs)
+        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ps)
     q_2 = R_co2(T_n, co2_n, q_n)
 
     T3 = -ener_balan(episl_r, V, r, v0) * T_n + ener_balan(episl_r, V, r, v0) * T2 + ener_balan2(episl_r) * (
         R_co2(T_n, co2_n, q_n)) + ener_balan3(V, r)
     co2_3 = -mass_balan(episl_r, V, r, v0) * co2_n + mass_balan(episl_r, V, r, v0) * co2_2 - (
-        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ρs)
+        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ps)
     q_3 = R_co2(T_n, co2_n, q_n)
 
     T4 = -ener_balan(episl_r, V, r, v0) * T_n + ener_balan(episl_r, V, r, v0) * T3 + ener_balan2(episl_r) * (
         R_co2(T_n, co2_n, q_n)) + ener_balan3(V, r)
     co2_4 = -mass_balan(episl_r, V, r, v0) * co2_n + mass_balan(episl_r, V, r, v0) * co2_3 - (
-        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ρs)
+        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ps)
     q_4 = R_co2(T_n, co2_n, q_n)
 
     T5 = -ener_balan(episl_r, V, r, v0) * T_n + ener_balan(episl_r, V, r, v0) * T4 + ener_balan2(episl_r) * (
         R_co2(T_n, co2_n, q_n)) + ener_balan3(V, r)
     co2_5 = -mass_balan(episl_r, V, r, v0) * co2_n + mass_balan(episl_r, V, r, v0) * co2_4 - (
-        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ρs)
+        R_co2(T_n, co2_n, q_n)) * masss_balan2(episl_r, ps)
     q_5 = R_co2(T_n, co2_n, q_n)
 
     # result = np.array([T1, T2, T3, T4, T5, co2_1, co2_2, co2_3, co2_4, co2_5, q_1, q_2, q_3, q_4, q_5]).reshape(-1, 1)
