@@ -1,6 +1,4 @@
-#coding:utf-8
 import math
-from telnetlib import TLS
 from scipy.integrate import solve_ivp, odeint
 from bokeh.io import save, curdoc
 from bokeh.layouts import column, row
