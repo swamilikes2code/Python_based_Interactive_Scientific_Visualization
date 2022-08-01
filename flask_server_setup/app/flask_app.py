@@ -12,7 +12,7 @@ app = Flask(__name__, static_url_path="/app/static")
 #create index page function
 @app.route("/app", methods=['GET'])
 def index():
-    return render_template("index.html")
+    return render_template("templates/index.html")
 
 @app.route("/sliders_reaction_kinetics", methods=['GET'])
 def sliders_reaction_kinetics():
