@@ -40,8 +40,8 @@ def catalysis_data_interactive_visualization():
 
 @app.route("/DAC", methods=['GET'])
 def DAC():
-    #bokeh_script_DACModel = server_document(url="https://srrweb.cc.lehigh.edu/dac")
-    bokeh_script_DACModel = server_document(url="http://localhost:5006/dac")
+    bokeh_script_DACModel = server_document(url="https://srrweb.cc.lehigh.edu/dac")
+    #bokeh_script_DACModel = server_document(url="http://localhost:5006/dac")
     return render_template("DAC.html", bokeh_script_DACModel=bokeh_script_DACModel)
 
 
