@@ -1,17 +1,29 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
+
+    <meta charset="utf-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Reaction Kinetics</title>
+
+    <title>Zero Energy Cooling Chamber</title>
+   
     <style>
-       body {
-    margin: 0;
-    background: #fff;
-    font-family: 'Work Sans', sans-serif;
-    font-weight: 400;
-       }
-      .container {
+    body {
+        margin: 0;
+        background: #fff;
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 400;
+           }
+            .container {
+                width: 85vw;
+                margin: 0 auto;
+                position: relative;
+    }
+    
+    .container {
     width: 85vw;
     margin: 0 auto;
     position: relative;
@@ -78,27 +90,7 @@ nav a::before {
 nav a:hover::before {
    width: 100%;
 }
-.flexwrap {
-    display:flex;
-    width: auto;
-    margin: auto;
-    font-family: 'Segoe UI';
-    max-width: 90rem;
-}
-.flexcol {
-    color:#484848;
-    font-weight: 600;
-    border:0.1953vw; 
-    font-size: 1.354vw;
-    border-style:solid; 
-    border-color:#000; 
-    padding: 0.651vw;
-    width: 50%;
-    background: #E8E8E8;
-    border-radius: 30px;
-    margin: 0 3.125vw;
-    line-height: 1.5;
-}
+
 
 .head1 {
     text-align: center;
@@ -106,6 +98,36 @@ nav a:hover::before {
     font-size: 3.125vw;
     font-weight: bold;
     font-family: 'Segoe UI';
+}
+
+.flexwrap1 {
+    display: flex;
+    width: auto;
+    font-family: 'Segoe UI';
+    color:#484848;
+    font-weight: 600; 
+    font-size: 1.354vw;
+    padding: 0.651vw;
+    background: #E8E8E8;
+    gap: 2.083vw;
+    line-height: 1.5;
+    margin: auto;
+}
+.flexwrap {
+    display:flex;
+    width: 100%;
+    font-family: 'Segoe UI';
+}
+.flexcol {
+    width: 28%;
+    margin-left: 1.302vw;
+}
+.flexcol1H {
+    width:41%;
+}
+.flexcol2H {
+    width:30%;
+    margin-right: 1.302vw;
 }
 .head2 {
     text-align: center;
@@ -120,15 +142,18 @@ nav a:hover::before {
     font-family: 'Segoe UI';
     color:#484848;
     font-weight: 600;
-    border:0.1953vw; 
-    font-size: 1.354vw;;
+    border: 0.1953vw; 
+    font-size: 1.354vw;
     border-style:solid; 
     border-color:#000; 
     padding: 0.651vw;
     background: #E8E8E8;
     border-radius: 30px;
     max-width: 85rem;
-}    
+}
+li{
+  margin: 0.651vw 0;
+}
 .center {
     display: block;
   margin-left: auto;
@@ -137,6 +162,10 @@ nav a:hover::before {
   height: 29.297vw;
   padding: 0.651vw;
 }
+
+.flexcol3 {
+    width: 50%;
+} 
 .footer {
     margin: 0;
     padding: 0;
@@ -262,13 +291,10 @@ nav a:hover::before {
 nav li {
     padding-top: 0.325vw;
 }
-.flexcol{
-    padding: 0 10px;
-    border-radius: 17px;
 }
-}
-    </style>
+</style>
 </head>
+    
 
 <body>
     <header>
@@ -281,54 +307,73 @@ nav li {
                 <li><a href="sliders_reaction_kinetics">Reaction Kinetics</a></li>
                 <li><a href="ZECC">ZECC</a></li>
                 <li><a href="SIR">SIR</a></li>
+                <li><a href="DAC">DAC</a></li>
                 <li><a href="catalysis_data_interactive_visualization">Catalysis</a></li>
             </ul>
         </nav>
     </header>
-    <h1 class="head1">Reaction Kinetics</h1>
-    <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
-        <img src="{{url_for('static', filename='CSTR-rxn-sequence.jpg')}}" alt="logo" class="center">
-     </div>
-    <div class="flexwrap">
-        <div class="flexcol">
-            <p> This is a simple example of a sequential set of reactions where a reactant "A" first undergoes a reaction to form B, the desired product. However, B undergoes a further (undesired) reaction to form C. It's a classical prototype of complex reactions we see all the time in natural (biological processes) and engineered reaction systems (chemical refineries, pharmaceuticals, etc.). As engineers, we would like to optimize the system to maximize the concentration of the desired product B. This, however, depends on a number of factors such as: 
-                <ol> <li>How fast each reaction occurs for a unit concentration (determined by rate constant k for each reaction)</li> <li> How sensitive the rate of consumption of A or B is to their concentration (determined by the order of reaction, greater the order more sensitive the reaction is to the concentration of the reactants)</li><li> How long you let the reactions take place.</li> </ol> </p>
-           </div>
-           <div class="flexcol">
-            <p>Note that 1 and 2 are natural properties of the reaction system (i.e. you do not have control over it) while 3 is a variable that the engineer sets.</p>
-            <p>Play around with the module below by varying rate constants and the order to see how the concentration of A, B, and C changes with time. 
-                <ul> <li> Can you come up with an explanation for what you see?  </li>
-                <li> When should you stop the reaction to maximize B if the rate constants and order were all 1.0? </li>
-                <li>How does this time change if the first reaction becomes faster or becomes more sensitive to concentration? </li>
-                <li>How does this time change if the second reaction becomes faster or becomes more sensitive to concentration?</li></ul></p>
-           </div>
-           </div>
-          
+        <h1 class="head1">Zero Energy Cooling Chamber</h1>
+        <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
+            <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
+         </div>
+        <div class="flexwrap1">
+            <div class="flexcol">
+           <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
+            </div>
+          <div class="flexcol1H"> <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
+        </div> 
+        <div class="flexcol2H">
+            <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
+        </div>
+        </div>
     
-        
-   
+                <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; margin-top: 2.279vw; max-width: 60rem;">
+                <iframe src="{{url_for('static', filename='ZECC ppt.pdf')}}" style= "display:block; width: 52.083vw;height: 29.2969vw; padding: 0.651vw;margin-left: auto; margin-right: auto;">Loading…</iframe>
+                </div>
+            
+    <br>
+    <br>
 
+    <div>
 
-     <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
+        {{bokeh_script_ZECC|safe}}
 
-    {{bokeh_script_sliders_reaction_kinetics|safe}}
-
-    <h2 class="head2">Supplemental Questions</h2>
-    <div class="questions">
-        <p> <ol>
-            <li>Where do the maxes occur relative to each other? Why is this the case? </li>
-            <li>What values of each parameter will result in B reaching its highest possible value? At what time will it reach this value? </li>
-            <li>What is the maximum value of C? For what values of parameters will C reach this value the soonest?</li>
-            <li>Which parameter would have the greatest effects on the concentration of B? Why?</li>
-            <ul> <li>For a hypothetical reaction: k_AB = 8, k_BC = 0.02, Order_AB = 1, Order_BC = 5:</li>
-            <li>For a hypothetical reaction: k_AB = 8, k_BC = 2, Order_AB = 1, Order_BC = 1:</li></ul>
-            <li>How quickly could you maximize B? Is it better to maximize B early or late in the reaction? Why?</li>
-            <li>Approximately, where would you expect to find the maximums for a hypothetical reaction: k_AB = 4, k_BC = 2, Order_AB = 1, Order_ BC = 1?</li>
-            <li>The process for producing B requires that B is collected after 4 seconds have passed. What values of k and order would give you a maximum for B at t=4 seconds?</li>
-        </ol></p>
     </div>
+
+    <h2 class="head2">Points to Consider</h2>
+    <div class="questions">
+        <p> <ul>
+            <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
+            <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
+            <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
+            <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
+            <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
+            <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
+        </ul></p>
+    </div>
+
     <br>
     <br>
+
+    <!--<div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+
+        <h1 style="font-family:Arial; font-size:300%; text-decoration:underline;">Starting Point:</h1>
+
+
+        <dl>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the lowest price you can get the system to operate at?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the maximum storage capacity you can achieve?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the lowest water usage you can achieve?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the best inner temperature you should have it function at?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What are the key differences in materials?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- Which locations should the ZECC be used in?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What times of year is the ZECC likely to be used in?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- How could you turn a profit on the ZECC model?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What kind of food would you want to include in order to turn a profit?</p>
+            <p style="font-size:200%; font-family:Helvetica;" align="justify">- Which constraints are the most important to focus on?</p>
+        </dl>
+    </div>-->
+
 </body>
 <div class="footer1">
     <div class="flexcol5">
