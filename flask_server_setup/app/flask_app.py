@@ -7,7 +7,7 @@ from flask import send_from_directory
 
 
 #instantiate the flask app
-app = Flask(__name__, static_url_path="/static")
+app = Flask(__name__, static_url_path="app/static")
 
 #create index page function
 @app.route("/app", methods=['GET'])
