@@ -6,6 +6,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/DAC.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/General.css')}}" media="screen">
     <title>Direct Air Capture</title>
 </head>
 <!-- 
@@ -13,9 +16,8 @@
 <meta property="og:title" content="DAC">
 <meta property="og:type" content="website"> -->
 
-    
-    <style>
-        body {
+
+body {
   margin: 0;
   background: #fff;
   font-family: 'Work Sans', sans-serif;
@@ -45,7 +47,7 @@ clear:both;
 }
 .logo {
 float:left;
-padding: 0.651vw 0; 
+padding: 0.651vw 0;
 width:22.79vw;
 height:100%;
 }
@@ -117,7 +119,7 @@ display: flex;
 width: auto;
 font-family: 'Segoe UI';
 color:#484848;
-font-weight: 600; 
+font-weight: 600;
 font-size: 1.354vw;
 padding: 1.751vw;
 background: #E8E8E8;
@@ -154,10 +156,10 @@ margin: auto;
 font-family: 'Segoe UI';
 color:#484848;
 font-weight: 600;
-border: 0.1953vw; 
+border: 0.1953vw;
 font-size: 1.354vw;
-border-style:solid; 
-border-color:#000; 
+border-style:solid;
+border-color:#000;
 padding: 0.651vw;
 background: #E8E8E8;
 border-radius: 30px;
@@ -177,7 +179,7 @@ padding: 0.651vw;
 
 .flexcol3 {
 width: 50%;
-} 
+}
 .footer {
 margin: 0;
 padding: 0;
@@ -297,16 +299,15 @@ color: white;
 }
 .fa-github {
 border:0.195vw solid #521D91;
-} 
+}
 
 @media all and (max-width: 960px) {
 nav li {
 padding-top: 0.325vw;
 }
 }
- 
-     </style>
-    
+
+
 <!-- Starting adding elements to the page -->
   <!-- Putting headers -->
 <body>
@@ -331,7 +332,7 @@ padding-top: 0.325vw;
     <!-- Putting  the picture Description and Hope of the project-->
         <h1 class="head1">Direct Air Captures</h1>
         <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
-            <img src="app/static/recourses/DACPIC1.jpg" alt="DAC Figure" class="center">
+            <img src="{{url_for('static', filename='resources/DACPIC1.jpg')}}" alt="DAC Fugure" class="center">
          </div>
         <h1 class="head2">What is DAC?</h1>
         <div class="flexwrap1">
@@ -341,11 +342,49 @@ padding-top: 0.325vw;
             </div>
         </div>
         <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; margin-top: 2.279vw; max-width: 60rem;">
-          <iframe src="{{url_for('static', filename='DAC.pdf')}}" style= "display:block; width: 52.083vw;height: 29.2969vw; padding: 0.651vw;margin-left: auto; margin-right: auto;">Loading…</iframe>
+          <iframe src="{{url_for('static', filename='resources/DAC.pdf')}}" style= "display:block; width: 52.083vw;height: 29.2969vw; padding: 0.651vw;margin-left: auto; margin-right: auto;">Loading…</iframe>
         </div>
+    <br>
+    <br>
+    <!-- Initiating Tabs
+    <section class="u-clearfix u-section-2" id="sec-d39e">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-expanded-width u-tabs u-tabs-1">
+          <ul class="u-tab-list u-unstyled" role="tablist">
+            <li class="u-tab-item" role="presentation">
+              <a class="active u-button-style u-tab-link" id="link-tab-b739" href="#tab-b739" role="tab" aria-controls="tab-b739" aria-selected="true">Model Description</a>
+            </li>
+            <li class="u-tab-item" role="presentation">
+              <a class="u-button-style u-tab-link" id="link-tab-5bf6" href="#tab-5bf6" role="tab" aria-controls="tab-5bf6" aria-selected="false">Model</a>
+            </li>
+          </ul>
+          <div class="u-tab-content">
+            <div class="u-align-left u-container-style u-tab-active u-tab-pane u-tab-pane-1" id="tab-b739" role="tabpanel" aria-labelledby="link-tab-b739">
+              <div class="u-container-layout u-container-layout-1">
+                <div class="u-container-style u-group u-palette-5-base u-radius-10 u-shape-round u-group-1">
+                  <div class="u-container-layout u-valign-middle u-container-layout-2">
+                    <h3 class="u-text u-text-default u-text-1">What user can do</h3>
+                  </div>
+                </div>
+                <img class="u-image u-image-round u-radius-10 u-image-1" src="{{url_for('static', filename='Test.JPG')}}" alt="" data-image-width="1394" data-image-height="1288">
+              </div>
+            </div>
+            <div class="u-align-left u-container-style u-tab-pane u-tab-pane-2" id="tab-5bf6" role="tabpanel" aria-labelledby="link-tab-5bf6">
+              <div class="u-container-layout u-container-layout-3">
+                <div>
+                  {{bokeh_script_DAC|safe}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> -->
 
   {{bokeh_script_DACModel|safe}}
 
+
+</body>
 </body>
 <div class="footer1">
     <div class="flexcol5">

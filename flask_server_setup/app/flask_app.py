@@ -16,14 +16,14 @@ def index():
 
 @app.route("/sliders_reaction_kinetics", methods=['GET'])
 def sliders_reaction_kinetics():
-    #bokeh_script_sliders_reaction_kinetics = server_document(url="http://localhost:5006/sliders_reaction_kinetics")
-    bokeh_script_sliders_reaction_kinetics = server_document(url="https://srrweb.cc.lehigh.edu/sliders_reaction_kinetics")
+    bokeh_script_sliders_reaction_kinetics = server_document(url="http://localhost:5006/sliders_reaction_kinetics")
+    #bokeh_script_sliders_reaction_kinetics = server_document(url="https://srrweb.cc.lehigh.edu/sliders_reaction_kinetics")
     return render_template("sliders_reaction_kinetics.html", bokeh_script_sliders_reaction_kinetics=bokeh_script_sliders_reaction_kinetics)
 
 @app.route("/ZECC", methods=['GET'])
 def ZECC():
-    #bokeh_script_ZECC = server_document(url="http://localhost:5007/ZECC")
-    bokeh_script_ZECC = server_document(url="https://srrweb.cc.lehigh.edu/ZECC")
+    bokeh_script_ZECC = server_document(url="http://localhost:5007/ZECC")
+    #bokeh_script_ZECC = server_document(url="https://srrweb.cc.lehigh.edu/ZECC")
     return render_template("ZECC.html", bokeh_script_ZECC=bokeh_script_ZECC)
 
 @app.route("/SIR", methods=['GET'])
@@ -40,8 +40,8 @@ def catalysis_data_interactive_visualization():
 
 @app.route("/DAC", methods=['GET'])
 def DAC():
-    bokeh_script_DACModel = server_document(url="https://srrweb.cc.lehigh.edu/dac")
-    #bokeh_script_DACModel = server_document(url="http://localhost:5006/dac")
+    #bokeh_script_DAC = server_document(url="EMPTYURL")
+    bokeh_script_DACModel = server_document(url="http://localhost:5006/DAC_animation")
     return render_template("DAC.html", bokeh_script_DACModel=bokeh_script_DACModel)
 
 
