@@ -16,12 +16,6 @@ from bokeh.models.widgets import Panel, Tabs
 import numpy as np
 import pandas as pd
 
-# To do list:
-# addd a input to control how much time the simulation can run - tf
-# run time input, make it as input box
-# reset the slider
-
-
 # --------------------- Static Parameters    --------------------- #
 
 b0 = 93 * (10**-5)  # 93      unit : 1/bars
@@ -72,13 +66,13 @@ def R_co2(T, c_co2, q):
     return rco2
 
 """
-    Defines the differential equations for odes of DAC
+    Defines the 15 systems of differential equations for odes of DAC
     Arguments:
         y :  vector of the state variables:
-                  y = all 15 states
+                  y = all 15 states in 5 columns
         t :  time
         params :  vector of the parameters:
-                  params = [V, r, T, c_co2_0, episl_r, v0]
+                  params = [V, T_in, c_co2_0, episl_r, volumetric_flow, Tw]
     
 """
 LoverR = 2.5/20 # Straight from the paper - shallow bed, so L << R
@@ -86,8 +80,8 @@ def deriv1(t, y, params):
     T_n, co2_n, q_n, T_n2, co2_n2, q_n2,T_n3, co2_n3, q_n3, T_n4, co2_n4, q_n4,T_n5, co2_n5, q_n5 = y # the rest of 12 vars a_n are not used, only for the success of solve_ivp
     V, T_in, c_co2_0, episl_r, volumetric_flow, Tw = params
 
-    ###############   -----  Parameters depend on input  -----  ###############
-    # LoverR = 2.5/20 # Straight from the paper - shallow bed, so L << R
+    ###############   -----  Parameters depend on Inputs  -----  ###############
+    #------ LoverR = 2.5/20 # Straight from the paper - shallow bed, so L << R ----- #
     r = cube(V/(LoverR*math.pi))
 
     v0 = volumetric_flow / (math.pi *r*r )
@@ -96,20 +90,19 @@ def deriv1(t, y, params):
     a_s = 150 #Straight from the paper
     theta = (1 - episl_r) * ps * Cp_s + episl_r * pg * Cp_g
     
+    # ------------------ Repetitive Terms in Equastions  -------------- #
     temperature_constant = ((v0  * pg* Cp_g) / (theta * deltZ))
     temperature_constant2 = (1 - episl_r) * ps * deltH_co2 /theta 
     temperature_constant3 = a_s * h /theta
     concentration_constant = v0 / (episl_r * deltZ)
     concentration_constant2 = (1 - episl_r) * ps/episl_r 
     
-
+    # ------------------ Set up the Differential Equastions -------------- #
     T1dot = -temperature_constant* T_n + temperature_constant* T_in + temperature_constant2* (
         R_co2(T_n, co2_n, q_n))+ temperature_constant3*(Tw - T_n)
-    # print(f"T1", {T1})
     co2_1dot = -concentration_constant * co2_n + concentration_constant * c_co2_0 - (
         R_co2(T_n, co2_n, q_n)) * concentration_constant2
     q1dot = R_co2(T_n, co2_n, q_n)
-    # print(f"energy balance in T1", {ener_balan(v0, theta, deltZ)})
     
     T2dot = -temperature_constant * T_n2 + temperature_constant * T_n +temperature_constant2 *(
         R_co2(T_n2, co2_n2, q_n2)) + temperature_constant3*(Tw - T_n2)
@@ -117,7 +110,6 @@ def deriv1(t, y, params):
     co2_2dot = -concentration_constant* co2_n2 + concentration_constant * co2_n - (
         R_co2(T_n2, co2_n2, q_n2)) * concentration_constant2
     q2dot = R_co2(T_n2, co2_n2, q_n2)
-    # print(f"energy balance in T1", {ener_balan(v0, theta, deltZ)})
 
     T3dot = -temperature_constant* T_n3 + temperature_constant * T_n2 + temperature_constant2* (
         R_co2(T_n3, co2_n3, q_n3)) + temperature_constant3 * (Tw - T_n3)
@@ -148,8 +140,6 @@ c_co2_0 = .016349 # mol/m^3
 episl_r = 0.3  # void
 volumetric_flow = .01 # m^3/s
 Tw = 293.0 # water temperature, utility
-# air humidity 
-# no radius and length, nonly nr *reed V, july 6th
 
 # ------------------ Initial Conditions to set up solve_ivp -------------- #
 t0, tf = 0.0, 43200.0 # 12hrs
@@ -157,16 +147,13 @@ co2_initial = 0
 q_init_cond = 0
 T_initial = T_in # initial temperature
 init_cond = [T_initial, co2_initial, q_init_cond] * 5
-# ,20.000, 0.000, 0.000,20.000, 0.000, 0.000,20.000, 0.000, 0.000,20.000, 0.000, 0.000
 params = [V, T_in, c_co2_0, episl_r, volumetric_flow, Tw]
 N = 25 # Number of points 
 tspan = np.linspace(t0, tf, N)
 
 soln = solve_ivp(deriv1, (t0, tf), init_cond, args=(params,), t_eval = tspan, method = "BDF", rtol = 1e-5, atol = 1e-8)  # init_cond = (T, c_co2_0, q0)
-# soln = solve_ivp(deriv1, (t0, tf), init_cond, args=(params,), method = "BDF", rtol = 1e-5, atol = 1e-8)  # init_cond = (T, c_co2_0, q0)
-# deriv1([t0, tf], )
-# print(soln)
-## --------------------  Extract Figures from returned solve results and match them with Z 
+
+## --------------------  Extract Figures from returned solve results and match them with Z  ------------- #
 def Extract(lst, term):
     return [item[term] for item in lst]
 dotT= [soln.y[0], soln.y[3], soln.y[6], soln.y[9], soln.y[12]]
@@ -185,7 +172,7 @@ def mapWithL(input_array, initial_value):
     np.array(res_list)
     return res_list
 
-# Set up sliders 
+## --------------------  Set up Sliders ------------------------- ##
 V_slider = Slider(title="Volume of bed"+" (default: "+str(V*1000)+" L)", value=V*1000, start=1, end=5, step=1)
 T_in_slider = Slider(title="Ambient temperature"+" (default: "+str(T_in)+" K)", value=T_in, start=285, end=310, step=1)
 c_co2_0_slider = Slider(title="Inlet CO2 concentration"+" (default: "+str(c_co2_0)+" mol/m^3)", value=c_co2_0, start=0.0, end=0.03, step=0.005)
@@ -195,8 +182,8 @@ Tw_slider = Slider(title="Water temperature"+" (default: "+str(Tw)+" K)", value=
 time_step = tspan[1] # since t_span[0] is 0
 slider_time = Slider(title="Time Slider (s)", value=t0, start=t0, end=tf, step=time_step, width=300)
 
+## --------------------  Map the discretized data with time ------------------------- #
 def getVecZ():
-    
     V0 = V_slider.value
     r = cube(V0/(LoverR*math.pi))
     L = V0 / (math.pi * (r ** 2))
@@ -205,17 +192,15 @@ def getVecZ():
 
 temp_list = mapWithL(dotT, T_in)
 co2_array = mapWithL(dotCo2, c_co2_0_slider.value)
-# print(c_co2_0_slider.value)
 q_array = mapWithL(dotQ, q_init_cond)
-# r = cube(V/(20*math.pi))
-# L = V / (math.pi * (r ** 2))
 vec_Z = getVecZ()
-# print(vec_Z)
 L = vec_Z[5]
-temp_df = pd.DataFrame(temp_list, tspan)
+
+temp_df = pd.DataFrame(temp_list, tspan) # Turn list into pandadf
 co2_df = pd.DataFrame(co2_array, tspan)
 q_df =  pd.DataFrame(q_array, tspan)
-# temp_list
+
+## --------------------  Start Plotting ------------------------- ##
 Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
 
 source_temperature = ColumnDataSource(data=dict(x=vec_Z, y=temp_df.iloc[0]))
@@ -251,9 +236,8 @@ def update_data(attrname, old, new):
     episl_r_temp = episl_r_slider.value
     volumetric_flow_temp = volumetric_flow_slider.value
     Tw_temp = Tw_slider.value
-    # time_temp = slider_time.value
 
-    # Generate the new curve
+    ## --------------------  Update the graphs when changing data ------------------------- ##
     params_temp = [V_temp, T_in_temp , c_co2_0_temp, episl_r_temp, volumetric_flow_temp, Tw_temp]
     init_cond_temp = [T_in_temp, c_co2_0, q_init_cond] * 5
     soln = solve_ivp(deriv1, (t0, tf), init_cond_temp, args=(params_temp,), t_eval = tspan, method = "BDF", rtol = 1e-5, atol = 1e-8) 
@@ -274,25 +258,59 @@ def update_data(attrname, old, new):
     source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[0])
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[0])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[0])
-    # print(f"in update", c_co2_0_slider.value)
+
+# def update_animate_helper(attr, new, old):
+#     # Get the current slider values
+#     V_temp = V_slider.value
+#     T_in_temp = T_in_slider.value
+#     c_co2_0_temp = c_co2_0_slider.value
+#     episl_r_temp = episl_r_slider.value
+#     volumetric_flow_temp = volumetric_flow_slider.value
+#     Tw_temp = Tw_slider.value
+#     # time_temp = slider_time.value
+
+#     # Generate the new curve
+#     params_temp = [V_temp, T_in_temp , c_co2_0_temp, episl_r_temp, volumetric_flow_temp, Tw_temp]
+#     init_cond_temp = [T_in_temp, c_co2_0, q_init_cond] * 5
+#     soln = solve_ivp(deriv1, (t0, tf), init_cond_temp, args=(params_temp,), t_eval = tspan, method = "BDF", rtol = 1e-5, atol = 1e-8) 
+#     dotT = [soln.y[0], soln.y[3], soln.y[6], soln.y[9], soln.y[12]]
+#     dotCo2 = [soln.y[1], soln.y[4], soln.y[7], soln.y[10], soln.y[13]]
+#     dotQ = [soln.y[2], soln.y[5], soln.y[8], soln.y[11], soln.y[14]]
+
+#     temp_list = mapWithL(dotT, T_initial)
+#     co2_array = mapWithL(dotCo2, c_co2_0_slider.value)
+#     q_array = mapWithL(dotQ, q_init_cond)    
+
+#     # L = vec_Z[5]
+#     temp_df = pd.DataFrame(temp_list, tspan)
+#     co2_df = pd.DataFrame(co2_array, tspan)
+#     q_df =  pd.DataFrame(q_array, tspan)
+
+#     res = [temp_df, co2_df, q_df]
+#     return res
+
+## --------------------  Animation with Play Button ------------------------- ##
 def animate_update():
-    current_time = slider_time.value +  time_step
+    # temp = update_animate_helper
+
+    # temp = update_animate_helper.__new__
+    # print(temp)
+    current_time = slider_time.value + time_step
     if current_time > tf:
         current_time = t0
-
+    vec_Z = getVecZ()
+    # temp_df_animate = temp[0]
+    # co2_df_animate = temp[1]
+    # q_df_animate = temp[2]
     source_temperature.data = dict(x=vec_Z, y=temp_df.loc[current_time])
     source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[current_time])
     source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[current_time])
     slider_time.value = current_time
-    V_slider.value = 0.003
-    T_in_slider.value = 298
-    c_co2_0_slider.value = 0.016349 
-    episl_r_slider.value = 0.30
-    volumetric_flow_slider.value = 0.01
-    Tw_slider.value = 293
+
 
 for w in [V_slider , T_in_slider, c_co2_0_slider, episl_r_slider, volumetric_flow_slider, Tw_slider]:
     w.on_change('value', update_data)
+    # w.on_change('value', update_animate_helper)
 
 def animate():
     global callback_id
@@ -308,14 +326,23 @@ def animate():
 animate_button = Button(label='► Play', width=80)
 animate_button.on_event('button_click', animate)
 
+## --------------------  Reset the values to default ------------------------- ##
 def reset():
     source_temperature.data = dict(x=vec_Z, y=temp_df.loc[0])
     source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[0])
     source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[0])
     slider_time.value = 0.0
+    V_slider.value = 0.003
+    T_in_slider.value = 298
+    c_co2_0_slider.value = 0.016349 
+    episl_r_slider.value = 0.30
+    volumetric_flow_slider.value = 0.01
+    Tw_slider.value = 293
+
 reset_button = Button(label='Reset', width = 80)
 reset_button.on_event('button_click', reset)
 
+## --------------------  Set up gridplot layout ------------------------- ##
 inputs_reaction = (column(V_slider , T_in_slider, c_co2_0_slider, episl_r_slider, volumetric_flow_slider, Tw_slider))
 
 inputs_button = row(slider_time, animate_button, reset_button)
