@@ -186,7 +186,7 @@ def mapWithL(input_array, initial_value):
     return res_list
 
 # Set up sliders 
-V_slider = Slider(title="Volume of bed"+" (default: "+str(V)+" m^3)", value=V, start=.001, end=.005, step=.001)
+V_slider = Slider(title="Volume of bed"+" (default: "+str(V*1000)+" L)", value=V*1000, start=1, end=5, step=1)
 T_in_slider = Slider(title="Ambient temperature"+" (default: "+str(T_in)+" K)", value=T_in, start=285, end=310, step=1)
 c_co2_0_slider = Slider(title="Inlet CO2 concentration"+" (default: "+str(c_co2_0)+" mol/m^3)", value=c_co2_0, start=0.0, end=0.03, step=0.005)
 episl_r_slider = Slider(title="Porocity"+" (default: "+str(episl_r)+")", value=episl_r, start= .3, end= .5, step=.03)
@@ -204,7 +204,8 @@ def getVecZ():
     return vec_Z
 
 temp_list = mapWithL(dotT, T_in)
-co2_array = mapWithL(dotCo2, co2_initial)
+co2_array = mapWithL(dotCo2, c_co2_0_slider.value)
+print(c_co2_0_slider.value)
 q_array = mapWithL(dotQ, q_init_cond)
 # r = cube(V/(20*math.pi))
 # L = V / (math.pi * (r ** 2))
@@ -217,7 +218,7 @@ q_df =  pd.DataFrame(q_array, tspan)
 # temp_list
 Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
 
-source_temperature = ColumnDataSource(data=dict(x=vec_Z, y=temp_df.iloc[1]))
+source_temperature = ColumnDataSource(data=dict(x=vec_Z, y=temp_df.iloc[0]))
 plot_temperature = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
               tools= Tools,
               x_range=[0, L], y_range=[296, 299])
@@ -225,7 +226,7 @@ plot_temperature.line('x', 'y',  line_width=3, source = source_temperature, line
 plot_temperature.xaxis.axis_label = "L (m)"
 plot_temperature.yaxis.axis_label = "Temperature (K)"
 
-source_co2 = ColumnDataSource(data=dict(co2_x=vec_Z, co2_y = co2_df.iloc[1]))
+source_co2 = ColumnDataSource(data=dict(co2_x=vec_Z, co2_y = co2_df.iloc[0]))
 plot_co2 = figure(height=370, width=400, title="Axial Profile of Gas Phase CO2",
               tools=Tools,
               x_range=[0, L], y_range=[0, .02])
@@ -233,7 +234,7 @@ plot_co2.line('co2_x', 'co2_y',  line_width=3, source = source_co2, line_alpha=0
 plot_co2.xaxis.axis_label = "L (m)"
 plot_co2.yaxis.axis_label = "Gaseous Concentration of CO2 (mol/m^3)"
 
-source_q = ColumnDataSource(data=dict(q_x=vec_Z, q_y = q_df.iloc[1]))
+source_q = ColumnDataSource(data=dict(q_x=vec_Z, q_y = q_df.iloc[0]))
 plot_q = figure(height=370, width=400, title="Axial profile of adsorbed CO2",
               tools=Tools,
               x_range=[0, L], y_range=[0, 1.2])
@@ -261,7 +262,7 @@ def update_data(attrname, old, new):
     dotQ = [soln.y[2], soln.y[5], soln.y[8], soln.y[11], soln.y[14]]
 
     temp_list = mapWithL(dotT, T_initial)
-    co2_array = mapWithL(dotCo2, co2_initial)
+    co2_array = mapWithL(dotCo2, c_co2_0_slider.value)
     q_array = mapWithL(dotQ, q_init_cond)    
 
     vec_Z = getVecZ()
@@ -270,10 +271,10 @@ def update_data(attrname, old, new):
     co2_df = pd.DataFrame(co2_array, tspan)
     q_df =  pd.DataFrame(q_array, tspan)
 
-    source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[1])
-    source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
-    source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
-
+    source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[0])
+    source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[0])
+    source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[0])
+    print(f"in update", c_co2_0_slider.value)
 def animate_update():
     current_time = slider_time.value +  time_step
     if current_time > tf:
