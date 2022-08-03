@@ -89,7 +89,7 @@ def deriv1(t, y, params):
     ###############   -----  Parameters depend on input  -----  ###############
     # LoverR = 2.5/20 # Straight from the paper - shallow bed, so L << R
     r = cube(V/(LoverR*math.pi))
-#     print(f"r",{r})
+
     v0 = volumetric_flow / (math.pi *r*r )
     L = V / (math.pi * (r ** 2))
     deltZ = L / 5.0  # 5 boxes in total
@@ -189,7 +189,7 @@ def mapWithL(input_array, initial_value):
 V_slider = Slider(title="Volume of bed"+" (default: "+str(V*1000)+" L)", value=V*1000, start=1, end=5, step=1)
 T_in_slider = Slider(title="Ambient temperature"+" (default: "+str(T_in)+" K)", value=T_in, start=285, end=310, step=1)
 c_co2_0_slider = Slider(title="Inlet CO2 concentration"+" (default: "+str(c_co2_0)+" mol/m^3)", value=c_co2_0, start=0.0, end=0.03, step=0.005)
-episl_r_slider = Slider(title="Porocity"+" (default: "+str(episl_r)+")", value=episl_r, start= .3, end= .5, step=.03)
+episl_r_slider = Slider(title="Porosity"+" (default: "+str(episl_r)+")", value=episl_r, start= .3, end= .5, step=.03)
 volumetric_flow_slider = Slider(title="Initial flow"+" (default: "+str(volumetric_flow)+")", value=volumetric_flow, start=.001, end=1, step=.005)
 Tw_slider = Slider(title="Water temperature"+" (default: "+str(Tw)+" K)", value=Tw, start=293, end=310, step=1)
 time_step = tspan[1] # since t_span[0] is 0
@@ -205,7 +205,7 @@ def getVecZ():
 
 temp_list = mapWithL(dotT, T_in)
 co2_array = mapWithL(dotCo2, c_co2_0_slider.value)
-print(c_co2_0_slider.value)
+# print(c_co2_0_slider.value)
 q_array = mapWithL(dotQ, q_init_cond)
 # r = cube(V/(20*math.pi))
 # L = V / (math.pi * (r ** 2))
@@ -274,7 +274,7 @@ def update_data(attrname, old, new):
     source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[0])
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[0])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[0])
-    print(f"in update", c_co2_0_slider.value)
+    # print(f"in update", c_co2_0_slider.value)
 def animate_update():
     current_time = slider_time.value +  time_step
     if current_time > tf:
