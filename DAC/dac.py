@@ -332,7 +332,7 @@ def reset():
     source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[0])
     source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[0])
     slider_time.value = 0.0
-    V_slider.value = 0.003
+    V_slider.value = 3
     T_in_slider.value = 298
     c_co2_0_slider.value = 0.016349 
     episl_r_slider.value = 0.30
@@ -352,7 +352,7 @@ inputs = column(inputs_reaction, inputs_button)
 grid = gridplot([[inputs, plot_q], [plot_co2, plot_temperature ]])
 
 tab1 =Panel(child= grid, title="Desktop")
-tab2 =Panel(child=column(plot_temperature, row( inputs_reaction, height=450)), title="Phone")
+tab2 =Panel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
 tabs = Tabs(tabs = [tab1, tab2])
 
 
