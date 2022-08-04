@@ -352,7 +352,7 @@ inputs = column(inputs_reaction, inputs_button)
 grid = gridplot([[inputs, plot_q], [plot_co2, plot_temperature ]])
 
 tab1 =Panel(child= grid, title="Desktop")
-tab2 =Panel(child=column(plot_temperature, row( inputs_reaction, height=450)), title="Phone")
+tab2 =Panel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
 tabs = Tabs(tabs = [tab1, tab2])
 
 
