@@ -328,9 +328,9 @@ animate_button.on_event('button_click', animate)
 
 ## --------------------  Reset the values to default ------------------------- ##
 def reset():
-    source_temperature.data = dict(x=vec_Z, y=temp_df.loc[1])
-    source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[1])
-    source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[1])
+    source_temperature.data = dict(x=vec_Z, y=temp_df.loc[0])
+    source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[0])
+    source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[0])
     slider_time.value = 0.0
     V_slider.value = 3
     T_in_slider.value = 298
