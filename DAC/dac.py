@@ -203,7 +203,7 @@ q_df =  pd.DataFrame(q_array, tspan)
 ## --------------------  Start Plotting ------------------------- ##
 Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
 
-source_temperature = ColumnDataSource(data=dict(x=vec_Z, y=temp_df.iloc[0]))
+source_temperature = ColumnDataSource(data=dict(x=vec_Z, y=temp_df.iloc[1]))
 plot_temperature = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
               tools= Tools,
               x_range=[0, L], y_range=[296, 299])
@@ -211,7 +211,7 @@ plot_temperature.line('x', 'y',  line_width=3, source = source_temperature, line
 plot_temperature.xaxis.axis_label = "L (m)"
 plot_temperature.yaxis.axis_label = "Temperature (K)"
 
-source_co2 = ColumnDataSource(data=dict(co2_x=vec_Z, co2_y = co2_df.iloc[0]))
+source_co2 = ColumnDataSource(data=dict(co2_x=vec_Z, co2_y = co2_df.iloc[1]))
 plot_co2 = figure(height=370, width=400, title="Axial Profile of Gas Phase CO2",
               tools=Tools,
               x_range=[0, L], y_range=[0, .02])
@@ -219,7 +219,7 @@ plot_co2.line('co2_x', 'co2_y',  line_width=3, source = source_co2, line_alpha=0
 plot_co2.xaxis.axis_label = "L (m)"
 plot_co2.yaxis.axis_label = "Gaseous Concentration of CO2 (mol/m^3)"
 
-source_q = ColumnDataSource(data=dict(q_x=vec_Z, q_y = q_df.iloc[0]))
+source_q = ColumnDataSource(data=dict(q_x=vec_Z, q_y = q_df.iloc[1]))
 plot_q = figure(height=370, width=400, title="Axial profile of adsorbed CO2",
               tools=Tools,
               x_range=[0, L], y_range=[0, 1.2])
@@ -255,9 +255,9 @@ def update_data(attrname, old, new):
     co2_df = pd.DataFrame(co2_array, tspan)
     q_df =  pd.DataFrame(q_array, tspan)
 
-    source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[0])
-    source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[0])
-    source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[0])
+    source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[1])
+    source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
+    source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
 
 # def update_animate_helper(attr, new, old):
 #     # Get the current slider values
