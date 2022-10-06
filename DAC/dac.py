@@ -195,7 +195,6 @@ co2_array = mapWithL(dotCo2, c_co2_0_slider.value)
 q_array = mapWithL(dotQ, q_init_cond)
 vec_Z = getVecZ()
 L = vec_Z[5]
-x_range = vec_Z[1] * 6
 temp_df = pd.DataFrame(temp_list, tspan) # Turn list into pandadf
 co2_df = pd.DataFrame(co2_array, tspan)
 q_df =  pd.DataFrame(q_array, tspan)
@@ -206,7 +205,7 @@ Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
 source_temperature = ColumnDataSource(data=dict(x=vec_Z, y=temp_df.iloc[1]))
 plot_temperature = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
               tools= Tools,
-              x_range=[0, x_range], y_range=[292, 299])
+              x_range=[0, L], y_range=[292, 299])
 plot_temperature.line('x', 'y',  line_width=3, source = source_temperature, line_alpha=0.6, color = "navy")
 plot_temperature.xaxis.axis_label = "L (m)"
 plot_temperature.yaxis.axis_label = "Temperature (K)"
@@ -255,6 +254,7 @@ def update_data(attrname, old, new):
     co2_df = pd.DataFrame(co2_array, tspan)
     q_df =  pd.DataFrame(q_array, tspan)
 
+# Map data
     source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[1])
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
@@ -322,6 +322,19 @@ def animate():
     else:
         animate_button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
+
+## return the 5 states for three graphs for reverse process
+        for renderer in plot_q.renderers:
+            q_reverse_data =  (renderer.data_source.data)
+            print(q_reverse_data)
+
+        for renderer in plot_temperature.renderers:
+            temperature_reverse_data =  (renderer.data_source.data)    
+            print(temperature_reverse_data)
+
+        for renderer in plot_co2.renderers:
+            co2_reverse_data =  (renderer.data_source.data)
+            print (co2_reverse_data)
 
 animate_button = Button(label='► Play', width=80)
 animate_button.on_event('button_click', animate)
