@@ -46,6 +46,8 @@ The interactive webpage can be found here:
 
 * [Catalysis Data Science Model](https://srrweb.cc.lehigh.edu/app/catalysis_data_interactive_visualization) - Catalysis Data Science Model example
 
+* [Direct Air Capture] (https://srrweb.cc.lehigh.edu/app/DAC) - Direct Air Capture example
+
 ## Built With
 
 * [Bokeh](https://docs.bokeh.org/en/latest/) - The visualization library used
