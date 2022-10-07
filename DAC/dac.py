@@ -147,6 +147,7 @@ co2_initial = 0
 q_init_cond = 0
 T_initial = T_in # initial temperature
 init_cond = [T_initial, co2_initial, q_init_cond] * 5
+print(init_cond)
 params = [V, T_in, c_co2_0, episl_r, volumetric_flow, Tw]
 N = 25 # Number of points 
 tspan = np.linspace(t0, tf, N)
@@ -259,36 +260,6 @@ def update_data(attrname, old, new):
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
 
-# def update_animate_helper(attr, new, old):
-#     # Get the current slider values
-#     V_temp = V_slider.value
-#     T_in_temp = T_in_slider.value
-#     c_co2_0_temp = c_co2_0_slider.value
-#     episl_r_temp = episl_r_slider.value
-#     volumetric_flow_temp = volumetric_flow_slider.value
-#     Tw_temp = Tw_slider.value
-#     # time_temp = slider_time.value
-
-#     # Generate the new curve
-#     params_temp = [V_temp, T_in_temp , c_co2_0_temp, episl_r_temp, volumetric_flow_temp, Tw_temp]
-#     init_cond_temp = [T_in_temp, c_co2_0, q_init_cond] * 5
-#     soln = solve_ivp(deriv1, (t0, tf), init_cond_temp, args=(params_temp,), t_eval = tspan, method = "BDF", rtol = 1e-5, atol = 1e-8) 
-#     dotT = [soln.y[0], soln.y[3], soln.y[6], soln.y[9], soln.y[12]]
-#     dotCo2 = [soln.y[1], soln.y[4], soln.y[7], soln.y[10], soln.y[13]]
-#     dotQ = [soln.y[2], soln.y[5], soln.y[8], soln.y[11], soln.y[14]]
-
-#     temp_list = mapWithL(dotT, T_initial)
-#     co2_array = mapWithL(dotCo2, c_co2_0_slider.value)
-#     q_array = mapWithL(dotQ, q_init_cond)    
-
-#     # L = vec_Z[5]
-#     temp_df = pd.DataFrame(temp_list, tspan)
-#     co2_df = pd.DataFrame(co2_array, tspan)
-#     q_df =  pd.DataFrame(q_array, tspan)
-
-#     res = [temp_df, co2_df, q_df]
-#     return res
-
 ## --------------------  Animation with Play Button ------------------------- ##
 def animate_update():
     # temp = update_animate_helper
@@ -312,29 +283,83 @@ for w in [V_slider , T_in_slider, c_co2_0_slider, episl_r_slider, volumetric_flo
     w.on_change('value', update_data)
     # w.on_change('value', update_animate_helper)
 
+
+# , temperature_reverse_data, co2_reverse_data = [], [], []
 def animate():
     global callback_id
     if animate_button.label == '► Play':
 
         animate_button.label = '❚❚ Pause'
 
-        callback_id = curdoc().add_periodic_callback(animate_update, 1*1000.0) # s to milliseconds conversion
+        callback_id = curdoc().add_periodic_callback(animate_update, 1*450.0) # s to milliseconds conversion
     else:
         animate_button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
 
 ## return the 5 states for three graphs for reverse process
-        for renderer in plot_q.renderers:
-            q_reverse_data =  (renderer.data_source.data)
-            print(q_reverse_data)
+        # for renderer in plot_q.renderers:
+        #     q_reverse_data =  (renderer.data_source.data)
+        #     # print((q_reverse_data))
+   
+        # for renderer in plot_temperature.renderers:
+        #     temperature_reverse_data =  (renderer.data_source.data)    
+        #     # print(temperature_reverse_data)
 
-        for renderer in plot_temperature.renderers:
-            temperature_reverse_data =  (renderer.data_source.data)    
-            print(temperature_reverse_data)
+        # for renderer in plot_co2.renderers:
+        #     co2_reverse_data =  (renderer.data_source.data)
+        #     # print (co2_reverse_data)
+        # y_values = [[q_reverse_data], [temperature_reverse_data], [co2_reverse_data]]
+        # print(y_values)
 
-        for renderer in plot_co2.renderers:
-            co2_reverse_data =  (renderer.data_source.data)
-            print (co2_reverse_data)
+
+# endpoint (i.e. take the values of the 15 states you have) of the current adsorption simulation 
+# volumetric flow stays the same
+Tw_temp_desorption = 363.15 # in kelvin = 90 celsius
+T_in_desorp= 348.0 # inlet temperature 50 celcius
+c_co2_0_desorption = 0
+volumetric_flow_desorption = 15 # litters    or    15 NL /min  
+
+temperature_reverse_initial_cond = soln.y[12]
+co2_reverse_initial_cond = soln.y[13]
+q_reverse_initial_cond = soln.y[14]
+
+
+## ------------- Reverse Process - Desorption ---------------- ##
+init_cond_reverse = [temperature_reverse_initial_cond[0], co2_reverse_initial_cond[0], q_reverse_initial_cond[0],
+                    temperature_reverse_initial_cond[1], co2_reverse_initial_cond[1], q_reverse_initial_cond[1],
+                    temperature_reverse_initial_cond[2], co2_reverse_initial_cond[2], q_reverse_initial_cond[2],
+                    temperature_reverse_initial_cond[3], co2_reverse_initial_cond[3], q_reverse_initial_cond[3],
+                    temperature_reverse_initial_cond[4], co2_reverse_initial_cond[4], q_reverse_initial_cond[4]]
+print(init_cond_reverse)
+
+params = [V, T_in_desorp, c_co2_0_desorption, episl_r, volumetric_flow_desorption, Tw_temp_desorption]
+# # N = 25 # Number of points 
+# # tspan = np.linspace(t0, tf, N)
+
+tf_desorb =  30000.0 
+tspan_desorb = np.linspace(t0, tf_desorb, N)
+
+# soln_desorb = solve_ivp(deriv1, (t0, tf_desorb), init_cond_reverse, args=(params,), t_eval = tspan_desorb, method = "Radau", rtol = 1e-5, atol = 1e-19) 
+
+# dotT_reverse= [soln_desorb.y[0], soln_desorb.y[3], soln_desorb.y[6], soln_desorb.y[9], soln_desorb.y[12]]
+# dotCo2_reverse = [soln_desorb.y[1], soln_desorb.y[4], soln_desorb.y[7], soln_desorb.y[10], soln_desorb.y[13]]
+# dotQ_reverse = [soln_desorb.y[2], soln_desorb.y[5], soln_desorb.y[8], soln_desorb.y[11], soln_desorb.y[14]]
+
+# co2_reverse_array = mapWithL(dotCo2_reverse, c_co2_0_slider.value)
+
+
+# co2_reverse_df = pd.DataFrame(dotCo2_reverse, tspan)
+
+
+# source_co2_desorption = ColumnDataSource(data=dict(x=vec_Z, y=co2_reverse_df.iloc[1]))
+# plot_desorption_co2 = figure(height=370, width=400, title="Desorption Process",
+#               tools= Tools,
+#               x_range=[0, L], y_range=[0, .03])
+# plot_desorption_co2.line('co2_x', 'co2_y',  line_width=3, source = source_co2, line_alpha=0.6, color = "navy")
+# plot_desorption_co2.xaxis.axis_label = "L (m)"
+# plot_desorption_co2.yaxis.axis_label = "Desorption of CO2 (mol/m^3)"
+# reverse_animate_button = Button(label='► Play', width=80)
+# reverse_animate_button.on_event('button_click', animate)
 
 animate_button = Button(label='► Play', width=80)
 animate_button.on_event('button_click', animate)
