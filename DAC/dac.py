@@ -317,11 +317,11 @@ def animate():
 Tw_temp_desorption = 363.15 # in kelvin = 90 celsius
 T_in_desorp= 348.0 # inlet temperature 50 celcius
 c_co2_0_desorption = 0
-volumetric_flow_desorption = 15 # litters    or    15 NL /min  
+volumetric_flow_desorption = 0.03 # litters    or    0.03 NL /min  
 
-temperature_reverse_initial_cond = soln.y[12]
-co2_reverse_initial_cond = soln.y[13]
-q_reverse_initial_cond = soln.y[14]
+temperature_reverse_initial_cond = soln.y[3]
+co2_reverse_initial_cond = soln.y[4]
+q_reverse_initial_cond = soln.y[5]
 
 
 ## ------------- Reverse Process - Desorption ---------------- ##
@@ -332,34 +332,31 @@ init_cond_reverse = [temperature_reverse_initial_cond[0], co2_reverse_initial_co
                     temperature_reverse_initial_cond[4], co2_reverse_initial_cond[4], q_reverse_initial_cond[4]]
 print(init_cond_reverse)
 
-params = [V, T_in_desorp, c_co2_0_desorption, episl_r, volumetric_flow_desorption, Tw_temp_desorption]
+params_reverse = [V, T_in_desorp, c_co2_0, episl_r, volumetric_flow_desorption, Tw_temp_desorption]
 # # N = 25 # Number of points 
 # # tspan = np.linspace(t0, tf, N)
 
 tf_desorb =  30000.0 
 tspan_desorb = np.linspace(t0, tf_desorb, N)
 
-# soln_desorb = solve_ivp(deriv1, (t0, tf_desorb), init_cond_reverse, args=(params,), t_eval = tspan_desorb, method = "Radau", rtol = 1e-5, atol = 1e-19) 
+soln_desorb = solve_ivp(deriv1, (t0, tf), init_cond_reverse, args=(params_reverse,), t_eval = tspan, method = "BDF", rtol = 1e-5, atol = 1e-19) 
 
-# dotT_reverse= [soln_desorb.y[0], soln_desorb.y[3], soln_desorb.y[6], soln_desorb.y[9], soln_desorb.y[12]]
-# dotCo2_reverse = [soln_desorb.y[1], soln_desorb.y[4], soln_desorb.y[7], soln_desorb.y[10], soln_desorb.y[13]]
-# dotQ_reverse = [soln_desorb.y[2], soln_desorb.y[5], soln_desorb.y[8], soln_desorb.y[11], soln_desorb.y[14]]
+dotT_reverse= [soln_desorb.y[0], soln_desorb.y[3], soln_desorb.y[6], soln_desorb.y[9], soln_desorb.y[12]]
+dotCo2_reverse = [soln_desorb.y[1], soln_desorb.y[4], soln_desorb.y[7], soln_desorb.y[10], soln_desorb.y[13]]
+dotQ_reverse = [soln_desorb.y[2], soln_desorb.y[5], soln_desorb.y[8], soln_desorb.y[11], soln_desorb.y[14]]
 
-# co2_reverse_array = mapWithL(dotCo2_reverse, c_co2_0_slider.value)
+co2_reverse_array = mapWithL(dotCo2_reverse, c_co2_0_slider.value)
+co2_reverse_df = pd.DataFrame(dotCo2_reverse, tspan)
 
-
-# co2_reverse_df = pd.DataFrame(dotCo2_reverse, tspan)
-
-
-# source_co2_desorption = ColumnDataSource(data=dict(x=vec_Z, y=co2_reverse_df.iloc[1]))
-# plot_desorption_co2 = figure(height=370, width=400, title="Desorption Process",
-#               tools= Tools,
-#               x_range=[0, L], y_range=[0, .03])
-# plot_desorption_co2.line('co2_x', 'co2_y',  line_width=3, source = source_co2, line_alpha=0.6, color = "navy")
-# plot_desorption_co2.xaxis.axis_label = "L (m)"
-# plot_desorption_co2.yaxis.axis_label = "Desorption of CO2 (mol/m^3)"
-# reverse_animate_button = Button(label='► Play', width=80)
-# reverse_animate_button.on_event('button_click', animate)
+source_co2_desorption = ColumnDataSource(data=dict(x=vec_Z, y=co2_reverse_df.iloc[1]))
+plot_desorption_co2 = figure(height=370, width=400, title="Desorption Process",
+              tools= Tools,
+              x_range=[0, L], y_range=[0, .03])
+plot_desorption_co2.line('co2_x', 'co2_y',  line_width=3, source = source_co2, line_alpha=0.6, color = "navy")
+plot_desorption_co2.xaxis.axis_label = "L (m)"
+plot_desorption_co2.yaxis.axis_label = "Desorption of CO2 (mol/m^3)"
+reverse_animate_button = Button(label='► Play', width=80)
+reverse_animate_button.on_event('button_click', animate)
 
 animate_button = Button(label='► Play', width=80)
 animate_button.on_event('button_click', animate)
