@@ -260,6 +260,8 @@ def update_data(attrname, old, new):
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
 
+for w in [V_slider , T_in_slider, c_co2_0_slider, episl_r_slider, volumetric_flow_slider, Tw_slider]:
+    w.on_change('value', update_data)
 ## --------------------  Animation with Play Button ------------------------- ##
 def animate_update():
     # temp = update_animate_helper
@@ -277,16 +279,9 @@ def animate_update():
     source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[current_time])
     source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[current_time])
     slider_time.value = current_time
-for w in [V_slider , T_in_slider, c_co2_0_slider, episl_r_slider, volumetric_flow_slider, Tw_slider]:
-    w.on_change('value', update_data)
-    # w.on_change('value', update_animate_helper)
-
 
     # w.on_change('value', update_animate_helper)
 
-
-
-# , temperature_reverse_data, co2_reverse_data = [], [], []
 def animate():
     global callback_id
     if animate_button.label == '► Play':
@@ -298,16 +293,6 @@ def animate():
         animate_button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
 
-def animate_reverse():
-    global callback_id
-    if reverse_animate_button.label == '► Play':
-
-        reverse_animate_button.label = '❚❚ Pause'
-
-        callback_id = curdoc().add_periodic_callback(animate_update_reverse, 1*450.0) # s to milliseconds conversion
-    else:
-        reverse_animate_button.label = '► Play'
-        curdoc().remove_periodic_callback(callback_id)
 
 
 Tw_temp_desorption = 363.15 # in kelvin = 90 celsius
@@ -315,9 +300,9 @@ T_in_desorp= 348.0 # inlet temperature 50 celcius
 c_co2_0_desorption = 0.000000001
 volumetric_flow_desorption = 0.03 # litters    or    0.03 NL /min  
 
-temperature_reverse_initial_cond = soln.y[3]
-co2_reverse_initial_cond = soln.y[4]
-q_reverse_initial_cond = soln.y[5]
+temperature_reverse_initial_cond= [soln.y[0][24], soln.y[3][24], soln.y[6][24], soln.y[9][24], soln.y[12][24]]
+co2_reverse_initial_cond = [soln.y[1][24], soln.y[4][24], soln.y[7][24], soln.y[10][24], soln.y[13][24]]
+q_reverse_initial_cond = [soln.y[2][24], soln.y[5][24], soln.y[8][24], soln.y[11][24], soln.y[14][24]]
 
 
 ## ------------- Reverse Process - Desorption ---------------- ##
@@ -344,11 +329,11 @@ dotQ_reverse = [soln_desorb.y[2], soln_desorb.y[5], soln_desorb.y[8], soln_desor
 co2_reverse_array = mapWithL(dotCo2_reverse, c_co2_0_slider.value)
 co2_reverse_df = pd.DataFrame(co2_reverse_array, tspan)
 
-source_co2_desorption = ColumnDataSource(data=dict(x=vec_Z, y=co2_reverse_df.iloc[1]))
+source_co2_desorption = ColumnDataSource(data=dict(co2_reverse_x=vec_Z, co2_reverse_y=co2_reverse_df.iloc[1]))
 plot_desorption_co2 = figure(height=370, width=400, title="Desorption Process",
               tools= Tools,
               x_range=[0, L], y_range=[0, .03])
-plot_desorption_co2.line('co2_x', 'co2_y',  line_width=3, source = source_co2, line_alpha=0.6, color = "red")
+plot_desorption_co2.line('co2_reverse_x', 'co2_reverse_y',  line_width=3, source = source_co2, line_alpha=0.6, color = "red")
 plot_desorption_co2.xaxis.axis_label = "L (m)"
 plot_desorption_co2.yaxis.axis_label = "Desorption of CO2 (mol/m^3)"
 
@@ -361,7 +346,7 @@ Tw_temp_desorption_slider = Slider(title="Water temperature"+" (default: "+str(T
 
 # reverse_process = (column(T_in_desorp_slider, c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider, slider_reverse_time , plot_desorption_co2))
 
-def update_data_reverse(attrname, old, new):
+def update_reverse_data(attrname, old, new):
 
     # Get the current slider values
     V_temp = V_slider.value
@@ -384,26 +369,33 @@ def update_data_reverse(attrname, old, new):
     # L = vec_Z[5]
     dotCo2_reverse = pd.DataFrame(co2_reverse_array, tspan)
 # Map data
-    source_co2_desorption.data = dict(co2_x = vec_Z, co2_y = dotCo2_reverse.iloc[1])
+    source_co2_desorption.data = dict(co2_reverse_x = vec_Z, co2_reverse_y = dotCo2_reverse.iloc[1])
 
 
+for w in [T_in_desorp_slider , c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider]:
+    w.on_change('value', update_reverse_data)
 
 
+def animate_reverse():
+    global callback_id1
+    if reverse_animate_button.label == '► Play':
+
+        reverse_animate_button.label = '❚❚ Pause'
+
+        callback_id1 = curdoc().add_periodic_callback(animate_update_reverse, 1*450.0) # s to milliseconds conversion
+    else:
+        reverse_animate_button.label = '► Play'
+        curdoc().remove_periodic_callback(callback_id1)
+        
 def animate_update_reverse():
-    # temp = update_animate_helper
-
-    # temp = update_animate_helper.__new__
-    # print(temp)
     current_time = slider_reverse_time.value + time_step
     if current_time > tf:
         current_time = t0
     vec_Z = getVecZ()
-    source_co2_desorption.data = dict(x=vec_Z, y=co2_reverse_df.loc[current_time])
+    source_co2_desorption.data = dict(co2_reverse_x=vec_Z, co2_reverse_y=co2_reverse_df.loc[current_time])
     slider_reverse_time.value = current_time
 
 
-for w in [T_in_desorp_slider , c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider]:
-    w.on_change('value', update_data_reverse)
 
 reverse_animate_button = Button(label='► Play', width=80)
 reverse_animate_button.on_event('button_click', animate_reverse)
