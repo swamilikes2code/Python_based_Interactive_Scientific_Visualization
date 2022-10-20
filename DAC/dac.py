@@ -203,11 +203,11 @@ q_df =  pd.DataFrame(q_array, tspan)
 ## --------------------  Start Plotting ------------------------- ##
 Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
 
-source_temperature = ColumnDataSource(data=dict(x=vec_Z, y=temp_df.iloc[1]))
+source_temperature = ColumnDataSource(data=dict(temp_x=vec_Z, temp_y=temp_df.iloc[1]))
 plot_temperature = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
               tools= Tools,
               x_range=[0, L], y_range=[292, 299])
-plot_temperature.line('x', 'y',  line_width=3, source = source_temperature, line_alpha=0.6, color = "navy")
+plot_temperature.line('temp_x', 'temp_y',  line_width=3, source = source_temperature, line_alpha=0.6, color = "navy")
 plot_temperature.xaxis.axis_label = "L (m)"
 plot_temperature.yaxis.axis_label = "Temperature (K)"
 
@@ -256,7 +256,7 @@ def update_data(attrname, old, new):
     q_df =  pd.DataFrame(q_array, tspan)
 
 # Map data
-    source_temperature.data = dict(x=vec_Z, y=temp_df.iloc[1])
+    source_temperature.data = dict(temp_x=vec_Z, temp_y=temp_df.iloc[1])
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
 
@@ -275,7 +275,7 @@ def animate_update():
     # temp_df_animate = temp[0]
     # co2_df_animate = temp[1]
     # q_df_animate = temp[2]
-    source_temperature.data = dict(x=vec_Z, y=temp_df.loc[current_time])
+    source_temperature.data = dict(temp_x=vec_Z, temp_y=temp_df.loc[current_time])
     source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[current_time])
     source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[current_time])
     slider_time.value = current_time
@@ -293,7 +293,26 @@ def animate():
         animate_button.label = '► Play'
         curdoc().remove_periodic_callback(callback_id)
 
+## --------------------  Reset the values to default ------------------------- ##
+def reset():
+    source_temperature.data = dict(temp_x=vec_Z, temp_y=temp_df.loc[0])
+    source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[0])
+    source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[0])
+    slider_time.value = 0.0
+    V_slider.value = 3
+    T_in_slider.value = 298
+    c_co2_0_slider.value = 0.016349 
+    episl_r_slider.value = 0.30
+    volumetric_flow_slider.value = 0.01
+    Tw_slider.value = 293
 
+reset_button = Button(label='Reset', width = 80)
+reset_button.on_event('button_click', reset)
+
+
+#------------------ Start of Reverse Process ----------------------
+
+#------------------ Initial Vaalues Revesrse Process  
 
 Tw_temp_desorption = 363.15 # in kelvin = 90 celsius
 T_in_desorp= 348.0 # inlet temperature 50 celcius
@@ -329,11 +348,11 @@ dotQ_reverse = [soln_desorb.y[2], soln_desorb.y[5], soln_desorb.y[8], soln_desor
 co2_reverse_array = mapWithL(dotCo2_reverse, c_co2_0_slider.value)
 co2_reverse_df = pd.DataFrame(co2_reverse_array, tspan)
 
-source_co2_desorption = ColumnDataSource(data=dict(co2_reverse_x=vec_Z, co2_reverse_y=co2_reverse_df.iloc[1]))
+source_co2_desorption = ColumnDataSource(data=dict(reverse_x=vec_Z, reverse_y=co2_reverse_df.iloc[1]))
 plot_desorption_co2 = figure(height=370, width=400, title="Desorption Process",
               tools= Tools,
               x_range=[0, L], y_range=[0, .03])
-plot_desorption_co2.line('co2_reverse_x', 'co2_reverse_y',  line_width=3, source = source_co2, line_alpha=0.6, color = "red")
+plot_desorption_co2.line('reverse_x', 'reverse_y',  line_width=3, source = source_co2_desorption, line_alpha=0.6, color = "red")
 plot_desorption_co2.xaxis.axis_label = "L (m)"
 plot_desorption_co2.yaxis.axis_label = "Desorption of CO2 (mol/m^3)"
 
@@ -369,7 +388,7 @@ def update_reverse_data(attrname, old, new):
     # L = vec_Z[5]
     dotCo2_reverse = pd.DataFrame(co2_reverse_array, tspan)
 # Map data
-    source_co2_desorption.data = dict(co2_reverse_x = vec_Z, co2_reverse_y = dotCo2_reverse.iloc[1])
+    source_co2_desorption.data = dict(reverse_x = vec_Z, reverse_y = dotCo2_reverse.iloc[1])
 
 
 for w in [T_in_desorp_slider , c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider]:
@@ -392,7 +411,7 @@ def animate_update_reverse():
     if current_time > tf:
         current_time = t0
     vec_Z = getVecZ()
-    source_co2_desorption.data = dict(co2_reverse_x=vec_Z, co2_reverse_y=co2_reverse_df.loc[current_time])
+    source_co2_desorption.data = dict(reverse_x=vec_Z, reverse_y=co2_reverse_df.loc[current_time])
     slider_reverse_time.value = current_time
 
 
@@ -404,21 +423,7 @@ animate_button = Button(label='► Play', width=80)
 animate_button.on_event('button_click', animate)
 
 
-## --------------------  Reset the values to default ------------------------- ##
-def reset():
-    source_temperature.data = dict(x=vec_Z, y=temp_df.loc[0])
-    source_co2.data = dict(co2_x=vec_Z, co2_y=co2_df.loc[0])
-    source_q.data = dict(q_x=vec_Z, q_y=q_df.loc[0])
-    slider_time.value = 0.0
-    V_slider.value = 3
-    T_in_slider.value = 298
-    c_co2_0_slider.value = 0.016349 
-    episl_r_slider.value = 0.30
-    volumetric_flow_slider.value = 0.01
-    Tw_slider.value = 293
 
-reset_button = Button(label='Reset', width = 80)
-reset_button.on_event('button_click', reset)
 
 ## --------------------  Set up gridplot layout ------------------------- ##
 constant_slider = (column (V_slider , episl_r_slider))
