@@ -147,7 +147,7 @@ co2_initial = 0
 q_init_cond = 0
 T_initial = T_in # initial temperature
 init_cond = [T_initial, co2_initial, q_init_cond] * 5
-print(init_cond)
+# print(init_cond)
 params = [V, T_in, c_co2_0, episl_r, volumetric_flow, Tw]
 N = 25 # Number of points 
 tspan = np.linspace(t0, tf, N)
@@ -178,7 +178,7 @@ V_slider = Slider(title="Volume of bed"+" (default: "+str(V*1000)+" L)", value=V
 T_in_slider = Slider(title="Ambient temperature"+" (default: "+str(T_in)+" K)", value=T_in, start=285, end=310, step=1)
 c_co2_0_slider = Slider(title="Inlet CO2 concentration"+" (default: "+str(c_co2_0)+" mol/m^3)", value=c_co2_0, start=0.0, end=0.03, step=0.005)
 episl_r_slider = Slider(title="Porosity"+" (default: "+str(episl_r)+")", value=episl_r, start= .3, end= .5, step=.03)
-volumetric_flow_slider = Slider(title="Initial flow"+" (default: "+str(volumetric_flow)+")", value=volumetric_flow, start=.001, end=1, step=.005)
+volumetric_flow_slider = Slider(title="Inlet flow"+" (default: "+str(volumetric_flow)+")", value=volumetric_flow, start=.001, end=1, step=.005)
 Tw_slider = Slider(title="Water temperature"+" (default: "+str(Tw)+" K)", value=Tw, start=293, end=310, step=1)
 time_step = tspan[1] # since t_span[0] is 0
 slider_time = Slider(title="Time Slider (s)", value=t0, start=t0, end=tf, step=time_step, width=300)
@@ -257,6 +257,10 @@ def update_data(attrname, old, new):
 
 # Map data
     source_temperature.data = dict(temp_x=vec_Z, temp_y=temp_df.iloc[1])
+    
+    print(temp_df)
+    print(co2_df)
+    print(q_df)
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
 
@@ -311,24 +315,33 @@ reset_button.on_event('button_click', reset)
 
 
 #------------------ Start of Reverse Process ----------------------
+# desorption: 
+# heat temperature 
+# have another slider 
+# run for 10 seconds - supposed to have small changes
+# plot other two plots
+# send the results to professor
+# all the input parameters, initial conditions, 
+# screenshot of simulations for 10 secondes with three graphs
 
 #------------------ Initial Vaalues Revesrse Process  --------------
 
 Tw_temp_desorption = 363.15 # in kelvin = 90 celsius
 T_in_desorp= 348.0 # inlet temperature 50 celcius
-c_co2_0_desorption = 0.000000001
+c_co2_0_desorption = 0.0000000001
 volumetric_flow_desorption = 0.03 # litters    or    0.03 NL /min  
 
 # ------------------- Set up Time ----------------
-tf_desorb =  10800.0 
+tf_desorb =  12.0 
 tspan_desorb = np.linspace(t0, tf_desorb, N)
+# tspan_desorb = np.round(np.linspace(t0, tf_desorb, N), 2)
 time_step_reverse = tspan_desorb[1]
-
+print(tspan_desorb)
 #--------------------------- Set up Reverse Slider ------------------------------
 slider_reverse_time = Slider(title=" Reverse Time Slider (s)", value=t0, start=t0, end=tf_desorb, step=time_step_reverse, width=300)
 T_in_desorp_slider = Slider(title="Ambient temperature"+" (default: "+str(T_in)+" K)", value=T_in, start=285, end=310, step=1)
 c_co2_0_desorption_slider = Slider(title="Inlet CO2 concentration"+" (default: "+str(c_co2_0_desorption)+" mol/m^3)", value=c_co2_0_desorption, start=0.0, end=0.03, step=0.005)
-volumetric_flow_desorption_slider = Slider(title="Initial flow"+" (default: "+str(volumetric_flow)+")", value=volumetric_flow, start=.001, end=1, step=.005)
+volumetric_flow_desorption_slider = Slider(title="Inlet flow"+" (default: "+str(volumetric_flow)+")", value=volumetric_flow, start=.001, end=1, step=.005)
 Tw_temp_desorption_slider = Slider(title="Water temperature"+" (default: "+str(Tw)+" K)", value=Tw, start=293, end=310, step=1)
 
 temperature_reverse_initial_cond= [soln.y[0][24], soln.y[3][24], soln.y[6][24], soln.y[9][24], soln.y[12][24]]
@@ -342,7 +355,6 @@ init_cond_reverse = [temperature_reverse_initial_cond[0], co2_reverse_initial_co
                     temperature_reverse_initial_cond[2], co2_reverse_initial_cond[2], q_reverse_initial_cond[2],
                     temperature_reverse_initial_cond[3], co2_reverse_initial_cond[3], q_reverse_initial_cond[3],
                     temperature_reverse_initial_cond[4], co2_reverse_initial_cond[4], q_reverse_initial_cond[4]]
-# print(init_cond_reverse)
 
 params_reverse = [V, T_in_desorp, c_co2_0_desorption, episl_r, volumetric_flow_desorption, Tw_temp_desorption]
 # # N = 25 # Number of points 
@@ -353,21 +365,25 @@ soln_desorb = solve_ivp(deriv1, (t0, tf_desorb), init_cond_reverse, args=(params
 dotT_reverse= [soln_desorb.y[0], soln_desorb.y[3], soln_desorb.y[6], soln_desorb.y[9], soln_desorb.y[12]]
 dotCo2_reverse = [soln_desorb.y[1], soln_desorb.y[4], soln_desorb.y[7], soln_desorb.y[10], soln_desorb.y[13]]
 dotQ_reverse = [soln_desorb.y[2], soln_desorb.y[5], soln_desorb.y[8], soln_desorb.y[11], soln_desorb.y[14]]
-print("---------------------------------")
-print("solve_ivp result")
+# print("---------------------------------")
+# print("solve_ivp result")
 
-print(dotCo2_reverse)
-co2_reverse_array = mapWithL(dotCo2_reverse, c_co2_0_slider.value)
+# print(dotCo2_reverse)
+co2_reverse_array = mapWithL(dotCo2_reverse, c_co2_0_desorption_slider.value)
 co2_reverse_df = pd.DataFrame(co2_reverse_array, tspan_desorb)
-print("map result")
-print(co2_reverse_array)
+# print("map result")
+# print(co2_reverse_array)
 source_co2_desorption = ColumnDataSource(data=dict(reverse_x=vec_Z, reverse_y=co2_reverse_df.iloc[0]))
 plot_desorption_co2 = figure(height=370, width=400, title="Desorption Process",
               tools= Tools,
-              x_range=[0, L], y_range=[-0.000001, .000001])
+              x_range=[0, L], y_range=[0, .00001])
 plot_desorption_co2.line('reverse_x', 'reverse_y',  line_width=3, source = source_co2_desorption, line_alpha=0.6, color = "red")
 plot_desorption_co2.xaxis.axis_label = "L (m)"
 plot_desorption_co2.yaxis.axis_label = "Desorption of CO2 (mol/m^3)"
+
+# T_reverse_array = mapWithL(dotT_reverse, )
+# T_reverse_df = pd.DataFrame()
+# q_reverse_array = mapWithL(dotQ_reverse)
 
 
 # reverse_process = (column(T_in_desorp_slider, c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider, slider_reverse_time , plot_desorption_co2))
