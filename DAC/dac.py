@@ -376,7 +376,7 @@ T_reverse_df = pd.DataFrame(T_reverse_array, tspan_desorb)
 source_temperature_reverse = ColumnDataSource(data=dict(temp_x_reverse=vec_Z, temp_y_reverse=temp_df.iloc[1]))
 plot_temperature_reverse = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
               tools= Tools,
-              x_range=[0, L], y_range=[292, 299])
+              x_range=[0, L], y_range=[295, 310])
 plot_temperature_reverse.line('temp_x_reverse', 'temp_y_reverse',  line_width=3, source = source_temperature_reverse, line_alpha=0.6, color = "navy")
 plot_temperature_reverse.xaxis.axis_label = "L (m)"
 plot_temperature_reverse.yaxis.axis_label = "Temperature (K)"
@@ -451,7 +451,7 @@ def animate_reverse():
         
 def animate_update_reverse():
     current_time = slider_reverse_time.value + time_step_desorb
-    if current_time > tf:
+    if current_time > tf_desorb:
         current_time = t0
     vec_Z = getVecZ()
     source_co2_desorption.data = dict(reverse_x=vec_Z, reverse_y=co2_reverse_df.loc[current_time])
