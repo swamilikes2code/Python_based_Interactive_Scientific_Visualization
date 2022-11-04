@@ -258,9 +258,9 @@ def update_data(attrname, old, new):
 # Map data
     source_temperature.data = dict(temp_x=vec_Z, temp_y=temp_df.iloc[1])
     
-    print(temp_df)
-    print(co2_df)
-    print(q_df)
+    # print(temp_df)
+    # print(co2_df)
+    # print(q_df)
     source_co2.data = dict(co2_x = vec_Z, co2_y = co2_df.iloc[1])
     source_q.data = dict(q_x = vec_Z, q_y = q_df.iloc[1])
 
@@ -351,7 +351,8 @@ params_reverse = [V, T_in_desorp, c_co2_0_desorption, episl_r, volumetric_flow_d
 tf_desorb =  7200.0 
 tspan_desorb = np.linspace(t0, tf_desorb, N)
 time_step_desorb = tspan_desorb[1]
-
+print(tspan_desorb)
+print(time_step_desorb)
 soln_desorb = solve_ivp(deriv1, (t0, tf), init_cond_reverse, args=(params_reverse,), t_eval = tspan_desorb, method = "BDF", rtol = 1e-5, atol = 1e-19) 
 
 dotT_reverse= [soln_desorb.y[0], soln_desorb.y[3], soln_desorb.y[6], soln_desorb.y[9], soln_desorb.y[12]]
@@ -368,6 +369,27 @@ plot_desorption_co2 = figure(height=370, width=400, title="Desorption Process",
 plot_desorption_co2.line('reverse_x', 'reverse_y',  line_width=3, source = source_co2_desorption, line_alpha=0.6, color = "red")
 plot_desorption_co2.xaxis.axis_label = "L (m)"
 plot_desorption_co2.yaxis.axis_label = "Desorption of CO2 (mol/m^3)"
+
+T_reverse_array = mapWithL(dotT_reverse, T_in_desorp)
+T_reverse_df = pd.DataFrame(T_reverse_array, tspan_desorb)
+
+source_temperature_reverse = ColumnDataSource(data=dict(temp_x_reverse=vec_Z, temp_y_reverse=temp_df.iloc[1]))
+plot_temperature_reverse = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
+              tools= Tools,
+              x_range=[0, L], y_range=[292, 299])
+plot_temperature_reverse.line('temp_x_reverse', 'temp_y_reverse',  line_width=3, source = source_temperature_reverse, line_alpha=0.6, color = "navy")
+plot_temperature_reverse.xaxis.axis_label = "L (m)"
+plot_temperature_reverse.yaxis.axis_label = "Temperature (K)"
+
+q_reverse_array = mapWithL(dotQ_reverse, q_reverse_initial_cond[4])
+q_reverse_df = pd.DataFrame(q_reverse_array, tspan_desorb)
+source_q_reverse = ColumnDataSource(data=dict(q_x_reverse=vec_Z, q_y_reverse = q_reverse_df.iloc[1]))
+plot_q_reverse = figure(height=370, width=400, title="Axial profile of desorpted CO2",
+              tools=Tools,
+              x_range=[0, L], y_range=[0, 1.2])
+plot_q_reverse.line('q_x_reverse', 'q_y_reverse',  line_width=3, source = source_q_reverse, line_alpha=0.6, color = "navy")
+plot_q_reverse.xaxis.axis_label = "L (m)"
+plot_q_reverse.yaxis.axis_label = "CO2 Desorbed (mol/kg)"
 
 #--------------------------- Set up Reverse Slider ------------------------------
 slider_reverse_time = Slider(title=" Reverse Time Slider (s)", value=t0, start=t0, end=tf_desorb, step=time_step_desorb, width=300)
@@ -393,15 +415,23 @@ def update_reverse_data(attrname, old, new):
     # init_cond_temp = [T_in_temp, c_co2_0, q_init_cond] * 5
     soln = solve_ivp(deriv1, (t0, tf), init_cond_reverse, args=(params_temp,), t_eval = tspan_desorb, method = "BDF", rtol = 1e-5, atol = 1e-8) 
     dotReverseCo2 = [soln.y[1], soln.y[4], soln.y[7], soln.y[10], soln.y[13]]
- 
+    dotT_reverse = [soln.y[0], soln.y[3], soln.y[6], soln.y[9], soln.y[12]]
+    dotQ_reverse = [soln.y[2], soln.y[5], soln.y[8], soln.y[11], soln.y[14]]
+
 # need to fix
     co2_reverse_array = mapWithL(dotReverseCo2, c_co2_0_desorption_slider.value)
+    T_reverse_array = mapWithL(dotT_reverse, T_in_desorp)
+    q_reverse_array = mapWithL(dotQ_reverse)
 
     vec_Z = getVecZ()
     # L = vec_Z[5]
     dotCo2_reverse = pd.DataFrame(co2_reverse_array, tspan_desorb)
+    q_reverse_df = pd.DataFrame(q_reverse_array, tspan_desorb)
+    T_reverse_df = pd.DataFrame(T_reverse_array, tspan_desorb)
 # Map data
     source_co2_desorption.data = dict(reverse_x = vec_Z, reverse_y = dotCo2_reverse.iloc[1])
+    source_temperature_reverse.data = dict(temp_x_reverse = vec_Z, temp_y_reverse = T_reverse_df.iloc[1])
+    source_q_reverse.data = dict(q_x_reverse = vec_Z, q_y_reverse = q_reverse_df.iloc[1])
 
 
 for w in [T_in_desorp_slider , c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider]:
@@ -425,18 +455,18 @@ def animate_update_reverse():
         current_time = t0
     vec_Z = getVecZ()
     source_co2_desorption.data = dict(reverse_x=vec_Z, reverse_y=co2_reverse_df.loc[current_time])
+    source_temperature_reverse.data = dict(temp_x_reverse=vec_Z, temp_y_reverse=T_reverse_df.loc[current_time])
+    source_q_reverse.data = dict(q_x_reverse=vec_Z, q_y_reverse=q_reverse_df.loc[current_time])
+
+    # source_temperature_reverse.data = dict(temp_x_reverse = vec_Z, temp_y_reverse = T_reverse_df.iloc[current_time])
+    # source_q_reverse.data = dict(q_x_reverse = vec_Z, q_y_reverse = q_reverse_df.iloc[current_time])
     slider_reverse_time.value = current_time
-
-
 
 reverse_animate_button = Button(label='► Play', width=80)
 reverse_animate_button.on_event('button_click', animate_reverse)
 
 animate_button = Button(label='► Play', width=80)
 animate_button.on_event('button_click', animate)
-
-
-
 
 ## --------------------  Set up gridplot layout ------------------------- ##
 constant_slider = (column (V_slider , episl_r_slider))
@@ -452,7 +482,8 @@ reverse_process =(column(reverse_slider, reverse_animate_button, plot_desorption
 column1 = column(constant_slider, inputs, plot_q)
 column2 = column(plot_co2, plot_temperature)
 column3 = column(reverse_process)
-grid = gridplot([[column1, column2, column3]])
+column4 = column(plot_q_reverse, plot_temperature_reverse)
+grid = gridplot([[column1, column2, column3, column4]])
 # grid = gridplot([[constant_slider, inputs, plot_q], [plot_co2, plot_temperature], [reverse_process]])
 
 tab1 =Panel(child= grid, title="Desktop")
