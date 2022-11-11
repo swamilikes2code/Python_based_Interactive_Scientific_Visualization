@@ -329,7 +329,7 @@ reset_button.on_event('button_click', reset)
 Tw_temp_desorption = 363.15 # in kelvin = 90 celsius
 T_in_desorp= 348.0 # inlet temperature 50 celcius
 c_co2_0_desorption = 0.0000000001
-volumetric_flow_desorption = 0.03 # litters    or    0.03 NL /min  
+volumetric_flow_desorption = 8.333*(10**-5) #     or    5 NL /min  
 
 temperature_reverse_initial_cond= [soln.y[0][24], soln.y[3][24], soln.y[6][24], soln.y[9][24], soln.y[12][24]]
 co2_reverse_initial_cond = [soln.y[1][24], soln.y[4][24], soln.y[7][24], soln.y[10][24], soln.y[13][24]]
@@ -393,10 +393,9 @@ plot_q_reverse.yaxis.axis_label = "CO2 Desorbed (mol/kg)"
 
 #--------------------------- Set up Reverse Slider ------------------------------
 slider_reverse_time = Slider(title=" Reverse Time Slider (s)", value=t0, start=t0, end=tf_desorb, step=time_step_desorb, width=300)
-T_in_desorp_slider = Slider(title="Ambient temperature"+" (default: "+str(T_in)+" K)", value=T_in, start=285, end=310, step=1)
-c_co2_0_desorption_slider = Slider(title="Inlet CO2 concentration"+" (default: "+str(c_co2_0)+" mol/m^3)", value=c_co2_0, start=0.0, end=0.03, step=0.005)
-volumetric_flow_desorption_slider = Slider(title="Initial flow"+" (default: "+str(volumetric_flow)+")", value=volumetric_flow, start=.001, end=1, step=.005)
-Tw_temp_desorption_slider = Slider(title="Water temperature"+" (default: "+str(Tw)+" K)", value=Tw, start=293, end=310, step=1)
+T_in_desorp_slider = Slider(title="Inlet temperature"+" (default: "+str(T_in)+" K)", value=T_in_desorp, start=285, end=365, step=1)
+volumetric_flow_desorption_slider = Slider(title="Inlet flow"+" (default: "+str(volumetric_flow)+")", value=volumetric_flow, start=.001, end=1, step=.005)
+Tw_temp_desorption_slider = Slider(title="Water temperature"+" (default: "+str(Tw)+" K)", value=Tw_temp_desorption, start=293, end=365, step=1)
 
 # reverse_process = (column(T_in_desorp_slider, c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider, slider_reverse_time , plot_desorption_co2))
 
@@ -419,7 +418,7 @@ def update_reverse_data(attrname, old, new):
     dotQ_reverse = [soln.y[2], soln.y[5], soln.y[8], soln.y[11], soln.y[14]]
 
 # need to fix
-    co2_reverse_array = mapWithL(dotReverseCo2, c_co2_0_desorption_slider.value)
+    co2_reverse_array = mapWithL(dotReverseCo2, c_co2_0_desorption)
     T_reverse_array = mapWithL(dotT_reverse, T_in_desorp)
     q_reverse_array = mapWithL(dotQ_reverse)
 
@@ -434,7 +433,7 @@ def update_reverse_data(attrname, old, new):
     source_q_reverse.data = dict(q_x_reverse = vec_Z, q_y_reverse = q_reverse_df.iloc[1])
 
 
-for w in [T_in_desorp_slider , c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider]:
+for w in [T_in_desorp_slider , volumetric_flow_desorption_slider, Tw_temp_desorption_slider]:
     w.on_change('value', update_reverse_data)
 
 
@@ -475,7 +474,7 @@ inputs_button = row( animate_button, reset_button)
 
 inputs = column(inputs_reaction, inputs_button)
 
-reverse_slider = (column (slider_reverse_time, T_in_desorp_slider , c_co2_0_desorption_slider, volumetric_flow_desorption_slider, Tw_temp_desorption_slider))
+reverse_slider = (column (slider_reverse_time, T_in_desorp_slider , volumetric_flow_desorption_slider, Tw_temp_desorption_slider))
 reverse_button = (row(reverse_animate_button))
 reverse_process =(column(reverse_slider, reverse_animate_button, plot_desorption_co2))
 
@@ -492,4 +491,4 @@ tabs = Tabs(tabs = [tab1, tab2])
 
 
 curdoc().add_root(tabs)
-curdoc().title = "Direct Air Caoture"
+curdoc().title = "Direct Air Capture"
