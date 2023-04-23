@@ -11,12 +11,11 @@ import math
 from scipy.integrate import solve_ivp
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
-from bokeh.models import (ColumnDataSource, Slider, TableColumn, DataTable, Button, Panel, Tabs, GraphRenderer, Div, Arrow, OpenHead, 
+from bokeh.models import (ColumnDataSource, Slider, TableColumn, DataTable, Button, TabPanel, Tabs, GraphRenderer, Div, Arrow, OpenHead, 
                           BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool)
-from bokeh.plotting import figure
+from bokeh.plotting import figure, from_networkx
 from math import exp
 from bokeh.palettes import Spectral4, Colorblind8
-from bokeh.models.graphs import from_networkx
 from bokeh.models.annotations import LabelSet
 TOOLS = "pan,reset,save,box_zoom"
 
@@ -96,7 +95,7 @@ S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y #solving the system of ODEs
 sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h, R=R, D=D, hc=([health_capacity]*365)))
 #hover_line=HoverTool(names=["S_line", "E_line"])
 #creating a graph with lines for the different classes of the model
-pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both', margin=(10, 20, 10, 40))
+pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, height=450, width=600, margin=(10, 20, 10, 40))
 pops.title.text_font_size='14pt'
 #adding a line for each of the 8 different class populations
 l1=pops.line('time', 'S', source=sourcePops, legend_label="Susceptible", line_width=2, color=Colorblind8[0], name="S_line")
@@ -114,7 +113,7 @@ pops.legend.location='top_left'
 pops.legend.background_fill_alpha=0.5
 
 #creating a graph that only displays the 4 different types of infecteds
-infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_width', margin=(10, 20, 10, 40))
+infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=450, width=600, margin=(10, 20, 10, 40))
 infecteds.title.text_font_size='14pt'
 la=infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2], line_width=2)
 lb=infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color=Colorblind8[3], line_dash='dashed')
@@ -185,7 +184,7 @@ for u in updates:
 
 #Creating visual layout for the program 
 widgets=column(A_infection_rate_slide, A_k_infection_rate_slide, S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, vaccine_slide, vaccination_rate_slider,hosp_space_slide, return_rate_slide)
-tabB=Panel(child=row(column(pops, infecteds), column(widgets, data_table)), title="Adjustable SEIR Model")
+tabB=TabPanel(child=row(column(pops, infecteds), column(widgets, data_table)), title="Adjustable SEIR Model")
 
 
 #########################################################################################
@@ -199,7 +198,7 @@ practice_sizes=[5, 10, 15, 20, 25, 30, 35, 40] #temporary numbers just to set up
 G=nx.DiGraph()
 G.add_nodes_from(range(8), name=class_names)
 G.add_edges_from(needed_edges)
-plot = Plot(aspect_ratio=1/1, sizing_mode='scale_both', margin=(10, 5, 5, 20),
+plot = Plot(height=450, width=450, margin=(10, 5, 5, 20),
             x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 plot.title.text_font_size='14pt'
@@ -228,7 +227,7 @@ xcoord = [1.15, .85, -.45, -1.2, -1.25, -1.25, -.15, .85] #location for the labe
 ycoord = [0, .75, 1.05, .85, 0.1, -.95, -1.2, -.95] #location for the label
 label_source=ColumnDataSource(data=dict(x=xcoord, y=ycoord, names=class_names))
 labels = LabelSet(x='x',y='y',text='names', text_font_size="13px",
-                  source=label_source, render_mode='canvas')
+                  source=label_source)
 plot.add_layout(labels)
 plot.renderers.append(graph_renderer)
 
@@ -252,7 +251,7 @@ plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 ####### Bar Graph
 proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0]/1000, Is_hb[0]/1000, Rb[0]/1000, Db[0]/1000]
 bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names, colors=Colorblind8))
-bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=600, margin=(15, 10, 10, 10))
+bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=600, margin=(15, 10, 10, 10))
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
 bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
@@ -326,7 +325,7 @@ n_R=Div(text="<b>Recovered:</b> A person in this class was previously infected w
 n_D=Div(text="<b>Dead:</b> This class represents everyone who has died. It includes people who have died from the disease or from other natural causes. Once an individual enters this class they remain in this class.", width=600, margin=(2, 0, 2, 10))
 #latout for this tab
 display=row(column(plot, time_slider, button, note1, note2), column(bargraph, note3, n_S, n_E, n_Iuk, n_Ik, n_Inh, n_Ih, n_R, n_D))
-tabA=Panel(child=display, title="General Outbreak") #first panel
+tabA=TabPanel(child=display, title="General Outbreak") #first panel
 
 
 ##################################################################################
@@ -340,7 +339,7 @@ div5=Div(text="By adding hospital beds and ventilators, the health capacity of t
 div6=Div(text="There is assumed to be a natural birth rate of .001 and a natural death rate of 0.0002. This accounts for individuals entering and exiting the system, for causes unrelated to the outbreak.", margin=(10, 20, 10, 20), width=750)
 text_descriptions=column(div1, div2, div3, div4, div5, div6)
 
-tabC=Panel(child=text_descriptions, title="Model Description") #third panel
+tabC=TabPanel(child=text_descriptions, title="Model Description") #third panel
 
 ##########################
 
