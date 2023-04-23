@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, Panel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, TabPanel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
 from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis, Category20
 from bokeh.transform import factor_cmap
@@ -106,8 +106,8 @@ source = ColumnDataSource(data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
 p = figure(height=600, width=700, title="Data Exploration", tools=TOOLS,
            toolbar_location="above", tooltips=TOOLTIPS)
-p.select(BoxSelectTool).select_every_mousemove = False
-p.select(LassoSelectTool).select_every_mousemove = False
+p.select(BoxSelectTool).continuous = False
+p.select(LassoSelectTool).continuous = False
 r = p.circle(x="x", y="y", source=source, size=7,
              color='mediumblue', line_color=None, fill_alpha=0.6)
 
@@ -290,7 +290,7 @@ mapper = LinearColorMapper(palette=cividis(no_of_colors),
 
 # SETTING UP THE PLOT
 c_corr = figure(title="Correlation Matrix", x_range=common_axes_val, y_range=list((common_axes_val)), x_axis_location="below", toolbar_location=None,
-                plot_width=700, plot_height=600, tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
+                width=700, height=600, tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
 
 
 # SETTING UP PLOT PROPERTIES
@@ -459,8 +459,8 @@ reg_testing.legend.location = "top_left"
 reg_testing.legend.background_fill_alpha = 0.5
 
 # Adding tabs for regression plots
-reg_tab1 = Panel(child=reg_training_layout, title="Training Dataset")
-reg_tab2 = Panel(child=reg_testing_layout, title="Testing Dataset")
+reg_tab1 = TabPanel(child=reg_training_layout, title="Training Dataset")
+reg_tab2 = TabPanel(child=reg_testing_layout, title="Testing Dataset")
 reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
 
 regression_layout = column(
@@ -544,7 +544,8 @@ def update_regression():
 
     # Update coefficients
     # array of variable names
-    x_name_coef_key = reg_pre_process.get_feature_names(x_name)
+    x_name_coef_key = reg_pre_process.get_feature_names_out(x_name)
+    x_name_coef_key = list(x_name_coef_key)
     x_name_coef_key.append("Intercept")
     reg_coeff = list(reg_ml.coef_)
     reg_coeff.append(reg_ml.intercept_)
@@ -887,13 +888,13 @@ text_descriptions = column(div1, div2, div3, div4, div5)
 
 ###########################################################################
 
-# organizing panels of display
-tab1 = Panel(child=visualization_layout, title="Data Exploration")
-tab2 = Panel(child=column(select_color, c_corr), title="Correlation Matrix")
-tab3 = Panel(child=regression_layout, title="Multivariable Regression")
-tab4 = Panel(child=unsuper_learn_layout, title="Unsupervised Learning")
-tab5 = Panel(child=svm_layout, title="Classification Methods")
-tab6 = Panel(child=text_descriptions, title="Model Description")
+# organizing TabPanels of display
+tab1 = TabPanel(child=visualization_layout, title="Data Exploration")
+tab2 = TabPanel(child=column(select_color, c_corr), title="Correlation Matrix")
+tab3 = TabPanel(child=regression_layout, title="Multivariable Regression")
+tab4 = TabPanel(child=unsuper_learn_layout, title="Unsupervised Learning")
+tab5 = TabPanel(child=svm_layout, title="Classification Methods")
+tab6 = TabPanel(child=text_descriptions, title="Model Description")
 tabs = Tabs(tabs=[tab6, tab1, tab2, tab3, tab4, tab5])
 
 update()  # initial load of the data
