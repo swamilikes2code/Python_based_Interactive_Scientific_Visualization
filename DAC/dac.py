@@ -10,9 +10,8 @@ from scipy.integrate import solve_ivp, odeint
 from bokeh.io import save, curdoc
 from bokeh.layouts import column, row, gridplot
 from bokeh.model import Model
-from bokeh.models import CustomJS, Slider, Callback, HoverTool, Button
+from bokeh.models import CustomJS, Slider, Callback, HoverTool, Button, TabPanel, Tabs
 from bokeh.plotting import ColumnDataSource, figure, show
-from bokeh.models.widgets import Panel, Tabs
 import numpy as np
 import pandas as pd
 
@@ -485,8 +484,8 @@ column4 = column(plot_q_reverse, plot_temperature_reverse)
 grid = gridplot([[column1, column2, column3, column4]])
 # grid = gridplot([[constant_slider, inputs, plot_q], [plot_co2, plot_temperature], [reverse_process]])
 
-tab1 =Panel(child= grid, title="Desktop")
-tab2 =Panel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
+tab1 =TabPanel(child= grid, title="Desktop")
+tab2 =TabPanel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
 tabs = Tabs(tabs = [tab1, tab2])
 
 
