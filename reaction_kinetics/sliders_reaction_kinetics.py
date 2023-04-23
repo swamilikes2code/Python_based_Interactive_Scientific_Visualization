@@ -12,7 +12,7 @@ from scipy.integrate import odeint
 
 from bokeh.io import curdoc
 from bokeh.layouts import row, column, gridplot
-from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool, Grid, LinearAxis, Tabs, Panel, Button
+from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool, TabPanel, Tabs, Grid, LinearAxis, Button
 from bokeh.plotting import figure
 from bokeh.palettes import Blues8
 
@@ -68,7 +68,7 @@ source_vbar = ColumnDataSource(data=dict(specie_names=specie_names, vbar_top=vba
 # Set up plot for concentrations
 TOOLTIPS = [("Time (s)","@vec_time"), ("A","@int_vec_A{0,0.000}"), ("B","@int_vec_B{0,0.000}"), ("C","@int_vec_C{0,0.000}")]
 TOOLS = "pan,undo,redo,reset,save,wheel_zoom,box_zoom"
-plot_conc = figure(plot_height=450, plot_width=550, tools=TOOLS, tooltips=TOOLTIPS,
+plot_conc = figure(height=450, width=550, tools=TOOLS, tooltips=TOOLTIPS,
               title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
 plot_conc.line('vec_time', 'int_vec_A', source=source, line_width=3, line_alpha=0.6, line_color="darkgray",
                legend_label="A Concentration")
@@ -85,7 +85,7 @@ plot_conc.grid.grid_line_color = "silver"
 
 # Set up vertical bar plot for concentrations at a certain time
 TOOLTIPS_vbar = [("Specie_Name","@specie_names"), ("Concentration","@vbar_top{0,0.000}")]
-plot_vbar = figure(plot_height=450, plot_width=550, tools=TOOLS, tooltips=TOOLTIPS_vbar, x_range=specie_names,
+plot_vbar = figure(height=450, width=550, tools=TOOLS, tooltips=TOOLTIPS_vbar, x_range=specie_names,
                    y_range=[-0.05, 1.05], title="Concentration A, B and C at time specified by time slider")
 plot_vbar.vbar(x='specie_names', top='vbar_top', source=source_vbar, bottom=0.0, width=0.5, alpha=0.6, color="color",
                legend_field="specie_names")
@@ -155,8 +155,8 @@ animate_button.on_event('button_click', animate)
 inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
 inputs_time = column(animate_button, slider_time )
 
-tab1 =Panel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
-tab2 =Panel(child=column(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Mobile")
+tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
+tab2 =TabPanel(child=column(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Mobile")
 tabs = Tabs(tabs = [tab1, tab2])
 
 curdoc().add_root(tabs)
