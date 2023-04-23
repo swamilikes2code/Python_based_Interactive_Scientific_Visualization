@@ -1,12 +1,11 @@
 from bokeh.io import curdoc
 import ast
 from bokeh.layouts import row, column
-from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, Panel, Tabs, LinearAxis, Range1d, HoverTool
+from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, TabPanel, Tabs, LinearAxis, Range1d, HoverTool
 from bokeh.plotting import figure
 import numpy as np
 import pandas as pd 
 from scipy.interpolate import interp1d
-from bokeh.tile_providers import get_provider, Vendors
 
 time_range=list(range(0, 24)) #hourly time scale
 time_range1=list(range(1,13)) #yearly time scale
@@ -14,12 +13,10 @@ initial_dims=[3, 2, 1, .3] #starting dimensions of the chamber [length, width, h
 materials=["Brick", "Wood", "Terracotta", "Concrete"] #possible materials to choose from
 time_ranges=["12 Months", "24 Hours"] #possible time ranges
 
-get_provider(Vendors.CARTODBPOSITRON) #this helps set up map
-tile_provider=get_provider('CARTODBPOSITRON')
 #Creating a map of the world to show where each of the 6 possible locations are
 mapp = figure(x_range=(-14000000, 7000000), y_range=(-4000000, 6060000), # range bounds supplied in web mercator coordinates
-           x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=4/3, sizing_mode='scale_both')
-mapp.add_tile(tile_provider)
+           x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=4/3, height=300, width=400)
+mapp.add_tile("CartoDB Positron", retina=True)
 #adding each location to the map
 mapp.circle(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.7, legend_label="Bethlehem, PA")
 mapp.circle(x=-8931102.469623, y=2972160.043550, size=10, fill_color='darkred', fill_alpha=.7, legend_label="Miami, FL")
@@ -40,7 +37,7 @@ daily_rh=pd.read_csv("ZECC_Model/ZECC_Daily_rh.csv", index_col=0, header=0) #rea
 
 TOOLS = "pan,reset,save,box_zoom" #tools for the graphs
 #Creating Grpah to show average temps throught the year for each location
-diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
+diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, height=300, width=400)
 diff_temps.title.text_font_size='14pt'
 diff_temps.xaxis.ticker = list(range(1, 13))
 diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -48,11 +45,11 @@ diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 
 diff_temps.xaxis.major_label_orientation=1
 
 #creating a graph to show the 6 locations temperatures throught one day 
-hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both')
+hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, height=300, width=400)
 hourly_temps.title.text_font_size='14pt'
 
 #Creating a graph to show the average humidity trends for each location throughout the year
-humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", x_range=diff_temps.x_range, tools=TOOLS, aspect_ratio=4/3, width=600)
+humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", x_range=diff_temps.x_range, tools=TOOLS, aspect_ratio=4/3, height=300, width=400)
 humid.title.text_font_size='14pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -112,7 +109,7 @@ start1=np.min(source.data['output'])
 end1=np.max(source.data['output'])
 
 #creating a graph to show the heat conduction and evaporative cooling rate for desired ZECC
-g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS, aspect_ratio=4/3, sizing_mode='scale_both',  margin=(20, 20, 20, 10))
+g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS, margin=(20, 20, 20, 10), height=300, width=400)
 gg1=g1.line('time', 'output', source=source, color="purple", legend_label="Heat Conduction", line_dash=[4,4], line_width=3)
 g1.y_range=Range1d(start1, end1)
 g1.legend.click_policy="hide"
@@ -318,7 +315,7 @@ def dew_point_hourly(temps, rh, time): #calculating dew point of loction at spec
 dp_Costa=dew_point(yearly_temps_df.iloc[2], yearly_rh_df.iloc[2], range(0,12)) #dew point for initial Costa Rica ZECC
 
 #creating a graph that shows the ambient temp, outer wall temp, and dew point temp
-g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), aspect_ratio=4/3, sizing_mode='scale_both')
+g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), height=300, width=400)
 g4.title.text_font_size='14pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], dp=dp_Costa, T1=range(0,12)))
 gl1=g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
@@ -513,9 +510,9 @@ selecters=column(location_select, time_select, select_material)
 sliders=column(slide_length, slide_height, slide_width, slide_thick, slide_desired_temp)
 
 #organizing panels of diaply
-tab2=Panel(child=column(row(diff_temps, hourly_temps), row(humid, mapp)), title="Climate Data")
-tab1=Panel(child=column(row(selecters, sliders), row(g4, g1), calculate_button, data_table), title="Heat Transfer & Essential Temps")
-tab3=Panel(child=column(p_ZECC, p_LHV, p_HT, p_Heat, p_dp), title="Information")
+tab2=TabPanel(child=column(row(diff_temps, hourly_temps), row(humid, mapp)), title="Climate Data")
+tab1=TabPanel(child=column(row(selecters, sliders), row(g4, g1), calculate_button, data_table), title="Heat Transfer & Essential Temps")
+tab3=TabPanel(child=column(p_ZECC, p_LHV, p_HT, p_Heat, p_dp), title="Information")
 tabs=Tabs(tabs=[tab1, tab2, tab3])
 
 updates=[location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp]
