@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+digital_lab_twin/.DS_Store
+.DS_Store
+.DS_Store
