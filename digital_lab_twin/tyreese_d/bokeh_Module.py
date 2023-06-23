@@ -101,32 +101,19 @@ inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Conc
 
 
 
-callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-                    code="""
+def update_plot(attr, old, new):
+    s1 = light_intensity.value
+    s2 = inlet_flow.value
 
-    const a = li.value;
-    const b = inf.value;
-    const c = pH.value;
-    const d = inc.value;
-
-    const data = source.data;
-    const x = data['day'];
-    const y1 = data['biomass'];
-    const y2 = data['nitrate'];
-
-    const updated_y1 = x.map((value) => b + a * Math.sin(c * 2 + d));
-    const updated_y2 = x.map((value) => b + a * Math.cos(c * 2 + d));
-
-    source.data['biomass'] = updated_y1;
-    source.data['nitrate'] = updated_y2;
-    source.change.emit();
-""")
+    # Update the y-values based on the slider values
+    y = [s1 * x_val + s2 for x_val in source.data['x']]
+    source.data['y'] = y
 
 
-light_intensity.js_on_change('value', callback)
-inlet_flow.js_on_change('value', callback)
-pH.js_on_change('value', callback)
-inlet_concentration.js_on_change('value', callback)
+
+# Attach the callback function to the sliders' value change event
+light_intensity.on_change('value', update_plot)
+inlet_flow.on_change('value', update_plot)
 
 p.toolbar.autohide = True
 
