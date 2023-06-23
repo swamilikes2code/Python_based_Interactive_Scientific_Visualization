@@ -114,8 +114,8 @@ callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inl
     const y1 = data['biomass'];
     const y2 = data['nitrate'];
 
-    const updated_y1 = b + a * Math.sin(c * 2 + d));
-    const updated_y2 = b + a * Math.cos(c * 2 + d));
+    const updated_y1 = x.map((value) => b + a * Math.sin(c * 2 + d));
+    const updated_y2 = x.map((value) => b + a * Math.cos(c * 2 + d));
 
     source.data = { 'day': x, 'biomass': updated_y1, 'nitrate': updated_y2 };
     source.change.emit();
