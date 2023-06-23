@@ -100,7 +100,7 @@ pH = Slider(start=0, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
 
 
-# sliders work but they dont change the graph and the graph is not interactive, also ther reset button does not work
+
 callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
                     code="""
 
@@ -113,16 +113,11 @@ callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inl
     const x = data['day'];
     const y1 = data['biomass'];
     const y2 = data['nitrate'];
-    
-   
-     for (let i = 0; i < x.length; i++) { 
-           const updated_y1[i] = b + a * Math.sin(c * 2 + d));
-           const updated_y2[i] = b + a * Math.cos(c * 2 + d));
 
-    }
+    const updated_y1 = x.map((value) => b + a * Math.sin(c * 2 + d));
+    const updated_y2 = x.map((value) => b + a * Math.cos(c * 2 + d));
 
-    source.data['biomass'] = updated_y1;
-    source.data['nitrate'] = updated_y2;
+    source.data = { 'day': x, 'biomass': updated_y1, 'nitrate': updated_y2 };
     source.change.emit();
 """)
 
