@@ -1,18 +1,13 @@
-from random import randint, random
-from numpy  import arange
-from bokeh.core.enums import SizingMode
+
 import numpy as np
 import pandas
 from bokeh.plotting import figure, show, curdoc
 from bokeh.layouts import row, column
-from bokeh.sampledata.iris import flowers
-from bokeh.palettes import Bright7
 from bokeh.io import curdoc
 from bokeh.layouts import layout
-from bokeh.transform import factor_cmap
 from bokeh.io import export_svgs
 import datetime
-from bokeh.models import ColumnDataSource,FileInput, Select, CategoricalColorMapper, NumeralTickFormatter, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button
+from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button  
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
 # NOTE THIS WAS ONLY MADE WITH PYTHON NOT HTML AT ALL
 
