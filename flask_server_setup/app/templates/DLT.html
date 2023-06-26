@@ -279,21 +279,27 @@ nav li {
                     <li><a href="SIR">SIR</a></li>
                     <li><a href="DAC">DAC</a></li>
                     <li><a href="catalysis_data_interactive_visualization">Catalysis</a></li>
+                    <li><a href="DLT">Digital Lab Twin</a></li>
                 </ul>
             </nav>
         </header>
-        <h1 class="head1">Catalysis Data Science Model</h1>
+        <h1 class="head1">Photobioreactor Digital Lab Twin</h1>
         <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
-            <img src="{{url_for('static', filename='data science.jpg')}}" alt="ZECC Diagram" class="center">
+            <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="Example of a Photobioreactor" class="center">
          </div>
         <div class="flexwrap">
             <div class="flexcol">
-            <p style="line-height: 1.5;">The dataset utilized in our module is called the “Catalysis dataset”. It describes a reaction known as the oxidative coupling of methane. What happens is methane and oxygen react together to form the desired products(ethane and ethylene) and the undesired products(carbon dioxide and carbon monoxide). This dataset contains over 10,000 points that represent instances of the catalytic reaction detailed above.
-
+            <p style="line-height: 1.5;">In this module, we have trained a machine learning regression model to learn the ins and outs of a Photobioreactor system. 
+                                         The data was derived from an ODE simulating the system; generating 20,000 training datapoints over 100 different experimental parameters. 
             </p>
             </div>
             <div class="flexcol">
-            <p style="line-height: 1.5">Due to its massive size, we apply data science and machine learning concepts such as multivariable regression, classification, clustering, and principal component analysis to uncover different trends within the data. To get a full understanding of all these concepts, it is important to utilize the interactivity of this module. Make sure to play out as many scenarios as possible to see how the data changes or how the performance of specific models change. 
+            <p style="line-height: 1.5">To use the model, simply adjust the sliders to the desired experimental parameters and the model will predict the output. 
+                                        There are 6 adjustable parameters: 3 to shift the initial concentrations of biomass, nitrate solution and lutein;
+                                        and 3 to shift the light intensity, Nitrate solution flow rate and Nitrate flow concentration.
+                                        Play as you wish, the model will keep parameters within 'expected' ranges. 
+                                        Hit "Reset" if you'd like to return the model to its original state.
+                                        If you'd like to save the state of the model, hit "Export" to generate a CSV of the data you've found.
             </p>
         </div>
         </div>
