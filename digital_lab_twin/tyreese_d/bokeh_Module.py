@@ -44,9 +44,13 @@ help_text= Paragraph(text = """
 #C_L is Lutine
 #Time is in hours
 
+# Prediction Data Section ---------------------------------------------------------------------------------------------------------------------
 df = pandas.read_csv("PredExperiment.csv")
 source = ColumnDataSource(df)
 
+#Actual Data Section ---------------------------------------------------------------------------------------------------------------------
+af = pandas.read_csv("ActualExperiment.csv")
+source1 = ColumnDataSource(df)
 
 
 
@@ -86,27 +90,45 @@ pH.js_on_change('value', callback)
 inlet_concentration.js_on_change('value', callback)
 
 
-#Line Graph Section ---------------------------------------------------------------------------------------------------------------------
+# Line Graph Section ---------------------------------------------------------------------------------------------------------------------
 # prepare some data
 
 
 
-curdoc().theme = "dark_minimal"# this makes the graph in dark mode
+# curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 name = ["Biomass", "Nitrate", "Lutine"]
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
-line_1 = p.line('Time', 'C_X', source = df, line_width = 2, line_color = "aqua", legend_label = "Biomass")
+#Actual Lines ******************************************************************************************************************************
+line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
+                                  ('Hour', '@Time'),
+                                  ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
+],))
+
+line_b = p.line('Time', 'C_N', source = af, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
+                                ('Hour', '@Time'), 
+                                ('Concentration', '@C_N'), 
+],))
+line_c = p.line('Time', 'C_L', source = af , line_width = 4, line_color = "lime", legend_label = "Lutine")
+p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
+                                ('Hour', '@Time'), 
+                                ('Concentration', '@C_L'), 
+],))
+#Predicted Lines ******************************************************************************************************************************
+line_1 = p.line('Time', 'C_X', source = df, line_dash = 'dashdot', line_width = 4, line_color = "blue", legend_label = "Biomass Prediction")
 p.add_tools(HoverTool(renderers = [line_1], tooltips=[  ('Name', 'Biomass'),
                                   ('Hour', '@Time'),
                                   ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
 ],))
 
-line_2 = p.line('Time', 'C_N', source = df, line_width = 2, line_color = "orange", legend_label = "Nitrate")
+line_2 = p.line('Time', 'C_N', source = df, line_dash = 'dashdot', line_width = 4, line_color = "red", legend_label = "Nitrate Prediction")
 p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Nitrate'),
                                 ('Hour', '@Time'), 
                                 ('Concentration', '@C_N'), 
 ],))
-line_3 = p.line('Time', 'C_L', source = df, line_width = 2, line_color = "lime", legend_label = "Lutine")
+line_3 = p.line('Time', 'C_L', source = df, line_dash = 'dashdot', line_width = 4, line_color = "green", legend_label = "Lutine Prediction")
 p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Lutine'),
                                 ('Hour', '@Time'), 
                                 ('Concentration', '@C_L'), 
