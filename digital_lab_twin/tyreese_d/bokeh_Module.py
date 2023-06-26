@@ -119,18 +119,18 @@ p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
 ],))
 #Predicted Lines ******************************************************************************************************************************
 line_1 = p.line('Time', 'C_X', source = df, line_dash = 'dashdot', line_width = 4, line_color = "blue", legend_label = "Biomass Prediction")
-p.add_tools(HoverTool(renderers = [line_1], tooltips=[  ('Name', 'Biomass'),
+p.add_tools(HoverTool(renderers = [line_1], tooltips=[  ('Name', 'Biomass Prediction'),
                                   ('Hour', '@Time'),
                                   ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
 ],))
 
 line_2 = p.line('Time', 'C_N', source = df, line_dash = 'dashdot', line_width = 4, line_color = "red", legend_label = "Nitrate Prediction")
-p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Nitrate'),
+p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Nitrate Prediction'),
                                 ('Hour', '@Time'), 
                                 ('Concentration', '@C_N'), 
 ],))
 line_3 = p.line('Time', 'C_L', source = df, line_dash = 'dashdot', line_width = 4, line_color = "green", legend_label = "Lutine Prediction")
-p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Lutine'),
+p.add_tools(HoverTool( renderers = [line_3],tooltips=[('Name', 'Lutine Prediction'),
                                 ('Hour', '@Time'), 
                                 ('Concentration', '@C_L'), 
 ],))
