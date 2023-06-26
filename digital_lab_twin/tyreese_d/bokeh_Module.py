@@ -51,12 +51,6 @@ source = ColumnDataSource(df)
 #Actual Data Section ---------------------------------------------------------------------------------------------------------------------
 af = pandas.read_csv("ActualExperiment.csv")
 source1 = ColumnDataSource(af)
-x = af['Time']
-y = af['C_X']
-z = af['C_N']
-
-source_slider = ColumnDataSource(data=dict(x=x, y=y, z=z))
-
 
 
 
@@ -69,7 +63,7 @@ inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Conc
 
 
 
-callback = CustomJS(args=dict( source = source_slider , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
                     code="""
 
     const a = li.value;
@@ -82,11 +76,8 @@ callback = CustomJS(args=dict( source = source_slider , li = light_intensity, in
     const y1 = data['C_X'];
     const y2 = data['C_N'];
 
-    const x = source.data.x;
-    const y = source.data.y;
-    const z = source.data.z;
-    const updated_y1 = x.map((y) => b + a * Math.sin(c * y + d));
-    const updated_y2 = x.map((z) => b + a * Math.cos(c * z + d));
+    const updated_y1 = x.map((x) => b + a * Math.sin(c * y1 + d));
+    const updated_y2 = x.map((x) => b + a * Math.cos(c * y2 + d));
 
     source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
     source.change.emit();
