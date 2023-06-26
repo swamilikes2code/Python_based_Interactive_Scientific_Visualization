@@ -56,9 +56,9 @@ source1 = ColumnDataSource(af)
 
 # Add the Slider to the figure
 
-light_intensity = Slider(start=0, end=9, value=0, step=.1, title="Light Intesity")
-inlet_flow = Slider(start=0, end=9, value=2, step=.1, title="Inlet Flow")
-pH = Slider(start=0, end=9, value=0.5, step=.1, title="PH")
+light_intensity = Slider(start=0.2, end=2, value=0.2, step=.1, title="Light Intesity")
+inlet_flow = Slider(start=0.2, end=2, value=2, step=.1, title="Inlet Flow")
+pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
 
 
@@ -168,7 +168,7 @@ p.toolbar.autohide = True
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
 reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
                                   code="""
-   li.value = 0
+   li.value = 0.2
    inf.value = 2
    pH.value = 0.5
    inc.value = 4
