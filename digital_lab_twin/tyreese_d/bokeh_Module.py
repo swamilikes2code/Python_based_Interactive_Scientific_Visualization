@@ -39,11 +39,51 @@ help_text= Paragraph(text = """
                      )
 
 # Line Graph section based on csv file information ---------------------------------------------------------------------------------------------------------------------
-df = pandas.read_csv("synthetic_data.csv")
+#C_X is Biomass
+#C_N is Nitrate
+#C_L is Lutine
+#Time is in hours
+
+df = pandas.read_csv("PredExperiment.csv")
+source = ColumnDataSource(df)
 
 
 
 
+# Add the Slider to the figure
+
+light_intensity = Slider(start=0, end=9, value=0, step=.1, title="Light Intesity")
+inlet_flow = Slider(start=0, end=9, value=2, step=.1, title="Inlet Flow")
+pH = Slider(start=0, end=9, value=0.5, step=.1, title="PH")
+inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
+
+
+
+callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+                    code="""
+
+    const a = li.value;
+    const b = inf.value;
+    const c = pH.value;
+    const d = inc.value;
+
+    const data = source.data;
+    const x = data['Time'];
+    const y1 = data['C_X'];
+    const y2 = data['C_N'];
+
+    const updated_y1 = x.map((value) => b + a * Math.sin(c * 2 + d));
+    const updated_y2 = x.map((value) => b + a * Math.cos(c * 2 + d));
+
+    source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
+    source.change.emit();
+""")
+
+
+light_intensity.js_on_change('value', callback)
+inlet_flow.js_on_change('value', callback)
+pH.js_on_change('value', callback)
+inlet_concentration.js_on_change('value', callback)
 
 
 #Line Graph Section ---------------------------------------------------------------------------------------------------------------------
@@ -55,21 +95,25 @@ curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 name = ["Biomass", "Nitrate", "Lutine"]
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
-line_1 = p.line('day', 'biomass', source = df, line_width = 2, line_color = "aqua", legend_label = "Biomass")
+line_1 = p.line('Time', 'C_X', source = df, line_width = 2, line_color = "aqua", legend_label = "Biomass")
 p.add_tools(HoverTool(renderers = [line_1], tooltips=[  ('Name', 'Biomass'),
-                                  ('Hour', '@day'),
-                                  ('Concentration', '@biomass'),
+                                  ('Hour', '@Time'),
+                                  ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
 ],))
 
-line_2 = p.line('day', 'nitrate', source = df, line_width = 2, line_color = "orange", legend_label = "Nitrate")
+line_2 = p.line('Time', 'C_N', source = df, line_width = 2, line_color = "orange", legend_label = "Nitrate")
 p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Nitrate'),
-                                ('Hour', '@day'), 
-                                ('Concentration', '@biomass'), 
+                                ('Hour', '@Time'), 
+                                ('Concentration', '@C_N'), 
 ],))
-circle1 = p.circle('day', 'biomass', line_color ="blue", source = df, size = 8, alpha = 0.8,fill_color = 'grey')
-circle2 = p.circle('day', 'nitrate', line_color ="orange", source = df, size = 8, alpha = 0.8, fill_color = 'grey')
+line_3 = p.line('Time', 'C_L', source = df, line_width = 2, line_color = "lime", legend_label = "Lutine")
+p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Lutine'),
+                                ('Hour', '@Time'), 
+                                ('Concentration', '@C_L'), 
+],))
+# circle1 = p.circle('Time', 'C_X', line_color ="blue", source = df, size = 8, alpha = 0.8,fill_color = 'grey')
+# circle2 = p.circle('Time', 'C_N', line_color ="orange", source = df, size = 8, alpha = 0.8, fill_color = 'grey')
 #source
-source = ColumnDataSource(df)
 
 
 # display legend in top left corner (default is top right corner)
@@ -92,40 +136,7 @@ p.legend.background_fill_alpha = 0.5
 
 
 
-# Add the HoverTool to the figure
 
-light_intensity = Slider(start=0, end=9, value=0, step=.1, title="Light Intesity")
-inlet_flow = Slider(start=0, end=9, value=2, step=.1, title="Inlet Flow")
-pH = Slider(start=0, end=9, value=0.5, step=.1, title="PH")
-inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
-
-
-
-callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-                    code="""
-
-    const a = li.value;
-    const b = inf.value;
-    const c = pH.value;
-    const d = inc.value;
-
-    const data = source.data;
-    const x = data['day'];
-    const y1 = data['biomass'];
-    const y2 = data['nitrate'];
-
-    const updated_y1 = x.map((value) => b + a * Math.sin(c * 2 + d));
-    const updated_y2 = x.map((value) => b + a * Math.cos(c * 2 + d));
-
-    source.data = { 'day': x, 'biomass': updated_y1, 'nitrate': updated_y2 };
-    source.change.emit();
-""")
-
-
-light_intensity.js_on_change('value', callback)
-inlet_flow.js_on_change('value', callback)
-pH.js_on_change('value', callback)
-inlet_concentration.js_on_change('value', callback)
 
 p.toolbar.autohide = True
 
@@ -149,13 +160,14 @@ reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intens
 def export_data():
     # Get the data from the ColumnDataSource
     data = source.data
-    day = data['day']
-    biomass = data['biomass']
-    nitrate = data['nitrate']
+    day = data['Time']#data for time
+    biomass = data['C_X']#data for biomass
+    nitrate = data['C_N']#data for nitrate
+    lutine = data['C_L'] #data for lutine
 
 
     # Create a dictionary to hold the data
-    export_data = {'day': day, 'biomass': biomass, 'nitrate': nitrate}
+    export_data = {'Time': day, 'Biomass': biomass, 'Nitrate': nitrate, 'Lutine': lutine}
 
      # Generate a unique filename using current date and time
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -163,9 +175,9 @@ def export_data():
 
     # Export the data as a CSV file
     with open(filename, 'w') as f:
-        f.write('day,biomass,nitrate\n')
+        f.write('Time,Biomass,Nitrate,Lutine\n')
         for i in range(len(day)):
-            f.write(f'{day[i]},{biomass[i]}, {nitrate[i]}\n')
+            f.write(f'{day[i]},{biomass[i]}, {nitrate[i]}, {lutine[i]} \n')
 
     # Export the plot as an SVG file
     export_svgs(p, filename='exported_plot.svg')
