@@ -44,6 +44,12 @@ def DAC():
     #bokeh_script_DACModel = server_document(url="http://localhost:5006/DAC_animation")
     return render_template("DAC.html", bokeh_script_DACModel=bokeh_script_DACModel)
 
+@app.route("/DLT", methods=['GET'])
+def DLT():
+    bokeh_script_DACModel = server_document(url="https://srrweb.cc.lehigh.edu/DLT")
+    #bokeh_script_DACModel = server_document(url="http://localhost:5006/DAC_animation")
+    return render_template("DLT.html", bokeh_script_DACModel=bokeh_script_DACModel)
+
 
 # @app.route("/acknowledgements", methods=['GET'])
 # def acknowledgements():
