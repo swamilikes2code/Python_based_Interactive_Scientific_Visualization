@@ -61,39 +61,67 @@ inlet_flow = Slider(start=0.2, end=2, value=2, step=.1, title="Inlet Flow")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
 
+# Define the callback function for the sliders
+def update_data(attr, old, new):
+    # Get the current values of the sliders
+    a = light_intensity.value
+    b = inlet_flow.value
+    c = pH.value
+    d = inlet_concentration.value
+    
+    # Retrieve the data from the source
+    data = source.data
+    x = data['Time']
+    y1 = data['C_X']
+    y2 = data['C_N']
+    
+    # Calculate the updated y-values using a loop
+    updated_y1 = []
+    updated_y2 = []
+    for i in range(len(x)):
+        updated_y1.append(b + a * (c * y1[i] + d))
+        updated_y2.append(b + a * (c * y2[i] + d))
+    
+    # Update the data source
+    source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
+
+# Add the callback function to the sliders
+light_intensity.on_change('value', update_data)
+inlet_flow.on_change('value', update_data)
+pH.on_change('value', update_data)
+inlet_concentration.on_change('value', update_data)
+
+# callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+#                     code="""
+
+#     const a = li.value;
+#     const b = inf.value;
+#     const c = pH.value;
+#     const d = inc.value;
+
+#     const data = source.data;
+#     const x = data['Time'];
+#     const y1 = data['C_X'];
+#     const y2 = data['C_N'];
+
+#     const updated_y1 = [];
+#     const updated_y2 = [];
+
+#     for (let i = 0; i < x.length; i++) {
+#         updated_y1.push(b + a * (c * y1[i] + d));
+#         updated_y2.push(b + a * (c * y2[i] + d));
+#     }
 
 
-callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-                    code="""
-
-    const a = li.value;
-    const b = inf.value;
-    const c = pH.value;
-    const d = inc.value;
-
-    const data = source.data;
-    const x = data['Time'];
-    const y1 = data['C_X'];
-    const y2 = data['C_N'];
-
-    const updated_y1 = [];
-    const updated_y2 = [];
-
-    for (let i = 0; i < x.length; i++) {
-        updated_y1.push(b + a * (c * y1[i] + d));
-        updated_y2.push(b + a * (c * y2[i] + d));
-    }
+#     source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
+#     source.change.emit();
+# """)
 
 
-    source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
-    source.change.emit();
-""")
-
-
-light_intensity.js_on_change('value', callback)
-inlet_flow.js_on_change('value', callback)
-pH.js_on_change('value', callback)
-inlet_concentration.js_on_change('value', callback)
+# light_intensity.js_on_change('value', callback)
+# inlet_flow.js_on_change('value', callback)
+# pH.js_on_change('value', callback)
+# inlet_concentration.js_on_change('value', callback)
 
 
 # Line Graph Section ---------------------------------------------------------------------------------------------------------------------
