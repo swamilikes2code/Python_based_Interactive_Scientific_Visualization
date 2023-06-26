@@ -76,8 +76,9 @@ callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inl
     const y1 = data['C_X'];
     const y2 = data['C_N'];
 
-    const updated_y1 = x.map((x) => b + a * Math.sin(c * y1 + d));
-    const updated_y2 = x.map((x) => b + a * Math.cos(c * y2 + d));
+    const updated_y1 = y1.map((value, index) => b + a * Math.sin(c * value + d));
+    const updated_y2 = y2.map((value, index) => b + a * Math.cos(c * value + d));
+
 
     source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
     source.change.emit();
