@@ -80,8 +80,8 @@ callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inl
     const updated_y2 = [];
 
     for (let i = 0; i < x.length; i++) {
-        updated_y1.push(b + a * Math.sin(c * y1[i] + d));
-        updated_y2.push(b + a * Math.cos(c * y2[i] + d));
+        updated_y1.push(b + a * (c * y1[i] + d));
+        updated_y2.push(b + a * (c * y2[i] + d));
     }
 
 
