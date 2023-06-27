@@ -1,0 +1,4 @@
+nn.ipynb was my first go at this, generally just kept as a reference. Will be deleted soon.
+nnModel.ipynb generates the model, allowing for dynamic changing of model parameters for easy testing. Shows a loss graph and preds versus reality.
+nnExpPreds.ipynb performs the actual function we want to see from this neural network--predicting a set of values over time with only one starting condition. This version compares model preds to the same conditions under the kinetic model.
+nnPrediction.ipynb removes the kinetic model entirely and just uses the neural network to predict the future. This is the final version of the model.
