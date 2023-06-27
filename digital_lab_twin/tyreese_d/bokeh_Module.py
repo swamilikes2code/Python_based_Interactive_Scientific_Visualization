@@ -86,6 +86,8 @@ def update_data(attr, old, new):
     source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
 
 # Add the callback function to the sliders
+
+
 light_intensity.on_change('value', update_data)
 inlet_flow.on_change('value', update_data)
 pH.on_change('value', update_data)
