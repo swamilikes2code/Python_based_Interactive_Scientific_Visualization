@@ -18,10 +18,10 @@
     </script>
   </head>
   <body>
-    <div id="c8dbe5fd-c947-4bd8-83e6-145d8e46a619" data-root-id="p1005" style="display: contents;"></div>
+    <div id="bb7db066-0e4b-491c-b5bb-619412c83c89" data-root-id="p1007" style="display: contents;"></div>
   
-    <script type="application/json" id="p1006">
-      {"5756e7f0-306a-42e5-9ac7-b9510d7c1bba":{"version":"3.1.1","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Column","id":"p1005","attributes":{"children":[{"type":"object","name":"RadioButtonGroup","id":"p1001","attributes":{"name":"Types","labels":["NN","GP","Forest"],"active":0}},{"type":"object","name":"NumericInput","id":"p1002","attributes":{"title":"Learning Rate:","value":0.0001,"low":0.0001,"high":0.1,"mode":"float"}},{"type":"object","name":"Select","id":"p1003","attributes":{"title":"Optimizer:","options":["LI","MSE","KL Div"],"value":"NN"}},{"type":"object","name":"Select","id":"p1004","attributes":{"title":"Loss Fn:","options":["ADAM","SGD"],"value":"NN"}}]}}],"callbacks":{"type":"map"}}}
+    <script type="application/json" id="p1008">
+      {"c718659d-dbf0-44da-85b4-dc3904dd6f8a":{"version":"3.1.1","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Column","id":"p1007","attributes":{"children":[{"type":"object","name":"RadioButtonGroup","id":"p1001","attributes":{"name":"Types","labels":["NN","GP","Forest"],"active":0}},{"type":"object","name":"NumericInput","id":"p1002","attributes":{"title":"Learning Rate:(0.00001-0.1)","value":1e-05,"low":1e-05,"high":0.1,"mode":"float"}},{"type":"object","name":"Select","id":"p1003","attributes":{"title":"Optimizer:","options":["LI","MSE","KL Div"],"value":"LI"}},{"type":"object","name":"Select","id":"p1004","attributes":{"title":"Loss Fn:","options":["ADAM","SGD"],"value":"ADAM"}},{"type":"object","name":"Button","id":"p1005","attributes":{"button_type":"danger","js_event_callbacks":{"type":"map","entries":[["button_click",[{"type":"object","name":"CustomJS","id":"p1006","attributes":{"args":{"type":"map","entries":[["lR",{"id":"p1002"}],["lFn",{"id":"p1004"}],["opt",{"id":"p1003"}]]},"code":"\n   lR.value = 0.00001;\n   lFn.value = \"NN\";\n    opt.value = \"NN\";\n\n\n\n"}}]]]},"width":300,"height":60,"label":"Reset"}}]}}],"callbacks":{"type":"map"}}}
     </script>
     <script type="text/javascript">
       (function() {
@@ -29,8 +29,8 @@
           Bokeh.safely(function() {
             (function(root) {
               function embed_document(root) {
-              const docs_json = document.getElementById('p1006').textContent;
-              const render_items = [{"docid":"5756e7f0-306a-42e5-9ac7-b9510d7c1bba","roots":{"p1005":"c8dbe5fd-c947-4bd8-83e6-145d8e46a619"},"root_ids":["p1005"]}];
+              const docs_json = document.getElementById('p1008').textContent;
+              const render_items = [{"docid":"c718659d-dbf0-44da-85b4-dc3904dd6f8a","roots":{"p1007":"bb7db066-0e4b-491c-b5bb-619412c83c89"},"root_ids":["p1007"]}];
               root.Bokeh.embed.embed_items(docs_json, render_items);
               }
               if (root.Bokeh !== undefined) {
