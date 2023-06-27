@@ -256,14 +256,6 @@ intro = Div(text="""
     """)
 
 
-# Prediction Data Section ---------------------------------------------------------------------------------------------------------------------
-df = pandas.read_csv("PredExperiment.csv")
-source = ColumnDataSource(df)
-
-#Actual Data Section ---------------------------------------------------------------------------------------------------------------------
-af = pandas.read_csv("ActualExperiment.csv")
-source1 = ColumnDataSource(af)
-
 name = ["Biomass", "Nitrate", "Lutine"]
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
