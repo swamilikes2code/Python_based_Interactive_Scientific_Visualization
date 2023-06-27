@@ -86,12 +86,14 @@ def update_data(attr, old, new):
     source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
 
 # Add the callback function to the sliders
+updates=[light_intensity, inlet_flow, pH, inlet_concentration]
+for u in updates:
+    u.on_change('value', update_data)
 
-
-light_intensity.on_change('value', update_data)
-inlet_flow.on_change('value', update_data)
-pH.on_change('value', update_data)
-inlet_concentration.on_change('value', update_data)
+# light_intensity.on_change('value', update_data)
+# inlet_flow.on_change('value', update_data)
+# pH.on_change('value', update_data)
+# inlet_concentration.on_change('value', update_data)
 
 # callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
 #                     code="""
