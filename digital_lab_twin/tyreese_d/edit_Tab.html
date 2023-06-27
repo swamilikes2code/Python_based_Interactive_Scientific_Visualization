@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bokeh Plot</title>
+    <style>
+      html, body {
+        box-sizing: border-box;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.1.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.1.1.min.js"></script>
+    <script type="text/javascript">
+        Bokeh.set_log_level("info");
+    </script>
+  </head>
+  <body>
+    <div id="a3362705-baf4-4ead-9cc7-97db160decc8" data-root-id="p1004" style="display: contents;"></div>
+  
+    <script type="application/json" id="p1005">
+      {"757c0dd5-d18e-46af-bc57-692516a062c6":{"version":"3.1.1","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Column","id":"p1004","attributes":{"children":[{"type":"object","name":"Select","id":"p1001","attributes":{"title":"Type:","options":["NN","GP","Forest"],"value":"NN"}},{"type":"object","name":"Slider","id":"p1002","attributes":{"title":"Learning Rate","start":1e-05,"end":10,"value":0.1,"step":1e-05}},{"type":"object","name":"RadioButtonGroup","id":"p1003","attributes":{"name":"Loss Fn","labels":["LI","MSE","KL Div"],"active":0}}]}}],"callbacks":{"type":"map"}}}
+    </script>
+    <script type="text/javascript">
+      (function() {
+        const fn = function() {
+          Bokeh.safely(function() {
+            (function(root) {
+              function embed_document(root) {
+              const docs_json = document.getElementById('p1005').textContent;
+              const render_items = [{"docid":"757c0dd5-d18e-46af-bc57-692516a062c6","roots":{"p1004":"a3362705-baf4-4ead-9cc7-97db160decc8"},"root_ids":["p1004"]}];
+              root.Bokeh.embed.embed_items(docs_json, render_items);
+              }
+              if (root.Bokeh !== undefined) {
+                embed_document(root);
+              } else {
+                let attempts = 0;
+                const timer = setInterval(function(root) {
+                  if (root.Bokeh !== undefined) {
+                    clearInterval(timer);
+                    embed_document(root);
+                  } else {
+                    attempts++;
+                    if (attempts > 100) {
+                      clearInterval(timer);
+                      console.log("Bokeh: ERROR: Unable to run BokehJS code because BokehJS library is missing");
+                    }
+                  }
+                }, 10, root)
+              }
+            })(window);
+          });
+        };
+        if (document.readyState != "loading") fn();
+        else document.addEventListener("DOMContentLoaded", fn);
+      })();
+    </script>
+  </body>
+</html>
