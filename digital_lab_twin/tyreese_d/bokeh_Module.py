@@ -257,16 +257,16 @@ intro = Div(text="""
 
 
 name = ["Biomass", "Nitrate", "Lutine"]
-p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+p3 = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 #Actual Lines ******************************************************************************************************************************
-line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+line_a = p3.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
 p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
                                   ('Hour', '@Time'),
                                   ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
 ],))
 
-line_1 = p.line('Time', 'C_X', source = df, line_dash = 'dashdot', line_width = 4, line_color = "blue", legend_label = "Biomass Prediction")
+line_1 = p3.line('Time', 'C_X', source = df, line_dash = 'dashdot', line_width = 4, line_color = "blue", legend_label = "Biomass Prediction")
 p.add_tools(HoverTool(renderers = [line_1], tooltips=[  ('Name', 'Biomass Prediction'),
                                   ('Hour', '@Time'),
                                   ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
