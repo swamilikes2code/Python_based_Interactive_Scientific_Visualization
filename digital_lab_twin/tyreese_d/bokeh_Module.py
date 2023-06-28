@@ -184,17 +184,14 @@ p.toolbar.autohide = True
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-                                  code="""
-   li.value = 0.2
-   inf.value = 2
-   pH.value = 0.5
-   inc.value = 4
 
-    source.change.emit();
-
-
-""" ))
+def reset_callback():
+    light_intensity.value = 0.2
+    inlet_flow.value = 2
+    pH.value = 0.5
+    inlet_concentration.value = 4
+    source.change.emit()
+reset_button.on_click(reset_callback)
 
 #Export Button******************************************************************************************************************************
 # File Export Data Area
