@@ -54,6 +54,30 @@ af = pandas.read_csv("ActualExperiment.csv")
 source1 = ColumnDataSource(af)
 
 
+#Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
+
+def plot_graph(Columndata ):
+
+    line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
+                                    ('Hour', '@Time'),
+                                    ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
+    ],))
+
+    line_b = p.line('Time', 'C_N', source = af, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
+                                    ('Hour', '@Time'), 
+                                    ('Concentration', '@C_N'), 
+    ],))
+    line_c = p.line('Time', 'C_L', source = af , line_width = 4, line_color = "lime", legend_label = "Lutine")
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
+                                    ('Hour', '@Time'), 
+                                    ('Concentration', '@C_L'), 
+    ],))
+
+
+    
+
 
 # Add the Slider to the figure
 
@@ -135,47 +159,7 @@ for u in updates:
 
 
 # curdoc().theme = "dark_minimal"# this makes the graph in dark mode
-name = ["Biomass", "Nitrate", "Lutine"]
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
-
-#Actual Lines ******************************************************************************************************************************
-line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
-p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
-                                  ('Hour', '@Time'),
-                                  ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
-],))
-
-line_b = p.line('Time', 'C_N', source = af, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
-p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
-                                ('Hour', '@Time'), 
-                                ('Concentration', '@C_N'), 
-],))
-line_c = p.line('Time', 'C_L', source = af , line_width = 4, line_color = "lime", legend_label = "Lutine")
-p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
-                                ('Hour', '@Time'), 
-                                ('Concentration', '@C_L'), 
-],))
-#Predicted Lines ******************************************************************************************************************************
-line_1 = p.line('Time', 'C_X', source = df, line_dash = 'dashdot', line_width = 4, line_color = "blue", legend_label = "Biomass Prediction")
-p.add_tools(HoverTool(renderers = [line_1], tooltips=[  ('Name', 'Biomass Prediction'),
-                                  ('Hour', '@Time'),
-                                  ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
-],))
-
-line_2 = p.line('Time', 'C_N', source = df, line_dash = 'dashdot', line_width = 4, line_color = "red", legend_label = "Nitrate Prediction")
-p.add_tools(HoverTool( renderers = [line_2],tooltips=[('Name', 'Nitrate Prediction'),
-                                ('Hour', '@Time'), 
-                                ('Concentration', '@C_N'), 
-],))
-line_3 = p.line('Time', 'C_L', source = df, line_dash = 'dashdot', line_width = 4, line_color = "green", legend_label = "Lutine Prediction")
-p.add_tools(HoverTool( renderers = [line_3],tooltips=[('Name', 'Lutine Prediction'),
-                                ('Hour', '@Time'), 
-                                ('Concentration', '@C_L'), 
-],))
-# circle1 = p.circle('Time', 'C_X', line_color ="blue", source = df, size = 8, alpha = 0.8,fill_color = 'grey')
-# circle2 = p.circle('Time', 'C_N', line_color ="orange", source = df, size = 8, alpha = 0.8, fill_color = 'grey')
-#source
-
 
 # display legend in top left corner (default is top right corner)
 p.legend.location = "top_left"
@@ -226,7 +210,7 @@ def export_data():
     day = data['Time']#data for time
     biomass = data['C_X']#data for biomass
     nitrate = data['C_N']#data for nitrate
-    lutine = data['C_L'] #data for lutine
+    lutine = data['C_L']#data for lutine
 
 
     # Create a dictionary to hold the data
@@ -248,10 +232,6 @@ def export_data():
         for i in range(len(day)):
             f.write(f'{day[i]},{biomass[i]},{nitrate[i]},{lutine[i]}\n')
 
-
-
-    # Export the plot as an SVG file
-    export_svgs(p, filename='exported_plot.svg')
 
 
 
