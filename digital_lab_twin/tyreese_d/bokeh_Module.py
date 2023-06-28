@@ -186,23 +186,40 @@ for u in updates:
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-                                  code="""
-   li.value = 0.2
-   inf.value = 2
-   pH.value = 0.5
-   inc.value = 4
+# reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+#                                   code="""
+#    li.value = 0.2
+#    inf.value = 2
+#    pH.value = 0.5
+#    inc.value = 4
 
-    source.change.emit();
+#     source.change.emit();
 
 
-""" ))
-  # Clear the renderers (lines) from the plot
-# p.renderers = []
-initial_data = pandas.read_csv("ActualExperiment.csv")
-af = ColumnDataSource(initial_data)
+# """ ))
+#   # Clear the renderers (lines) from the plot
+# # p.renderers = []
+# initial_data = pandas.read_csv("ActualExperiment.csv")
+# af = ColumnDataSource(initial_data)
 
 # source = af
+def refresh_reset_callback():
+    # Perform any necessary refresh operations, such as updating data
+    
+    # Reset the values of the sliders to their initial conditions
+    light_intensity.value = 0.2
+    inlet_flow.value = 2
+    pH.value = 0.5
+    inlet_concentration.value = 4
+    
+    # Clear the renderers (lines) from the plot
+    p.renderers = []
+    
+    # Re-plot the graph with the original data
+    source.data = plot_graph("ActualExperiment.csv").data
+
+# Create the refresh and reset button
+reset_button.on_click(refresh_reset_callback)
 
 
 
