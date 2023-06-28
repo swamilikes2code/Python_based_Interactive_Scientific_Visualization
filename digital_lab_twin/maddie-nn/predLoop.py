@@ -9,15 +9,15 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import joblib
 import pathlib as path
-
+import os
 # initialize everything 
-# note that these load funcs will need to change to your current directory!
-#copy and paste in the relative path locations of each file
-model = torch.load('digital_lab_twin\maddie-nn\models\model.pt')
+# note that these load funcs will need you to change to your current directory here!
+os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin\\maddie-nn')
+model = torch.load('models\model.pt')
 model.eval()
 #scalers
-mmscalerX = joblib.load('digital_lab_twin\maddie-nn\models\mmscalerX.pkl')
-mmscalerY = joblib.load('digital_lab_twin\maddie-nn\models\mmscalerY.pkl')
+mmscalerX = joblib.load('models\mmscalerX.pkl')
+mmscalerY = joblib.load('models\mmscalerY.pkl')
 
 XTimes = np.linspace(0, 150, 200)
 XDF = pd.DataFrame(XTimes, columns=['Time'])
@@ -72,8 +72,8 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #export XDF to csv
     #add times back in
     XDF['Time'] = XTimes
-    XDF.to_csv('digital_lab_twin\maddie-nn\outputs\prediction.csv', index=False)
+    XDF.to_csv('outputs\prediction.csv', index=False)
     #TODO: re-call the plotting function to show results to user
 
 #testing with default values
-#predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
+predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
