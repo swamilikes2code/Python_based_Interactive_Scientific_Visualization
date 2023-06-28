@@ -54,28 +54,6 @@ af = pandas.read_csv("ActualExperiment.csv")
 source1 = ColumnDataSource(af)
 
 
-#Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
-
-def plot_graph(Columndata ):
-
-    line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
-    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
-                                    ('Hour', '@Time'),
-                                    ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
-    ],))
-
-    line_b = p.line('Time', 'C_N', source = af, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
-    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
-                                    ('Hour', '@Time'), 
-                                    ('Concentration', '@C_N'), 
-    ],))
-    line_c = p.line('Time', 'C_L', source = af , line_width = 4, line_color = "lime", legend_label = "Lutine")
-    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
-                                    ('Hour', '@Time'), 
-                                    ('Concentration', '@C_L'), 
-    ],))
-
-
     
 
 
@@ -152,12 +130,6 @@ for u in updates:
 # pH.js_on_change('value', callback)
 # inlet_concentration.js_on_change('value', callback)
 
-
-# Line Graph Section ---------------------------------------------------------------------------------------------------------------------
-# prepare some data
-
-
-
 # curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
@@ -178,6 +150,28 @@ p.legend.border_line_color = "black"
 p.legend.border_line_alpha = 0.8
 p.legend.background_fill_color = "white"
 p.legend.background_fill_alpha = 0.5
+
+
+#Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
+
+def plot_graph(ColumndataSource ):
+
+    line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
+                                    ('Hour', '@Time'),
+                                    ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
+    ],))
+
+    line_b = p.line('Time', 'C_N', source = af, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
+                                    ('Hour', '@Time'), 
+                                    ('Concentration', '@C_N'), 
+    ],))
+    line_c = p.line('Time', 'C_L', source = af , line_width = 4, line_color = "lime", legend_label = "Lutine")
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
+                                    ('Hour', '@Time'), 
+                                    ('Concentration', '@C_L'), 
+    ],))
 
 
 
