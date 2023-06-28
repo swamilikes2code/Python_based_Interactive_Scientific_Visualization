@@ -58,34 +58,7 @@ inlet_flow = Slider(start=0.2, end=2, value=2, step=.1, title="Inlet Flow")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
 
-# Define the callback function for the sliders
-def update_data(attr, old, new):
-    # Get the current values of the sliders
-    a = light_intensity.value
-    b = inlet_flow.value
-    c = pH.value
-    d = inlet_concentration.value
-    
-    # Retrieve the data from the source
-    data = source.data
-    x = data['Time']
-    y1 = data['C_X']
-    y2 = data['C_N']
-    
-    # Calculate the updated y-values using a loop
-    updated_y1 = []
-    updated_y2 = []
-    for i in range(len(x)):
-        updated_y1.append(b + a * (c * y1[i] + d))
-        updated_y2.append(b + a * (c * y2[i] + d))
-    
-    # Update the data source
-    source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
-
-# Add the callback function to the sliders
-updates=[light_intensity, inlet_flow, pH, inlet_concentration]
-for u in updates:
-    u.on_change('value', update_data)
+#
 
 # light_intensity.on_change('value', update_data)
 # inlet_flow.on_change('value', update_data)
@@ -151,12 +124,10 @@ def plot_graph(data):
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_L'), 
     ],))
-    return data
+    return af
 
 
-
-source_data = plot_graph("ActualExperiment.csv")
-source = ColumnDataSource(source_data)
+source = plot_graph("ActualExperiment.csv")
 
 # display legend in top left corner (default is top right corner)
 p.legend.location = "top_left"
@@ -178,25 +149,64 @@ p.legend.background_fill_alpha = 0.5
 
 
 
+
 p.toolbar.autohide = True
+
+#Define the callback function for the sliders
+def update_data(attr, old, new):
+    # Get the current values of the sliders
+    a = light_intensity.value
+    b = inlet_flow.value
+    c = pH.value
+    d = inlet_concentration.value
+    
+    # Retrieve the data from the source
+    data = source.data
+    x = data['Time']
+    y1 = data['C_X']
+    y2 = data['C_N']
+    
+    # Calculate the updated y-values using a loop
+    updated_y1 = []
+    updated_y2 = []
+    for i in range(len(x)):
+        updated_y1.append(b + a + (c + y1[i] + d))
+        updated_y2.append(b + a - (c + y2[i] + d))
+    
+    # Update the data source
+    source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
+
+# Add the callback function to the sliders
+updates=[light_intensity, inlet_flow, pH, inlet_concentration]
+for u in updates:
+    u.on_change('value', update_data)
 
 
 # Creating the Button---------------------------------------------------------------------------------------------------------------------
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
+reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+                                  code="""
+   li.value = 0.2
+   inf.value = 2
+   pH.value = 0.5
+   inc.value = 4
 
-def reset_callback():
-    light_intensity.value = 0.2
-    inlet_flow.value = 2
-    pH.value = 0.5
-    inlet_concentration.value = 4
-
-    source.change.emit()
-
-reset_button.on_click(reset_callback)
+    source.change.emit();
 
 
+""" ))
+  # Clear the renderers (lines) from the plot
+# p.renderers = []
+initial_data = pandas.read_csv("ActualExperiment.csv")
+af = ColumnDataSource(initial_data)
+
+# source = af
+
+
+
+ 
 #Export Button******************************************************************************************************************************
 # File Export Data Area
 def export_data():
