@@ -151,11 +151,12 @@ def plot_graph(data):
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_L'), 
     ],))
-    return af
+    return data
 
 
 
-source = plot_graph("ActualExperiment.csv")
+source_data = plot_graph("ActualExperiment.csv")
+source = ColumnDataSource(source_data)
 
 # display legend in top left corner (default is top right corner)
 p.legend.location = "top_left"
@@ -190,8 +191,11 @@ def reset_callback():
     inlet_flow.value = 2
     pH.value = 0.5
     inlet_concentration.value = 4
+
     source.change.emit()
+
 reset_button.on_click(reset_callback)
+
 
 #Export Button******************************************************************************************************************************
 # File Export Data Area
