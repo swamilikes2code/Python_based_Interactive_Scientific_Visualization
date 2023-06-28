@@ -1,17 +1,14 @@
+#needed for this to work: working directory should have a models folder with mmscalerX.pkl and mmscalerY.pkl and model.pt, and an outputs folder
 # imports, put these at the very top of everything
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import tqdm
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import joblib
 import pathlib as path
-import copy
-import random
 
 # initialize everything 
 model = torch.load('models/model.pt')
@@ -70,6 +67,8 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
         XDF.iloc[nextTimeStep, 1] = Y_current[0,1]
         XDF.iloc[nextTimeStep, 2] = Y_current[0,2]
     #after this loop, XDF should be filled with the predicted values
+    #export XDF to csv
+    XDF.to_csv('outputs/prediction.csv', index=False)
     #re-call the plotting function to show results to user
 
 
