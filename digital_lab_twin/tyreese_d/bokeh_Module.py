@@ -1,5 +1,6 @@
 
 import numpy as np
+import os
 import pandas
 from bokeh.plotting import figure, show, curdoc
 from bokeh.layouts import row, column
@@ -235,11 +236,19 @@ def export_data():
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"exported_data_{timestamp}.csv"
 
-    # Export the data as a CSV file
-    with open(filename, 'w') as f:
+        # Get the path to the user's downloads folder
+    downloads_folder = os.path.expanduser("~/Downloads")
+
+    # Create the file path
+    file_path = os.path.join(downloads_folder, filename)
+
+    # Export the data as a CSV file to the downloads folder
+    with open(file_path, 'w') as f:
         f.write('Time,Biomass,Nitrate,Lutine\n')
         for i in range(len(day)):
-            f.write(f'{day[i]},{biomass[i]}, {nitrate[i]}, {lutine[i]} \n')
+            f.write(f'{day[i]},{biomass[i]},{nitrate[i]},{lutine[i]}\n')
+
+
 
     # Export the plot as an SVG file
     export_svgs(p, filename='exported_plot.svg')
@@ -250,11 +259,23 @@ def export_data():
 export_button = Button(label="Export Data", button_type="success",  height = 60, width = 300)
 export_button.on_click(export_data)
 
+#Run Button******************************************************************************************************************************
+run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
+# run_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+#                                   code="""
+#    li.value = 0.2
+#    inf.value = 2
+#    pH.value = 0.5
+#    inc.value = 4
 
+#     source.change.emit();
+
+
+# """ ))
 
 
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-tab1 = TabPanel(child= row(  p,column(reset_button, light_intensity, inlet_flow,inlet_concentration, pH, export_button) ), title="Model")
+tab1 = TabPanel(child= row(  p,column(reset_button, light_intensity, inlet_flow,inlet_concentration, pH, export_button, run_button) ), title="Model")
 tab2 = TabPanel(child = column(intro, info_text, help_text), title = "Instruction")
 
   
