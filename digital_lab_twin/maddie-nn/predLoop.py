@@ -73,7 +73,7 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #add times back in
     XDF['Time'] = XTimes
     XDF.to_csv('digital_lab_twin\maddie-nn\outputs\prediction.csv', index=False)
-    #re-call the plotting function to show results to user
+    #TODO: re-call the plotting function to show results to user
 
 #testing with default values
 #predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
