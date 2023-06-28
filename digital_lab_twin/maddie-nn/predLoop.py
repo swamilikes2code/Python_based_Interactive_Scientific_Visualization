@@ -11,11 +11,13 @@ import joblib
 import pathlib as path
 
 # initialize everything 
-model = torch.load('models/model.pt')
+# note that these load funcs will need to change to your current directory!
+#copy and paste in the relative path locations of each file
+model = torch.load('digital_lab_twin\maddie-nn\models\model.pt')
 model.eval()
 #scalers
-mmscalerX = joblib.load('models/mmscalerX.pkl')
-mmscalerY = joblib.load('models/mmscalerY.pkl')
+mmscalerX = joblib.load('digital_lab_twin\maddie-nn\models\mmscalerX.pkl')
+mmscalerY = joblib.load('digital_lab_twin\maddie-nn\models\mmscalerY.pkl')
 
 XTimes = np.linspace(0, 150, 200)
 XDF = pd.DataFrame(XTimes, columns=['Time'])
@@ -68,7 +70,10 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
         XDF.iloc[nextTimeStep, 2] = Y_current[0,2]
     #after this loop, XDF should be filled with the predicted values
     #export XDF to csv
-    XDF.to_csv('outputs/prediction.csv', index=False)
+    #add times back in
+    XDF['Time'] = XTimes
+    XDF.to_csv('digital_lab_twin\maddie-nn\outputs\prediction.csv', index=False)
     #re-call the plotting function to show results to user
 
-
+#testing with default values
+#predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
