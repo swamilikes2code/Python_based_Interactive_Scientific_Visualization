@@ -45,13 +45,7 @@ help_text= Paragraph(text = """
 #C_L is Lutine
 #Time is in hours
 
-# Prediction Data Section ---------------------------------------------------------------------------------------------------------------------
-df = pandas.read_csv("PredExperiment.csv")
-source = ColumnDataSource(df)
 
-#Actual Data Section ---------------------------------------------------------------------------------------------------------------------
-af = pandas.read_csv("ActualExperiment.csv")
-source1 = ColumnDataSource(af)
 
 
     
@@ -154,8 +148,11 @@ p.legend.background_fill_alpha = 0.5
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
 
-def plot_graph(ColumndataSource ):
-
+def plot_graph(data):
+    if isinstance(data, str):
+        # If data is a string, assume it's a CSV file path and read the data
+        data = pandas.read_csv(data)
+        af = ColumnDataSource(data)
     line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
                                     ('Hour', '@Time'),
