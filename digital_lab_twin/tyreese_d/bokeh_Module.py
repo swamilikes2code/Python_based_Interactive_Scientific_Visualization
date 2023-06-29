@@ -217,7 +217,7 @@ slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_co
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = initial_source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
+reset_button.js_on_click(CustomJS(args=dict( source = source, p = p, li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
                                   code="""
    li.value = 150
    inf.value = 0.008
@@ -225,6 +225,7 @@ reset_button.js_on_click(CustomJS(args=dict( source = initial_source , li = ligh
    inc.value = 10
    nit.value = 1
    bio.value = 0.5
+   p.reset.emit()
 
     source.change.emit();
 
@@ -291,6 +292,8 @@ run_button = Button(label = "Run", button_type = "primary", height = 60, width =
 #    inf.value = 2
 #    pH.value = 0.5
 #    inc.value = 4
+
+
 
 #     source.change.emit();
 
