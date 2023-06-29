@@ -120,7 +120,7 @@ p.toolbar.autohide = True
 # Add the Slider to the figure
 
 light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s)")
-inlet_flow = Slider(start=0.001, end=0.015, value= 8e-3, step=.01, title="Inlet Flow(g/L)")
+inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.01, title="Inlet Flow(g/L)")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L)")
 nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Nitrate Concentration(g/L)")
@@ -143,12 +143,11 @@ def update_data(attr, old, new):
     y2 = data['C_N']
     
     # Calculate the updated y-values using a loop
-    updated_y1 = []
-    updated_y2 = []
+    updated_y1 = [0] * len(x)
+    updated_y2 = [0] * len(x)
     for i in range(len(x)):
-        updated_y1 [i] = (b + a + (c + y1[i] + d))
-        updated_y2[i] = (b + a - (c + y2[i] + d))
-    
+        updated_y1[i] = b + a * (c + y1[i] + d)
+        updated_y2[i] = b + a * (c + y2[i] + d)
     # Update the data source
     source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
 
@@ -206,10 +205,10 @@ slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_co
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
 reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
                                   code="""
-   li.value = 0.2
-   inf.value = 2
+   li.value = 150
+   inf.value = 0.008
    pH.value = 0.5
-   inc.value = 4
+   inc.value = 10
    nit.value = 1
    bio.value = 0.5
 
