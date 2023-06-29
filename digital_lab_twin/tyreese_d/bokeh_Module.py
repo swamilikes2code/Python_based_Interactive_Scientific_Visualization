@@ -226,9 +226,8 @@ reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = in
    nit.value = 1
    bio.value = 0.5
     // Reset the plot data
-    source.data = initial_source.data;
-
-    // Reset the axis ranges
+    source.data = initial_source.data; // This is the initial data stored in the ColumnDataSource
+    // Reset the axis ranges // this will help reset the axis ranges of the graph and the graph in genral
     p.x_range.start = Math.min.apply(null, source.data['Time']);
     p.x_range.end = Math.max.apply(null, source.data['Time']);
     p.y_range.start = Math.min.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
@@ -238,7 +237,6 @@ reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = in
 
 
 """ ))
-plot_graph(initial_source)
 
   # Clear the renderers (lines) from the plot
 # p.renderers = []
