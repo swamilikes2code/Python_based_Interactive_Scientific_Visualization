@@ -51,8 +51,17 @@ help_text= Paragraph(text = """
 # a good range for C_N_in (the inlet concentration of nitrate feed to the reactor) is 5 - 15 g/L
 # a good range for intensity of light is 100 - 200 umol/m2-s
 
-# UO = 
+U_O = 0.152 # 1/h  Cell specific growth rate
+U_D = 5.95*1e-3 # 1/h  Cell specific decay rate
+K_N = 30.0*1e-3 # g/L  nitrate half-velocity constant
 
+Y_NX = 0.305 # g/g  nitrate yield coefficient
+
+K_O = 0.350*1e-3*2 #g/g-h Lutine synthesis rate
+
+K_D = 3.71*0.05/90 # L/g-h  lutein consumption rate constant
+
+K_NL = 10.0*1e-3 # g/L  nitrate half- velocity constant for lutein synthesis
 
 
 
@@ -143,12 +152,12 @@ biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomas
 #Define the callback function for the sliders
 def update_data(attr, old, new):
     # Get the current values of the sliders
-    a = light_intensity.value
-    b = inlet_flow.value
-    c = pH.value
-    d = inlet_concentration.value
-    e = nitrate_con.value
-    f = biomass_con.value
+    light_i = light_intensity.value
+    F_in = inlet_flow.value
+    ph = pH.value
+    Cn_in = inlet_concentration.value
+    cn = nitrate_con.value
+    cx = biomass_con.value
     
     # Retrieve the data from the source
     data = source.data
@@ -160,8 +169,8 @@ def update_data(attr, old, new):
     updated_y1 = []
     updated_y2 = []
     for i in range(len(x)):
-        updated_y1.append(b * a * (c + y1[i]) + d)#still need to fix the equations  to make it accurat to the number in the ode
-        updated_y2.append(b * a * (c + y2[i]) + d)#still need to fix the equations  to make it accurat to the number in the ode
+        updated_y1.append(U_O * (cn / (cn + K_N)) * cx - U_D * cx  )#Biomass
+        updated_y2.append(-Y_NX - U_O * (cn / (cn + K_N))* cx + F_in * Cn_in )#still need to fix the equations  to make it accurat to the number in the ode
 
     
     # Update the data source
