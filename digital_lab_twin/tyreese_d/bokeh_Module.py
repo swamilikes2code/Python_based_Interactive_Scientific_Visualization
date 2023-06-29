@@ -141,13 +141,12 @@ p.toolbar.autohide = True
 
 # Add the Slider to the figure
 
-light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s)")
-inlet_flow = NumericInput(value=0.008, high = 0.015, low = 0.001, mode = "float", title="Inlet Flow(g/L):(0.001 - 0.015)")# Student chooses the learning rate
-
+light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s):(100 - 200)")
+inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
-inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L)")
-nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L)")
-biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L)")
+inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L):(5 - 15)")
+nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
+biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
 
 #Define the callback function for the sliders
 def update_data(attr, old, new):
