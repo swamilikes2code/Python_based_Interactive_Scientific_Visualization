@@ -1,3 +1,4 @@
+
 import numpy as np
 import os
 import pandas
@@ -38,11 +39,29 @@ help_text= Paragraph(text = """
     """
                      )
 
-# Line Graph section based on csv file information ---------------------------------------------------------------------------------------------------------------------
+# Defining Values ---------------------------------------------------------------------------------------------------------------------
 #C_X is Biomass
 #C_N is Nitrate
 #C_L is Lutine
 #Time is in hours
+#To generate data, just change these values in this block (perhaps in a loop), In my opinion, 
+#a good range for C_x0 (which is the initial concnentration of biomass in the reactor C_X) is 0.2 - 2 g/L
+# a good range for C_N0 (which is the initial concnetraiton of nitrate in the reactor C_N) is 0.2 - 2 g/L
+# a good range for F_in (the inlet flow rate of nitrate into the reactor) is 1e-3 1.5e-2 L/h
+# a good range for C_N_in (the inlet concentration of nitrate feed to the reactor) is 5 - 15 g/L
+# a good range for intensity of light is 100 - 200 umol/m2-s
+
+U_O = 0.152 # 1/h  Cell specific growth rate
+U_D = 5.95*1e-3 # 1/h  Cell specific decay rate
+K_N = 30.0*1e-3 # g/L  nitrate half-velocity constant
+
+Y_NX = 0.305 # g/g  nitrate yield coefficient
+
+K_O = 0.350*1e-3*2 #g/g-h Lutine synthesis rate
+
+K_D = 3.71*0.05/90 # L/g-h  lutein consumption rate constant
+
+K_NL = 10.0*1e-3 # g/L  nitrate half- velocity constant for lutein synthesis
 
 
 
@@ -50,19 +69,125 @@ help_text= Paragraph(text = """
     
 
 
+
+
+# curdoc().theme = "dark_minimal"# this makes the graph in dark mode
+
+#Data Generation Section ---------------------------------------------------------------------------------------------------------------------
+
+data = "ActualExperiment.csv"
+datas = pandas.read_csv(data)
+source = ColumnDataSource(datas)
+
+#initial Data section ---------------------------------------------------------------------------------------------------------------------
+initial_csv = "ActualExperiment.csv"
+initial_datas = pandas.read_csv(data)
+initial_source = ColumnDataSource(datas)
+
+#Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
+p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+
+def plot_graph(source):
+
+
+   
+    line_a = p.line('Time', 'C_X', source = source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
+                                    ('Hour', '@Time'),
+                                    ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
+    ],))
+
+    line_b = p.line('Time', 'C_N', source = source, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
+                                    ('Hour', '@Time'), 
+                                    ('Concentration', '@C_N'), 
+    ],))
+    line_c = p.line('Time', 'C_L', source = source , line_width = 4, line_color = "lime", legend_label = "Lutine")
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
+                                    ('Hour', '@Time'), 
+                                    ('Concentration', '@C_L'), 
+    ],))
+
+   
+
+    return p
+
+p = plot_graph(source)
+
+# display legend in top left corner (default is top right corner)
+p.legend.location = "top_left"
+
+# add a title to your legend
+p.legend.title = "Elements"
+
+# change appearance of legend text
+p.legend.label_text_font = "times"
+p.legend.label_text_font_style = "italic"
+p.legend.label_text_color = "navy"
+
+# change border and background of legend
+p.legend.border_line_width = 3
+p.legend.border_line_color = "black"
+p.legend.border_line_alpha = 0.8
+p.legend.background_fill_color = "white"
+p.legend.background_fill_alpha = 0.5
+
+
+
+
+p.toolbar.autohide = True
+
+
+
 # Add the Slider to the figure
 
-light_intensity = Slider(start=0.2, end=2, value=0.2, step=.1, title="Light Intesity")
-inlet_flow = Slider(start=0.2, end=2, value=2, step=.1, title="Inlet Flow")
+light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s):(100 - 200)")
+inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
-inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
+inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L):(5 - 15)")
+nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
+biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
 
-#
+#Define the callback function for the sliders
+def update_data(attr, old, new):
+    # Get the current values of the sliders
+    light_i = light_intensity.value
+    F_in = inlet_flow.value
+    ph = pH.value
+    Cn_in = inlet_concentration.value
+    cn = nitrate_con.value
+    cx = biomass_con.value
+    
+    # Retrieve the data from the source
+    data = source.data
+    x = data['Time']
+    y1 = data['C_X']
+    y2 = data['C_N']
+    
+    # Calculate the updated y-values using a loop
+    updated_y1 = []
+    updated_y2 = []
+    for i in range(len(x)):
+        updated_y1.append(U_O * (cn / (cn + K_N)) * cx - U_D * cx  )#Biomass
+        updated_y2.append(-Y_NX - U_O * (cn / (cn + K_N))* cx + F_in * Cn_in )#still need to fix the equations  to make it accurat to the number in the ode
+
+    
+    # Update the data source
+    source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
+
+# Add the callback function to the sliders
+updates=[light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con]
+for u in updates:
+    u.on_change('value', update_data)
+
+
 
 # light_intensity.on_change('value', update_data)
 # inlet_flow.on_change('value', update_data)
 # pH.on_change('value', update_data)
 # inlet_concentration.on_change('value', update_data)
+
+slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con)
 
 # callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
 #                     code="""
@@ -96,110 +221,37 @@ inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Conc
 # pH.js_on_change('value', callback)
 # inlet_concentration.js_on_change('value', callback)
 
-# curdoc().theme = "dark_minimal"# this makes the graph in dark mode
-p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
-
-
-#Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
-
-def plot_graph(data):
-    if isinstance(data, str):
-        # If data is a string, assume it's a CSV file path and read the data
-        data = pandas.read_csv(data)
-        af = ColumnDataSource(data)
-    line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
-    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
-                                    ('Hour', '@Time'),
-                                    ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
-    ],))
-
-    line_b = p.line('Time', 'C_N', source = af, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
-    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
-                                    ('Hour', '@Time'), 
-                                    ('Concentration', '@C_N'), 
-    ],))
-    line_c = p.line('Time', 'C_L', source = af , line_width = 4, line_color = "lime", legend_label = "Lutine")
-    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
-                                    ('Hour', '@Time'), 
-                                    ('Concentration', '@C_L'), 
-    ],))
-    return af
-
-
-source = plot_graph("ActualExperiment.csv")
-
-# display legend in top left corner (default is top right corner)
-p.legend.location = "top_left"
-
-# add a title to your legend
-p.legend.title = "Elements"
-
-# change appearance of legend text
-p.legend.label_text_font = "times"
-p.legend.label_text_font_style = "italic"
-p.legend.label_text_color = "navy"
-
-# change border and background of legend
-p.legend.border_line_width = 3
-p.legend.border_line_color = "black"
-p.legend.border_line_alpha = 0.8
-p.legend.background_fill_color = "white"
-p.legend.background_fill_alpha = 0.5
-
-
-
-
-p.toolbar.autohide = True
-
-#Define the callback function for the sliders
-def update_data(attr, old, new):
-    # Get the current values of the sliders
-    a = light_intensity.value
-    b = inlet_flow.value
-    c = pH.value
-    d = inlet_concentration.value
-    
-    # Retrieve the data from the source
-    data = source.data
-    x = data['Time']
-    y1 = data['C_X']
-    y2 = data['C_N']
-    
-    # Calculate the updated y-values using a loop
-    updated_y1 = []
-    updated_y2 = []
-    for i in range(len(x)):
-        updated_y1.append(b + a + (c + y1[i] + d))
-        updated_y2.append(b + a - (c + y2[i] + d))
-    
-    # Update the data source
-    source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
-
-# Add the callback function to the sliders
-updates=[light_intensity, inlet_flow, pH, inlet_concentration]
-for u in updates:
-    u.on_change('value', update_data)
-
-
+#dkllhdfhdlk
+#kdjdklfjfdlkfkl
 # Creating the Button---------------------------------------------------------------------------------------------------------------------
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
                                   code="""
-   li.value = 0.2
-   inf.value = 2
+   li.value = 150
+   inf.value = 0.008
    pH.value = 0.5
-   inc.value = 4
+   inc.value = 10
+   nit.value = 1
+   bio.value = 0.5
+    // Reset the plot data
+    source.data = initial_source.data; // This is the initial data stored in the ColumnDataSource
+    // Reset the axis ranges // this will help reset the axis ranges of the graph and the graph in genral
+    p.x_range.start = Math.min.apply(null, source.data['Time']);
+    p.x_range.end = Math.max.apply(null, source.data['Time']);
+    p.y_range.start = Math.min.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
+    p.y_range.end = Math.max.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
 
     source.change.emit();
 
 
 """ ))
+
   # Clear the renderers (lines) from the plot
 # p.renderers = []
-for u in updates:
-    u.on_change('value', update_data)
+# for u in updates:
+#     u.on_change('value', update_data)
 
 
 # initial_data = pandas.read_csv("ActualExperiment.csv")
@@ -256,6 +308,8 @@ run_button = Button(label = "Run", button_type = "primary", height = 60, width =
 #    pH.value = 0.5
 #    inc.value = 4
 
+
+
 #     source.change.emit();
 
 
@@ -263,7 +317,7 @@ run_button = Button(label = "Run", button_type = "primary", height = 60, width =
 
 
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-tab1 = TabPanel(child= row(  p,column(reset_button, light_intensity, inlet_flow,inlet_concentration, pH, export_button, run_button) ), title="Model")
+tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
 tab2 = TabPanel(child = column(intro, info_text, help_text), title = "Instruction")
 
   
@@ -281,9 +335,6 @@ l = layout(
 )
 
 
-
 curdoc().add_root(l)
-
-
 
 
