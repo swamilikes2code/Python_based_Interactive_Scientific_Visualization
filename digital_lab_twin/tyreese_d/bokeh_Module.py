@@ -68,31 +68,30 @@ p = figure(title = "Change in  concentration over time in a photobioreactor", x_
 #Data Generation Section ---------------------------------------------------------------------------------------------------------------------
 
 data = "ActualExperiment.csv"
+datas = pandas.read_csv(data)
+source = ColumnDataSource(datas)
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
 
-def plot_graph(data):
-    data = pandas.read_csv(data)
-    af = ColumnDataSource(data)
-    line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+def plot_graph(source):
+   
+    line_a = p.line('Time', 'C_X', source = source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
                                     ('Hour', '@Time'),
                                     ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
     ],))
 
-    line_b = p.line('Time', 'C_N', source = af, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    line_b = p.line('Time', 'C_N', source = source, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
     p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_N'), 
     ],))
-    line_c = p.line('Time', 'C_L', source = af , line_width = 4, line_color = "lime", legend_label = "Lutine")
+    line_c = p.line('Time', 'C_L', source = source , line_width = 4, line_color = "lime", legend_label = "Lutine")
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_L'), 
     ],))
-    return af
 
-
-source = plot_graph("ActualExperiment.csv")
+plot_graph(source)
 
 # display legend in top left corner (default is top right corner)
 p.legend.location = "top_left"
