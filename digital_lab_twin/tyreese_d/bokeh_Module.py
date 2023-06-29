@@ -143,11 +143,12 @@ def update_data(attr, old, new):
     y2 = data['C_N']
     
     # Calculate the updated y-values using a loop
-    updated_y1 = [0] * len(x)
-    updated_y2 = [0] * len(x)
+    updated_y1 = []
+    updated_y2 = []
     for i in range(len(x)):
-        updated_y1[i] = b + a * (c + y1[i] + d)
-        updated_y2[i] = b + a * (c + y2[i] + d)
+        updated_y1.append(b + a + (c + y1[i] + d))
+        updated_y2.append(b + a - (c + y2[i] + d))
+    
     # Update the data source
     source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
 
