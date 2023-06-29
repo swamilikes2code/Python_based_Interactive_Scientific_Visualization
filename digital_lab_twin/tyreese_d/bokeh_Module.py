@@ -120,7 +120,8 @@ p.toolbar.autohide = True
 # Add the Slider to the figure
 
 light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s)")
-inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.01, title="Inlet Flow(g/L)")
+inlet_flow = NumericInput(value=0.008, high = 0.015, low = 0.001, mode = "float", title="Inlet Flow(g/L):(0.001 - 0.015)")# Student chooses the learning rate
+
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L)")
 nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Nitrate Concentration(g/L)")
@@ -146,8 +147,9 @@ def update_data(attr, old, new):
     updated_y1 = []
     updated_y2 = []
     for i in range(len(x)):
-        updated_y1.append(b + a + (c + y1[i] + d))
-        updated_y2.append(b + a - (c + y2[i] + d))
+        updated_y1.append(b * a * (c + y1[i]) + d)
+        updated_y2.append(b * a * (c + y2[i]) + d)
+
     
     # Update the data source
     source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
@@ -159,10 +161,10 @@ for u in updates:
 
 
 
-light_intensity.on_change('value', update_data)
-inlet_flow.on_change('value', update_data)
-pH.on_change('value', update_data)
-inlet_concentration.on_change('value', update_data)
+# light_intensity.on_change('value', update_data)
+# inlet_flow.on_change('value', update_data)
+# pH.on_change('value', update_data)
+# inlet_concentration.on_change('value', update_data)
 
 slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con)
 
