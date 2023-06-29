@@ -1,5 +1,6 @@
 #needed for this to work: working directory should have a models folder with mmscalerX.pkl and mmscalerY.pkl and model.pt, and an outputs folder
 # imports, put these at the very top of everything
+#Static, run once at beginning of program
 import numpy as np
 import pandas as pd
 import torch
@@ -36,10 +37,10 @@ F_in_init = 0.001
 C_N_in_init = 10
 I0_init = 150
 
-#function takes in initial conditions and runs the model
-#overwrites XDF with the predicted values
-#updates bokeh plot with new values
-#call when run button is hit
+#predloop expects 6 inputs, all floats, corresponding to the 6 columns of XDF (these are your initial conditions)
+#this function will run the model and predict the next 200 timesteps
+#it will then export the results to a csv in the outputs folder
+#afterward, run a plotting function with that csv as input!
 def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #write init conditions to df
     #Only write to the first row for these 3, they'll be filled in thru the loop
