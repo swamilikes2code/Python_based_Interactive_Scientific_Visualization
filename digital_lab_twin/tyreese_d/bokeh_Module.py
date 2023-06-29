@@ -160,8 +160,8 @@ def update_data(attr, old, new):
     updated_y1 = []
     updated_y2 = []
     for i in range(len(x)):
-        updated_y1.append(b * a * (c + y1[i]) + d)
-        updated_y2.append(b * a * (c + y2[i]) + d)
+        updated_y1.append(b * a * (c + y1[i]) + d)#still need to fix the equations  to make it accurat to the number in the ode
+        updated_y2.append(b * a * (c + y2[i]) + d)#still need to fix the equations  to make it accurat to the number in the ode
 
     
     # Update the data source
