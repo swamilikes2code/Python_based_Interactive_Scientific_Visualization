@@ -76,10 +76,10 @@ initial_datas = pandas.read_csv(data)
 initial_source = ColumnDataSource(datas)
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
+p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 def plot_graph(source):
 
-    p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
    
     line_a = p.line('Time', 'C_X', source = source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
@@ -99,31 +99,32 @@ def plot_graph(source):
                                     ('Concentration', '@C_L'), 
     ],))
 
-    # display legend in top left corner (default is top right corner)
-    p.legend.location = "top_left"
-
-    # add a title to your legend
-    p.legend.title = "Elements"
-
-    # change appearance of legend text
-    p.legend.label_text_font = "times"
-    p.legend.label_text_font_style = "italic"
-    p.legend.label_text_color = "navy"
-
-    # change border and background of legend
-    p.legend.border_line_width = 3
-    p.legend.border_line_color = "black"
-    p.legend.border_line_alpha = 0.8
-    p.legend.background_fill_color = "white"
-    p.legend.background_fill_alpha = 0.5
-
-
-
-
-    p.toolbar.autohide = True
+   
 
     return p
 
+# display legend in top left corner (default is top right corner)
+p.legend.location = "top_left"
+
+# add a title to your legend
+p.legend.title = "Elements"
+
+# change appearance of legend text
+p.legend.label_text_font = "times"
+p.legend.label_text_font_style = "italic"
+p.legend.label_text_color = "navy"
+
+# change border and background of legend
+p.legend.border_line_width = 3
+p.legend.border_line_color = "black"
+p.legend.border_line_alpha = 0.8
+p.legend.background_fill_color = "white"
+p.legend.background_fill_alpha = 0.5
+
+
+
+
+p.toolbar.autohide = True
 p = plot_graph(source)
 
 
