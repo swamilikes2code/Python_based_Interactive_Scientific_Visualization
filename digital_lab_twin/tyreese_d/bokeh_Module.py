@@ -135,8 +135,8 @@ inlet_flow = NumericInput(value=0.008, high = 0.015, low = 0.001, mode = "float"
 
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L)")
-nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Nitrate Concentration(g/L)")
-biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Biomass Concentration(g/L)")
+nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L)")
+biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L)")
 
 #Define the callback function for the sliders
 def update_data(attr, old, new):
@@ -217,7 +217,7 @@ slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_co
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
+reset_button.js_on_click(CustomJS(args=dict( source = initial_source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
                                   code="""
    li.value = 150
    inf.value = 0.008
