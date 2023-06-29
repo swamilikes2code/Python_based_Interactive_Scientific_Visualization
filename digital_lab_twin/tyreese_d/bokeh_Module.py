@@ -65,14 +65,14 @@ help_text= Paragraph(text = """
 # curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
+#Data Generation Section ---------------------------------------------------------------------------------------------------------------------
 
+data = "ActualExperiment.csv"
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
 
 def plot_graph(data):
-    if isinstance(data, str):
-        # If data is a string, assume it's a CSV file path and read the data
-        data = pandas.read_csv(data)
-        af = ColumnDataSource(data)
+    data = pandas.read_csv(data)
+    af = ColumnDataSource(data)
     line_a = p.line('Time', 'C_X', source = af, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
                                     ('Hour', '@Time'),
