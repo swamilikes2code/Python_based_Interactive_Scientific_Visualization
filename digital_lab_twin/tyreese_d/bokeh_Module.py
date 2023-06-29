@@ -103,6 +103,8 @@ def plot_graph(source):
 
     return p
 
+p = plot_graph(source)
+
 # display legend in top left corner (default is top right corner)
 p.legend.location = "top_left"
 
@@ -125,7 +127,6 @@ p.legend.background_fill_alpha = 0.5
 
 
 p.toolbar.autohide = True
-p = plot_graph(source)
 
 
 
