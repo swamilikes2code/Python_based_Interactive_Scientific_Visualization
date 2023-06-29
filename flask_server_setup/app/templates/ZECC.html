@@ -303,15 +303,21 @@ nav li {
         </div>
         <nav>
             <ul>
-                <li><a href="/app">Home</a></li>
-                <li><a href="sliders_reaction_kinetics">Reaction Kinetics</a></li>
-                <li><a href="ZECC">ZECC</a></li>
-                <li><a href="SIR">SIR</a></li>
-                <li><a href="DAC">DAC</a></li>
-                <li><a href="catalysis_data_interactive_visualization">Catalysis</a></li>
+                <li><a href="/app"class="text-size">Home</a></li>
+                <li><a href="sliders_reaction_kinetics"class="text-size">Reaction Kinetics</a></li>
+                <li><a href="ZECC"class="text-size">ZECC</a></li>
+                <li><a href="SIR"class="text-size">SIR</a></li>
+                <li><a href="DAC"class="text-size">DAC</a></li>
+                <li><a href="catalysis_data_interactive_visualization"class="text-size">Catalysis</a></li>
+                <li><a href="DLT" class="text-size">Digital Lab Twin</a></li>
             </ul>
         </nav>
     </header>
+    <style>
+        .text-size {
+            font-size: 16px; /* Adjust the font size as desired */
+        }
+    </style>
         <h1 class="head1">Zero Energy Cooling Chamber</h1>
         <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
             <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
