@@ -39,11 +39,20 @@ help_text= Paragraph(text = """
     """
                      )
 
-# Line Graph section based on csv file information ---------------------------------------------------------------------------------------------------------------------
+# Defining Values ---------------------------------------------------------------------------------------------------------------------
 #C_X is Biomass
 #C_N is Nitrate
 #C_L is Lutine
 #Time is in hours
+#To generate data, just change these values in this block (perhaps in a loop), In my opinion, 
+#a good range for C_x0 (which is the initial concnentration of biomass in the reactor C_X) is 0.2 - 2 g/L
+# a good range for C_N0 (which is the initial concnetraiton of nitrate in the reactor C_N) is 0.2 - 2 g/L
+# a good range for F_in (the inlet flow rate of nitrate into the reactor) is 1e-3 1.5e-2 L/h
+# a good range for C_N_in (the inlet concentration of nitrate feed to the reactor) is 5 - 15 g/L
+# a good range for intensity of light is 100 - 200 umol/m2-s
+
+# UO = 
+
 
 
 
@@ -108,35 +117,6 @@ p.legend.background_fill_alpha = 0.5
 
 p.toolbar.autohide = True
 
-# #Define the callback function for the sliders
-# def update_data(attr, old, new):
-#     # Get the current values of the sliders
-#     a = light_intensity.value
-#     b = inlet_flow.value
-#     c = pH.value
-#     d = inlet_concentration.value
-    
-#     # Retrieve the data from the source
-#     data = source.data
-#     x = data['Time']
-#     y1 = data['C_X']
-#     y2 = data['C_N']
-    
-#     # Calculate the updated y-values using a loop
-#     updated_y1 = []
-#     updated_y2 = []
-#     for i in range(len(x)):
-#         updated_y1.append(b + a + (c + y1[i] + d))
-#         updated_y2.append(b + a - (c + y2[i] + d))
-    
-#     # Update the data source
-#     source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
-
-# # Add the callback function to the sliders
-# updates=[light_intensity, inlet_flow, pH, inlet_concentration]
-# for u in updates:
-#     u.on_change('value', update_data)
-
 # Add the Slider to the figure
 
 light_intensity = Slider(start=0.2, end=2, value=0.2, step=.1, title="Light Intesity")
@@ -144,44 +124,73 @@ inlet_flow = Slider(start=0.2, end=2, value=2, step=.1, title="Inlet Flow")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
 
+#Define the callback function for the sliders
+def update_data(attr, old, new):
+    # Get the current values of the sliders
+    a = light_intensity.value
+    b = inlet_flow.value
+    c = pH.value
+    d = inlet_concentration.value
+    
+    # Retrieve the data from the source
+    data = source.data
+    x = data['Time']
+    y1 = data['C_X']
+    y2 = data['C_N']
+    
+    # Calculate the updated y-values using a loop
+    updated_y1 = []
+    updated_y2 = []
+    for i in range(len(x)):
+        updated_y1.append(b + a + (c + y1[i] + d))
+        updated_y2.append(b + a - (c + y2[i] + d))
+    
+    # Update the data source
+    source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
+
+# Add the callback function to the sliders
+updates=[light_intensity, inlet_flow, pH, inlet_concentration]
+for u in updates:
+    u.on_change('value', update_data)
 
 
-# light_intensity.on_change('value', update_data)
-# inlet_flow.on_change('value', update_data)
-# pH.on_change('value', update_data)
-# inlet_concentration.on_change('value', update_data)
 
-callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-                    code="""
+light_intensity.on_change('value', update_data)
+inlet_flow.on_change('value', update_data)
+pH.on_change('value', update_data)
+inlet_concentration.on_change('value', update_data)
 
-    const a = li.value;
-    const b = inf.value;
-    const c = pH.value;
-    const d = inc.value;
+# callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+#                     code="""
 
-    const data = source.data;
-    const x = data['Time'];
-    const y1 = data['C_X'];
-    const y2 = data['C_N'];
+#     const a = li.value;
+#     const b = inf.value;
+#     const c = pH.value;
+#     const d = inc.value;
 
-    const updated_y1 = [];
-    const updated_y2 = [];
+#     const data = source.data;
+#     const x = data['Time'];
+#     const y1 = data['C_X'];
+#     const y2 = data['C_N'];
 
-    for (let i = 0; i < x.length; i++) {
-        updated_y1.push(b + a * (c * y1[i] + d));
-        updated_y2.push(b + a * (c * y2[i] + d));
-    }
+#     const updated_y1 = [];
+#     const updated_y2 = [];
 
-
-    source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
-    source.change.emit();
-""")
+#     for (let i = 0; i < x.length; i++) {
+#         updated_y1.push(b + a * (c * y1[i] + d));
+#         updated_y2.push(b + a * (c * y2[i] + d));
+#     }
 
 
-light_intensity.js_on_change('value', callback)
-inlet_flow.js_on_change('value', callback)
-pH.js_on_change('value', callback)
-inlet_concentration.js_on_change('value', callback)
+#     source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
+#     source.change.emit();
+# """)
+
+
+# light_intensity.js_on_change('value', callback)
+# inlet_flow.js_on_change('value', callback)
+# pH.js_on_change('value', callback)
+# inlet_concentration.js_on_change('value', callback)
 
 #dkllhdfhdlk
 #kdjdklfjfdlkfkl
