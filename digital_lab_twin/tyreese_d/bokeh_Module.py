@@ -63,7 +63,6 @@ help_text= Paragraph(text = """
 
 
 # curdoc().theme = "dark_minimal"# this makes the graph in dark mode
-p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 #Data Generation Section ---------------------------------------------------------------------------------------------------------------------
 
@@ -79,6 +78,9 @@ initial_source = ColumnDataSource(datas)
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
 
 def plot_graph(source):
+
+    p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+
    
     line_a = p.line('Time', 'C_X', source = source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -97,30 +99,34 @@ def plot_graph(source):
                                     ('Concentration', '@C_L'), 
     ],))
 
-plot_graph(source)
+    # display legend in top left corner (default is top right corner)
+    p.legend.location = "top_left"
 
-# display legend in top left corner (default is top right corner)
-p.legend.location = "top_left"
+    # add a title to your legend
+    p.legend.title = "Elements"
 
-# add a title to your legend
-p.legend.title = "Elements"
+    # change appearance of legend text
+    p.legend.label_text_font = "times"
+    p.legend.label_text_font_style = "italic"
+    p.legend.label_text_color = "navy"
 
-# change appearance of legend text
-p.legend.label_text_font = "times"
-p.legend.label_text_font_style = "italic"
-p.legend.label_text_color = "navy"
-
-# change border and background of legend
-p.legend.border_line_width = 3
-p.legend.border_line_color = "black"
-p.legend.border_line_alpha = 0.8
-p.legend.background_fill_color = "white"
-p.legend.background_fill_alpha = 0.5
+    # change border and background of legend
+    p.legend.border_line_width = 3
+    p.legend.border_line_color = "black"
+    p.legend.border_line_alpha = 0.8
+    p.legend.background_fill_color = "white"
+    p.legend.background_fill_alpha = 0.5
 
 
 
 
-p.toolbar.autohide = True
+    p.toolbar.autohide = True
+
+    return p
+
+p = plot_graph(source)
+
+
 
 # Add the Slider to the figure
 
@@ -224,6 +230,8 @@ reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intens
 
 
 """ ))
+plot_graph(initial_source)
+
   # Clear the renderers (lines) from the plot
 # p.renderers = []
 # for u in updates:
