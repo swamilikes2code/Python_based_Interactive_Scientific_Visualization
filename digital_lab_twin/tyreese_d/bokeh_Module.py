@@ -119,10 +119,12 @@ p.toolbar.autohide = True
 
 # Add the Slider to the figure
 
-light_intensity = Slider(start=0.2, end=2, value=0.2, step=.1, title="Light Intesity")
-inlet_flow = Slider(start=0.2, end=2, value=2, step=.1, title="Inlet Flow")
+light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s)")
+inlet_flow = Slider(start=0.001, end=0.015, value= 8e-3, step=.01, title="Inlet Flow(g/L)")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
-inlet_concentration = Slider(start=0, end=9, value=4, step=.1, title="Inlet Concentration")
+inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L)")
+nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Nitrate Concentration(g/L)")
+biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Biomass Concentration(g/L)")
 
 #Define the callback function for the sliders
 def update_data(attr, old, new):
@@ -131,6 +133,8 @@ def update_data(attr, old, new):
     b = inlet_flow.value
     c = pH.value
     d = inlet_concentration.value
+    e = nitrate_con.value
+    f = biomass_con.value
     
     # Retrieve the data from the source
     data = source.data
@@ -142,14 +146,14 @@ def update_data(attr, old, new):
     updated_y1 = []
     updated_y2 = []
     for i in range(len(x)):
-        updated_y1.append(b + a + (c + y1[i] + d))
-        updated_y2.append(b + a - (c + y2[i] + d))
+        updated_y1 [i] = (b + a + (c + y1[i] + d))
+        updated_y2[i] = (b + a - (c + y2[i] + d))
     
     # Update the data source
     source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
 
 # Add the callback function to the sliders
-updates=[light_intensity, inlet_flow, pH, inlet_concentration]
+updates=[light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con]
 for u in updates:
     u.on_change('value', update_data)
 
@@ -159,6 +163,8 @@ light_intensity.on_change('value', update_data)
 inlet_flow.on_change('value', update_data)
 pH.on_change('value', update_data)
 inlet_concentration.on_change('value', update_data)
+
+slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con)
 
 # callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
 #                     code="""
@@ -198,12 +204,14 @@ inlet_concentration.on_change('value', update_data)
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
+reset_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
                                   code="""
    li.value = 0.2
    inf.value = 2
    pH.value = 0.5
    inc.value = 4
+   nit.value = 1
+   bio.value = 0.5
 
     source.change.emit();
 
@@ -276,7 +284,7 @@ run_button = Button(label = "Run", button_type = "primary", height = 60, width =
 
 
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-tab1 = TabPanel(child= row(  p,column(reset_button, light_intensity, inlet_flow,inlet_concentration, pH, export_button, run_button) ), title="Model")
+tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
 tab2 = TabPanel(child = column(intro, info_text, help_text), title = "Instruction")
 
   
