@@ -70,6 +70,12 @@ p = figure(title = "Change in  concentration over time in a photobioreactor", x_
 data = "ActualExperiment.csv"
 datas = pandas.read_csv(data)
 source = ColumnDataSource(datas)
+
+#initial Data section ---------------------------------------------------------------------------------------------------------------------
+initial_csv = "ActualExperiment.csv"
+initial_datas = pandas.read_csv(data)
+initial_source = ColumnDataSource(datas)
+
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
 
 def plot_graph(source):
