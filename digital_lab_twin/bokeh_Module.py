@@ -75,9 +75,6 @@ K_NL = 10.0*1e-3 # g/L  nitrate half- velocity constant for lutein synthesis
 
 
 
-#pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
-
-
 # curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 
 #Data Generation Section ---------------------------------------------------------------------------------------------------------------------
@@ -308,6 +305,17 @@ export_button.on_click(export_data)
 
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
+
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con): 
+    
+    #set initial conditions by changing these vals
+    C_X_init = biomass_con.value
+    C_N_init = nitrate_con.value
+    C_L_init = pH.value
+    F_in_init = inlet_flow.value
+    C_N_in_init = inlet_concentration.value
+    I0_init = light_intensity.value
+
 # run_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
 #                                   code="""
 #    li.value = 0.2
@@ -321,6 +329,8 @@ run_button = Button(label = "Run", button_type = "primary", height = 60, width =
 
 
 # """ ))
+
+#pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
 
 # initialize everything 
 # note that these load funcs will need you to change to your current directory here!
@@ -341,13 +351,6 @@ XDF['F_in'] = np.zeros(200)
 XDF['C_N_in'] = np.zeros(200)
 XDF['I0'] = np.zeros(200)
 XTimes = XDF.pop('Time') #popped for plotting
-#set initial conditions by changing these vals
-C_X_init = .2
-C_N_init = .2
-C_L_init = 0.0
-F_in_init = 0.001
-C_N_in_init = 10
-I0_init = 150
 
 #function takes in initial conditions and runs the model
 #overwrites XDF with the predicted values
