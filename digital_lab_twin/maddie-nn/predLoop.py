@@ -16,8 +16,8 @@ os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientif
 model = torch.load('models\model.pt')
 model.eval()
 #scalers
-mmscalerX = joblib.load('models\mmscalerX.pkl')
-mmscalerY = joblib.load('models\mmscalerY.pkl')
+stScalerX = joblib.load('models/stScalerX.pkl')
+stScalerY = joblib.load('models/stScalerY.pkl')
 
 XTimes = np.linspace(0, 150, 200)
 XDF = pd.DataFrame(XTimes, columns=['Time'])
@@ -57,12 +57,12 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
         #get the current timestep
         X_current = XDF.iloc[i]
         #scale the current timestep
-        X_current_scaled = mmscalerX.transform([X_current])
+        X_current_scaled = stScalerX.transform([X_current])
         #predict the next timestep
         Y_current_scaled = model(torch.tensor(X_current_scaled, dtype=torch.float32))
         #unscale the prediction
         Y_current_scaled = Y_current_scaled.detach().numpy()
-        Y_current = mmscalerY.inverse_transform(Y_current_scaled)
+        Y_current = stScalerY.inverse_transform(Y_current_scaled)
         #store the prediction
         nextTimeStep = i+1
         XDF.iloc[nextTimeStep, 0] = Y_current[0,0]
@@ -76,4 +76,4 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #TODO: re-call the plotting function to show results to user
 
 #testing with default values
-predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
+#predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
