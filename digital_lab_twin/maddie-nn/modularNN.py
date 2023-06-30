@@ -13,7 +13,7 @@ import pathlib as path
 import copy
 
 ### Static
-rawData = pd.read_csv('STEMVisualsSynthData.csv', header=0)
+rawData = pd.read_csv('digital_lab_twin\maddie-nn\STEMVisualsSynthData.csv', header=0)
 #remove unneeded column
 rawData.drop('Index_within_Experiment', axis = 1, inplace = True)
 #X is inputs--the three Concentrations, F_in, I0 (light intensity), and c_N_in (6)
@@ -167,4 +167,18 @@ def plotter(trainLoss, valLoss):
     plt.title('Training and Validation Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
+    plt.show()
+
+#plotPredictions takes in the real data and labels as well as the model to predict the test data and plot the predictions
+def plotPredictions(X_test_tensor, Y_test_tensor, model, scalerX, scalerY):
+    #plot the predictions
+    model.eval()
+    y_pred = model(X_test_tensor)
+    y_pred = y_pred.detach().numpy()
+    y_pred = scalerX.inverse_transform(y_pred)
+    Y_test = scalerY.inverse_transform(Y_test_tensor)
+    plt.plot(Y_test, label='Real')
+    plt.plot(y_pred, label='Predicted')
+    plt.legend()
+    plt.title('Real vs Predicted')
     plt.show()
