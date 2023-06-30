@@ -148,3 +148,23 @@ def trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor
     # restore model and return best accuracy
     model.load_state_dict(best_weights)
     return model, trainLoss, valLoss
+
+#testModel takes in the model and data and returns the test loss
+def testModel(model, lossFunction, X_test_tensor, Y_test_tensor):
+    #test the model
+    model.eval()
+    y_pred = model(X_test_tensor)
+    mse = lossFunction(y_pred, Y_test_tensor)
+    mse = float(mse)
+    return mse
+
+#plotter takes in the training and validation loss and plots them
+def plotter(trainLoss, valLoss):
+    #plot the loss
+    plt.plot(trainLoss, label='Training Loss')
+    plt.plot(valLoss, label='Validation Loss')
+    plt.legend()
+    plt.title('Training and Validation Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.show()
