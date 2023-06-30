@@ -143,7 +143,7 @@ p.toolbar.autohide = True
 
 
 
-# Add the Slider to the figure
+# Add the Slider to the figure ---------------------------------------------------------------------------------------------------------------------
 
 light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s):(100 - 200)")
 inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
@@ -318,19 +318,6 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
 
     predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init, pH.value, model, stScalerX, stScalerY, source, initial_source)
 
-# run_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-#                                   code="""
-#    li.value = 0.2
-#    inf.value = 2
-#    pH.value = 0.5
-#    inc.value = 4
-
-
-
-#     source.change.emit();
-
-
-# """ ))
 
 #pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
 
