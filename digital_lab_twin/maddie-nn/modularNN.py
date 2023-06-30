@@ -102,7 +102,7 @@ def modelCreator(initNeuronNum, loss, optimizer, learnRate):
 
 #trainModel takes in the model, loss function, optimizer, training params, and data and returns the trained model, training loss, and validation loss
 def trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor, X_val_tensor, Y_train_tensor, Y_val_tensor):
-    batch_start = torch.arange(0, len(X_train), batch_size)
+    batch_start = torch.arange(0, len(X_train_tensor), batchSize)
     
     # Hold the best model
     best_mse = np.inf   # init to infinity
@@ -140,7 +140,7 @@ def trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor
             best_weights = copy.deepcopy(model.state_dict())
         
         #validation loss
-        y_pred = model(X_val)
+        y_pred = model(X_val_tensor)
         mse = lossFunction(y_pred, Y_val_tensor)
         mse = float(mse)
         valLoss.append(mse)
