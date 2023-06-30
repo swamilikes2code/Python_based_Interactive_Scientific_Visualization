@@ -309,12 +309,14 @@ run_button = Button(label = "Run", button_type = "primary", height = 60, width =
 def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con): 
     
     #set initial conditions by changing these vals
-    C_X_init = biomass_con.value
-    C_N_init = nitrate_con.value
-    C_L_init = pH.value
-    F_in_init = inlet_flow.value
-    C_N_in_init = inlet_concentration.value
-    I0_init = light_intensity.value
+    C_X_init = li.value
+    C_N_init = nit.value
+    C_L_init = 0.0
+    F_in_init = inf.value
+    C_N_in_init = inc.value
+    I0_init = li.value
+
+    predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init, pH.value, model, stScalerX, stScalerY, source, initial_source)
 
 # run_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
 #                                   code="""
