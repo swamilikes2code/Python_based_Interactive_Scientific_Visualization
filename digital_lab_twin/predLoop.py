@@ -1,6 +1,5 @@
 #needed for this to work: working directory should have a models folder with mmscalerX.pkl and mmscalerY.pkl and model.pt, and an outputs folder
 # imports, put these at the very top of everything
-#Static, run once at beginning of program
 import numpy as np
 import pandas as pd
 import torch
@@ -13,11 +12,12 @@ import pathlib as path
 import os
 # initialize everything 
 # note that these load funcs will need you to change to your current directory here!
+os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin\\maddie-nn')
 model = torch.load('models\model.pt')
 model.eval()
 #scalers
-mmscalerX = joblib.load('models\mmscalerX.pkl')
-mmscalerY = joblib.load('models\mmscalerY.pkl')
+stScalerX = joblib.load('models/stScalerX.pkl')
+stScalerY = joblib.load('models/stScalerY.pkl')
 
 XTimes = np.linspace(0, 150, 200)
 XDF = pd.DataFrame(XTimes, columns=['Time'])
@@ -37,10 +37,10 @@ F_in_init = 0.001
 C_N_in_init = 10
 I0_init = 150
 
-#predloop expects 6 inputs, all floats, corresponding to the 6 columns of XDF (these are your initial conditions)
-#this function will run the model and predict the next 200 timesteps
-#it will then export the results to a csv in the outputs folder
-#afterward, run a plotting function with that csv as input!
+#function takes in initial conditions and runs the model
+#overwrites XDF with the predicted values
+#updates bokeh plot with new values
+#call when run button is hit
 def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #write init conditions to df
     #Only write to the first row for these 3, they'll be filled in thru the loop
@@ -57,12 +57,12 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
         #get the current timestep
         X_current = XDF.iloc[i]
         #scale the current timestep
-        X_current_scaled = mmscalerX.transform([X_current])
+        X_current_scaled = stScalerX.transform([X_current])
         #predict the next timestep
         Y_current_scaled = model(torch.tensor(X_current_scaled, dtype=torch.float32))
         #unscale the prediction
         Y_current_scaled = Y_current_scaled.detach().numpy()
-        Y_current = mmscalerY.inverse_transform(Y_current_scaled)
+        Y_current = stScalerY.inverse_transform(Y_current_scaled)
         #store the prediction
         nextTimeStep = i+1
         XDF.iloc[nextTimeStep, 0] = Y_current[0,0]
@@ -76,4 +76,4 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #TODO: re-call the plotting function to show results to user
 
 #testing with default values
-predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
+#predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
