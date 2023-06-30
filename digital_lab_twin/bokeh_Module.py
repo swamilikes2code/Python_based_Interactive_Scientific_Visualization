@@ -105,7 +105,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
 
 # initialize everything 
 # note that these load funcs will need you to change to your current directory here!
-os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin')
+os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin\\nn_and_boekh_set')
 model = torch.load('models\model.pt')
 model.eval()
 #scalers
