@@ -165,6 +165,6 @@ def plot_predictions(train_data,
 
 #saveModel saves both model and the scalers
 def saveModel(model, scalerX, scalerY):
-    torch.save(model.state_dict(), 'models/model.pt')
+    torch.save(model, 'models/model.pt')
     joblib.dump(scalerX, 'models/scalerX.pkl')
     joblib.dump(scalerY, 'models/scalerY.pkl')
