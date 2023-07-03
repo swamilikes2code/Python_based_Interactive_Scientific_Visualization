@@ -139,18 +139,29 @@ def plotter(trainLoss, valLoss):
     plt.show()
 
 #plotPredictions takes in the real data and labels as well as the model to predict the test data and plot the predictions
-def plotPredictions(X_test_tensor, Y_test_tensor, model, scalerX, scalerY):
-    #plot the predictions
-    model.eval()
-    y_pred = model(X_test_tensor)
-    y_pred = y_pred.detach().numpy()
-    y_pred = scalerY.inverse_transform(y_pred)
-    Y_test = scalerY.inverse_transform(Y_test_tensor)
-    plt.plot(Y_test, label='Real')
-    plt.plot(y_pred, label='Predicted')
-    plt.legend()
-    plt.title('Real vs Predicted')
-    plt.show()
+#quick visual just to see our data
+def plot_predictions(train_data, 
+                     train_labels, 
+                     test_data, 
+                     test_labels, 
+                     predictions):
+  """
+  Plots training data, test data and compares predictions.
+  """
+  plt.figure(figsize=(10, 7)) #create the base of our figure, figsize feeds in width/height in inches
+
+  # Plot training data in blue
+  plt.scatter(train_data, train_labels, c="b", s=4, label="Training data") #c for color, s for size. 
+  
+  # Plot test data in green
+  plt.scatter(test_data, test_labels, c="deeppink", s=4, label="Testing data")
+
+  if predictions is not None:
+    # Plot the predictions in red (predictions were made on the test data)
+    plt.scatter(test_data, predictions, c="seagreen", s=4, label="Predictions")
+
+  # Show the legend
+  plt.legend(prop={"size": 14});
 
 #saveModel saves both model and the scalers
 def saveModel(model, scalerX, scalerY):
