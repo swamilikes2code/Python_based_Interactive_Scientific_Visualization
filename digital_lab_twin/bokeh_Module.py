@@ -388,6 +388,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     C_N_in_init = inc.value
     I0_init = li.value
 
+    # print((C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init))
     predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
     #creates the source for the graph that the new plot will be based on
     data = "outputs/prediction.csv"
@@ -395,7 +396,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     source = ColumnDataSource(datas)
     plot_graph(source)
 
-
+    run_button.on_click(runbutton_function)
 
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
