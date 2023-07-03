@@ -166,7 +166,11 @@ source = ColumnDataSource(datas)
 #initial Data section ---------------------------------------------------------------------------------------------------------------------
 initial_csv = "outputs/initial_predictions.csv"
 initial_datas = pandas.read_csv(initial_csv)
-initial_source = ColumnDataSource(initial_datas)
+initial_sources= ColumnDataSource(initial_datas)
+#initial Data  for reset section ---------------------------------------------------------------------------------------------------------------------
+initial_csv1 = "outputs/prediction.csv"
+initial_data = pandas.read_csv(initial_csv1)
+initial_source = ColumnDataSource(initial_data)
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
