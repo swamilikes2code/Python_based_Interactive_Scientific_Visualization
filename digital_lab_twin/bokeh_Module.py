@@ -173,9 +173,9 @@ initial_data = pandas.read_csv(initial_csv1)
 initial_source = ColumnDataSource(initial_data)
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
+p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 def plot_graph(sources):
-    p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -382,23 +382,25 @@ export_button.on_click(export_data)
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, p = p): 
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, plot = p): 
     
     #set initial conditions by changing these vals
-    C_X_init = li.value
+    C_X_init = bio.value
     C_N_init = nit.value
     C_L_init = 0.0
     F_in_init = inf.value
     C_N_in_init = inc.value
     I0_init = li.value
+    p = figure() #PREDLOOP IDEA EVERYTIME THE FUNCTION IS CALLED IT ALSO PASSES IN A NEW FIGURE THAT IS CREATED
+
 
     # print((C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init))
     predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
     #creates the source for the graph that the new plot will be based on
     data = "outputs/prediction.csv"
     datas = pandas.read_csv(data)
-    source = ColumnDataSource(datas)
-    p = plot_graph(source)
+    sourceS = ColumnDataSource(datas)
+    p = plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
 
 run_button.on_click(runbutton_function)
 
