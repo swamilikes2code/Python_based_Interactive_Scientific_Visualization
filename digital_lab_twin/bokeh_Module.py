@@ -307,7 +307,7 @@ slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_co
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
+reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, p = p, li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
                                   code="""
    li.value = 150
    inf.value = 0.008
@@ -382,7 +382,7 @@ export_button.on_click(export_data)
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, plot = p): 
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, p = p): 
     
     #set initial conditions by changing these vals
     C_X_init = bio.value
@@ -400,6 +400,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     data = "outputs/prediction.csv"
     datas = pandas.read_csv(data)
     sourceS = ColumnDataSource(datas)
+    p.renderers = []#attempt to reset the graph
     p = plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
 
 run_button.on_click(runbutton_function)
@@ -427,4 +428,4 @@ curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code o
 
 
 
-#code report: the graph can run and reset however both buttons still have issues with doubling the lines on the graph that are had
+#code report: 
