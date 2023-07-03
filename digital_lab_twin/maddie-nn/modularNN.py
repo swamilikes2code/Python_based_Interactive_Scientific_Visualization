@@ -144,7 +144,7 @@ def plotPredictions(X_test_tensor, Y_test_tensor, model, scalerX, scalerY):
     model.eval()
     y_pred = model(X_test_tensor)
     y_pred = y_pred.detach().numpy()
-    y_pred = scalerX.inverse_transform(y_pred)
+    y_pred = scalerY.inverse_transform(y_pred)
     Y_test = scalerY.inverse_transform(Y_test_tensor)
     plt.plot(Y_test, label='Real')
     plt.plot(y_pred, label='Predicted')
