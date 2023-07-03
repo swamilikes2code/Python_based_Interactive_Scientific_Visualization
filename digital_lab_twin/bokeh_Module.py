@@ -388,7 +388,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     C_N_in_init = inc.value
     I0_init = li.value
 
-    predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init, pH.value, model, stScalerX, stScalerY, source, initial_source)
+    predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init, model, stScalerX, stScalerY, source, initial_source)
     #creates the source for the graph that the new plot will be based on
     data = "outputs/prediction.csv"
     datas = pandas.read_csv(data)
