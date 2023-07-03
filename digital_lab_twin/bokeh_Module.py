@@ -106,7 +106,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
 # initialize everything 
 # note that these load funcs will need you to change to your current directory here!
 print(os.getcwd() )
-os.chdir('C:\\Users\\tyreesedavidson\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin\\bokeh_Module.py')
+os.chdir('C:\\Users\\tyreesedavidson\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin')
 model = torch.load('models\model.pt')
 model.eval()
 #scalers
@@ -240,7 +240,7 @@ p.toolbar.autohide = True
 #Define the callback function for the sliders
 def update_data(attr, old, new):
     # Get the current values of the sliders
-    light_i = light_intensity.value
+    light_i = light_intensity.value * 0.000001 #converts from micro to grams
     F_in = inlet_flow.value
     ph = pH.value
     Cn_in = inlet_concentration.value
@@ -408,6 +408,6 @@ l = layout(
 )
 
 
-curdoc().add_root(l)
+curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code on a bokeh server
 
 
