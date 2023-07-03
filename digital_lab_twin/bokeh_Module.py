@@ -426,3 +426,5 @@ l = layout(
 curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code on a bokeh server
 
 
+
+#code report: the graph can run and reset however both buttons still have issues with doubling the lines on the graph that are had
