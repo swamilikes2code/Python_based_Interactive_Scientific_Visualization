@@ -106,8 +106,10 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
 # initialize everything 
 # note that these load funcs will need you to change to your current directory here!
 print(os.getcwd() )
-os.chdir('C:\\Users\\tyreesedavidson\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin')
-model = torch.load('models\model.pt')
+# os.chdir('C:\\Users\\[computer_name]\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
+os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
+
+model = torch.load('models/model.pt')
 model.eval()
 #scalers
 stScalerX = joblib.load('models/stScalerX.pkl')
@@ -159,7 +161,7 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #export XDF to csv
     #add times back in
     XDF['Time'] = XTimes
-    XDF.to_csv('outputs\prediction.csv', index=False)
+    XDF.to_csv('outputs/prediction.csv', index=False)
     #TODO: re-call the plotting function to show results to user
 
 #testing with default values
@@ -170,7 +172,7 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
 
 #Data Generation Section ---------------------------------------------------------------------------------------------------------------------
 
-data = "outputs\prediction.csv"
+data = "outputs/prediction.csv"
 datas = pandas.read_csv(data)
 source = ColumnDataSource(datas)
 
