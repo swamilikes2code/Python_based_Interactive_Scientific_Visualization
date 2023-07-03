@@ -49,7 +49,7 @@ def main():
     #split the data
     X_train, X_val, X_test, Y_train, Y_val, Y_test, XTrainTime, XValTime, XTestTime = mnn.dataSplitter(X, Y, trainSplit, valSplit, testSplit)
     #scale the data
-    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, stScalerX, stScalerY = mnn.dataScaler(X_train, X_val, X_test, Y_train, Y_val, Y_test)
+    X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled, stScalerX, stScalerY = mnn.scaleData(X_train, X_val, X_test, Y_train, Y_val, Y_test)
     #tensorize the data
     X_train_tensor, X_val_tensor, X_test_tensor, Y_train_tensor, Y_val_tensor, Y_test_tensor = mnn.tensors(X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled)
     #create the model
@@ -65,6 +65,5 @@ def main():
     #save the model
     mnn.saveModel(model, stScalerX, stScalerY)
     #TODO: save the model, scalers, and parameters to a file
-    #TODO: load the model, scalers, and parameters from a file
     #TODO: move this to a ipynb file for easy running/visualization
     

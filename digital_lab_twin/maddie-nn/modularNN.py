@@ -54,9 +54,9 @@ def modelCreator(initNeuronNum, loss, optimizer, learnRate):
     model = nn.Sequential(
         nn.Linear(6, initNeuronNum), 
         nn.LeakyReLU(), 
-        nn.Linear(initNeuronNum, (initNeuronNum/2)),
+        nn.Linear(initNeuronNum, (initNeuronNum//2)),
         nn.LeakyReLU(),
-        nn.Linear((initNeuronNum/2), 3))
+        nn.Linear((initNeuronNum//2), 3))
     #define the loss function
     if loss == 0:
         lossFunction = nn.MSELoss()
