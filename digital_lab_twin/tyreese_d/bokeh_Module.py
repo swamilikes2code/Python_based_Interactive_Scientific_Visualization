@@ -151,7 +151,7 @@ biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomas
 #Define the callback function for the sliders
 def update_data(attr, old, new):
     # Get the current values of the sliders
-    light_i = light_intensity.value
+    light_i = light_intensity.value * 0.000001 #converts from micro to grams
     F_in = inlet_flow.value
     ph = pH.value
     Cn_in = inlet_concentration.value
