@@ -176,6 +176,7 @@ initial_source = ColumnDataSource(initial_data)
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 def plot_graph(sources):
+    p.renderers = []
 
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -400,7 +401,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     data = "outputs/prediction.csv"
     datas = pandas.read_csv(data)
     sourceS = ColumnDataSource(datas)
-    p.renderers = []#attempt to reset the graph
+    #attempt to reset the graph IDEA: ADD     p.renderers = [] AT THE BEGINNING OF THE PLOTTING FUNCTION
     p = plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
 
 run_button.on_click(runbutton_function)
