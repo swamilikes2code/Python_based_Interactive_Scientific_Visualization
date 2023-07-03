@@ -173,12 +173,10 @@ initial_data = pandas.read_csv(initial_csv1)
 initial_source = ColumnDataSource(initial_data)
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
-p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 def plot_graph(sources):
+    p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
-
-   
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
                                     ('Hour', '@Time'),
@@ -384,7 +382,7 @@ export_button.on_click(export_data)
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, plot = p): 
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, p = p): 
     
     #set initial conditions by changing these vals
     C_X_init = li.value
@@ -400,7 +398,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     data = "outputs/prediction.csv"
     datas = pandas.read_csv(data)
     source = ColumnDataSource(datas)
-    plot = plot_graph(source)
+    p = plot_graph(source)
 
 run_button.on_click(runbutton_function)
 
