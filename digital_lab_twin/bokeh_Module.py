@@ -429,4 +429,4 @@ curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code o
 
 
 
-#code report: 
+#code report: run works with reset, but after running the sliders dont function anymore
