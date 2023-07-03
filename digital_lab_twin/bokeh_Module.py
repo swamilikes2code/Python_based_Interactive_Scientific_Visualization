@@ -88,34 +88,35 @@ biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomas
 
 #pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
 
-# initialize everything 
-# note that these load funcs will need you to change to your current directory here!
-print(os.getcwd() )
-# os.chdir('C:\\Users\\[computer_name]\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
-os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
 
-model = torch.load('models/model.pt')
-model.eval()
-#scalers
-stScalerX = joblib.load('models/stScalerX.pkl')
-stScalerY = joblib.load('models/stScalerY.pkl')
-
-XTimes = np.linspace(0, 150, 200)
-XDF = pd.DataFrame(XTimes, columns=['Time'])
-#generate empty columns
-XDF['C_X'] = np.zeros(200)
-XDF['C_N'] = np.zeros(200)
-XDF['C_L'] = np.zeros(200)
-XDF['F_in'] = np.zeros(200)
-XDF['C_N_in'] = np.zeros(200)
-XDF['I0'] = np.zeros(200)
-XTimes = XDF.pop('Time') #popped for plotting
 
 #function takes in initial conditions and runs the model
 #overwrites XDF with the predicted values
 #updates bokeh plot with new values
 #call when run button is hit
 def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
+    # initialize everything 
+    # note that these load funcs will need you to change to your current directory here!
+    print(os.getcwd() )
+    # os.chdir('C:\\Users\\[computer_name]\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
+    os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
+
+    model = torch.load('models/model.pt')
+    model.eval()
+    #scalers
+    stScalerX = joblib.load('models/stScalerX.pkl')
+    stScalerY = joblib.load('models/stScalerY.pkl')
+
+    XTimes = np.linspace(0, 150, 200)
+    XDF = pd.DataFrame(XTimes, columns=['Time'])
+    #generate empty columns
+    XDF['C_X'] = np.zeros(200)
+    XDF['C_N'] = np.zeros(200)
+    XDF['C_L'] = np.zeros(200)
+    XDF['F_in'] = np.zeros(200)
+    XDF['C_N_in'] = np.zeros(200)
+    XDF['I0'] = np.zeros(200)
+    XTimes = XDF.pop('Time') #popped for plotting
     #write init conditions to df
     #Only write to the first row for these 3, they'll be filled in thru the loop
     XDF['C_X'][0] = C_X
@@ -195,7 +196,7 @@ def plot_graph(sources):
 
     return p
 
-p = plot_graph(initial_source)
+p = plot_graph(source)
 
 # display legend in top left corner (default is top right corner)
 p.legend.location = "top_left"
@@ -379,7 +380,7 @@ export_button.on_click(export_data)
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con): 
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, plot = p): 
     
     #set initial conditions by changing these vals
     C_X_init = li.value
@@ -395,7 +396,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     data = "outputs/prediction.csv"
     datas = pandas.read_csv(data)
     source = ColumnDataSource(datas)
-    plot_graph(source)
+    plot = plot_graph(source)
 
 run_button.on_click(runbutton_function)
 
