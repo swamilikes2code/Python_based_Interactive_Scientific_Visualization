@@ -85,21 +85,6 @@ inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Co
 nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
 biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
 
-#Run Button******************************************************************************************************************************
-run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
-
-def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con): 
-    
-    #set initial conditions by changing these vals
-    C_X_init = li.value
-    C_N_init = nit.value
-    C_L_init = 0.0
-    F_in_init = inf.value
-    C_N_in_init = inc.value
-    I0_init = li.value
-
-    predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init, pH.value, model, stScalerX, stScalerY, source, initial_source)
-
 
 #pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
 
@@ -389,6 +374,27 @@ def export_data():
 
 export_button = Button(label="Export Data", button_type="success",  height = 60, width = 300)
 export_button.on_click(export_data)
+
+#Run Button******************************************************************************************************************************
+run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
+
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con): 
+    
+    #set initial conditions by changing these vals
+    C_X_init = li.value
+    C_N_init = nit.value
+    C_L_init = 0.0
+    F_in_init = inf.value
+    C_N_in_init = inc.value
+    I0_init = li.value
+
+    predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init, pH.value, model, stScalerX, stScalerY, source, initial_source)
+    #creates the source for the graph that the new plot will be based on
+    data = "outputs/prediction.csv"
+    datas = pandas.read_csv(data)
+    source = ColumnDataSource(datas)
+    plot_graph(source)
+
 
 
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
