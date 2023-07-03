@@ -149,7 +149,7 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     XDF.to_csv('outputs/prediction.csv', index=False)
     #TODO: re-call the plotting function to show results to user
 
-predLoop(biomass_con.value, nitrate_con.value, 0, inlet_flow.value, inlet_concentration.value, light_intensity.value)
+# predLoop(biomass_con.value, nitrate_con.value, 0, inlet_flow.value, inlet_concentration.value, light_intensity.value)
 #testing with default values
 #predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
 
