@@ -149,6 +149,7 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     XDF.to_csv('outputs/prediction.csv', index=False)
     #TODO: re-call the plotting function to show results to user
 
+predLoop(biomass_con.value, nitrate_con.value, 0, inlet_flow.value, inlet_concentration.value, light_intensity.value)
 #testing with default values
 #predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
 
@@ -396,7 +397,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     source = ColumnDataSource(datas)
     plot_graph(source)
 
-    run_button.on_click(runbutton_function)
+run_button.on_click(runbutton_function)
 
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
