@@ -176,8 +176,25 @@ initial_source = ColumnDataSource(initial_data)
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 def plot_graph(sources):
+    #Removes previous lines and hover tools
     p.renderers = [] #removes previous lines
     p.tools = [] #removes previous hover tools
+    
+    #Updates the Lutine concentration by multiplying by the desired factor
+    def update_CL(value):
+        
+        # Access the CL values from the data source
+        CL_values = sources.data['C_L']
+        
+        # Update the CL values by multiplying by the desired factor
+        updated_CL_values = [val * value for val in CL_values]
+        
+        # # Update the CL values in the data source
+        # sources.data['C_L'] = updated_CL_values
+        return updated_CL_values
+    
+    # Example of updating CL value
+    c_L = update_CL(1000)  # Multiply CL values by 1000
 
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -190,11 +207,19 @@ def plot_graph(sources):
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_N'), 
     ],))
-    line_c = p.line('Time', 'C_L' * 1000, source = sources , line_width = 4, line_color = "lime", legend_label = "Lutine")# CL is multiplied by 1000 to make it visible on the graph
+    line_c = p.line('Time', c_L, source = sources , line_width = 4, line_color = "lime", legend_label = "Lutine")# CL is multiplied by 1000 to make it visible on the graph
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_L'), 
     ],)) 
+   
+    
+
+
+
+
+
+
 
    
 
