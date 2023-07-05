@@ -195,8 +195,8 @@ def plot_graph(sources):
                                     ('Concentration', '@C_N'), 
     ],))
     sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
-    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien")# CL is multiplied by 1000 to make it visible on the graph
-    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien X 1000'),
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien x 1000")# CL is multiplied by 1000 to make it visible on the graph
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@modified_C_L'), 
     ],)) 
