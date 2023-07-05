@@ -149,7 +149,13 @@ def plot_predictions(train_data,
   Plots training data, test data and compares predictions.
   """
   plt.figure(figsize=(10, 7)) #create the base of our figure, figsize feeds in width/height in inches
-
+  #if needed, move data to cpu
+  if torch.cuda.is_available():
+        #train_data = train_data.cpu()
+        train_labels = train_labels.cpu()
+        #test_data = test_data.cpu()
+        test_labels = test_labels.cpu()
+        #predictions = predictions.cpu()
   # Plot training data in blue
   plt.scatter(train_data, train_labels, c="b", s=4, label="Training data") #c for color, s for size. 
   
