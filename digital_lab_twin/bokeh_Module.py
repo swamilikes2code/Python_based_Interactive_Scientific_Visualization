@@ -193,7 +193,7 @@ def plot_graph(sources):
         sources.data['C_L'] = updated_CL_values
     
     # Example of updating CL value
-    update_CL(1000)  # Multiply CL values by 1000
+    # update_CL(1000)  # Multiply CL values by 1000
 
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -206,13 +206,14 @@ def plot_graph(sources):
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_N'), 
     ],))
-    line_c = p.line('Time', 'C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien")# CL is multiplied by 1000 to make it visible on the graph
+    sources.data['modified_C_L'] = sources.data['C_L'] * 1000
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien")# CL is multiplied by 1000 to make it visible on the graph
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_L'), 
     ],)) 
    
-    update_CL(0.001)  # Multiply CL values by 0.001
+    # update_CL(0.001)  # Multiply CL values by 0.001
 
 
     return p
