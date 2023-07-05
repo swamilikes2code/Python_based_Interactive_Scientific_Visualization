@@ -180,20 +180,8 @@ def plot_graph(sources):
     p.renderers = [] #removes previous lines
     p.tools = [] #removes previous hover tools
     
-    #Updates the Lutine concentration by multiplying by the desired factor
-    def update_CL(value):
-        
-        # Access the CL values from the data source
-        CL_values = sources.data['C_L']
-        
-        # Update the CL values by multiplying by the desired factor
-        updated_CL_values = [val * value for val in CL_values]
-        
-        # Update the CL values in the data source
-        sources.data['C_L'] = updated_CL_values
     
     # Example of updating CL value
-    # update_CL(1000)  # Multiply CL values by 1000
 
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -213,7 +201,6 @@ def plot_graph(sources):
                                     ('Concentration', '@C_L'), 
     ],)) 
    
-    # update_CL(0.001)  # Multiply CL values by 0.001
 
 
     return p
