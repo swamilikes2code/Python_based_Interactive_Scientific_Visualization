@@ -46,7 +46,18 @@ intro = Div(text="""
 
          <h3>Hover Tool</h3>
         <p> Hover the cursor over the line and you will be able to the element name, time, and  element concentration <br>
-            <b><u>Note</u></b>: the Lutien concentration is 1000 greater than what the actual concentration is, so that you are able to see the Lutine curve</p>
+            <b><u>Note</u></b>: the Lutien concentration is 1000 times greater than what the actual concentration is, so that you are able to see the Lutine curve</p>
+        
+         <h3>Reset Button</h3>
+        <p> This Button will reset the graph to the original position based on the initial conditions before the sliders were changed</p>
+        
+         <h3>Run Button</h3>
+        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions</p>
+        
+         <h3>Export Button</h3>
+        <p> This Button will take the data points of the Time, Nitrate Concentration, Biomass concentration, and Lutine concentration<br>
+        and put them in a csv file and this csv file will be located in your downloads folder the file will be named "exported_data_{timestamp}.csv"<br>
+        the timestamp is the current time and will be formated as year-month-day-hour-minuete-second</p>
         
         
         <h4> Section for bold text</h4>
