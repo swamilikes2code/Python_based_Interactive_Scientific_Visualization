@@ -207,21 +207,13 @@ def plot_graph(sources):
                                     ('Concentration', '@C_N'), 
     ],))
     line_c = p.line('Time', 'C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien")# CL is multiplied by 1000 to make it visible on the graph
-    update_CL(0.001)  # Multiply CL values by 1000
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_L'), 
     ],)) 
    
-    
+    update_CL(0.001)  # Multiply CL values by 0.001
 
-
-
-
-
-
-
-   
 
     return p
 
