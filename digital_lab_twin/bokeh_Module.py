@@ -176,8 +176,8 @@ initial_source = ColumnDataSource(initial_data)
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 def plot_graph(sources):
-    p.renderers = []
-    p.tools = []
+    p.renderers = [] #removes previous lines
+    p.tools = [] #removes previous hover tools
 
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -190,11 +190,11 @@ def plot_graph(sources):
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_N'), 
     ],))
-    line_c = p.line('Time', 'C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutine")
+    line_c = p.line('Time', 'C_L' * 1000, source = sources , line_width = 4, line_color = "lime", legend_label = "Lutine")# CL is multiplied by 1000 to make it visible on the graph
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_L'), 
-    ],))
+    ],)) 
 
    
 
