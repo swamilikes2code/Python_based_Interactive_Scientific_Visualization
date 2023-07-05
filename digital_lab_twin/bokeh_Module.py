@@ -20,14 +20,35 @@ from bokeh.io import export_svgs
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
-# NOTE THIS WAS ONLY MADE WITH PYTHON NOT HTML AT ALL
+#This is the intro text section, it is a div, which is a bokeh object that allows you to write html and css in python
+#headers are made with <h1> </h1> tags, and paragraphs are made with <p> </p> tags, headers are automatically bolded
+
 
 intro = Div(text="""
         <h3>Work In Progress!</h3>
+        <h2>Header</h2><p>This is a <em>formatted</em> paragraph.</p>
+        <h3>Simple Photobioreactor Summary</h3>
         <p>A photobioreactor is a container, like a fish tank, filled with water and special microscopic plants called algae. 
         It provides the algae with light, nutrients, and carbon dioxide to help them grow. 
         The algae use sunlight to make their own food through a process called photosynthesis. 
-        The photobioreactor allows us to grow algae and use their biomass to produce clean and renewable energy, like biofuels. It also helps clean up the environment by absorbing harmful pollutants, such as carbon dioxide. In simple terms, a photobioreactor is a special container that helps tiny plants called algae grow using light, nutrients, and carbon dioxide to make clean energy and help the planet.(section for the paragraph).</p>
+        The photobioreactor allows us to grow algae and use their biomass to produce clean and renewable energy,
+        like biofuels. It also helps clean up the environment by absorbing harmful pollutants, such as carbon dioxide.
+        In simple terms, a photobioreactor is a special container that helps tiny plants called algae grow using
+        light, nutrients, and carbon dioxide to make clean energy and help the planet.(section for the paragraph).</p>
+        
+        <h3>Sliders</h3>
+        <p> <b>To generate data, you can change the following values with the coresponding slider</b>:<br>
+            Initial Nitrate Concentration: Set the initial nitrate concentration in g/L (0.2 - 2)<br>
+            Initial Biomass Concentration: Set the initial biomass concentration in g/L (0.2 - 2)<br>
+            Inlet Flow: Control the inlet flow of nitrate into the reactor (0.001 - 0.015 L/h)<br>
+            Inlet Concentration: Inlet concentration of nitrate feed to the reactor (5 - 15 g/L)<br>
+            Light Intensity: Control the light intensity in the range of 100 - 200 umol/m2-s </p>
+
+         <h3>Hover Tool</h3>
+        <p> Hover the cursor over the line and you will be able to the element name, time, and  element concentration <br>
+            <b><u>Note</u></b>: the Lutien concentration is 1000 greater than what the actual concentration is, so that you are able to see the Lutine curve</p>
+        
+        
         <h4> Section for bold text</h4>
     """)
 
@@ -414,7 +435,7 @@ run_button.on_click(runbutton_function)
 
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
-tab2 = TabPanel(child = column(intro, info_text, help_text), title = "Instruction")
+tab2 = TabPanel(child = column(intro), title = "Instruction")
 
   
 all_tabs = Tabs(tabs=[tab1,tab2,])
