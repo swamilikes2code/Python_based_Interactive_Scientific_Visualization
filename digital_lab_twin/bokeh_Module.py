@@ -177,6 +177,7 @@ p = figure(title = "Change in  concentration over time in a photobioreactor", x_
 
 def plot_graph(sources):
     p.renderers = []
+    p.tools = []
 
     line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
@@ -383,7 +384,7 @@ export_button.on_click(export_data)
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, p = p): 
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, ): 
     
     #set initial conditions by changing these vals
     C_X_init = bio.value
@@ -392,7 +393,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     F_in_init = inf.value
     C_N_in_init = inc.value
     I0_init = li.value
-    p = figure() #PREDLOOP IDEA EVERYTIME THE FUNCTION IS CALLED IT ALSO PASSES IN A NEW FIGURE THAT IS CREATED
+    # p = figure() PREDLOOP IDEA EVERYTIME THE FUNCTION IS CALLED IT ALSO PASSES IN A NEW FIGURE THAT IS CREATED
 
 
     # print((C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init))
@@ -402,7 +403,7 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
     datas = pandas.read_csv(data)
     sourceS = ColumnDataSource(datas)
     #attempt to reset the graph IDEA: ADD     p.renderers = [] AT THE BEGINNING OF THE PLOTTING FUNCTION
-    p = plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
+    plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
 
 run_button.on_click(runbutton_function)
 
