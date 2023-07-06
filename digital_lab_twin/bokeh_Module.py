@@ -481,11 +481,12 @@ reset_button.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn,
 ls = column( radio_button_group,learning_rate, optimizer, loss_Fn)
 rs = column(p, reset_button)
 bs = row(ls, rs)
-tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
-tab2 = TabPanel(child = column(intro), title = "Instruction")
+tab1 = TabPanel(child=bs, title="Edit")
+tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
+tab3 = TabPanel(child = column(intro), title = "Instruction")
 
   
-all_tabs = Tabs(tabs=[tab1,tab2,])
+all_tabs = Tabs(tabs=[tab1,tab2,tab3])
 # show(all_tabs)
 
 #Making the layout to show all of the information and the code ---------------------------------------------------------------------------------------------------------------------
