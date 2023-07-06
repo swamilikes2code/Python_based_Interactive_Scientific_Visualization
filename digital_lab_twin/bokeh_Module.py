@@ -468,12 +468,12 @@ loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height
 
 
 #Rest Buttton Section-----------------------------------------------------------------------------------------------
-reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer),
+reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
+reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer),
                                   code="""
    lR.value = 0.00001;
-   lFn.value = "NN";
-    opt.value = "NN";
+   lFn.value = "LI";
+    opt.value = "ADAM";
 
 
 
@@ -486,7 +486,7 @@ reset_button.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn,
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 ls = column( radio_button_group,learning_rate, optimizer, loss_Fn)
-rs = column(p, reset_button)
+rs = column(p, reset_button_edit_tab)
 bs = row(ls, rs)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
