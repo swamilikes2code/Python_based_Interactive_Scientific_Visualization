@@ -298,8 +298,8 @@ def update_data(attr, old, new):
 
 # Add the callback function to the sliders
 updates=[light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con]
-for u in updates:
-    u.on_change('value', update_data)
+# for u in updates:
+#     u.on_change('value', update_data)
 
 
 
@@ -467,7 +467,7 @@ optimizer = Select(title="Optimizer:", value="LI", options=["LI", "MSE", "KL Div
 loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the loss function
 
 
-#Rest Buttton Section-----------------------------------------------------------------------------------------------
+#Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
 reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer),
                                   code="""
