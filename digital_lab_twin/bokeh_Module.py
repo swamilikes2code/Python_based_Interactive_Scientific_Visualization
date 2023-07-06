@@ -452,13 +452,14 @@ run_button.on_click(runbutton_function)
 TYPES = ["NN", "GP", "Forest"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
+
 test = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Test:(0.00001-0.1)")# 
 
 train = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Train:(0.00001-0.1)")# 
 
 val_split = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Val Split:(0.00001-0.1)")# 
 
-neurons = Slider (start = 1, end = 100, value = 1, step = 1, title = "Number of Neurons")# 
+neurons = Slider (start = 10, end = 50, value = 32, step = 1, title = "Number of Neurons")# 
 
 learning_rate = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Learning Rate:(0.00001-0.1)")# Student chooses the learning rate
 
@@ -469,15 +470,25 @@ loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height
 
 #Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer),
+reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons),
                                   code="""
    lR.value = 0.00001;
-   lFn.value = "LI";
-    opt.value = "ADAM";
+   lFn.value = "ADAM";
+   opt.value = "LI";
+   n.value = 32;
+   vs.value = 0.00001;
+   tr.value = 0.00001;
+   ts.value = 0.00001;
+    
+    
 
 
 
 """ ))
+
+#Run Button******************************************************************************************************************************
+run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
+
 
 
 
@@ -485,8 +496,8 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column( radio_button_group,learning_rate, optimizer, loss_Fn)
-rs = column(p, reset_button_edit_tab)
+ls = column( radio_button_group, test, train, val_split, neurons, learning_rate, optimizer, loss_Fn)
+rs = column(p, run_button_edit_tab, reset_button_edit_tab)
 bs = row(ls, rs)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
