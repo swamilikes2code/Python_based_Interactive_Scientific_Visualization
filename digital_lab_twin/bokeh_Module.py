@@ -19,6 +19,7 @@ from bokeh.layouts import layout
 from bokeh.io import export_svgs
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput
+#Instrutions Tab Section_____________________________________________________________________________________________________________________
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
 #This is the intro text section, it is a div, which is a bokeh object that allows you to write html and css in python
 #headers are made with <h1> </h1> tags, and paragraphs are made with <p> </p> tags, headers are automatically bolded
@@ -81,6 +82,7 @@ help_text= Paragraph(text = """
     """
                      )
 
+#Predecition Tab Section_____________________________________________________________________________________________________________________
 # Defining Values ---------------------------------------------------------------------------------------------------------------------
 #C_X is Biomass
 #C_N is Nitrate
@@ -444,7 +446,41 @@ def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = in
 
 run_button.on_click(runbutton_function)
 
+
+#Edit Tab Section______________________________________________________________________________________________________________________________
+#Model Inputs Section-----------------------------------------------------------------------------------------------
+TYPES = ["NN", "GP", "Forest"]
+
+radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
+
+learning_rate = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Learning Rate:(0.00001-0.1)")# Student chooses the learning rate
+
+optimizer = Select(title="Optimizer:", value="LI", options=["LI", "MSE", "KL Div"], height = 60, width = 300)# Student chooses the optimizer
+
+loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the loss function
+
+
+#Rest Buttton Section-----------------------------------------------------------------------------------------------
+reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
+reset_button.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer),
+                                  code="""
+   lR.value = 0.00001;
+   lFn.value = "NN";
+    opt.value = "NN";
+
+
+
+""" ))
+
+
+
+
+
+#Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
+ls = column( radio_button_group,learning_rate, optimizer, loss_Fn)
+rs = column(p, reset_button)
+bs = row(ls, rs)
 tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
 tab2 = TabPanel(child = column(intro), title = "Instruction")
 
