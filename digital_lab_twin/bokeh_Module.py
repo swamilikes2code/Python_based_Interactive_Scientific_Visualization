@@ -453,11 +453,11 @@ TYPES = ["NN", "GP", "Forest"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
 
-test = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Test:(0.00001-0.1)")# 
+test = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Test:(0% - 100%)")# 
 
-train = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Train:(0.00001-0.1)")# 
+train = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Train:(0% - 100%)")# 
 
-val_split = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Val Split:(0.00001-0.1)")# 
+val_split = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
 
 neurons = Slider (start = 10, end = 50, value = 32, step = 1, title = "Number of Neurons")# 
 
@@ -476,9 +476,9 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
    lFn.value = "ADAM";
    opt.value = "LI";
    n.value = 32;
-   vs.value = 0.00001;
-   tr.value = 0.00001;
-   ts.value = 0.00001;
+   vs.value = 0;
+   tr.value = 0;
+   ts.value = 0;
     
     
 
