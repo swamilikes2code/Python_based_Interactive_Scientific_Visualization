@@ -452,6 +452,13 @@ run_button.on_click(runbutton_function)
 TYPES = ["NN", "GP", "Forest"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
+test = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Test:(0.00001-0.1)")# 
+
+train = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Train:(0.00001-0.1)")# 
+
+val_split = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Val Split:(0.00001-0.1)")# 
+
+neurons = Slider (start = 1, end = 100, value = 1, step = 1, title = "Number of Neurons")# 
 
 learning_rate = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Learning Rate:(0.00001-0.1)")# Student chooses the learning rate
 
@@ -504,4 +511,4 @@ curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code o
 
 
 
-#code report: run works with reset, but after running the sliders dont function anymore
+#code report: 
