@@ -534,9 +534,9 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 # loss_datas = pandas.read_csv(loss_data)
 # loss_source = ColumnDataSource(loss_datas)
 #Loss Graph section ---------------------------------------------------------------------------------------------------------------------
-p2= figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+p2 = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
-def loss_graph(loss_data): # function to plot the loss graph
+def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
     
     loss_data['index'] = range(len(loss_data))
@@ -546,6 +546,7 @@ def loss_graph(loss_data): # function to plot the loss graph
 
     train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
     value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
+    return p2
 
   
     
@@ -553,7 +554,7 @@ def loss_graph(loss_data): # function to plot the loss graph
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options): 
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options,  p2 = p2): 
     
     learning_rate = lR.value
     loss = lFn.value
@@ -564,10 +565,10 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     neurons = n.value
     epochs = e.value
     batch_Size = b.value
-    model_loop(lR, lFn, opt, tr, ts, vs, n, e, b, X, Y, device, optimizer_options, loss_options)
+    model_loop(learning_rate, loss, optimizer, train, test, val_split, neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options)
     #generating data from model loop
     loss_data = "models/losses.csv"
-    loss_graph(loss_data)
+    loss_graph(loss_data, p2)
     
     
     
