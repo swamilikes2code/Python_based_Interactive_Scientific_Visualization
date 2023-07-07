@@ -540,21 +540,22 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
     
     loss_datas = pandas.read_csv(loss_data)
-    loss_datas['index'] = range(len(loss_datas))
+    loss_datas['index'] = loss_datas.index
     loss_source = ColumnDataSource(loss_datas)
     # Example of updating CL value
 
-    train_loss = p2.line('x', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
+    train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
     p2.add_tools(HoverTool(renderers = [train_loss], tooltips=[  ('Name', 'Train Loss'),
                                     # adds the hover tool to the graph for the specifed line
     ],))
-    value_loss = p2.line('x', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
+    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
     p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Value Loss'), ],))
 
     
     # Add the lines to the plot
-    p2.add_glyph(loss_source, train_loss)
-    p2.add_glyph(loss_source, value_loss)
+   
+    
+loss_graph("models/losses.csv", p2)
 
 
     
