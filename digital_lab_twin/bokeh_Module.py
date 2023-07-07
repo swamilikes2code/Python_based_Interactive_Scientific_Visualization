@@ -464,7 +464,7 @@ epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")
 batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch Size")# 
 
 
-learning_rate = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Learning Rate:(0.00001-0.1)")# Student chooses the learning rate
+learning_rate = NumericInput(value=0.0001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
 
 optimizer = Select(title="Optimizer:", value="LI", options=["LI", "MSE", "KL Div"], height = 60, width = 300)# Student chooses the optimizer
 
