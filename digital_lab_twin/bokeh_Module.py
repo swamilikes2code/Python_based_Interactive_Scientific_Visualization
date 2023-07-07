@@ -19,15 +19,48 @@ from bokeh.layouts import layout
 from bokeh.io import export_svgs
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput
+#Instrutions Tab Section_____________________________________________________________________________________________________________________
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
-# NOTE THIS WAS ONLY MADE WITH PYTHON NOT HTML AT ALL
+#This is the intro text section, it is a div, which is a bokeh object that allows you to write html and css in python
+#headers are made with <h1> </h1> tags, and paragraphs are made with <p> </p> tags, headers are automatically bolded
+
 
 intro = Div(text="""
         <h3>Work In Progress!</h3>
+        <h2>Header</h2><p>This is a <em>formatted</em> paragraph.</p>
+        <h3>Simple Photobioreactor Summary</h3>
         <p>A photobioreactor is a container, like a fish tank, filled with water and special microscopic plants called algae. 
         It provides the algae with light, nutrients, and carbon dioxide to help them grow. 
         The algae use sunlight to make their own food through a process called photosynthesis. 
-        The photobioreactor allows us to grow algae and use their biomass to produce clean and renewable energy, like biofuels. It also helps clean up the environment by absorbing harmful pollutants, such as carbon dioxide. In simple terms, a photobioreactor is a special container that helps tiny plants called algae grow using light, nutrients, and carbon dioxide to make clean energy and help the planet.(section for the paragraph).</p>
+        The photobioreactor allows us to grow algae and use their biomass to produce clean and renewable energy,
+        like biofuels. It also helps clean up the environment by absorbing harmful pollutants, such as carbon dioxide.
+        In simple terms, a photobioreactor is a special container that helps tiny plants called algae grow using
+        light, nutrients, and carbon dioxide to make clean energy and help the planet.(section for the paragraph).</p>
+        
+        <h3>Sliders</h3>
+        <p> <b>To generate data, you can change the following values with the coresponding slider</b>:<br>
+            Initial Nitrate Concentration: Set the initial nitrate concentration in g/L (0.2 - 2)<br>
+            Initial Biomass Concentration: Set the initial biomass concentration in g/L (0.2 - 2)<br>
+            Inlet Flow: Control the inlet flow of nitrate into the reactor (0.001 - 0.015 L/h)<br>
+            Inlet Concentration: Inlet concentration of nitrate feed to the reactor (5 - 15 g/L)<br>
+            Light Intensity: Control the light intensity in the range of 100 - 200 umol/m2-s </p>
+
+         <h3>Hover Tool</h3>
+        <p> Hover the cursor over the line and you will be able to the element name, time, and  element concentration <br>
+            <b><u>Note</u></b>: the Lutien concentration is 1000 times greater than what the actual concentration is, so that you are able to see the Lutine curve</p>
+        
+         <h3>Reset Button</h3>
+        <p> This Button will reset the graph to the original position based on the initial conditions before the sliders were changed</p>
+        
+         <h3>Run Button</h3>
+        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions</p>
+        
+         <h3>Export Button</h3>
+        <p> This Button will take the data points of the Time, Nitrate Concentration, Biomass concentration, and Lutine concentration<br>
+        and put them in a csv file and this csv file will be located in your downloads folder the file will be named "exported_data_{timestamp}.csv"<br>
+        the timestamp is the current time and will be formated as year-month-day-hour-minuete-second</p>
+        
+        
         <h4> Section for bold text</h4>
     """)
 
@@ -49,6 +82,7 @@ help_text= Paragraph(text = """
     """
                      )
 
+#Predecition Tab Section_____________________________________________________________________________________________________________________
 # Defining Values ---------------------------------------------------------------------------------------------------------------------
 #C_X is Biomass
 #C_N is Nitrate
@@ -75,38 +109,48 @@ K_NL = 10.0*1e-3 # g/L  nitrate half- velocity constant for lutein synthesis
 
 
 
-#pytorch  section ---------------------------------------------------------------------------------------------------------------------
-# initialize everything 
-# note that these load funcs will need you to change to your current directory here!
-model = torch.load('models\model.pt')
-model.eval()
-#scalers
-mmscalerX = joblib.load('models\mmscalerX.pkl')
-mmscalerY = joblib.load('models\mmscalerY.pkl')
+# curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 
-XTimes = np.linspace(0, 150, 200)
-XDF = pd.DataFrame(XTimes, columns=['Time'])
-#generate empty columns
-XDF['C_X'] = np.zeros(200)
-XDF['C_N'] = np.zeros(200)
-XDF['C_L'] = np.zeros(200)
-XDF['F_in'] = np.zeros(200)
-XDF['C_N_in'] = np.zeros(200)
-XDF['I0'] = np.zeros(200)
-XTimes = XDF.pop('Time') #popped for plotting
-#set initial conditions by changing these vals
-C_X_init = .2
-C_N_init = .2
-C_L_init = 0.0
-F_in_init = 0.001
-C_N_in_init = 10
-I0_init = 150
+#Creating Sliders ---------------------------------------------------------------------------------------------------------------------
+light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s):(100 - 200)")
+inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
+pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
+inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L):(5 - 15)")
+nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
+biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
+
+
+#pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
+
+
 
 #function takes in initial conditions and runs the model
 #overwrites XDF with the predicted values
 #updates bokeh plot with new values
 #call when run button is hit
 def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
+    # initialize everything 
+    # note that these load funcs will need you to change to your current directory here!
+    print(os.getcwd() )
+    # os.chdir('C:\\Users\\[computer_name]\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
+    os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
+
+    model = torch.load('models/model.pt')
+    model.eval()
+    #scalers
+    stScalerX = joblib.load('models/stScalerX.pkl')
+    stScalerY = joblib.load('models/stScalerY.pkl')
+
+    XTimes = np.linspace(0, 150, 200)
+    XDF = pd.DataFrame(XTimes, columns=['Time'])
+    #generate empty columns
+    XDF['C_X'] = np.zeros(200)
+    XDF['C_N'] = np.zeros(200)
+    XDF['C_L'] = np.zeros(200)
+    XDF['F_in'] = np.zeros(200)
+    XDF['C_N_in'] = np.zeros(200)
+    XDF['I0'] = np.zeros(200)
+    XTimes = XDF.pop('Time') #popped for plotting
     #write init conditions to df
     #Only write to the first row for these 3, they'll be filled in thru the loop
     XDF['C_X'][0] = C_X
@@ -122,12 +166,12 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
         #get the current timestep
         X_current = XDF.iloc[i]
         #scale the current timestep
-        X_current_scaled = mmscalerX.transform([X_current])
+        X_current_scaled = stScalerX.transform([X_current])
         #predict the next timestep
         Y_current_scaled = model(torch.tensor(X_current_scaled, dtype=torch.float32))
         #unscale the prediction
         Y_current_scaled = Y_current_scaled.detach().numpy()
-        Y_current = mmscalerY.inverse_transform(Y_current_scaled)
+        Y_current = stScalerY.inverse_transform(Y_current_scaled)
         #store the prediction
         nextTimeStep = i+1
         XDF.iloc[nextTimeStep, 0] = Y_current[0,0]
@@ -137,55 +181,61 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #export XDF to csv
     #add times back in
     XDF['Time'] = XTimes
-    XDF.to_csv('outputs\prediction.csv', index=False)
+    XDF.to_csv('outputs/prediction.csv', index=False)
     #TODO: re-call the plotting function to show results to user
 
+# predLoop(biomass_con.value, nitrate_con.value, 0, inlet_flow.value, inlet_concentration.value, light_intensity.value)
 #testing with default values
-predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
-
-    
+#predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
 
 
 
-
-# curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 
 #Data Generation Section ---------------------------------------------------------------------------------------------------------------------
 
-data = "outputs\prediction.csv"
+data = "outputs/prediction.csv"
 datas = pandas.read_csv(data)
 source = ColumnDataSource(datas)
 
 #initial Data section ---------------------------------------------------------------------------------------------------------------------
-initial_csv = "outputs\prediction.csv"
-initial_datas = pandas.read_csv(data)
-initial_source = ColumnDataSource(datas)
+initial_csv = "outputs/initial_predictions.csv"
+initial_datas = pandas.read_csv(initial_csv)
+initial_sources= ColumnDataSource(initial_datas)
+#initial Data  for reset section ---------------------------------------------------------------------------------------------------------------------
+initial_csv1 = "outputs/prediction.csv"
+initial_data = pandas.read_csv(initial_csv1)
+initial_source = ColumnDataSource(initial_data)
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
 p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
-def plot_graph(source):
+def plot_graph(sources):
+    #Removes previous lines and hover tools
+    p.renderers = [] #removes previous lines
+    p.tools = [] #removes previous hover tools
+    
+    
+    # Example of updating CL value
 
-
-   
-    line_a = p.line('Time', 'C_X', source = source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+    line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
     p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
                                     ('Hour', '@Time'),
                                     ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
     ],))
 
-    line_b = p.line('Time', 'C_N', source = source, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    line_b = p.line('Time', 'C_N', source = sources, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
     p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_N'), 
     ],))
-    line_c = p.line('Time', 'C_L', source = source , line_width = 4, line_color = "lime", legend_label = "Lutine")
-    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutine'),
+    sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien x 1000")# CL is multiplied by 1000 to make it visible on the graph
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
                                     ('Hour', '@Time'), 
-                                    ('Concentration', '@C_L'), 
-    ],))
-
+                                    ('Concentration', '@modified_C_L'), 
+    ],)) 
    
+
 
     return p
 
@@ -216,19 +266,13 @@ p.toolbar.autohide = True
 
 
 
-# Add the Slider to the figure
+# Add the Slider to the figure ---------------------------------------------------------------------------------------------------------------------
 
-light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s):(100 - 200)")
-inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
-pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
-inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L):(5 - 15)")
-nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
-biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
 
 #Define the callback function for the sliders
 def update_data(attr, old, new):
     # Get the current values of the sliders
-    light_i = light_intensity.value
+    light_i = light_intensity.value * 0.000001 #converts from micro to grams
     F_in = inlet_flow.value
     ph = pH.value
     Cn_in = inlet_concentration.value
@@ -254,8 +298,8 @@ def update_data(attr, old, new):
 
 # Add the callback function to the sliders
 updates=[light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con]
-for u in updates:
-    u.on_change('value', update_data)
+# for u in updates:
+#     u.on_change('value', update_data)
 
 
 
@@ -304,7 +348,7 @@ slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_co
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
+reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, p = p, li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
                                   code="""
    li.value = 150
    inf.value = 0.008
@@ -313,12 +357,12 @@ reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = in
    nit.value = 1
    bio.value = 0.5
     // Reset the plot data
-    source.data = initial_source.data; // This is the initial data stored in the ColumnDataSource
+    //source.data = initial_source.data; // This is the initial data stored in the ColumnDataSource
     // Reset the axis ranges // this will help reset the axis ranges of the graph and the graph in genral
-    p.x_range.start = Math.min.apply(null, source.data['Time']);
-    p.x_range.end = Math.max.apply(null, source.data['Time']);
-    p.y_range.start = Math.min.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
-    p.y_range.end = Math.max.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
+    // p.x_range.start = Math.min.apply(null, source.data['Time']);
+    // p.x_range.end = Math.max.apply(null, source.data['Time']);
+    // p.y_range.start = Math.min.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
+    // p.y_range.end = Math.max.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
 
     source.change.emit();
 
@@ -378,27 +422,109 @@ export_button.on_click(export_data)
 
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
-# run_button.js_on_click(CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-#                                   code="""
-#    li.value = 0.2
-#    inf.value = 2
-#    pH.value = 0.5
-#    inc.value = 4
+
+def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, ): 
+    
+    #set initial conditions by changing these vals
+    C_X_init = bio.value
+    C_N_init = nit.value
+    C_L_init = 0.0
+    F_in_init = inf.value
+    C_N_in_init = inc.value
+    I0_init = li.value
+    # p = figure() PREDLOOP IDEA EVERYTIME THE FUNCTION IS CALLED IT ALSO PASSES IN A NEW FIGURE THAT IS CREATED
+
+
+    # print((C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init))
+    predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
+    #creates the source for the graph that the new plot will be based on
+    data = "outputs/prediction.csv"
+    datas = pandas.read_csv(data)
+    sourceS = ColumnDataSource(datas)
+    #attempt to reset the graph IDEA: ADD     p.renderers = [] AT THE BEGINNING OF THE PLOTTING FUNCTION
+    plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
+
+run_button.on_click(runbutton_function)
+
+
+#Edit Tab Section______________________________________________________________________________________________________________________________
+#Model Inputs Section-----------------------------------------------------------------------------------------------
+TYPES = ["NN", "GP", "Forest"]
+
+radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
+
+test = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Test:(0% - 100%)")# 
+
+train = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Train:(0% - 100%)")# 
+
+val_split = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
+
+neurons = Slider (start = 10, end = 50, value = 32, step = 1, title = "Number of Neurons")# 
+epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
+batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch Size")# 
+
+
+learning_rate = NumericInput(value=0.0001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
+
+optimizer = Select(title="Optimizer:", value="LI", options=["LI", "MSE", "KL Div"], height = 60, width = 300)# Student chooses the optimizer
+
+loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the loss function
+
+
+#Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
+reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
+reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
+                                  code="""
+   lR.value = 0.0001;
+   lFn.value = "ADAM";
+   opt.value = "LI";
+   n.value = 32;
+   vs.value = 0;
+   tr.value = 0;
+   ts.value = 0;
+   e.value = 100;
+   b.value = 25;
+    
+    
 
 
 
-#     source.change.emit();
+""" ))
+
+#Run Button******************************************************************************************************************************
+run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
+
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size): 
+    
+    learning_rate = lR.value
+    loss = lFn.value
+    optimizer = opt.value
+    train = tr.value
+    test = ts.value
+    val_split = vs.value
+    neurons = n.value
+    epochs = e.value
+    batch_Size = b.value
+    
+    
+    
+    
 
 
-# """ ))
 
 
+
+#Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-tab1 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Model")
-tab2 = TabPanel(child = column(intro, info_text, help_text), title = "Instruction")
+ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn)
+rs = column(p,p, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
+bs = row(ls, rs)
+tab1 = TabPanel(child=bs, title="Edit")
+tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
+tab3 = TabPanel(child = column(intro), title = "Instruction")
 
   
-all_tabs = Tabs(tabs=[tab1,tab2,])
+all_tabs = Tabs(tabs=[tab1,tab2,tab3])
 # show(all_tabs)
 
 #Making the layout to show all of the information and the code ---------------------------------------------------------------------------------------------------------------------
@@ -412,6 +538,8 @@ l = layout(
 )
 
 
-curdoc().add_root(l)
+curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code on a bokeh server
 
 
+
+#code report: 
