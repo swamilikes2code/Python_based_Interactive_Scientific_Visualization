@@ -64,23 +64,6 @@ intro = Div(text="""
         <h4> Section for bold text</h4>
     """)
 
-#Info Text sectionSection ---------------------------------------------------------------------------------------------------------------------
-# NOTE THIS WAS ONLY MADE WITH PYTHON NOT HTML AT ALL
-
-info_text =  Paragraph(text="""
-        This is a Bokeh demo showing the interactive examples that
-       could be used for the photobioreactor example 
-        """)
-
- #Help Text sectionSection ---------------------------------------------------------------------------------------------------------------------
-# NOTE THIS WAS ONLY MADE WITH PYTHON NOT HTML AT ALL
-
-help_text= Paragraph(text = """
-            In photography, bokeh is the aesthetic quality of the blur produced in out-of-focus parts of an image,
-              caused by Circles of Confusion. Bokeh has also been defined as "the way the lens renders out-of-focus
-                points of light". Differences in lens aberrations and aperture shape cause very different bokeh effects.
-    """
-                     )
 
 #Predecition Tab Section_____________________________________________________________________________________________________________________
 # Defining Values ---------------------------------------------------------------------------------------------------------------------
