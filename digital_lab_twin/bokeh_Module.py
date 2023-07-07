@@ -114,6 +114,10 @@ lossCSV = pd.read_csv('models/losses.csv', header=0)
 #TODO:plot the losses against epochs (stored as indexes)
 #TODO:update the prediction side of the bokeh visualizationnnn
 
+def model_loop():
+    
+    
+    l
 
 
 
@@ -501,9 +505,9 @@ batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch
 
 learning_rate = NumericInput(value=0.0001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
 
-optimizer = Select(title="Optimizer:", value="LI", options=["LI", "MSE", "KL Div"], height = 60, width = 300)# Student chooses the optimizer
+loss_Fn = Select(title="Optimizer:", value="MAE", options=["MSE", "MAE"], height = 60, width = 300)# Student chooses the optimizer
 
-loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the loss function
+optimizer = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the loss function
 
 
 #Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
