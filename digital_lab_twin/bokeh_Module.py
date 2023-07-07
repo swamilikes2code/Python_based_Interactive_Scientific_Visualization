@@ -517,7 +517,7 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn)
-rs = column(p,p, run_button_edit_tab, reset_button_edit_tab)
+rs = column(p,p, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 bs = row(ls, rs)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
