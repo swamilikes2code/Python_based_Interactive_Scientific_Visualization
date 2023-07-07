@@ -437,6 +437,8 @@ run_button.on_click(runbutton_function)
 #Edit Tab Section______________________________________________________________________________________________________________________________
 #Model Inputs Section-----------------------------------------------------------------------------------------------
 TYPES = ["NN", "GP", "Forest"]
+optimizer_options = ["Adam", "SGD"]
+loss_options = ["MSE", "MAE"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
 
@@ -453,9 +455,9 @@ batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch
 
 learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
 
-loss_Fn = Select(title="Optimizer:", value="MAE", options=["MSE", "MAE"], height = 60, width = 300)# Student chooses the loss function
+loss_Fn = Select(title="Optimizer:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
 
-optimizer = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the optimizer 
+optimizer = Select(title="Loss Fn:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
 
 
 #Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
@@ -502,7 +504,7 @@ X.drop(index=19999, inplace=True)
 device = 'cpu'
 
 
-def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device):
+def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options):
     
   #user defined parameters: current values can serve as a default
   #splits - expects 3 floats that add to 1
@@ -511,8 +513,8 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   testSplit = ts.value
   #model params
   initNeuronNum = n.value #number of neurons in the first layer, 7 < int < 100
-  loss = lFn.value #0 = MSE, 1 = MAE
-  optimizer = opt.value #0 = Adam, 1 = SGD
+  loss = loss_options.index(lFn.value) #0 = MSE, 1 = MAE
+  optimizer = optimizer_options.index(opt.value ) #0 = Adam, 1 = SGD
   learnRate = lR.value #0.0001 < float < 0.01
   #training params
   epochs = e.value #0 < int < 200
@@ -528,7 +530,19 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #TODO:update the prediction side of the bokeh visualization
     
 
+def plot_graph_edit_tab(sources):
+    #Removes previous lines and hover tools
+    p.renderers = [] #removes previous lines
+    p.tools = [] #removes previous hover tools
+    
+    
+    # Example of updating CL value
 
+    line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
+                                    ('Hour', '@Time'),
+                                    ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
+    ],))
 
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
