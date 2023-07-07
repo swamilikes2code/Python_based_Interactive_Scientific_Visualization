@@ -544,11 +544,11 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
     loss_source = ColumnDataSource(loss_datas)
     # Example of updating CL value
 
-    train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 2 ,  line_color = "aqua", legend_label = "Train Loss")
+    train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "Train Loss")
     p2.add_tools(HoverTool(renderers = [train_loss], tooltips=[  ('Name', 'Train Loss'),
                                     # adds the hover tool to the graph for the specifed line
     ],))
-    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 2 ,  line_color = "lime", legend_label = "Value Loss")
+    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "Value Loss")
     p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Value Loss'), ],))
 
     
