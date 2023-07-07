@@ -460,6 +460,9 @@ train = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Train:
 val_split = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
 
 neurons = Slider (start = 10, end = 50, value = 32, step = 1, title = "Number of Neurons")# 
+epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
+batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch Size")# 
+
 
 learning_rate = NumericInput(value=0.00001, high = 0.1, low = 0.00001, mode = "float", title="Learning Rate:(0.00001-0.1)")# Student chooses the learning rate
 
@@ -470,7 +473,7 @@ loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height
 
 #Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons),
+reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
                                   code="""
    lR.value = 0.00001;
    lFn.value = "ADAM";
@@ -479,6 +482,8 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
    vs.value = 0;
    tr.value = 0;
    ts.value = 0;
+   e.value = 100;
+   b.value = 25;
     
     
 
@@ -489,7 +494,7 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons): 
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size): 
     
     learning_rate = lR.value
     loss = lFn.value
@@ -498,6 +503,8 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     test = ts.value
     val_split = vs.value
     neurons = n.value
+    epochs = e.value
+    batch_Size = b.value
     
     
     
@@ -509,7 +516,7 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column( radio_button_group, test, train, val_split, neurons, learning_rate, optimizer, loss_Fn)
+ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn)
 rs = column(p, run_button_edit_tab, reset_button_edit_tab)
 bs = row(ls, rs, p)
 tab1 = TabPanel(child=bs, title="Edit")
