@@ -437,7 +437,7 @@ run_button.on_click(runbutton_function)
 #Edit Tab Section______________________________________________________________________________________________________________________________
 #Model Inputs Section-----------------------------------------------------------------------------------------------
 TYPES = ["NN", "GP", "Forest"]
-optimizer_options = ["Adam", "SGD"]
+optimizer_options = ["ADAM", "SGD"]
 loss_options = ["MSE", "MAE"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
@@ -529,25 +529,31 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #TODO:plot the losses against epochs (stored as indexes)
   #TODO:update the prediction side of the bokeh visualization
     
+# #Loss Graph Data section ---------------------------------------------------------------------------------------------------------------------
+# loss_data = "models/losses.csv"
+# loss_datas = pandas.read_csv(loss_data)
+# loss_source = ColumnDataSource(loss_datas)
+#Loss Graph section ---------------------------------------------------------------------------------------------------------------------
+p2= figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
-def plot_graph_edit_tab(sources):
+def loss_graph(loss_data): # function to plot the loss graph
     #Removes previous lines and hover tools
-    p.renderers = [] #removes previous lines
-    p.tools = [] #removes previous hover tools
     
-    
+    loss_data['index'] = range(len(loss_data))
+    loss_datas = pandas.read_csv(loss_data)
+    loss_source = ColumnDataSource(loss_datas)
     # Example of updating CL value
 
-    line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
-    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
-                                    ('Hour', '@Time'),
-                                    ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
-    ],))
+    train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
+    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
+
+  
+    
 
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size): 
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options): 
     
     learning_rate = lR.value
     loss = lFn.value
@@ -558,9 +564,16 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     neurons = n.value
     epochs = e.value
     batch_Size = b.value
+    model_loop(lR, lFn, opt, tr, ts, vs, n, e, b, X, Y, device, optimizer_options, loss_options)
+    #generating data from model loop
+    loss_data = "models/losses.csv"
+    loss_graph(loss_data)
     
     
     
+    
+run_button_edit_tab.on_click(edit_run_button_function)
+
     
 
 
@@ -569,8 +582,8 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn)
-rs = column(p,p, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
+ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, )
+rs = column(p2, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 bs = row(ls, rs)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
