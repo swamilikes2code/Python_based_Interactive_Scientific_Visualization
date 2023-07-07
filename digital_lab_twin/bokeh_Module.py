@@ -536,17 +536,16 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 #Loss Graph section ---------------------------------------------------------------------------------------------------------------------
 p2 = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
-def loss_graph(loss_data, p2): # function to plot the loss graph
+def loss_graph(loss_data): # function to plot the loss graph
     #Removes previous lines and hover tools
     
-    loss_data['index'] = range(len(loss_data))
     loss_datas = pandas.read_csv(loss_data)
+    loss_datas['index'] = range(len(loss_datas))
     loss_source = ColumnDataSource(loss_datas)
     # Example of updating CL value
 
     train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
     value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
-    return p2
 
   
     
@@ -568,7 +567,7 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     model_loop(learning_rate, loss, optimizer, train, test, val_split, neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options)
     #generating data from model loop
     loss_data = "models/losses.csv"
-    loss_graph(loss_data, p2)
+    loss_graph(loss_data)
     
     
     
