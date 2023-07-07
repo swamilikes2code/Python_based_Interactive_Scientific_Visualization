@@ -92,7 +92,8 @@ def trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor
                 y_pred = model(X_batch)
                 loss = lossFunction(y_pred, y_batch)
                 # backward pass
-                optimizer.zero_grad()
+                for param in model.parameters():
+                    param.grad = None
                 loss.backward()
                 # update weights
                 optimizer.step()
@@ -174,3 +175,37 @@ def saveModel(model, scalerX, scalerY):
     torch.save(model, 'models/model.pt')
     joblib.dump(scalerX, 'models/scalerX.pkl')
     joblib.dump(scalerY, 'models/scalerY.pkl')
+
+#savelosses saves the training and validation losses as csv files
+def saveLosses(trainLoss, valLoss):
+    #convert losses to a single DF
+    losses = pd.DataFrame({'trainLoss': trainLoss, 'valLoss': valLoss})
+    #save the losses
+    losses.to_csv('models/losses.csv')
+
+
+#all in one function to split data, train and save model
+#models, scalers, and losses are saved to the models folder
+def trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device):
+    #split the data
+    X_train, X_val, X_test, Y_train, Y_val, Y_test, XTrainTime, XValTime, XTestTime = dataSplitter(X, Y, trainSplit, valSplit, testSplit)
+    #scale the data
+    stScalerX, stScalerY, X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled= scaleData(X_train, X_val, X_test, Y_train, Y_val, Y_test)
+    #tensorize the data
+    X_train_tensor, X_val_tensor, X_test_tensor, Y_train_tensor, Y_val_tensor, Y_test_tensor = tensors(X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled)
+    #if possible, move the tensors to the GPU
+    X_train_tensor = X_train_tensor.to(device)
+    X_val_tensor = X_val_tensor.to(device)
+    X_test_tensor = X_test_tensor.to(device)
+    Y_train_tensor = Y_train_tensor.to(device)
+    Y_val_tensor = Y_val_tensor.to(device)
+    Y_test_tensor = Y_test_tensor.to(device)
+
+    #create the model
+    model, lossFunction, optimizer = modelCreator(initNeuronNum, loss, optimizer, learnRate)
+    #if possible, move the model to the GPU
+    model = model.to(device)
+    #train the model
+    model, trainLoss, valLoss = trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor, X_val_tensor, Y_train_tensor, Y_val_tensor)
+    saveLosses(trainLoss, valLoss)
+    saveModel(model, stScalerX, stScalerY)
