@@ -565,15 +565,15 @@ run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60
 
 def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2): 
     
-    learning_rate = lR.value
-    loss = lFn.value
-    optimizer = opt.value
-    train = tr.value
-    test = ts.value
-    val_split = vs.value
-    neurons = n.value
-    epochs = e.value
-    batch_Size = b.value
+    learning_rate = lR
+    loss = lFn
+    optimizer = opt
+    train = tr
+    test = ts
+    val_split = vs
+    neurons = n
+    epochs = e
+    batch_Size = b
     model_loop(learning_rate, loss, optimizer, train, test, val_split, neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options)
     #generating data from model loop
     loss_graph("models/losses.csv", p2)
