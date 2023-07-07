@@ -553,7 +553,7 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
 
     
     # Add the lines to the plot
-   
+    
     
 loss_graph("models/losses.csv", p2)
 
