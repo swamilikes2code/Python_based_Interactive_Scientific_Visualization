@@ -544,18 +544,16 @@ def loss_graph(loss_data): # function to plot the loss graph
     loss_source = ColumnDataSource(loss_datas)
     # Example of updating CL value
 
-    train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
-    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
+    train_loss = p2.line('', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
+    value_loss = p2.line('', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
 
-    # Add the lines to the plot
-    p2.add_glyph(loss_source, train_loss)
-    p2.add_glyph(loss_source, value_loss)
+
     
 
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options,  p2 = p2): 
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options,): 
     
     learning_rate = lR.value
     loss = lFn.value
