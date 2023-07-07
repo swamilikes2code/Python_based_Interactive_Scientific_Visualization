@@ -67,58 +67,6 @@ intro = Div(text="""
         
         <h4> Section for bold text</h4>
     """)
-#Model Loop section for edit tab_____________________________________________________________________________________________________________________
-
-#the below code is designed to drag and drop into the bokeh visualization
-#static section should run once on launch, dynamic section should run on each change
-### Static (run once)
-rawData = pd.read_csv('STEMVisualsSynthData.csv', header=0)
-#remove unneeded column
-rawData.drop('Index_within_Experiment', axis = 1, inplace = True)
-#X is inputs--the three Concentrations, F_in, I0 (light intensity), and c_N_in (6)
-X = rawData[['Time', 'C_X', 'C_N', 'C_L', 'F_in', 'C_N_in', 'I0']]
-Y = X.copy(deep=True)
-#drop unnecessary rows in Y
-Y.drop('F_in', axis = 1, inplace = True)
-Y.drop('C_N_in', axis = 1, inplace = True)
-Y.drop('I0', axis = 1, inplace = True)
-Y.drop('Time', axis = 1, inplace = True)
-#Y vals should be X concentrations one timestep ahead, so remove the first index
-Y.drop(index=0, inplace=True)
-#To keep the two consistent, remove the last index of X
-X.drop(index=19999, inplace=True)
-#set device
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = 'cpu'
-
-#user defined parameters: current values can serve as a default
-#splits - expects 3 floats that add to 1
-trainSplit = 0.6
-valSplit = 0.2
-testSplit = 0.2
-#model params
-initNeuronNum = 18 #number of neurons in the first layer, 7 < int < 100
-loss = 1 #0 = MSE, 1 = MAE
-optimizer = 0 #0 = Adam, 1 = SGD
-learnRate = 0.001 #0.0001 < float < 0.01
-#training params
-epochs = 100 #0 < int < 200
-batchSize = 25 #0 < int < 200
-
-### Dynamic (run on each change)
-#TODO: upon running, check params are valid then update these values
-#test the all-in-one function
-model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device)
-#read in the loss CSV
-lossCSV = pd.read_csv('models/losses.csv', header=0)
-#TODO:plot the losses against epochs (stored as indexes)
-#TODO:update the prediction side of the bokeh visualizationnnn
-
-def model_loop():
-    
-    
-    l
-
 
 
 #Predecition Tab Section_____________________________________________________________________________________________________________________
@@ -492,22 +440,22 @@ TYPES = ["NN", "GP", "Forest"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
 
-test = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Test:(0% - 100%)")# 
+test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test:(0% - 100%)")# 
 
-train = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Train:(0% - 100%)")# 
+train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train:(0% - 100%)")# 
 
-val_split = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
+val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
 
-neurons = Slider (start = 10, end = 50, value = 32, step = 1, title = "Number of Neurons")# 
+neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
 epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
 batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch Size")# 
 
 
-learning_rate = NumericInput(value=0.0001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
+learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
 
-loss_Fn = Select(title="Optimizer:", value="MAE", options=["MSE", "MAE"], height = 60, width = 300)# Student chooses the optimizer
+loss_Fn = Select(title="Optimizer:", value="MAE", options=["MSE", "MAE"], height = 60, width = 300)# Student chooses the loss function
 
-optimizer = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the loss function
+optimizer = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the optimizer 
 
 
 #Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
@@ -529,6 +477,61 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
 
 
 """ ))
+#Model Loop section for edit tab_____________________________________________________________________________________________________________________
+
+#the below code is designed to drag and drop into the bokeh visualization
+#static section should run once on launch, dynamic section should run on each change
+### Static (run once)
+rawData = pd.read_csv('STEMVisualsSynthData.csv', header=0)
+#remove unneeded column
+rawData.drop('Index_within_Experiment', axis = 1, inplace = True)
+#X is inputs--the three Concentrations, F_in, I0 (light intensity), and c_N_in (6)
+X = rawData[['Time', 'C_X', 'C_N', 'C_L', 'F_in', 'C_N_in', 'I0']]
+Y = X.copy(deep=True)
+#drop unnecessary rows in Y
+Y.drop('F_in', axis = 1, inplace = True)
+Y.drop('C_N_in', axis = 1, inplace = True)
+Y.drop('I0', axis = 1, inplace = True)
+Y.drop('Time', axis = 1, inplace = True)
+#Y vals should be X concentrations one timestep ahead, so remove the first index
+Y.drop(index=0, inplace=True)
+#To keep the two consistent, remove the last index of X
+X.drop(index=19999, inplace=True)
+#set device
+#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = 'cpu'
+
+
+
+
+
+def model_loop():
+    
+  #user defined parameters: current values can serve as a default
+  #splits - expects 3 floats that add to 1
+  trainSplit = 0.6
+  valSplit = 0.2
+  testSplit = 0.2
+  #model params
+  initNeuronNum = 18 #number of neurons in the first layer, 7 < int < 100
+  loss = 1 #0 = MSE, 1 = MAE
+  optimizer = 0 #0 = Adam, 1 = SGD
+  learnRate = 0.001 #0.0001 < float < 0.01
+  #training params
+  epochs = 100 #0 < int < 200
+  batchSize = 25 #0 < int < 200
+    
+  ### Dynamic (run on each change)
+  #TODO: upon running, check params are valid then update these values
+  #test the all-in-one function
+  model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device)
+  #read in the loss CSV
+  lossCSV = pd.read_csv('models/losses.csv', header=0)
+  #TODO:plot the losses against epochs (stored as indexes)
+  #TODO:update the prediction side of the bokeh visualization
+    
+
+
 
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
