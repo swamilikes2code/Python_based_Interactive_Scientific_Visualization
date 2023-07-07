@@ -48,9 +48,12 @@ learnRate = 0.001 #0.0001 < float < 0.01
 #training params
 epochs = 100 #0 < int < 200
 batchSize = 25 #0 < int < 200
+
+### Dynamic (run on each change)
 #TODO: upon running, check params are valid then update these values
 #test the all-in-one function
 model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device)
 #read in the loss CSV
 lossCSV = pd.read_csv('models/losses.csv', header=0)
 #TODO:plot the losses against epochs (stored as indexes)
+#TODO:update the prediction side of the bokeh visualization
