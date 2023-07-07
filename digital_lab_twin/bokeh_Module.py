@@ -489,6 +489,19 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons): 
+    
+    learning_rate = lR.value
+    loss = lFn.value
+    optimizer = opt.value
+    train = tr.value
+    test = ts.value
+    val_split = vs.value
+    neurons = n.value
+    
+    
+    
+    
 
 
 
