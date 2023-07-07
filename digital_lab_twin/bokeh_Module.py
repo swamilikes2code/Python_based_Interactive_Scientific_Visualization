@@ -547,7 +547,9 @@ def loss_graph(loss_data): # function to plot the loss graph
     train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "TBD")
     value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "TBD")
 
-  
+    # Add the lines to the plot
+    p2.add_glyph(loss_source, train_loss)
+    p2.add_glyph(loss_source, value_loss)
     
 
 #Run Button******************************************************************************************************************************
@@ -566,8 +568,7 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     batch_Size = b.value
     model_loop(learning_rate, loss, optimizer, train, test, val_split, neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options)
     #generating data from model loop
-    loss_data = "models/losses.csv"
-    loss_graph(loss_data)
+    loss_graph("models/losses.csv")
     
     
     
