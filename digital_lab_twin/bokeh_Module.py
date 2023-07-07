@@ -475,7 +475,7 @@ loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
 reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
                                   code="""
-   lR.value = 0.00001;
+   lR.value = 0.0001;
    lFn.value = "ADAM";
    opt.value = "LI";
    n.value = 32;
