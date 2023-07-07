@@ -617,4 +617,4 @@ curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code o
 
 
 
-#code report: 
+#code report: is able to plot, but run button is not working, also you also still need to do the validation to ensure that the test, train, and validation split add up to 1 or 100% check notes for more info
