@@ -502,24 +502,21 @@ X.drop(index=19999, inplace=True)
 device = 'cpu'
 
 
-
-
-
-def model_loop():
+def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device):
     
   #user defined parameters: current values can serve as a default
   #splits - expects 3 floats that add to 1
-  trainSplit = 0.6
-  valSplit = 0.2
-  testSplit = 0.2
+  trainSplit = tr.value
+  valSplit = vs.value
+  testSplit = ts.value
   #model params
-  initNeuronNum = 18 #number of neurons in the first layer, 7 < int < 100
-  loss = 1 #0 = MSE, 1 = MAE
-  optimizer = 0 #0 = Adam, 1 = SGD
-  learnRate = 0.001 #0.0001 < float < 0.01
+  initNeuronNum = n.value #number of neurons in the first layer, 7 < int < 100
+  loss = lFn.value #0 = MSE, 1 = MAE
+  optimizer = opt.value #0 = Adam, 1 = SGD
+  learnRate = lR.value #0.0001 < float < 0.01
   #training params
-  epochs = 100 #0 < int < 200
-  batchSize = 25 #0 < int < 200
+  epochs = e.value #0 < int < 200
+  batchSize = b.value #0 < int < 200
     
   ### Dynamic (run on each change)
   #TODO: upon running, check params are valid then update these values
