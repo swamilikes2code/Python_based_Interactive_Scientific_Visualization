@@ -511,7 +511,7 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 ls = column( radio_button_group, test, train, val_split, neurons, learning_rate, optimizer, loss_Fn)
 rs = column(p, run_button_edit_tab, reset_button_edit_tab)
-bs = row(ls, rs)
+bs = row(ls, rs, p)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
 tab3 = TabPanel(child = column(intro), title = "Instruction")
