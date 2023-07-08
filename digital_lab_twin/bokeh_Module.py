@@ -464,13 +464,13 @@ optimizer = Select(title="Loss Fn:", value="ADAM", options= optimizer_options, h
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
 reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
                                   code="""
-   lR.value = 0.0001;
+   lR.value = 0.001;
    lFn.value = "ADAM";
    opt.value = "LI";
-   n.value = 32;
-   vs.value = 0;
-   tr.value = 0;
-   ts.value = 0;
+   n.value = 18;
+   vs.value = 0.2;
+   tr.value = 0.6;
+   ts.value = 0.2;
    e.value = 100;
    b.value = 25;
     
