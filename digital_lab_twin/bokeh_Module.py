@@ -538,7 +538,8 @@ p2 = figure(title = "Change in  concentration over time in a photobioreactor", x
 
 def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
-    
+    p2.renderers = [] #removes previous lines
+    p2.tools = [] #removes previous hover tools    
     loss_datas = pandas.read_csv(loss_data)
     loss_datas['index'] = loss_datas.index
     loss_source = ColumnDataSource(loss_datas)
