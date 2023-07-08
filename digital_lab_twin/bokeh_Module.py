@@ -465,8 +465,8 @@ reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height =
 reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
                                   code="""
    lR.value = 0.001;
-   lFn.value = "ADAM";
-   opt.value = "MAE";
+   lFn.value = "MAE";
+   opt.value = "ADAM";
    n.value = 18;
    vs.value = 0.2;
    tr.value = 0.6;
