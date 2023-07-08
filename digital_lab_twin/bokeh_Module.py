@@ -466,7 +466,7 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
                                   code="""
    lR.value = 0.001;
    lFn.value = "ADAM";
-   opt.value = "LI";
+   opt.value = "MAE";
    n.value = 18;
    vs.value = 0.2;
    tr.value = 0.6;
