@@ -24,6 +24,8 @@ from bokeh.layouts import layout
 from bokeh.io import export_svgs
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
 #This is the intro text section, it is a div, which is a bokeh object that allows you to write html and css in python
@@ -100,7 +102,7 @@ K_NL = 10.0*1e-3 # g/L  nitrate half- velocity constant for lutein synthesis
 # curdoc().theme = "dark_minimal"# this makes the graph in dark mode
 
 #Creating Sliders ---------------------------------------------------------------------------------------------------------------------
-light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intesity (umol/m2-s):(100 - 200)")
+light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intensity (umol/m2-s):(100 - 200)")
 inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
 pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L):(5 - 15)")
@@ -120,8 +122,8 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     # initialize everything 
     # note that these load funcs will need you to change to your current directory here!
     print(os.getcwd() )
-    # os.chdir('C:\\Users\\[computer_name]\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
-    os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
+    #os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
+    #os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
 
     model = torch.load('models/model.pt')
     model.eval()
@@ -195,7 +197,7 @@ initial_data = pandas.read_csv(initial_csv1)
 initial_source = ColumnDataSource(initial_data)
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
-p = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+p = figure(title = "Change in concentrations over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
 
 def plot_graph(sources):
     #Removes previous lines and hover tools
@@ -217,7 +219,7 @@ def plot_graph(sources):
                                     ('Concentration', '@C_N'), 
     ],))
     sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
-    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutien x 1000")# CL is multiplied by 1000 to make it visible on the graph
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutein (x1000)")# CL is multiplied by 1000 to make it visible on the graph
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@modified_C_L'), 
@@ -383,7 +385,7 @@ def export_data():
 
 
     # Create a dictionary to hold the data
-    export_data = {'Time': day, 'Biomass': biomass, 'Nitrate': nitrate, 'Lutine': lutine}
+    export_data = {'Time': day, 'Biomass': biomass, 'Nitrate': nitrate, 'Lutein': lutine}
 
      # Generate a unique filename using current date and time
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -397,7 +399,7 @@ def export_data():
 
     # Export the data as a CSV file to the downloads folder
     with open(file_path, 'w') as f:
-        f.write('Time,Biomass,Nitrate,Lutine\n')
+        f.write('Time,Biomass,Nitrate,Lutein\n')
         for i in range(len(day)):
             f.write(f'{day[i]},{biomass[i]},{nitrate[i]},{lutine[i]}\n')
 
@@ -483,7 +485,7 @@ train.on_change('value', validate_sum)
 val_split.on_change('value', validate_sum)
 
 
-#Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
+#Reset Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
 reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
                                   code="""
@@ -557,7 +559,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 # loss_datas = pandas.read_csv(loss_data)
 # loss_source = ColumnDataSource(loss_datas)
 #Loss Graph section ---------------------------------------------------------------------------------------------------------------------
-p2 = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+p2 = figure(title = "Loss Graph (Train and Validation)", x_axis_label = "Epochs", y_axis_label = "Loss", )
 
 def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
