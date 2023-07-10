@@ -1,6 +1,10 @@
 
 #needed for this to work: working directory should have a models folder with mmscalerX.pkl and mmscalerY.pkl and model.pt, and an outputs folder
 # imports, put these at the very top of everything
+import matplotlib.pyplot as plt
+import tqdm
+import copy
+import modularNN as mnn
 import numpy as np
 import pandas as pd
 import pandas
@@ -64,23 +68,6 @@ intro = Div(text="""
         <h4> Section for bold text</h4>
     """)
 
-#Info Text sectionSection ---------------------------------------------------------------------------------------------------------------------
-# NOTE THIS WAS ONLY MADE WITH PYTHON NOT HTML AT ALL
-
-info_text =  Paragraph(text="""
-        This is a Bokeh demo showing the interactive examples that
-       could be used for the photobioreactor example 
-        """)
-
- #Help Text sectionSection ---------------------------------------------------------------------------------------------------------------------
-# NOTE THIS WAS ONLY MADE WITH PYTHON NOT HTML AT ALL
-
-help_text= Paragraph(text = """
-            In photography, bokeh is the aesthetic quality of the blur produced in out-of-focus parts of an image,
-              caused by Circles of Confusion. Bokeh has also been defined as "the way the lens renders out-of-focus
-                points of light". Differences in lens aberrations and aperture shape cause very different bokeh effects.
-    """
-                     )
 
 #Predecition Tab Section_____________________________________________________________________________________________________________________
 # Defining Values ---------------------------------------------------------------------------------------------------------------------
@@ -229,7 +216,7 @@ def plot_graph(sources):
                                     ('Concentration', '@C_N'), 
     ],))
     sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
-    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien x 1000")# CL is multiplied by 1000 to make it visible on the graph
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutien x 1000")# CL is multiplied by 1000 to make it visible on the graph
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@modified_C_L'), 
@@ -450,38 +437,40 @@ run_button.on_click(runbutton_function)
 #Edit Tab Section______________________________________________________________________________________________________________________________
 #Model Inputs Section-----------------------------------------------------------------------------------------------
 TYPES = ["NN", "GP", "Forest"]
+optimizer_options = ["ADAM", "SGD"]
+loss_options = ["MSE", "MAE"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
 
-test = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Test:(0% - 100%)")# 
+test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test:(0% - 100%)")# 
 
-train = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Train:(0% - 100%)")# 
+train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train:(0% - 100%)")# 
 
-val_split = NumericInput(value=0, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
+val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
 
-neurons = Slider (start = 10, end = 50, value = 32, step = 1, title = "Number of Neurons")# 
+neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
 epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
 batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch Size")# 
 
 
-learning_rate = NumericInput(value=0.0001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
+learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
 
-optimizer = Select(title="Optimizer:", value="LI", options=["LI", "MSE", "KL Div"], height = 60, width = 300)# Student chooses the optimizer
+loss_Fn = Select(title="Optimizer:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
 
-loss_Fn = Select(title="Loss Fn:", value="ADAM", options=["ADAM", "SGD"], height = 60, width = 300)# Student chooses the loss function
+optimizer = Select(title="Loss Fn:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
 
 
 #Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
 reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
                                   code="""
-   lR.value = 0.0001;
-   lFn.value = "ADAM";
-   opt.value = "LI";
-   n.value = 32;
-   vs.value = 0;
-   tr.value = 0;
-   ts.value = 0;
+   lR.value = 0.001;
+   lFn.value = "MAE";
+   opt.value = "ADAM";
+   n.value = 18;
+   vs.value = 0.2;
+   tr.value = 0.6;
+   ts.value = 0.2;
    e.value = 100;
    b.value = 25;
     
@@ -490,24 +479,111 @@ reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn =
 
 
 """ ))
+#Model Loop section for edit tab_____________________________________________________________________________________________________________________
+
+#the below code is designed to drag and drop into the bokeh visualization
+#static section should run once on launch, dynamic section should run on each change
+### Static (run once)
+rawData = pd.read_csv('STEMVisualsSynthData.csv', header=0)
+#remove unneeded column
+rawData.drop('Index_within_Experiment', axis = 1, inplace = True)
+#X is inputs--the three Concentrations, F_in, I0 (light intensity), and c_N_in (6)
+X = rawData[['Time', 'C_X', 'C_N', 'C_L', 'F_in', 'C_N_in', 'I0']]
+Y = X.copy(deep=True)
+#drop unnecessary rows in Y
+Y.drop('F_in', axis = 1, inplace = True)
+Y.drop('C_N_in', axis = 1, inplace = True)
+Y.drop('I0', axis = 1, inplace = True)
+Y.drop('Time', axis = 1, inplace = True)
+#Y vals should be X concentrations one timestep ahead, so remove the first index
+Y.drop(index=0, inplace=True)
+#To keep the two consistent, remove the last index of X
+X.drop(index=19999, inplace=True)
+#set device
+#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = 'cpu'
+
+
+def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options):
+    
+  #user defined parameters: current values can serve as a default
+  #splits - expects 3 floats that add to 1
+  trainSplit = tr.value
+  valSplit = vs.value
+  testSplit = ts.value
+  #model params
+  initNeuronNum = n.value #number of neurons in the first layer, 7 < int < 100
+  loss = loss_options.index(lFn.value) #0 = MSE, 1 = MAE
+  optimizer = optimizer_options.index(opt.value ) #0 = Adam, 1 = SGD
+  learnRate = lR.value #0.0001 < float < 0.01
+  #training params
+  epochs = e.value #0 < int < 200
+  batchSize = b.value #0 < int < 200
+    
+  ### Dynamic (run on each change)
+  #TODO: upon running, check params are valid then update these values
+  #test the all-in-one function
+  model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device)
+  #read in the loss CSV
+  lossCSV = pd.read_csv('models/losses.csv', header=0)
+  #TODO:plot the losses against epochs (stored as indexes)
+  #TODO:update the prediction side of the bokeh visualization
+    
+# #Loss Graph Data section ---------------------------------------------------------------------------------------------------------------------
+# loss_data = "models/losses.csv"
+# loss_datas = pandas.read_csv(loss_data)
+# loss_source = ColumnDataSource(loss_datas)
+#Loss Graph section ---------------------------------------------------------------------------------------------------------------------
+p2 = figure(title = "Change in  concentration over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+
+def loss_graph(loss_data, p2): # function to plot the loss graph
+    #Removes previous lines and hover tools
+    p2.renderers = [] #removes previous lines
+    p2.tools = [] #removes previous hover tools    
+    loss_datas = pandas.read_csv(loss_data)
+    loss_datas['index'] = loss_datas.index
+    loss_source = ColumnDataSource(loss_datas)
+    # Example of updating CL value
+
+    train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "aqua", legend_label = "Train Loss")
+    p2.add_tools(HoverTool(renderers = [train_loss], tooltips=[  ('Name', 'Train Loss'),
+                                    # adds the hover tool to the graph for the specifed line
+    ],))
+    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 , line_dash='dotted', line_color = "navy", legend_label = "Value Loss")
+    p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Value Loss'), ],))
+
+    
+    # Add the lines to the plot
+    
+    
+loss_graph("models/losses.csv", p2)
+
+
+    
 
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size): 
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2): 
     
-    learning_rate = lR.value
-    loss = lFn.value
-    optimizer = opt.value
-    train = tr.value
-    test = ts.value
-    val_split = vs.value
-    neurons = n.value
-    epochs = e.value
-    batch_Size = b.value
+    learning_rate = lR
+    loss = lFn
+    optimizer = opt
+    train = tr
+    test = ts
+    val_split = vs
+    neurons = n
+    epochs = e
+    batch_Size = b
+    model_loop(learning_rate, loss, optimizer, train, test, val_split, neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options)
+    #generating data from model loop
+    loss_graph("models/losses.csv", p2)
     
     
     
+    
+run_button_edit_tab.on_click(edit_run_button_function)
+
     
 
 
@@ -516,8 +592,8 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn)
-rs = column(p,p, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
+ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, )
+rs = column(p2, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 bs = row(ls, rs)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
@@ -542,4 +618,5 @@ curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code o
 
 
 
-#code report: 
+#code report: is able to plot, but run button is not working, also you also still need to do the validation to ensure that the test, train, and validation split add up to 1 or 100% check notes for more info
+# look into imports and how to import the needed imports properly, also look into how to make the run button work, and that the losses.csv is actualy working
