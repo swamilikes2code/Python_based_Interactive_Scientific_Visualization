@@ -442,11 +442,11 @@ loss_options = ["MSE", "MAE"]
 
 radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
 
-test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test:(0% - 100%)")# 
+test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test:(0 - 1)")# 
 
-train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train:(0% - 100%)")# 
+train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train:(0 - 1)")# 
 
-val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0% - 100%)")# 
+val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
 epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
@@ -458,6 +458,28 @@ learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "flo
 loss_Fn = Select(title="Optimizer:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
 
 optimizer = Select(title="Loss Fn:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
+
+
+# Define the callback function for the sliders
+def validate_sum(attr, old, new):
+    # Calculate the sum of the slider values
+    total = test.value + train.value + val_split.value
+    
+    # Check if the sum is not equal to 1
+    if total != 1:
+        # Calculate the difference between the current sum and 1
+        diff = total - 1
+        
+        # Find the slider with the maximum value
+        max_slider = max(test, train, val_split, key=lambda s: s.value)
+        
+        # Adjust the value of the max_slider by the difference
+        max_slider.value -= diff
+
+# Attach the callback to the 'value' change event of each slider
+test.on_change('value', validate_sum)
+train.on_change('value', validate_sum)
+val_split.on_change('value', validate_sum)
 
 
 #Rest Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
