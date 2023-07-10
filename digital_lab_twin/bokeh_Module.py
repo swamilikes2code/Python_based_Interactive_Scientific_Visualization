@@ -123,7 +123,7 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     # note that these load funcs will need you to change to your current directory here!
     print(os.getcwd() )
     #os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
-    #os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
+    os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
 
     model = torch.load('models/model.pt')
     model.eval()
