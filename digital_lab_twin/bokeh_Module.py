@@ -216,7 +216,7 @@ def plot_graph(sources):
                                     ('Concentration', '@C_N'), 
     ],))
     sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
-    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime", legend_label = "Lutien x 1000")# CL is multiplied by 1000 to make it visible on the graph
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutien x 1000")# CL is multiplied by 1000 to make it visible on the graph
     p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@modified_C_L'), 
@@ -549,7 +549,7 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
     p2.add_tools(HoverTool(renderers = [train_loss], tooltips=[  ('Name', 'Train Loss'),
                                     # adds the hover tool to the graph for the specifed line
     ],))
-    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 ,  line_color = "lime", legend_label = "Value Loss")
+    value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 , line_dash='dotted', line_color = "navy", legend_label = "Value Loss")
     p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Value Loss'), ],))
 
     
