@@ -173,8 +173,8 @@ def plot_predictions(train_data,
 #saveModel saves both model and the scalers
 def saveModel(model, scalerX, scalerY):
     torch.save(model, 'models/model.pt')
-    joblib.dump(scalerX, 'models/scalerX.pkl')
-    joblib.dump(scalerY, 'models/scalerY.pkl')
+    joblib.dump(scalerX, 'models/StScalerX.pkl')
+    joblib.dump(scalerY, 'models/StScalerY.pkl')
 
 #savelosses saves the training and validation losses as csv files
 def saveLosses(trainLoss, valLoss):
