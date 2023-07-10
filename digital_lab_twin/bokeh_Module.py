@@ -2,6 +2,7 @@
 #needed for this to work: working directory should have a models folder with mmscalerX.pkl and mmscalerY.pkl and model.pt, and an outputs folder
 # imports, put these at the very top of everything
 import matplotlib.pyplot as plt
+import matplotlib
 import tqdm
 import copy
 import modularNN as mnn

@@ -12,8 +12,9 @@ import pathlib as path
 import os
 # initialize everything 
 # note that these load funcs will need you to change to your current directory here!
-os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin\\maddie-nn')
-model = torch.load('models\model.pt')
+#os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin\\maddie-nn')
+os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
+model = torch.load('models/model.pt')
 model.eval()
 #scalers
 stScalerX = joblib.load('models/stScalerX.pkl')
