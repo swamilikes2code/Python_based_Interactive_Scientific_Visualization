@@ -101,8 +101,8 @@ def trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor
                 bar.set_postfix(mse=float(loss))
         # evaluate accuracy at end of each epoch
         model.eval()
-        y_pred = model(X_val_tensor)
-        mse = lossFunction(y_pred, Y_val_tensor)
+        y_pred = model(X_train_tensor)
+        mse = lossFunction(y_pred, Y_train_tensor)
         mse = float(mse)
         trainLoss.append(mse)
         if mse < best_mse:
