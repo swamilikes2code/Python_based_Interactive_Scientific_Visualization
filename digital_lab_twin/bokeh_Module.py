@@ -295,40 +295,7 @@ updates=[light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biom
 
 slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con)
 
-# callback = CustomJS(args=dict( source = source , li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration),
-#                     code="""
 
-#     const a = li.value;
-#     const b = inf.value;
-#     const c = pH.value;
-#     const d = inc.value;
-
-#     const data = source.data;
-#     const x = data['Time'];
-#     const y1 = data['C_X'];
-#     const y2 = data['C_N'];
-
-#     const updated_y1 = [];
-#     const updated_y2 = [];
-
-#     for (let i = 0; i < x.length; i++) {
-#         updated_y1.push(b + a * (c * y1[i] + d));
-#         updated_y2.push(b + a * (c * y2[i] + d));
-#     }
-
-
-#     source.data = { 'Time': x, 'C_X': updated_y1, 'C_N': updated_y2 };
-#     source.change.emit();
-# """)
-
-
-# light_intensity.js_on_change('value', callback)
-# inlet_flow.js_on_change('value', callback)
-# pH.js_on_change('value', callback)
-# inlet_concentration.js_on_change('value', callback)
-
-#dkllhdfhdlk
-#kdjdklfjfdlkfkl
 # Creating the Button---------------------------------------------------------------------------------------------------------------------
 
 #Reset Button******************************************************************************************************************************
