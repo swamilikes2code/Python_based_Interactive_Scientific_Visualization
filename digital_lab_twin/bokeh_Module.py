@@ -282,16 +282,6 @@ reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = in
 
 """ ))
 
-  # Clear the renderers (lines) from the plot
-# p.renderers = []
-# for u in updates:
-#     u.on_change('value', update_data)
-
-
-# initial_data = pandas.read_csv("ActualExperiment.csv")
-# af = ColumnDataSource(initial_data)
-
-# source = af
 
 
 
