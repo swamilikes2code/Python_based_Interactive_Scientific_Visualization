@@ -186,11 +186,6 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
 data = "outputs/prediction.csv"
 datas = pandas.read_csv(data)
 source = ColumnDataSource(datas)
-
-#initial Data section ---------------------------------------------------------------------------------------------------------------------
-initial_csv = "outputs/initial_predictions.csv"
-initial_datas = pandas.read_csv(initial_csv)
-initial_sources= ColumnDataSource(initial_datas)
 #initial Data  for reset section ---------------------------------------------------------------------------------------------------------------------
 initial_csv1 = "outputs/prediction.csv"
 initial_data = pandas.read_csv(initial_csv1)
