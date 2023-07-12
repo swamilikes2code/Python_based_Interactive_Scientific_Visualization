@@ -123,7 +123,7 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     # note that these load funcs will need you to change to your current directory here!
     print(os.getcwd() )
     #os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
-    os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
+    #os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
 
     model = torch.load('models/model.pt')
     model.eval()
@@ -439,11 +439,8 @@ run_button.on_click(runbutton_function)
 
 #Edit Tab Section______________________________________________________________________________________________________________________________
 #Model Inputs Section-----------------------------------------------------------------------------------------------
-TYPES = ["NN", "GP", "Forest"]
 optimizer_options = ["ADAM", "SGD"]
 loss_options = ["MSE", "MAE"]
-
-radio_button_group = RadioButtonGroup(name = "Types", labels=TYPES, active=0)# Student chooses the ML model type
 
 test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test:(0 - 1)")# 
 
@@ -617,7 +614,7 @@ run_button_edit_tab.on_click(edit_run_button_function)
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column( radio_button_group, test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, )
+ls = column( test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, )
 rs = column(p2, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 bs = row(ls, rs)
 tab1 = TabPanel(child=bs, title="Edit")
