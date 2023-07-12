@@ -254,45 +254,6 @@ p.toolbar.autohide = True
 # Add the Slider to the figure ---------------------------------------------------------------------------------------------------------------------
 
 
-#Define the callback function for the sliders
-def update_data(attr, old, new):
-    # Get the current values of the sliders
-    light_i = light_intensity.value * 0.000001 #converts from micro to grams
-    F_in = inlet_flow.value
-    ph = pH.value
-    Cn_in = inlet_concentration.value
-    cn = nitrate_con.value
-    cx = biomass_con.value
-    
-    # Retrieve the data from the source
-    data = source.data
-    x = data['Time']
-    y1 = data['C_X']
-    y2 = data['C_N']
-    
-    # Calculate the updated y-values using a loop
-    updated_y1 = []
-    updated_y2 = []
-    for i in range(len(x)):
-        updated_y1.append(U_O * (cn / (cn + K_N)) * cx - U_D * cx  )#Biomass
-        updated_y2.append(-Y_NX - U_O * (cn / (cn + K_N))* cx + F_in * Cn_in )#still need to fix the equations  to make it accurat to the number in the ode
-
-    
-    # Update the data source
-    source.data = {'Time': x, 'C_X': updated_y1, 'C_N': updated_y2}
-
-# Add the callback function to the sliders
-updates=[light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con]
-# for u in updates:
-#     u.on_change('value', update_data)
-
-
-
-# light_intensity.on_change('value', update_data)
-# inlet_flow.on_change('value', update_data)
-# pH.on_change('value', update_data)
-# inlet_concentration.on_change('value', update_data)
-
 slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con)
 
 
