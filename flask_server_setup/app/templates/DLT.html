@@ -115,7 +115,7 @@ font-size: 1.354vw;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:10px;
-background: #E8E8E8;
+background: #b2e3f4;
 gap: 2.083vw;
 line-height: 1.5;
 margin: auto;
@@ -276,7 +276,7 @@ nav li {
     padding: 0 10px;
     border-radius: 17px;
 }
-
+}
 .tab {
         overflow: hidden;
         border: 1px solid #ccc;
@@ -299,7 +299,6 @@ nav li {
       .tab button:hover {
         background-color: #ddd;
       }
-
       /* Create an active/current tablink class */
       .tab button.active {
         background-color: #ccc;
@@ -312,6 +311,22 @@ nav li {
         border: 1px solid #ccc;
         border-top: none;
       }
+      * {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.text_column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.text_row:after {
+  content: "";
+  display: table;
+  clear: both;
 }
      </style>
 </head>
@@ -362,6 +377,8 @@ nav li {
       
           <div class="flexwrap1">
           <div id="Questions" class="tabcontent">
+            <div class="text_row">
+                <div class="text_column">
             <h3>Supplemental Questions</h3>
             <p><strong>Introductory Questions</strong> 
               <ol> 
@@ -374,8 +391,10 @@ nav li {
                   <li> Looking at the model with all features selected, is it possible to tell which variables were the most important in predicting the output variable? If so, how would you do so and which are the most important variables? </li>
                   <li> How does changing the type of regression from linear to quadratic to cubic affect the regression? </li>
                   <li>  Is there any overfitting occurring in the regression model?</li>
-                  </ol>
-                  <strong>Unsupervised Learning Section</strong> 
+                  </ol> </p>
+                  </div>
+                <div class="text_column">
+                  <p> <strong>Unsupervised Learning Section</strong> 
                   <ol> 
                   <li> Is there a trend that can be noticed about the amount of variance explained by each principal component? How many principal components does it take to have at least 80 percent variance explained?</li>
                   <li> According to the elbow plot, what is the ideal number of clusters(optimal k value) for the k-means clustering?</li>
@@ -387,6 +406,8 @@ nav li {
                       <li> Looking at the classification report, what are metrics such as precision, recall, and F1-score and how are they useful in evaluating classification models?</li>
                       <li> Looking at the svm model, matrix, and report, which kernel performs the best? </li>
                       </ol></p>
+                </div>
+            </div>
           </div>
         </div>
           <script>
@@ -408,6 +429,7 @@ document.getElementById("defaultOpen").click();
           </script>
         <br>
     <br>
+{{bokeh_script_DLTModel|safe}}
 </body>
 <div class="footer1">
     <div class="flexcol5">
