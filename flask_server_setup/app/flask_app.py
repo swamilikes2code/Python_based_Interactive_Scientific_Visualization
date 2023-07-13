@@ -18,10 +18,10 @@ def index():
 
 @app.route("/sliders_reaction_kinetics", methods=["GET"])
 def sliders_reaction_kinetics():
-    # bokeh_script_sliders_reaction_kinetics = server_document(url="http://localhost:5006/sliders_reaction_kinetics")
-    bokeh_script_sliders_reaction_kinetics = server_document(
+    bokeh_script_sliders_reaction_kinetics = server_document(url="http://localhost:5006/sliders_reaction_kinetics")
+    """bokeh_script_sliders_reaction_kinetics = server_document(
         url="https://srrweb.cc.lehigh.edu/sliders_reaction_kinetics"
-    )
+    )"""
     return render_template(
         "sliders_reaction_kinetics.html",
         bokeh_script_sliders_reaction_kinetics=bokeh_script_sliders_reaction_kinetics,
@@ -64,9 +64,9 @@ def DAC():
 @app.route("/DLT", methods=["GET"])
 def DLT():
     #bokeh_script_DLTModel = server_document(url="https://srrweb.cc.lehigh.edu/DLT")
-    print('running DLT Model')
-    bokeh_script_DLTModel = server_document(url="localhost:5006/bokeh_Module")
-    return render_template("DLT.html", bokeh_script_DACModel=bokeh_script_DLTModel)
+    #print('running DLT Model')
+    bokeh_script_DLTModel = server_document(url="http://localhost:5007/bokeh_Module")
+    return render_template("DLT.html", bokeh_script_DLTModel=bokeh_script_DLTModel)
 
 
 # @app.route("/acknowledgements", methods=['GET'])
