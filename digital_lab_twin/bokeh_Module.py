@@ -355,11 +355,11 @@ run_button.on_click(runbutton_function)
 optimizer_options = ["ADAM", "SGD"]
 loss_options = ["MSE", "MAE"]
 
-test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test:(0 - 1)")# 
+test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
 
-train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train:(0 - 1)")# 
+train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train Split:(0 - 1)")# 
 
-val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1")# 
+val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
 epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
@@ -485,7 +485,7 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
                                     # adds the hover tool to the graph for the specifed line
     ],))
     value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 , line_color = "navy", legend_label = "Validation Loss")
-    p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Value Loss'), ],))
+    p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Validation Loss'), ],))
 
     
     # Add the lines to the plot
