@@ -458,7 +458,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   ### Dynamic (run on each change)
   #TODO: upon running, check params are valid then update these values
   #test the all-in-one function
-  model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
+  model, Y_test_tensor, testPreds, XTestTime, trainLoss, valLoss, stScalerX, stScalerY = mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
   #read in the loss CSV
   lossCSV = pd.read_csv('models/losses.csv', header=0)
   #TODO:plot the losses against epochs (stored as indexes)
