@@ -357,7 +357,7 @@ loss_options = ["MSE", "MAE"]
 
 #test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
 
-train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train Split:(0 - 1)")# 
+train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Train Split:(0.1-0.7)")# 
 
 #val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
