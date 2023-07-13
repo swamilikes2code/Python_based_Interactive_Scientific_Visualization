@@ -14,7 +14,10 @@ import copy
 
 #dataSplitter takes in the data and the split params and returns the split data
 #XTrainTime, XValTime, and XTestTime are the time columns for each respective set
-def dataSplitter(X, Y, trainSplit, valSplit, testSplit):
+def dataSplitter(X, Y, trainSplit):
+    #presume trainsplit is between .1 and .7
+    #val split and test split should be equal to the other, and half of the remaining percentage
+    valSplit = testSplit = (1-trainSplit)/2
     #split the data into train, val, and test sets
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=testSplit)
     X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, test_size=valSplit/(trainSplit+valSplit), random_state=42)
@@ -186,9 +189,9 @@ def saveLosses(trainLoss, valLoss):
 
 #all in one function to split data, train and save model
 #models, scalers, and losses are saved to the models folder
-def trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device):
+def trainAndSaveModel(X, Y, trainSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device):
     #split the data
-    X_train, X_val, X_test, Y_train, Y_val, Y_test, XTrainTime, XValTime, XTestTime = dataSplitter(X, Y, trainSplit, valSplit, testSplit)
+    X_train, X_val, X_test, Y_train, Y_val, Y_test, XTrainTime, XValTime, XTestTime = dataSplitter(X, Y, trainSplit)
     #scale the data
     stScalerX, stScalerY, X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled= scaleData(X_train, X_val, X_test, Y_train, Y_val, Y_test)
     #tensorize the data

@@ -355,11 +355,11 @@ run_button.on_click(runbutton_function)
 optimizer_options = ["ADAM", "SGD"]
 loss_options = ["MSE", "MAE"]
 
-test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
+#test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
 
 train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train Split:(0 - 1)")# 
 
-val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
+#val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
 epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
@@ -372,7 +372,7 @@ loss_Fn = Select(title="Optimizer:", value="MAE", options= loss_options, height 
 
 optimizer = Select(title="Loss Fn:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
 
-
+"""
 # Define the callback function for the sliders
 def validate_sum(attr, old, new):
     # Calculate the sum of the slider values
@@ -392,20 +392,20 @@ def validate_sum(attr, old, new):
 # Attach the callback to the 'value' change event of each slider
 test.on_change('value', validate_sum)
 train.on_change('value', validate_sum)
-val_split.on_change('value', validate_sum)
+val_split.on_change('value', validate_sum)"""
 
 
 #Reset Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size),
+reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size),#vs = val_split,ts = test,
                                   code="""
    lR.value = 0.001;
    lFn.value = "MAE";
    opt.value = "ADAM";
    n.value = 18;
-   vs.value = 0.2;
+   #vs.value = 0.2;
    tr.value = 0.6;
-   ts.value = 0.2;
+   #ts.value = 0.2;
    e.value = 100;
    b.value = 25;
     
@@ -439,13 +439,13 @@ X.drop(index=19999, inplace=True)
 device = 'cpu'
 
 
-def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options):
+def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train,  n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options): #ts = test, vs = val_split,
     
   #user defined parameters: current values can serve as a default
   #splits - expects 3 floats that add to 1
   trainSplit = tr.value
-  valSplit = vs.value
-  testSplit = ts.value
+  #valSplit = vs.value
+  #testSplit = ts.value
   #model params
   initNeuronNum = n.value #number of neurons in the first layer, 7 < int < 100
   loss = loss_options.index(lFn.value) #0 = MSE, 1 = MAE
@@ -458,7 +458,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   ### Dynamic (run on each change)
   #TODO: upon running, check params are valid then update these values
   #test the all-in-one function
-  model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device)
+  model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
   #read in the loss CSV
   lossCSV = pd.read_csv('models/losses.csv', header=0)
   #TODO:plot the losses against epochs (stored as indexes)
@@ -499,18 +499,18 @@ loss_graph("models/losses.csv", p2)
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, ts = test, vs = val_split, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2): 
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2): #ts = test, vs = val_split,
     
     learning_rate = lR
     loss = lFn
     optimizer = opt
     train = tr
-    test = ts
-    val_split = vs
+    #test = ts
+    #val_split = vs
     neurons = n
     epochs = e
     batch_Size = b
-    model_loop(learning_rate, loss, optimizer, train, test, val_split, neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options)
+    model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
     #generating data from model loop
     loss_graph("models/losses.csv", p2)
     
@@ -527,7 +527,7 @@ run_button_edit_tab.on_click(edit_run_button_function)
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column( test, train, val_split, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, )
+ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, ) #test,val_split,
 rs = column(p2, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 bs = row(ls, rs)
 tab1 = TabPanel(child=bs, title="Edit")
