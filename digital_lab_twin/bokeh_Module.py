@@ -469,7 +469,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 # loss_datas = pandas.read_csv(loss_data)
 # loss_source = ColumnDataSource(loss_datas)
 #Loss Graph section ---------------------------------------------------------------------------------------------------------------------
-p2 = figure(title = "Loss Graph (Train and Validation)", x_axis_label = "Epochs", y_axis_label = "Loss", )
+p2 = figure(title = "Loss Graph (Train and Validation)", x_axis_label = "Epochs", y_axis_label = "Loss (percentage)", )
 
 def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
