@@ -103,11 +103,11 @@ K_NL = 10.0*1e-3 # g/L  nitrate half- velocity constant for lutein synthesis
 
 #Creating Sliders ---------------------------------------------------------------------------------------------------------------------
 light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intensity (umol/m2-s):(100 - 200)")
-inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
+inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow of Nitrates(g/L):(0.001 - 0.015)")
 #pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
-inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L):(5 - 15)")
-nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
-biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
+inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration of Nitrates(g/L):(5 - 15)")
+nitrate_con = Slider(start=0.2, end=2, value=1, step=.05, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
+biomass_con = Slider(start=0.2, end=2, value=0.5, step=.05, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
 
 
 #pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomas
 def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     # initialize everything 
     # note that these load funcs will need you to change to your current directory here!
-    print(os.getcwd() )
+    #print(os.getcwd() )
     #os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
     #os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
 
