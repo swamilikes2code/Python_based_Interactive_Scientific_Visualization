@@ -362,7 +362,7 @@ train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Tr
 #val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
-epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
+epochs = Slider (start = 5, end = 50, value = 25, step = 5, title = "Epochs")# 
 batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch Size")# 
 
 
