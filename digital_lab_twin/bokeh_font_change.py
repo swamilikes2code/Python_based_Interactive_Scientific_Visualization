@@ -13,7 +13,7 @@ def font_Callback(attr, old, new):
     else:
         intro.styles = {"font-family": "Times New Roman"}
     
-fontAccess.on_change('value', font_Callback)
+# fontAccess.on_change('value', font_Callback)
 
 
 font_size_options = ["100%", "110%", "120%", "130%", "140%", "150%", "160%", "170%", "180%", "190%", "200%"]
@@ -22,7 +22,18 @@ sizeAccess = Select(title="Text Size Options:", value="100", options= font_size_
 def size_Callback(attr, old, new, font):
     intro.styles = {'font-size': new, "font-family": font.value}
 
-sizeAccess.on_change('value', size_Callback, fontAccess)
+# sizeAccess.on_change('value', size_Callback, fontAccess)
+
+# Define the callback function for font and size changes
+def font_size_callback(attr, old, new):
+    selected_font = fontAccess.value
+    selected_size = sizeAccess.value
+    
+    intro.styles = {'font-size': selected_size, "font-family": selected_font}
+
+# Attach the callback functions to the value change events of the font and size widgets
+fontAccess.on_change('value', font_size_callback)
+sizeAccess.on_change('value', font_size_callback)
 
 
 
