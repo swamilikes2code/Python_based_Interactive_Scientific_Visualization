@@ -11,6 +11,7 @@ from sklearn import preprocessing
 import joblib
 import pathlib as path
 import copy
+import math
 
 #dataSplitter takes in the data and the split params and returns the split data
 #XTrainTime, XValTime, and XTestTime are the time columns for each respective set
@@ -215,11 +216,28 @@ def trainAndSaveModel(X, Y, trainSplit, initNeuronNum, loss, optimizer, learnRat
     testPreds = testPredictions(model, X_test_tensor) #3 columns, 1 for each output (biomass/nitrate/lutein)
     #return model, Y_test_tensor, testPreds, XTestTime for plotting
     return model, Y_test_tensor, testPreds, XTestTime
-#testPreds uses the model to predict the test data, returns the predictions
-def testPredictions(model, X_test_tensor):
+#testPredictions takes in the model, test data, loss function, and test labels and returns the predictions as well as test loss and RMSE
+def testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor):
     #test the model
     model.eval()
     y_pred = model(X_test_tensor)
-    return y_pred
+    #if possible, move the predictions to the CPU
+    if torch.cuda.is_available():
+        y_pred = y_pred.cpu()
+    #calculate test loss
+    mse = lossFunction(y_pred, Y_test_tensor)
+    mse = float(mse)
+    #calculate test RMSE
+    rmse = math.sqrt(mse)
+    #create parity dataframe
+    y_pred = y_pred.detach().numpy()
+    y_pred = pd.DataFrame(y_pred)
+    y_pred.columns = ['Biomass Predicted', 'Nitrate Predicted', 'Lutein Predicted']
+    #add the actual values to the dataframe
+    y_pred['Biomass Actual'] = Y_test_tensor[:,0]
+    y_pred['Nitrate Actual'] = Y_test_tensor[:,1]
+    y_pred['Lutein Actual'] = Y_test_tensor[:,2]
+
+    return y_pred, mse, rmse
 
 
