@@ -104,7 +104,7 @@ K_NL = 10.0*1e-3 # g/L  nitrate half- velocity constant for lutein synthesis
 #Creating Sliders ---------------------------------------------------------------------------------------------------------------------
 light_intensity = Slider(start=100, end=200, value=150, step= 1, title="Light Intensity (umol/m2-s):(100 - 200)")
 inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "0.000", title="Inlet Flow(g/L):(0.001 - 0.015)")
-pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
+#pH = Slider(start=0.1, end=9, value=0.5, step=.1, title="PH")
 inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration(g/L):(5 - 15)")
 nitrate_con = Slider(start=0.2, end=2, value=1, step=.1, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
 biomass_con = Slider(start=0.2, end=2, value=0.5, step=.1, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
@@ -254,18 +254,18 @@ p.toolbar.autohide = True
 # Add the Slider to the figure ---------------------------------------------------------------------------------------------------------------------
 
 
-slides = column(light_intensity, inlet_flow, pH, inlet_concentration, nitrate_con, biomass_con)
+slides = column(light_intensity, inlet_flow,  inlet_concentration, nitrate_con, biomass_con) #pH,
 
 
 # Creating the Button---------------------------------------------------------------------------------------------------------------------
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, p = p, li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con),
+reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, p = p, li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con), #pH = pH,
                                   code="""
    li.value = 150
    inf.value = 0.008
-   pH.value = 0.5
+   #pH.value = 0.5
    inc.value = 10
    nit.value = 1
    bio.value = 0.5
@@ -326,7 +326,7 @@ export_button.on_click(export_data)
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def runbutton_function(li = light_intensity, inf = inlet_flow, pH = pH, inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, ): 
+def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, ):  #pH = pH,
     
     #set initial conditions by changing these vals
     C_X_init = bio.value
@@ -355,11 +355,11 @@ run_button.on_click(runbutton_function)
 optimizer_options = ["ADAM", "SGD"]
 loss_options = ["MSE", "MAE"]
 
-test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test:(0 - 1)")# 
+test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
 
-train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train:(0 - 1)")# 
+train = NumericInput(value=0.6, high = 100, low = 0, mode = "float", title="Train Split:(0 - 1)")# 
 
-val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1")# 
+val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
 epochs = Slider (start = 0, end = 200, value = 100, step = 25, title = "Epochs")# 
@@ -485,7 +485,7 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
                                     # adds the hover tool to the graph for the specifed line
     ],))
     value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 , line_color = "navy", legend_label = "Validation Loss")
-    p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Value Loss'), ],))
+    p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Validation Loss'), ],))
 
     
     # Add the lines to the plot
