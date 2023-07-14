@@ -308,8 +308,6 @@ nav li {
       .tabcontent {
         display: none;
         padding: 6px 12px;
-        border: 1px solid #ccc;
-        border-top: none;
       }
       * {
   box-sizing: border-box;
@@ -355,9 +353,9 @@ nav li {
         </style>
         <h1 class="head1">Photobioreactor Digital Lab Twin</h1>
         <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
-            <button class="tablinks" onclick="openTab(event, 'Instructions')">Instructions</button>
-            <button class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Instructions')">Instructions</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
           </div>
       
           <div class="flexwrap1">
@@ -426,10 +424,25 @@ nav li {
             }
             // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+    const tablinks = document.querySelectorAll('.tablinks');
+    let currentTab = Array.from(tablinks).findIndex((tab) => tab.classList.contains('active'));
+    
+    if (event.key === 'ArrowRight') {
+      currentTab = (currentTab + 1) % tablinks.length;
+    } else if (event.key === 'ArrowLeft') {
+      currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+    } else {
+      return;
+    }
+    
+    tablinks[currentTab].click();
+  });
           </script>
         <br>
     <br>
-{{bokeh_script_DLTModel|safe}}
+{{bokeh_script_DLT|safe}}
 </body>
 <div class="footer1">
     <div class="flexcol5">
