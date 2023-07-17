@@ -501,37 +501,38 @@ loss_graph("models/losses.csv", p2)
 
 #Parity Plot section ---------------------------------------------------------------------------------------------------------------------
 p3 = figure(title = "Parity Plot", x_axis_label = "Actual Concentration", y_axis_label = "Predicted Concentration", )
-def pariotry_plot(loss_data, p3): # function to plot the loss graph
+def parity_plot(parity_data, p3): # function to plot the parity graph
     #Removes previous lines and hover tools
     p3.renderers = [] #removes previous lines
     p3.tools = [] #removes previous hover tools    
-    #if loss data is not a string, then it is a dataframe
-    if type(loss_data) != str:
-        loss_datas = loss_data
+    #if parity data is not a string, then it is a dataframe
+    if type(parity_data) != str:
+        parity_datas = parity_data
     else:
-        loss_datas = pandas.read_csv(loss_data)
-        loss_datas['index'] = loss_datas.index
-    loss_source = ColumnDataSource(loss_datas)
+        parity_datas = pandas.read_csv(parity_data)
+        parity_datas['index'] = parity_datas.index
+    parity_source = ColumnDataSource(parity_datas)
     # Example of updating CL value
 
-    biomass = p3.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "violet", legend_label = "Biomass")
-    p3.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Epochs', '@index'), ('Loss', '@trainLoss')],))
+    biomass = p3.line('Biomass_Actual', 'Biomass_Predicted', source = parity_source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+    p3.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Biomass Actual:', '@Biomass_Actual'), ('Biomass Predicted:', '@Biomass_Predicted')],))
                                     # adds the hover tool to the graph for the specifed line
    
-    nitrate = p3.line('index', 'valLoss', source = loss_source, line_width = 4 , line_color = "navy", legend_label = "Nitrate")
-    p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Epochs', '@index'), ('Loss', '@valLoss') ],))
+    nitrate = p3.line('Nitrate Actual', 'Nitrate Predicted', source = parity_source, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Nitrate Actual:', '@Nitrate Actual'), ('Nitrate Predicted:', '@Nitrate Predicted') ],))
     
-    lutien = p3.line('index', 'valLoss', source = loss_source, line_width = 4 , line_color = "lime", legend_label = "Lutien")
-    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Epochs', '@index'), ('Loss', '@valLoss') ],))
+    lutien = p3.line('Lutein Actual', 'Lutein Predicted', source = parity_source, line_width = 4 , line_color = "lime", legend_label = "Lutien")
+    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Lutein Actual:', '@Lutein Actual'), ('Lutein Predicted:', '@Lutein Predicted') ],))
     
     # Add the lines to the plot
-    
+parity_plot("models/testPreds.csv", p3)
+
     
 
 #Run Button******************************************************************************************************************************
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2): #ts = test, vs = val_split,
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3): #ts = test, vs = val_split,
     
     learning_rate = lR
     loss = lFn
@@ -561,7 +562,7 @@ run_button_edit_tab.on_click(edit_run_button_function)
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, ) #test,val_split,
 rs = column(p2, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
-bs = row(ls, rs)
+bs = row(ls, rs, p3)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
 tab3 = TabPanel(child = column(intro), title = "Instruction")
