@@ -461,7 +461,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #read in the losses
   lossCSV = lossDF
   #save testPreds to a csv
-  testPreds.to_csv('models/testPreds.csv', index=False)
+  #testPreds.to_csv('models/testPreds.csv', index=False)
   return lossDF
   #TODO:plot the losses against epochs (stored as indexes)
   #TODO:update the prediction side of the bokeh visualization
