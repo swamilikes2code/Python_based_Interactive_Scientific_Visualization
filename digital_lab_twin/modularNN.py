@@ -11,10 +11,14 @@ from sklearn import preprocessing
 import joblib
 import pathlib as path
 import copy
+import math
 
 #dataSplitter takes in the data and the split params and returns the split data
 #XTrainTime, XValTime, and XTestTime are the time columns for each respective set
-def dataSplitter(X, Y, trainSplit, valSplit, testSplit):
+def dataSplitter(X, Y, trainSplit):
+    #presume trainsplit is between .1 and .7
+    #val split and test split should be equal to the other, and half of the remaining percentage
+    valSplit = testSplit = (1-trainSplit)/2
     #split the data into train, val, and test sets
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=testSplit)
     X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, test_size=valSplit/(trainSplit+valSplit), random_state=42)
@@ -186,9 +190,9 @@ def saveLosses(trainLoss, valLoss):
 
 #all in one function to split data, train and save model
 #models, scalers, and losses are saved to the models folder
-def trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device):
+def trainAndSaveModel(X, Y, trainSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device):
     #split the data
-    X_train, X_val, X_test, Y_train, Y_val, Y_test, XTrainTime, XValTime, XTestTime = dataSplitter(X, Y, trainSplit, valSplit, testSplit)
+    X_train, X_val, X_test, Y_train, Y_val, Y_test, XTrainTime, XValTime, XTestTime = dataSplitter(X, Y, trainSplit)
     #scale the data
     stScalerX, stScalerY, X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled= scaleData(X_train, X_val, X_test, Y_train, Y_val, Y_test)
     #tensorize the data
@@ -209,14 +213,31 @@ def trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss
     model, trainLoss, valLoss = trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor, X_val_tensor, Y_train_tensor, Y_val_tensor)
     saveLosses(trainLoss, valLoss)
     saveModel(model, stScalerX, stScalerY)
-    testPreds = testPredictions(model, X_test_tensor) #3 columns, 1 for each output (biomass/nitrate/lutein)
+    testPreds, mse, rmse = testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor) #3 columns, 1 for each output (biomass/nitrate/lutein)
     #return model, Y_test_tensor, testPreds, XTestTime for plotting
-    return model, Y_test_tensor, testPreds, XTestTime
-#testPreds uses the model to predict the test data, returns the predictions
-def testPredictions(model, X_test_tensor):
+    return model, Y_test_tensor, testPreds, XTestTime, trainLoss, valLoss, stScalerX, stScalerY
+#testPredictions takes in the model, test data, loss function, and test labels and returns the predictions as well as test loss and RMSE
+def testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor):
     #test the model
     model.eval()
     y_pred = model(X_test_tensor)
-    return y_pred
+    #if possible, move the predictions to the CPU
+    if torch.cuda.is_available():
+        y_pred = y_pred.cpu()
+    #calculate test loss
+    mse = lossFunction(y_pred, Y_test_tensor)
+    mse = float(mse)
+    #calculate test RMSE
+    rmse = math.sqrt(mse)
+    #create parity dataframe
+    y_pred = y_pred.detach().numpy()
+    y_pred = pd.DataFrame(y_pred)
+    y_pred.columns = ['Biomass Predicted', 'Nitrate Predicted', 'Lutein Predicted']
+    #add the actual values to the dataframe
+    y_pred['Biomass Actual'] = Y_test_tensor[:,0]
+    y_pred['Nitrate Actual'] = Y_test_tensor[:,1]
+    y_pred['Lutein Actual'] = Y_test_tensor[:,2]
+
+    return y_pred, mse, rmse
 
 

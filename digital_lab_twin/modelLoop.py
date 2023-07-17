@@ -38,8 +38,6 @@ device = 'cpu'
 #user defined parameters: current values can serve as a default
 #splits - expects 3 floats that add to 1
 trainSplit = 0.6
-valSplit = 0.2
-testSplit = 0.2
 #model params
 initNeuronNum = 18 #number of neurons in the first layer, 7 < int < 100
 loss = 1 #0 = MSE, 1 = MAE
@@ -52,7 +50,7 @@ batchSize = 25 #0 < int < 200
 ### Dynamic (run on each change)
 #TODO: upon running, check params are valid then update these values
 #test the all-in-one function
-model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit, valSplit, testSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device)
+model, Y_test_tensor, testPreds, XTestTime = mnn.trainAndSaveModel(X, Y, trainSplit, initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device)
 #read in the loss CSV
 lossCSV = pd.read_csv('models/losses.csv', header=0)
 #TODO:plot the losses against epochs (stored as indexes)
