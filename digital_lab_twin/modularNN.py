@@ -233,11 +233,11 @@ def testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor):
     #create parity dataframe
     y_pred = y_pred.detach().numpy()
     y_pred = pd.DataFrame(y_pred)
-    y_pred.columns = ['Biomass Predicted', 'Nitrate Predicted', 'Lutein Predicted']
+    y_pred.columns = ['Biomass_Predicted', 'Nitrate_Predicted', 'Lutein_Predicted']
     #add the actual values to the dataframe
-    y_pred['Biomass Actual'] = Y_test_tensor[:,0]
-    y_pred['Nitrate Actual'] = Y_test_tensor[:,1]
-    y_pred['Lutein Actual'] = Y_test_tensor[:,2]
+    y_pred['Biomass_Actual'] = Y_test_tensor[:,0]
+    y_pred['Nitrate_Actual'] = Y_test_tensor[:,1]
+    y_pred['Lutein_Actual'] = Y_test_tensor[:,2]
 
     return y_pred, mse, rmse
 
