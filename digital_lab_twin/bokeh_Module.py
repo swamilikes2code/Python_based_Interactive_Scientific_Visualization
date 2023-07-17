@@ -436,7 +436,7 @@ X.drop(index=19999, inplace=True)
 #set device
 #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = 'cpu'
-
+lossCSV = pd.read_csv('models/losses.csv', header=0)
 
 def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train,  n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options): #ts = test, vs = val_split,
     
@@ -457,9 +457,10 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   ### Dynamic (run on each change)
   #TODO: upon running, check params are valid then update these values
   #test the all-in-one function
-  model, Y_test_tensor, testPreds, XTestTime, trainLoss, valLoss, stScalerX, stScalerY = mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
-  #read in the loss CSV
-  lossCSV = pd.read_csv('models/losses.csv', header=0)
+  model, Y_test_tensor, testPreds, XTestTime, lossDF, stScalerX, stScalerY, testPreds, mse, rmse= mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
+  #read in the losses
+  lossCSV = lossDF
+  return lossDF
   #TODO:plot the losses against epochs (stored as indexes)
   #TODO:update the prediction side of the bokeh visualization
     
@@ -474,8 +475,12 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
     p2.renderers = [] #removes previous lines
     p2.tools = [] #removes previous hover tools    
-    loss_datas = pandas.read_csv(loss_data)
-    loss_datas['index'] = loss_datas.index
+    #if loss data is not a string, then it is a dataframe
+    if type(loss_data) != str:
+        loss_datas = loss_data
+    else:
+        loss_datas = pandas.read_csv(loss_data)
+        loss_datas['index'] = loss_datas.index
     loss_source = ColumnDataSource(loss_datas)
     # Example of updating CL value
 
@@ -509,9 +514,9 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     neurons = n
     epochs = e
     batch_Size = b
-    model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
+    lossDF = model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
     #generating data from model loop
-    loss_graph("models/losses.csv", p2)
+    loss_graph(lossDF, p2)
     
     
     

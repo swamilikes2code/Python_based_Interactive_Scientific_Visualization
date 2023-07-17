@@ -185,7 +185,8 @@ def saveLosses(trainLoss, valLoss):
     #convert losses to a single DF
     losses = pd.DataFrame({'trainLoss': trainLoss, 'valLoss': valLoss})
     #save the losses
-    losses.to_csv('models/losses.csv')
+    return losses
+    #losses.to_csv('models/losses.csv')
 
 
 #all in one function to split data, train and save model
@@ -211,11 +212,11 @@ def trainAndSaveModel(X, Y, trainSplit, initNeuronNum, loss, optimizer, learnRat
     model = model.to(device)
     #train the model
     model, trainLoss, valLoss = trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor, X_val_tensor, Y_train_tensor, Y_val_tensor)
-    saveLosses(trainLoss, valLoss)
+    lossDF = saveLosses(trainLoss, valLoss)
     saveModel(model, stScalerX, stScalerY)
     testPreds, mse, rmse = testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor) #3 columns, 1 for each output (biomass/nitrate/lutein)
     #return model, Y_test_tensor, testPreds, XTestTime for plotting
-    return model, Y_test_tensor, testPreds, XTestTime, trainLoss, valLoss, stScalerX, stScalerY
+    return model, Y_test_tensor, testPreds, XTestTime, lossDF, stScalerX, stScalerY, testPreds, mse, rmse
 #testPredictions takes in the model, test data, loss function, and test labels and returns the predictions as well as test loss and RMSE
 def testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor):
     #test the model
