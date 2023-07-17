@@ -526,7 +526,7 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
     
     # Add the lines to the plot
 parity_plot("models/testPreds.csv", p3)
-p3.legend.click_policy="mute"
+p3.legend.click_policy="hide"
 
 
     
