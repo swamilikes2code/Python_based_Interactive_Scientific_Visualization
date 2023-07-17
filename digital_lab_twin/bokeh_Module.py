@@ -462,7 +462,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   lossCSV = lossDF
   #save testPreds to a csv
   testPreds.to_csv('models/testPreds.csv', index=False)
-  return lossDF
+  return lossDF, testPreds, mse, rmse
   #TODO:plot the losses against epochs (stored as indexes)
   #TODO:update the prediction side of the bokeh visualization
     
@@ -514,14 +514,14 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
     parity_source = ColumnDataSource(parity_datas)
     # Example of updating CL value
 
-    biomass = p3.line('Biomass_Actual', 'Biomass_Predicted', source = parity_source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
+    biomass = p3.scatter('Biomass_Actual', 'Biomass_Predicted', source = parity_source, size = 4 ,  fill_color = "aqua", legend_label = "Biomass", fill_alpha = 0.5)
     p3.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Biomass Actual:', '@Biomass_Actual'), ('Biomass Predicted:', '@Biomass_Predicted')],))
                                     # adds the hover tool to the graph for the specifed line
    
-    nitrate = p3.line('Nitrate_Actual', 'Nitrate_Predicted', source = parity_source, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    nitrate = p3.scatter('Nitrate_Actual', 'Nitrate_Predicted', source = parity_source, size = 4 , fill_color = "orange", legend_label = "Nitrate", fill_alpha = 0.5)
     p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Nitrate Actual:', '@Nitrate_Actual'), ('Nitrate Predicted:', '@Nitrate_Predicted') ],))
     
-    lutien = p3.line('Lutein_Actual', 'Lutein_Predicted', source = parity_source, line_width = 4 , line_color = "lime", legend_label = "Lutien")
+    lutien = p3.scatter('Lutein_Actual', 'Lutein_Predicted', source = parity_source, size = 4 , fill_color = "lime", legend_label = "Lutien", fill_alpha = 0.5)
     p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Lutein Actual:', '@Lutein_Actual'), ('Lutein Predicted:', '@Lutein_Predicted') ],))
     
     # Add the lines to the plot
@@ -543,9 +543,11 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     neurons = n
     epochs = e
     batch_Size = b
-    lossDF = model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
+    lossDF, testPreds, mse, rmse = model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
     #generating data from model loop
     loss_graph(lossDF, p2)
+    #parity graph
+    parity_plot(testPreds, p3)
     
     
     
