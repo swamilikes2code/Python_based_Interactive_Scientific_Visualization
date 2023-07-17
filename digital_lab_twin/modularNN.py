@@ -213,7 +213,7 @@ def trainAndSaveModel(X, Y, trainSplit, initNeuronNum, loss, optimizer, learnRat
     #train the model
     model, trainLoss, valLoss = trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor, X_val_tensor, Y_train_tensor, Y_val_tensor)
     lossDF = saveLosses(trainLoss, valLoss)
-    saveModel(model, stScalerX, stScalerY)
+    #saveModel(model, stScalerX, stScalerY)
     testPreds, mse, rmse = testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor) #3 columns, 1 for each output (biomass/nitrate/lutein)
     #return model, Y_test_tensor, testPreds, XTestTime for plotting
     return model, Y_test_tensor, testPreds, XTestTime, lossDF, stScalerX, stScalerY, testPreds, mse, rmse

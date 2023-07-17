@@ -362,7 +362,7 @@ train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Tr
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
 epochs = Slider (start = 5, end = 50, value = 25, step = 5, title = "Epochs")# 
-batch_Size = Slider (start = 0, end = 200, value = 25, step = 25, title = "Batch Size")# 
+batch_Size = Slider (start = 25, end = 200, value = 25, step = 25, title = "Batch Size")# 
 
 
 learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
