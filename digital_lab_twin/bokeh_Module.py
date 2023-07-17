@@ -514,15 +514,15 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
     parity_source = ColumnDataSource(parity_datas)
     # Example of updating CL value
 
-    biomass = p3.scatter('Biomass_Actual', 'Biomass_Predicted', source = parity_source, size = 4 ,  fill_color = "aqua", legend_label = "Biomass", fill_alpha = 0.8, muted_color = 'aqua', muted_alpha=0.2,)
-    p3.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Biomass Actual:', '@Biomass_Actual'), ('Biomass Predicted:', '@Biomass_Predicted')],))
+    biomass = p3.scatter('Biomass_Actual', 'Biomass_Predicted', source = parity_source, size = 4 ,  fill_color = "aqua", legend_label = "Biomass", fill_alpha = 0.8, muted_color = 'aqua', muted_alpha=0.1,)
+    p3.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Biomass Actual:', '@Biomass_Actual'), ('Biomass Predicted:', '@Biomass_Predicted')],) )
                                     # adds the hover tool to the graph for the specifed line
    
-    nitrate = p3.scatter('Nitrate_Actual', 'Nitrate_Predicted', source = parity_source, size = 4 , fill_color = "orange", legend_label = "Nitrate", fill_alpha = 0.8, muted_color = 'orange', muted_alpha=0.2,)
-    p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Nitrate Actual:', '@Nitrate_Actual'), ('Nitrate Predicted:', '@Nitrate_Predicted') ],))
+    nitrate = p3.scatter('Nitrate_Actual', 'Nitrate_Predicted', source = parity_source, size = 4 , fill_color = "orange", legend_label = "Nitrate", fill_alpha = 0.8, muted_color = 'orange', muted_alpha=0.1,)
+    p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Nitrate Actual:', '@Nitrate_Actual'), ('Nitrate Predicted:', '@Nitrate_Predicted') ],) )
     
-    lutien = p3.scatter('Lutein_Actual', 'Lutein_Predicted', source = parity_source, size = 4 , fill_color = "lime", legend_label = "Lutien", fill_alpha = 0.8, muted_color = 'lime', muted_alpha=0.2,)
-    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Lutein Actual:', '@Lutein_Actual'), ('Lutein Predicted:', '@Lutein_Predicted') ],))
+    lutien = p3.scatter('Lutein_Actual', 'Lutein_Predicted', source = parity_source, size = 4 , fill_color = "lime", legend_label = "Lutien", fill_alpha = 0.8, muted_color = 'lime', muted_alpha=0.1,)
+    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Lutein Actual:', '@Lutein_Actual'), ('Lutein Predicted:', '@Lutein_Predicted') ],) )
     
     # Add the lines to the plot
 parity_plot("models/testPreds.csv", p3)
