@@ -23,7 +23,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import layout
 from bokeh.io import export_svgs
 import datetime
-from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput
+from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
@@ -528,13 +528,19 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
 parity_plot("models/testPreds.csv", p3)
 p3.legend.click_policy="hide"
 
-
+#Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
     
+mean_squared_error = TextInput(value = str(0.0206), title = "MSE", width = 300, disabled = True)
+root_mean_squared_error = TextInput(value = str(0.1437), title = "MSE", width = 300, disabled = True)
+
+
 
 #Run Button******************************************************************************************************************************
+
+
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3): #ts = test, vs = val_split,
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error ): #ts = test, vs = val_split,
     
     learning_rate = lR
     loss = lFn
@@ -550,6 +556,11 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     loss_graph(lossDF, p2)
     #parity graph
     parity_plot(testPreds, p3)
+    mean.value = str(mse)
+    root_mean.value = str(rmse)
+    
+
+
     
     
     
@@ -566,7 +577,8 @@ run_button_edit_tab.on_click(edit_run_button_function)
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, ) #test,val_split,
 rs = column(p2, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
-bs = row(ls, rs, p3)
+means = column(mean_squared_error, root_mean_squared_error)
+bs = row(ls, rs, p3, means)
 tab1 = TabPanel(child=bs, title="Edit")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
 tab3 = TabPanel(child = column(intro), title = "Instruction")
