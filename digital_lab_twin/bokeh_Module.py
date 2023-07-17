@@ -111,7 +111,12 @@ biomass_con = Slider(start=0.2, end=2, value=0.5, step=.05, title="Initial Bioma
 
 
 #pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
-
+#initial run so bokeh plot is not empty
+model = torch.load('models/model.pt')
+model.eval()
+#scalers
+stScalerX = joblib.load('models/stScalerX.pkl')
+stScalerY = joblib.load('models/stScalerY.pkl')
 
 
 #function takes in initial conditions and runs the model
@@ -124,13 +129,6 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #print(os.getcwd() )
     #os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
     #os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
-
-    model = torch.load('models/model.pt')
-    model.eval()
-    #scalers
-    stScalerX = joblib.load('models/stScalerX.pkl')
-    stScalerY = joblib.load('models/stScalerY.pkl')
-
     XTimes = np.linspace(0, 150, 200)
     XDF = pd.DataFrame(XTimes, columns=['Time'])
     #generate empty columns
@@ -171,7 +169,8 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     #export XDF to csv
     #add times back in
     XDF['Time'] = XTimes
-    XDF.to_csv('outputs/prediction.csv', index=False)
+    return XDF
+    #XDF.to_csv('outputs/prediction.csv', index=False)
     #TODO: re-call the plotting function to show results to user
 
 # predLoop(biomass_con.value, nitrate_con.value, 0, inlet_flow.value, inlet_concentration.value, light_intensity.value)
@@ -339,10 +338,10 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
 
 
     # print((C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init))
-    predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
+    datas = predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
     #creates the source for the graph that the new plot will be based on
-    data = "outputs/prediction.csv"
-    datas = pandas.read_csv(data)
+    #data = "outputs/prediction.csv"
+    #datas = pandas.read_csv(data)
     sourceS = ColumnDataSource(datas)
     #attempt to reset the graph IDEA: ADD     p.renderers = [] AT THE BEGINNING OF THE PLOTTING FUNCTION
     plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
