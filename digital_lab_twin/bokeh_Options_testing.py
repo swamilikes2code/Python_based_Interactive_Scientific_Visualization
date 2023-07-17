@@ -6,7 +6,7 @@ from bokeh.layouts import row, column
 
 color_options = ["default", "colorblind"]
 
-colorAccess = Select(title="Color Options:", value="MAE", options= color_options, height = 60, width = 300)# Student chooses the loss function
+colorAccess = Select(title="Color Options:", value="default", options= color_options, height = 60, width = 300)# Student chooses the loss function
 
 def color_Callback(attr, old, new):
     colorAccess.value = new
