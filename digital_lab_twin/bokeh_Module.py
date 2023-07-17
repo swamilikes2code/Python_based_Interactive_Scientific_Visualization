@@ -518,11 +518,11 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
     p3.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Biomass Actual:', '@Biomass_Actual'), ('Biomass Predicted:', '@Biomass_Predicted')],))
                                     # adds the hover tool to the graph for the specifed line
    
-    nitrate = p3.line('Nitrate Actual', 'Nitrate Predicted', source = parity_source, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
-    p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Nitrate Actual:', '@Nitrate Actual'), ('Nitrate Predicted:', '@Nitrate Predicted') ],))
+    nitrate = p3.line('Nitrate_Actual', 'Nitrate_Predicted', source = parity_source, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
+    p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Nitrate Actual:', '@Nitrate_Actual'), ('Nitrate Predicted:', '@Nitrate_Predicted') ],))
     
-    lutien = p3.line('Lutein Actual', 'Lutein Predicted', source = parity_source, line_width = 4 , line_color = "lime", legend_label = "Lutien")
-    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Lutein Actual:', '@Lutein Actual'), ('Lutein Predicted:', '@Lutein Predicted') ],))
+    lutien = p3.line('Lutein_Actual', 'Lutein_Predicted', source = parity_source, line_width = 4 , line_color = "lime", legend_label = "Lutien")
+    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Lutein Actual:', '@Lutein_Actual'), ('Lutein Predicted:', '@Lutein_Predicted') ],))
     
     # Add the lines to the plot
 parity_plot("models/testPreds.csv", p3)
