@@ -499,7 +499,33 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
     
 loss_graph("models/losses.csv", p2)
 
+#Parity Plot section ---------------------------------------------------------------------------------------------------------------------
+p3 = figure(title = "Parity Plot", x_axis_label = "Actual Concentration", y_axis_label = "Predicted Concentration", )
+def pariotry_plot(loss_data, p3): # function to plot the loss graph
+    #Removes previous lines and hover tools
+    p3.renderers = [] #removes previous lines
+    p3.tools = [] #removes previous hover tools    
+    #if loss data is not a string, then it is a dataframe
+    if type(loss_data) != str:
+        loss_datas = loss_data
+    else:
+        loss_datas = pandas.read_csv(loss_data)
+        loss_datas['index'] = loss_datas.index
+    loss_source = ColumnDataSource(loss_datas)
+    # Example of updating CL value
 
+    biomass = p3.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "violet", legend_label = "Biomass")
+    p3.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Epochs', '@index'), ('Loss', '@trainLoss')],))
+                                    # adds the hover tool to the graph for the specifed line
+   
+    nitrate = p3.line('index', 'valLoss', source = loss_source, line_width = 4 , line_color = "navy", legend_label = "Nitrate")
+    p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Epochs', '@index'), ('Loss', '@valLoss') ],))
+    
+    lutien = p3.line('index', 'valLoss', source = loss_source, line_width = 4 , line_color = "lime", legend_label = "Lutien")
+    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Epochs', '@index'), ('Loss', '@valLoss') ],))
+    
+    # Add the lines to the plot
+    
     
 
 #Run Button******************************************************************************************************************************
