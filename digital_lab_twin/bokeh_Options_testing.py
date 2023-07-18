@@ -106,17 +106,6 @@ p.legend.background_fill_alpha = 0.5
 
 p.toolbar.autohide = True
 
-
-css_rule = """
-@font-face {
-  font-family: "OpenDyslexic";
-  src: url(path/to/OpenDyslexic_fonts/OpenDyslexic-Regular.oft);
-}
-"""
-
-# Add the CSS rule to the document head
-curdoc().add_root(CustomJS(code=css_rule))
-
 test = row(p, colorAccess)
 
 curdoc().add_root(test)
