@@ -575,8 +575,8 @@ run_button_edit_tab.on_click(edit_run_button_function)
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn, ) #test,val_split,
-rs = column(p2, run_button_edit_tab, reset_button_edit_tab)#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
+ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
+rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error)
 bs = row(ls, rs, p3, means)
 tab1 = TabPanel(child=bs, title="Edit")
