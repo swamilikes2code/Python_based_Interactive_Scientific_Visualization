@@ -214,7 +214,7 @@ def plot_graph(sources):
     ],))
     sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
     line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutein (x1000)")# CL is multiplied by 1000 to make it visible on the graph
-    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutien'),
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutein'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@modified_C_L'), 
     ],)) 
@@ -521,8 +521,8 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
     nitrate = p3.scatter('Nitrate_Actual', 'Nitrate_Predicted', source = parity_source, size = 4 , fill_color = "orange", legend_label = "Nitrate", fill_alpha = 0.8, muted_color = 'orange', muted_alpha=0.1,)
     p3.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Nitrate Actual:', '@Nitrate_Actual'), ('Nitrate Predicted:', '@Nitrate_Predicted') ],) )
     
-    lutien = p3.scatter('Lutein_Actual', 'Lutein_Predicted', source = parity_source, size = 4 , fill_color = "lime", legend_label = "Lutien", fill_alpha = 0.8, muted_color = 'lime', muted_alpha=0.1,)
-    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutien'), ('Lutein Actual:', '@Lutein_Actual'), ('Lutein Predicted:', '@Lutein_Predicted') ],) )
+    lutien = p3.scatter('Lutein_Actual', 'Lutein_Predicted', source = parity_source, size = 4 , fill_color = "lime", legend_label = "Lutein", fill_alpha = 0.8, muted_color = 'lime', muted_alpha=0.1,)
+    p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutein'), ('Lutein Actual:', '@Lutein_Actual'), ('Lutein Predicted:', '@Lutein_Predicted') ],) )
     
     # Add the lines to the plot
 parity_plot("models/testPreds.csv", p3)
