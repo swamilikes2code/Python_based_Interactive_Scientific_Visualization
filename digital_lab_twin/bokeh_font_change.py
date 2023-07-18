@@ -2,8 +2,11 @@
 from bokeh.models import Select, Div, CustomJS
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
+from bokeh.resources import Resources
 
-font_options = ["Arial", "San Serif", "Times New Roman", "Open Dyslexic"]
+
+
+font_options = ["Arial", "San Serif", "Times New Roman", "OpenDyslexic"]
 fontAccess = Select(title="Font Options:", value="Arial", options= font_options, height = 60, width = 300)# Student chooses the loss function
 def font_Callback(attr, old, new):
     if(new == "Arial"):
@@ -11,7 +14,7 @@ def font_Callback(attr, old, new):
     elif(new == "San Serif"):
         intro.styles = {"font-family": "San Serif"}
     elif(new == "OpenDyslexic"):
-        intro.sytles = {"font-family": "Open Dyslexic"}
+        intro.sytles = {"font-family": "opendyslexic"}
     else:
         intro.styles = {"font-family": "Times New Roman"}
     
@@ -39,16 +42,55 @@ sizeAccess.on_change('value', font_size_callback)
 
 
 
-
 css_rule = """
-@font-face {
-  font-family: "Open Dyslexic";
-  src: url(OpenDyslexic_fonts/OpenDyslexic-Regular.otf);
-}
+    @font-face {
+    font-family: 'opendyslexic';
+        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-Regular.otf');
+        font-style: normal;
+        font-weight: normal;
+    } 
+
+    @font-face {
+        font-family: 'opendyslexic';
+        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-Italic.ttf');
+        font-style: italic;
+        font-weight: normal;
+    }
+
+    @font-face {
+        font-family: 'opendyslexic';
+        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-Bold.ttf');
+        font-weight: bold;
+        font-style: normal;
+    } 
+
+    @font-face {
+        font-family: 'opendyslexic';
+        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-BoldItalic.ttf');
+        font-weight: bold;
+        font-style: italic;
+    } 
+
+    @font-face {
+        font-family: eulexia;
+        src: url('http://dyslexicfonts.com/fonts/eulexia.ttf');
+    } 
+
+    * {
+        font-size:20px;
+        line-height:200%;
+        color: #191A42;
+        font-family:opendyslexic !important;
+    }
 """
+head_html = f"<style>{css_rule}</style>"
+curdoc().add_root(Div(text=head_html))
+
+
+
 
 # Add the CSS rule to the document head
-curdoc().add_root(CustomJS(code=css_rule))
+# curdoc().add_root(CustomJS(code=css_rule))
 
 
 intro = Div(styles={"font-family": "Arial", 'font-size': '100%'}, text="""
