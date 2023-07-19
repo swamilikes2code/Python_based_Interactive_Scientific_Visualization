@@ -463,8 +463,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #save testPreds to a csv
   testPreds.to_csv('models/testPreds.csv', index=False)
   return lossDF, testPreds, mse, rmse
-  #TODO:plot the losses against epochs (stored as indexes)
-  #TODO:update the prediction side of the bokeh visualization
+  #TODO: pick an experiment to run, run it and return a df of its values
     
 # #Loss Graph Data section ---------------------------------------------------------------------------------------------------------------------
 # loss_data = "models/losses.csv"
