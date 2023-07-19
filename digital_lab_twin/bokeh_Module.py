@@ -578,14 +578,16 @@ run_button_edit_tab.on_click(edit_run_button_function)
 ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error)
-bs = row(ls, rs, p3, means)
+bs = row(ls, rs)
+evaluate = row(p3, means)
 tab1 = TabPanel(child=bs, title="Train")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
+tab4 = TabPanel(child = evaluate, title = "Evaluate")
 #TODO: add evaluate tab, parity plot, synth line versus model line and mse/rmse displayed here
 tab3 = TabPanel(child = column(intro), title = "Instruction")
 
   
-all_tabs = Tabs(tabs=[tab1,tab2,tab3])
+all_tabs = Tabs(tabs=[tab1,tab4,tab2,tab3])
 # show(all_tabs)
 
 #Making the layout to show all of the information and the code ---------------------------------------------------------------------------------------------------------------------
