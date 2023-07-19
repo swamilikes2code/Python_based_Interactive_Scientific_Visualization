@@ -600,7 +600,9 @@ def versus_plot(vs_data, p4): # function to plot the parity graph
     nitrate = p4.line('Time', 'C_N_actual', source = vs_source, line_width = 4 , line_color = "orange", legend_label = "Nitrate(Actual)", muted_color = 'orange',)
     p4.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Time:', '@Time'), ('Concentration:', '@C_N_actual') ],) )
     
-    lutien = p4.line('Time', 'C_L_actual', source = vs_source, line_width = 4 , line_color = "lime", legend_label = "Lutein(Actual)", muted_color = 'lime',)
+    vs_source.data['modified_C_L_actual'] = vs_source.data['C_L_actual'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
+
+    lutien = p4.line('Time', 'modified_C_L_actual', source = vs_source, line_width = 4 , line_color = "lime", legend_label = "Lutein(Actual)", muted_color = 'lime',)
     p4.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutein'), ('Time:', '@Time'), ('Concentration:', '@C_L_actual') ],) )
     
     
@@ -610,8 +612,10 @@ def versus_plot(vs_data, p4): # function to plot the parity graph
    
     nitrate_predicted = p4.line('Time', 'C_N', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "orange", legend_label = "Nitrate(Predicted)", muted_color = 'orange',)
     p4.add_tools(HoverTool(renderers = [nitrate_predicted], tooltips=[  ('Name', 'Nitrate'), ('Time:', '@Time'), ('Concentration:', '@C_N') ],) )
-    
-    lutien_predicted = p4.line('Time', 'C_L', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "lime", legend_label = "Lutein(Predicted)", muted_color = 'lime',)
+       
+    vs_source.data['modified_C_L'] = vs_source.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
+
+    lutien_predicted = p4.line('Time', 'modified_C_L', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "lime", legend_label = "Lutein(Predicted)", muted_color = 'lime',)
     p4.add_tools(HoverTool(renderers = [lutien_predicted], tooltips=[  ('Name', 'Lutein'), ('Time:', '@Time'), ('Concentration:', '@C_L') ],) )
     
     # Add the lines to the plot
