@@ -563,6 +563,20 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
     # Add the lines to the plot
 parity_plot("models/testPreds.csv", p3)
 p3.legend.click_policy="hide"
+# display legend in top left corner (default is top right corner)
+p3.legend.location = "top_left"
+
+# change appearance of legend text
+p3.legend.label_text_font = "times"
+p3.legend.label_text_font_style = "italic"
+p3.legend.label_text_color = "navy"
+
+# change border and background of legend
+p3.legend.border_line_width = 3
+p3.legend.border_line_color = "black"
+p3.legend.border_line_alpha = 0.8
+p3.legend.background_fill_color = "white"
+p3.legend.background_fill_alpha = 0.5
 
 #Predictions vs Actual Plot section ---------------------------------------------------------------------------------------------------------------------
 p4 = figure(title = "Prediction vs Actual Plot", x_axis_label = "Time", y_axis_label = "Concentration", )
@@ -590,18 +604,33 @@ def versus_plot(vs_data, p4): # function to plot the parity graph
     p4.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutein'), ('Time:', '@Time'), ('Concentration:', '@C_L_actual') ],) )
     
     
-    biomass_predicted = p4.line('Time', 'C_X', source = vs_source, line_dash = 'dashed', line_width = 4 ,  line_color = "aqua", legend_label = "Biomass(Actual)", muted_color = 'aqua',)
+    biomass_predicted = p4.line('Time', 'C_X', source = vs_source, line_dash = 'dashed', line_width = 4 ,  line_color = "aqua", legend_label = "Biomass(Predicted)", muted_color = 'aqua',)
     p4.add_tools(HoverTool(renderers = [biomass_predicted], tooltips=[  ('Name', 'Biomass'),  ('Time:', '@Time'), ('Concentration:', '@C_X')],) )
                                     # adds the hover tool to the graph for the specifed line
    
-    nitrate_predicted = p4.line('Time', 'C_N', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "orange", legend_label = "Nitrate(Actual)", muted_color = 'orange',)
+    nitrate_predicted = p4.line('Time', 'C_N', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "orange", legend_label = "Nitrate(Predicted)", muted_color = 'orange',)
     p4.add_tools(HoverTool(renderers = [nitrate_predicted], tooltips=[  ('Name', 'Nitrate'), ('Time:', '@Time'), ('Concentration:', '@C_N') ],) )
     
-    lutien_predicted = p4.line('Time', 'C_L', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "lime", legend_label = "Lutein(Actual)", muted_color = 'lime',)
+    lutien_predicted = p4.line('Time', 'C_L', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "lime", legend_label = "Lutein(Predicted)", muted_color = 'lime',)
     p4.add_tools(HoverTool(renderers = [lutien_predicted], tooltips=[  ('Name', 'Lutein'), ('Time:', '@Time'), ('Concentration:', '@C_L') ],) )
     
     # Add the lines to the plot
 versus_plot("outputs/expPredVsDataset.csv", p4)
+p4.legend.click_policy="hide"
+# display legend in top left corner (default is top right corner)
+p4.legend.location = "top_left"
+
+# change appearance of legend text
+p4.legend.label_text_font = "times"
+p4.legend.label_text_font_style = "italic"
+p4.legend.label_text_color = "navy"
+
+# change border and background of legend
+p4.legend.border_line_width = 3
+p4.legend.border_line_color = "black"
+p4.legend.border_line_alpha = 0.8
+p4.legend.background_fill_color = "white"
+p4.legend.background_fill_alpha = 0.5
 
 #Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
     
