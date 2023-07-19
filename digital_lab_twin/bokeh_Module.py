@@ -471,7 +471,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 # loss_datas = pandas.read_csv(loss_data)
 # loss_source = ColumnDataSource(loss_datas)
 #Loss Graph section ---------------------------------------------------------------------------------------------------------------------
-p2 = figure(title = "Loss Graph (Train and Validation)", x_axis_label = "Epochs", y_axis_label = "Loss (percentage)", )
+p2 = figure(title = "Loss Graph (Training)", x_axis_label = "Epochs", y_axis_label = "Loss (percentage)", )
 
 def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
@@ -489,10 +489,10 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
     train_loss = p2.line('index', 'trainLoss', source = loss_source, line_width = 4 ,  line_color = "violet", legend_label = "Train Loss")
     p2.add_tools(HoverTool(renderers = [train_loss], tooltips=[  ('Name', 'Train Loss'),  ('Epochs', '@index'), ('Loss', '@trainLoss')],))
                                     # adds the hover tool to the graph for the specifed line
-   
+"""   
     value_loss = p2.line('index', 'valLoss', source = loss_source, line_width = 4 , line_color = "navy", legend_label = "Validation Loss")
     p2.add_tools(HoverTool(renderers = [value_loss], tooltips=[  ('Name', 'Validation Loss'), ('Epochs', '@index'), ('Loss', '@valLoss') ],))
-
+"""
     
     # Add the lines to the plot
     
@@ -530,9 +530,9 @@ p3.legend.click_policy="hide"
 
 #Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
     
-mean_squared_error = TextInput(value = str(0.0206), title = "MSE", width = 300, disabled = True)
-root_mean_squared_error = TextInput(value = str(0.1437), title = "MSE", width = 300, disabled = True)
-
+mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
+root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
+#TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
 
 #Run Button******************************************************************************************************************************
@@ -579,8 +579,9 @@ ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_F
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error)
 bs = row(ls, rs, p3, means)
-tab1 = TabPanel(child=bs, title="Edit")
-tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Predictions")
+tab1 = TabPanel(child=bs, title="Train")
+tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
+#TODO: add evaluate tab, parity plot, synth line versus model line and mse/rmse displayed here
 tab3 = TabPanel(child = column(intro), title = "Instruction")
 
   
