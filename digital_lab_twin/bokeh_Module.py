@@ -25,6 +25,7 @@ from bokeh.io import export_svgs
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput
 import warnings
+import random
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
@@ -462,9 +463,44 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   lossCSV = lossDF
   #save testPreds to a csv
   testPreds.to_csv('models/testPreds.csv', index=False)
-  return lossDF, testPreds, mse, rmse
-  #TODO:plot the losses against epochs (stored as indexes)
-  #TODO:update the prediction side of the bokeh visualization
+  #TODO: pick an experiment to run, run it and return a df of its values  
+  #pick an experiment number (between zero and 100)
+  experimentNum = random.randint(0, 100)
+  #experimentnum times 200 will give the starting index, then add 199 to get the ending index
+  start = experimentNum * 200
+  end = start + 200
+  #get the experiment data
+  experimentDataX = X.iloc[start:end]
+  experimentDataY = Y.iloc[start:end]
+  #the first row of experimentDataX is the initial conditions, isolate them for use in predLoop
+  initialConditions = experimentDataX.iloc[0]
+  XTimes = np.linspace(0, 150, 200)
+  XDF = pd.DataFrame(XTimes, columns=['Time'])
+  #generate empty columns
+  XDF['C_X'] = np.zeros(200)
+  XDF['C_N'] = np.zeros(200)
+  XDF['C_L'] = np.zeros(200)
+  XDF['F_in'] = np.zeros(200)
+  XDF['C_N_in'] = np.zeros(200)
+  XDF['I0'] = np.zeros(200)
+  XTimes = XDF.pop('Time') #popped for plotting
+  #set initial conditions by referencing initialConditions
+  C_X_init = initialConditions[1]
+  C_N_init = initialConditions[2]
+  C_L_init = initialConditions[3]
+  F_in_init = initialConditions[4]
+  C_N_in_init = initialConditions[5]
+  I0_init = initialConditions[6]
+  #call predLoop
+  XDF = predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
+  #add the experiment data to the XDF
+  XDF['C_X_actual'] = experimentDataY['C_X'].to_numpy()
+  XDF['C_N_actual'] = experimentDataY['C_N'].to_numpy()
+  XDF['C_L_actual'] = experimentDataY['C_L'].to_numpy()
+  #export XDF to csv (for initial run)
+  #XDF.to_csv('outputs/expPredVsDataset.csv', index=False)
+  return lossDF, testPreds, mse, rmse, XDF
+
     
 # #Loss Graph Data section ---------------------------------------------------------------------------------------------------------------------
 # loss_data = "models/losses.csv"
@@ -551,14 +587,16 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     neurons = n
     epochs = e
     batch_Size = b
-    lossDF, testPreds, mse, rmse = model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
+    lossDF, testPreds, mse, rmse, XDF = model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
     #generating data from model loop
     loss_graph(lossDF, p2)
     #parity graph
     parity_plot(testPreds, p3)
     mean.value = str(mse)
     root_mean.value = str(rmse)
-    
+    #TODO: use XDF to plot the actual vs predicted values
+    #'Time' on X axis, then two lines per output (actual and predicted) on Y axis
+    #C_X, C_N, C_L are model outputs, C_X_actual, C_N_actual, C_L_actual are actual values
 
 
     
