@@ -45,36 +45,32 @@ sizeAccess.on_change('value', font_size_callback)
 css_rule = """
     @font-face {
     font-family: 'opendyslexic';
-        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-Regular.otf');
+        src: url('fonts/OpenDyslexic-Regular.otf');
         font-style: normal;
         font-weight: normal;
     } 
 
     @font-face {
         font-family: 'opendyslexic';
-        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-Italic.ttf');
+        src: url('fonts/OpenDyslexic-Italic.otf');
         font-style: italic;
         font-weight: normal;
     }
 
     @font-face {
         font-family: 'opendyslexic';
-        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-Bold.ttf');
+        src: url('fonts/OpenDyslexic-Bold.ttf');
         font-weight: bold;
         font-style: normal;
     } 
 
     @font-face {
         font-family: 'opendyslexic';
-        src: url('http://dyslexicfonts.com/fonts/OpenDyslexic-BoldItalic.ttf');
+        src: url('fonts/OpenDyslexic-BoldItalic.ttf');
         font-weight: bold;
         font-style: italic;
     } 
 
-    @font-face {
-        font-family: eulexia;
-        src: url('http://dyslexicfonts.com/fonts/eulexia.ttf');
-    } 
 
     * {
         font-size:20px;
@@ -83,8 +79,7 @@ css_rule = """
         font-family:opendyslexic !important;
     }
 """
-head_html = f"<style>{css_rule}</style>"
-curdoc().add_root(Div(text=head_html))
+
 
 
 
@@ -135,5 +130,5 @@ intro = Div(styles={"font-family": "Arial", 'font-size': '100%'}, text="""
 
 choose = row (fontAccess, sizeAccess)
 test = column(choose, intro)
-curdoc().add_root(test, CustomJS(code=css_rule))
+curdoc().add_root(test, )
 
