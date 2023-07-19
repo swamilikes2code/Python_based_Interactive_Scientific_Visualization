@@ -564,6 +564,45 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
 parity_plot("models/testPreds.csv", p3)
 p3.legend.click_policy="hide"
 
+#Predictions vs Actual Plot section ---------------------------------------------------------------------------------------------------------------------
+p4 = figure(title = "Prediction vs Actual Plot", x_axis_label = "Time", y_axis_label = "Concentration", )
+def versus_plot(vs_data, p4): # function to plot the parity graph
+    #Removes previous lines and hover tools
+    p4.renderers = [] #removes previous lines
+    p4.tools = [] #removes previous hover tools    
+    #if parity data is not a string, then it is a dataframe
+    if type(vs_data) != str:
+        vs_datas = vs_data
+    else:
+        vs_datas = pandas.read_csv(vs_data)
+        vs_datas['index'] = vs_datas.index
+    vs_source = ColumnDataSource(vs_datas)
+    # Example of updating CL value
+
+    biomass = p4.line('Time', 'C_X_actual', source = vs_source, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass(Actual)", muted_color = 'aqua',)
+    p4.add_tools(HoverTool(renderers = [biomass], tooltips=[  ('Name', 'Biomass'),  ('Time:', '@Time'), ('Concentration:', '@C_X_actual')],) )
+                                    # adds the hover tool to the graph for the specifed line
+   
+    nitrate = p4.line('Time', 'C_N_actual', source = vs_source, line_width = 4 , line_color = "orange", legend_label = "Nitrate(Actual)", muted_color = 'orange',)
+    p4.add_tools(HoverTool(renderers = [nitrate], tooltips=[  ('Name', 'Nitrate'), ('Time:', '@Time'), ('Concentration:', '@C_N_actual') ],) )
+    
+    lutien = p4.line('Time', 'C_L_actual', source = vs_source, line_width = 4 , line_color = "lime", legend_label = "Lutein(Actual)", muted_color = 'lime',)
+    p4.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutein'), ('Time:', '@Time'), ('Concentration:', '@C_L_actual') ],) )
+    
+    
+    biomass_predicted = p4.line('Time', 'C_X', source = vs_source, line_dash = 'dashed', line_width = 4 ,  line_color = "aqua", legend_label = "Biomass(Actual)", muted_color = 'aqua',)
+    p4.add_tools(HoverTool(renderers = [biomass_predicted], tooltips=[  ('Name', 'Biomass'),  ('Time:', '@Time'), ('Concentration:', '@C_X')],) )
+                                    # adds the hover tool to the graph for the specifed line
+   
+    nitrate_predicted = p4.line('Time', 'C_N', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "orange", legend_label = "Nitrate(Actual)", muted_color = 'orange',)
+    p4.add_tools(HoverTool(renderers = [nitrate_predicted], tooltips=[  ('Name', 'Nitrate'), ('Time:', '@Time'), ('Concentration:', '@C_N') ],) )
+    
+    lutien_predicted = p4.line('Time', 'C_L', source = vs_source, line_dash = 'dashed', line_width = 4 , line_color = "lime", legend_label = "Lutein(Actual)", muted_color = 'lime',)
+    p4.add_tools(HoverTool(renderers = [lutien_predicted], tooltips=[  ('Name', 'Lutein'), ('Time:', '@Time'), ('Concentration:', '@C_L') ],) )
+    
+    # Add the lines to the plot
+versus_plot("outputs/expPredVsDataset.csv", p4)
+
 #Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
     
 mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
@@ -576,7 +615,7 @@ root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", 
 
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error ): #ts = test, vs = val_split,
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4): #ts = test, vs = val_split,
     
     learning_rate = lR
     loss = lFn
@@ -594,6 +633,7 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     parity_plot(testPreds, p3)
     mean.value = str(mse)
     root_mean.value = str(rmse)
+    versus_plot(XDF, p4)
     #TODO: use XDF to plot the actual vs predicted values
     #'Time' on X axis, then two lines per output (actual and predicted) on Y axis
     #C_X, C_N, C_L are model outputs, C_X_actual, C_N_actual, C_L_actual are actual values
@@ -617,7 +657,7 @@ ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_F
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error)
 bs = row(ls, rs)
-evaluate = row(p3, means)
+evaluate = row(p4,p3, means)
 tab1 = TabPanel(child=bs, title="Train")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
 tab4 = TabPanel(child = evaluate, title = "Evaluate")
