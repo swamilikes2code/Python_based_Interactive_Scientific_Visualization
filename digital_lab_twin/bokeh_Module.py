@@ -25,6 +25,7 @@ from bokeh.io import export_svgs
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput
 import warnings
+import random
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
@@ -462,8 +463,39 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   lossCSV = lossDF
   #save testPreds to a csv
   testPreds.to_csv('models/testPreds.csv', index=False)
+  #TODO: pick an experiment to run, run it and return a df of its values  
+  #pick an experiment number (between zero and 100)
+  experimentNum = random.randint(0, 100)
+  #experimentnum times 200 will give the starting index, then add 199 to get the ending index
+  start = experimentNum * 200
+  end = start + 199
+  #get the experiment data
+  experimentDataX = X.iloc[start:end]
+  experimentDataY = Y.iloc[start:end]
+  #the first row of experimentDataX is the initial conditions, isolate them for use in predLoop
+  initialConditions = experimentDataX.iloc[0]
+  XTimes = np.linspace(0, 150, 200)
+  XDF = pd.DataFrame(XTimes, columns=['Time'])
+  #generate empty columns
+  XDF['C_X'] = np.zeros(200)
+  XDF['C_N'] = np.zeros(200)
+  XDF['C_L'] = np.zeros(200)
+  XDF['F_in'] = np.zeros(200)
+  XDF['C_N_in'] = np.zeros(200)
+  XDF['I0'] = np.zeros(200)
+  XTimes = XDF.pop('Time') #popped for plotting
+  #set initial conditions by referencing 0th index of experimentDataX
+  C_X_init = initialConditions[0]
+  C_N_init = initialConditions[1]
+  C_L_init = initialConditions[2]
+  F_in_init = initialConditions[3]
+  C_N_in_init = initialConditions[4]
+  I0_init = initialConditions[5]
+  
+  
+
   return lossDF, testPreds, mse, rmse
-  #TODO: pick an experiment to run, run it and return a df of its values
+
     
 # #Loss Graph Data section ---------------------------------------------------------------------------------------------------------------------
 # loss_data = "models/losses.csv"
