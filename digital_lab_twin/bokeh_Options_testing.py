@@ -1,5 +1,5 @@
 from bokeh.plotting import show, figure;
-from bokeh.models import ColumnDataSource, HoverTool, Select
+from bokeh.models import ColumnDataSource, HoverTool, Select, CustomJS
 import pandas
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
