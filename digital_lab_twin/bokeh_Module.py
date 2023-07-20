@@ -397,19 +397,7 @@ val_split.on_change('value', validate_sum)"""
 
 #Reset Buttton For Edit Tab Section -----------------------------------------------------------------------------------------------
 reset_button_edit_tab = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-# reset_button_edit_tab.js_on_click(CustomJS(args=dict( lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size),#vs = val_split,ts = test,
-#                                   code="""
-#    lR.value = 0.001;
-#    lFn.value = "MAE";
-#    opt.value = "ADAM";
-#    n.value = 18;
-#    #vs.value = 0.2;
-#    tr.value = 0.6;
-#    #ts.value = 0.2;
-#    e.value = 100;
-#    b.value = 25;
 
-# """ ))
 def reset_button_edit_tab_function():
     learning_rate.value = 0.001
     loss_Fn.value = "MAE"
