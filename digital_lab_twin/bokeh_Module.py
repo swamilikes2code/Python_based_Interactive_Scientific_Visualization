@@ -625,7 +625,8 @@ p4.legend.background_fill_alpha = 0.3
     
 mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
 root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
-lowest_mse_validation = TextInput(value = str(0.0174), title = "Lowest MSE (Validation)", width = 300, disabled = True)
+lowest_mse_validation = TextInput(value = str(100), title = "Lowest MSE (Validation)", width = 300, disabled = True)
+epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Loss", width = 300, disabled = True)
 #TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
 
@@ -642,7 +643,7 @@ def first_clicked(p2 = p2):
 run_button_edit_tab.on_click(first_clicked)
 
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, low_mse = lowest_mse_validation): #ts = test, vs = val_split,
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, minValLoss = lowest_mse_validation, minValLossIndex = epoch_of_lowest_loss): #ts = test, vs = val_split,
     #Idea: have two functions and the inputs can be( lossDF, testPreds, mse, rmse, XDF ) insted of (lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4)
     #could also clear the graphs here before the actual graph functions
     #p2.renderers = []
@@ -662,9 +663,9 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     #generating data from model loop
     loss_graph(lossDF, p2)
     #get min valLoss from lossDF, index is it's epoch num
-    minValLoss = lossDF['valLoss'].min()
+    minValLoss.value = str(lossDF['valLoss'].min())
     #get the index of the min valLoss
-    minValLossIndex = lossDF['valLoss'].idxmin()
+    minValLossIndex.value = str(lossDF['valLoss'].idxmin())
     #TODO: show these things on 1st tab
     #parity graph
     parity_plot(testPreds, p3)
@@ -693,8 +694,9 @@ run_button_edit_tab.on_click(edit_run_button_function)
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
-means = column(mean_squared_error, root_mean_squared_error)
-bs = row(ls, rs)
+means = column(mean_squared_error, root_mean_squared_error,)
+lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss)
+bs = row(ls, rs, lowest_val_info)
 evaluate = row(p4,p3, means)
 tab1 = TabPanel(child=bs, title="Train")
 tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
