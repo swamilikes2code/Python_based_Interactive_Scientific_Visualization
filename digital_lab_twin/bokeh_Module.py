@@ -447,7 +447,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #read in the losses
   lossCSV = lossDF
   #save testPreds to a csv
-  testPreds.to_csv('models/testPreds.csv', index=False)
+  #testPreds.to_csv('models/testPreds.csv', index=False)
   #TODO: pick an experiment to run, run it and return a df of its values  
   #pick an experiment number (between zero and 100)
   experimentNum = random.randint(0, 100)
@@ -661,6 +661,11 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     lossDF, testPreds, mse, rmse, XDF = model_loop(learning_rate, loss, optimizer, train,  neurons, epochs, batch_Size, X, Y, device, optimizer_options, loss_options) #test, val_split,
     #generating data from model loop
     loss_graph(lossDF, p2)
+    #get min valLoss from lossDF, index is it's epoch num
+    minValLoss = lossDF['valLoss'].min()
+    #get the index of the min valLoss
+    minValLossIndex = lossDF['valLoss'].idxmin()
+    #TODO: show these things on 1st tab
     #parity graph
     parity_plot(testPreds, p3)
     mean.value = str(mse)
