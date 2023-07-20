@@ -261,26 +261,15 @@ slides = column(light_intensity, inlet_flow,  inlet_concentration, nitrate_con, 
 
 #Reset Button******************************************************************************************************************************
 reset_button = Button(label = "Reset", button_type = "danger", height = 60, width = 300)
-reset_button.js_on_click(CustomJS(args=dict( source = source,initial_source = initial_source, p = p, li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con), #pH = pH,
-                                  code="""
-   li.value = 150
-   inf.value = 0.008
-   #pH.value = 0.5
-   inc.value = 10
-   nit.value = 1
-   bio.value = 0.5
-    // Reset the plot data
-    //source.data = initial_source.data; // This is the initial data stored in the ColumnDataSource
-    // Reset the axis ranges // this will help reset the axis ranges of the graph and the graph in genral
-    // p.x_range.start = Math.min.apply(null, source.data['Time']);
-    // p.x_range.end = Math.max.apply(null, source.data['Time']);
-    // p.y_range.start = Math.min.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
-    // p.y_range.end = Math.max.apply(null, source.data['C_X'].concat(source.data['C_N'], source.data['C_L']));
 
-    source.change.emit();
-
-
-""" ))
+def rest_button_callback():
+    light_intensity.value = 150
+    nitrate_con.value = 1
+    biomass_con.value = 0.5
+    inlet_concentration.value = 10
+    inlet_flow.value = 0.008
+    
+reset_button.on_click(rest_button_callback)
 
 
 
