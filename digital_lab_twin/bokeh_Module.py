@@ -625,6 +625,7 @@ p4.legend.background_fill_alpha = 0.3
     
 mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
 root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
+lowest_mse_validation = TextInput(value = str(0.0174), title = "Lowest MSE (Validation)", width = 300, disabled = True)
 #TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
 
@@ -641,7 +642,7 @@ def first_clicked(p2 = p2):
 run_button_edit_tab.on_click(first_clicked)
 
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4): #ts = test, vs = val_split,
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, low_mse = lowest_mse_validation): #ts = test, vs = val_split,
     #Idea: have two functions and the inputs can be( lossDF, testPreds, mse, rmse, XDF ) insted of (lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4)
     #could also clear the graphs here before the actual graph functions
     #p2.renderers = []
