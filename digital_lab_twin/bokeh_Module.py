@@ -447,7 +447,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #read in the losses
   lossCSV = lossDF
   #save testPreds to a csv
-  testPreds.to_csv('models/testPreds.csv', index=False)
+  #testPreds.to_csv('models/testPreds.csv', index=False)
   #TODO: pick an experiment to run, run it and return a df of its values  
   #pick an experiment number (between zero and 100)
   experimentNum = random.randint(0, 100)
