@@ -656,19 +656,21 @@ root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", 
 
 run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
-# def first_clicked(p2 = p2):
-#     p2.renderers = []
-#     run_button_edit_tab.label = "Running..."
-#     run_button_edit_tab.button_type = "danger"
+def first_clicked(p2 = p2):
+    p2.renderers = []
+    run_button_edit_tab.label = "Running..."
+    run_button_edit_tab.button_type = "danger"
     
+run_button_edit_tab.on_click(first_clicked)
+
 
 def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4): #ts = test, vs = val_split,
     #Idea: have two functions and the inputs can be( lossDF, testPreds, mse, rmse, XDF ) insted of (lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4)
     #could also clear the graphs here before the actual graph functions
     #p2.renderers = []
     #run_button_edit_tab.disabled = True
-    # run_button_edit_tab.label = "Running..."
-    # run_button_edit_tab.button_type = "primary"
+    run_button_edit_tab.label = "Run"
+    run_button_edit_tab.button_type = "primary"
     learning_rate = lR
     loss = lFn
     optimizer = opt
@@ -696,7 +698,6 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     
     
     
-run_button_edit_tab.on_click(first_clicked)
 run_button_edit_tab.on_click(edit_run_button_function)
 
     
