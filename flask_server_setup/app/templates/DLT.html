@@ -348,7 +348,10 @@ nav li {
           <div class="flexwrap1">
           <div id="About" class="tabcontent">
             <h3>About</h3>
-            <p>In this module, we have trained a machine learning regression model to learn the ins and outs of a Photobioreactor system. The data was derived from an ODE simulating the system; generating 20,000 training datapoints over 100 different experimental parameters.</p>
+            <p>This module will dive into the creation, analysis, and optimization of a data-driven model. 
+              Neural networks are powerful, statistical models that, over the course of analysing past data, can learn to predict new outputs. 
+              We'll be using one to predict the outputs of a photobioreactor over a week's experimentation.
+              </p>
               <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="Example of a Photobioreactor" class="center" style="width:800px; border:5px solid black">
            </div>
           </div>
@@ -356,13 +359,19 @@ nav li {
           <div class="flexwrap1">
           <div id="Instructions" class="tabcontent">
             <h3>Instructions</h3>
-            <p>To use the model, simply adjust the sliders to the desired experimental parameters and the model will predict the output. There are 6 adjustable parameters: 3 to shift the initial concentrations of biomass, nitrate solution and lutein; and 3 to shift the light intensity, Nitrate solution flow rate and Nitrate flow concentration. Play as you wish, the model will keep parameters within 'expected' ranges. Hit "Reset" if you'd like to return the model to its original state. If you'd like to save the state of the model, hit "Export" to generate a CSV of the data you've found.</p>
+            <p>
+              To use the model, simply adjust sliders and dropdowns to your liking. Press the "run" button on the "Test" tab to create a new neural network. 
+              Analyse your model's performance with the "Evaluate" tab. 
+              Aim to lower your model's error and increase it's accuracy!
+              To optimize your model, use the "Optimize" tab. Change experimental parameters to your liking, and hit "Run" to generate new predictions.
+              To save predictions to your local machine, hit "Export Data". 
+            </p>
           </div>
           </div>
       
           <div class="flexwrap1">
           <div id="Questions" class="tabcontent">
-            <h3>Supplemental Questions</h3>
+            <h3>Supplemental Questions (WIP)</h3>
             <p><strong>Introductory Questions</strong> 
               <ol> 
               <li> In the Data Exploration section, what combinations of methane conversion, temperature, and value of C2y will yield the most data points?</li>
