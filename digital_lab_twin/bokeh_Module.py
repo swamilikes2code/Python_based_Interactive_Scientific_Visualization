@@ -23,7 +23,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import layout
 from bokeh.io import export_svgs
 import datetime
-from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput
+from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip
 import warnings
 import random
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
@@ -346,20 +346,37 @@ loss_options = ["MSE", "MAE"]
 
 #test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
 
-train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Train Split:(0.1-0.7)")# 
+train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Train Split:(0.1-0.7)", )# 
+train_tooltip = Tooltip(content=("""Choose a train value from 0.1 - 0.7."""), position = "right")
+train_help_button = HelpButton(tooltip=train_tooltip, button_type = "light", )
 
 #val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
+neurons_tooltip = Tooltip(content=("""Choose the number of neurons from 7 to 100."""), position = "right")
+neurons_help_button = HelpButton(tooltip=neurons_tooltip, button_type = "light")
+
 epochs = Slider (start = 5, end = 50, value = 25, step = 5, title = "Epochs")# 
+epochs_tooltip = Tooltip(content=("""Choose the number of epochs from 5 to 50."""), position = "right")
+epochs_help_button = HelpButton(tooltip=epochs_tooltip, button_type = "light")
+    
 batch_Size = Slider (start = 25, end = 200, value = 25, step = 25, title = "Batch Size")# 
+batch_Size_tooltip = Tooltip(content=("""Choose the batch size from 25 to 200."""), position = "right")
+batch_Size_help_button = HelpButton(tooltip=batch_Size_tooltip, button_type = "light")
 
 
 learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
+learning_rate_tooltip = Tooltip(content=("""Choose the learning rate from 0.0001 to 0.01"""), position = "right")
+learning_rate_help_button = HelpButton(tooltip=learning_rate_tooltip, button_type = "light")
 
-loss_Fn = Select(title="Optimizer:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
 
-optimizer = Select(title="Loss Fn:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
+loss_Fn = Select(title="Loss Function:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
+loss_Fn_tooltip = Tooltip(content=f"Select one of the following options: {', '.join(loss_options)}", position = "right")
+loss_Fn_help_button = HelpButton(tooltip=loss_Fn_tooltip, button_type = "light")
+
+optimizer = Select(title="Optimizer:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
+O_tooltip = Tooltip(content=f"Select one of the following options: {', '.join(optimizer_options)}", position="right")
+optimizer_help_button = HelpButton(tooltip=O_tooltip, button_type = "light")
 
 """
 # Define the callback function for the sliders
@@ -692,7 +709,14 @@ run_button_edit_tab.on_click(edit_run_button_function)
 
 #Putting the Model together______________________________________________________________________________________________________________________________
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
-ls = column(train, neurons, epochs, batch_Size, learning_rate, optimizer, loss_Fn,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
+trains = row(train,train_help_button)
+neuron = row(neurons, neurons_help_button)
+epoch = row(epochs, epochs_help_button)
+batch = row(batch_Size, batch_Size_help_button)
+learning = row(learning_rate, learning_rate_help_button)
+optimizers = row(optimizer, optimizer_help_button)
+losses_help = row(loss_Fn, loss_Fn_help_button)
+ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error,)
 lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss)
