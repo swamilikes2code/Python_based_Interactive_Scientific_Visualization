@@ -34,8 +34,7 @@ warnings.filterwarnings("ignore", category=UserWarning, message="X does not have
 
 
 intro = Div(text="""
-        <h3>Work In Progress!</h3>
-        <h2>Header</h2><p>This is a <em>formatted</em> paragraph.</p>
+       
         <h3>Simple Photobioreactor Summary</h3>
         <p>A photobioreactor is a container, like a fish tank, filled with water and special microscopic plants called algae. 
         It provides the algae with light, nutrients, and carbon dioxide to help them grow. 
@@ -69,7 +68,6 @@ intro = Div(text="""
         the timestamp is the current time and will be formated as year-month-day-hour-minuete-second</p>
         
         
-        <h4> Section for bold text</h4>
     """)
 
 
@@ -701,7 +699,41 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     
 run_button_edit_tab.on_click(edit_run_button_function)
 
+#Fonts Slection******************************************************************************************************************************
+font_options = ["Arial", "San Serif", "Times New Roman", "OpenDyslexic"]
+fontAccess = Select(title="Font Options:", value="Arial", options= font_options, height = 60, width = 300)# Student chooses the loss function
+def font_Callback(attr, old, new):
+    if(new == "Arial"):
+        intro.styles = {"font-family": "Arial"}
+    elif(new == "San Serif"):
+        intro.styles = {"font-family": "San Serif"}
+    elif(new == "OpenDyslexic"):
+        intro.sytles = {"font-family": "opendyslexic"}
+    else:
+        intro.styles = {"font-family": "Times New Roman"}
     
+# fontAccess.on_change('value', font_Callback)
+
+
+font_size_options = ["100%", "110%", "120%", "130%", "140%", "150%", "160%", "170%", "180%", "190%", "200%"]
+sizeAccess = Select(title="Text Size Options:", value="100", options= font_size_options, height = 60, width = 300)# Student chooses the loss function
+
+def size_Callback(attr, old, new, font):
+    intro.styles = {'font-size': new, "font-family": font.value}
+
+# sizeAccess.on_change('value', size_Callback, fontAccess)
+
+# Define the callback function for font and size changes
+def font_size_callback(attr, old, new):
+    selected_font = fontAccess.value
+    selected_size = sizeAccess.value
+    
+    intro.styles = {'font-size': selected_size, "font-family": selected_font}
+
+# Attach the callback functions to the value change events of the font and size widgets
+fontAccess.on_change('value', font_size_callback)
+sizeAccess.on_change('value', font_size_callback)
+
 
 
 
@@ -722,14 +754,18 @@ means = column(mean_squared_error, root_mean_squared_error,)
 lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss)
 bs = row(ls, rs, lowest_val_info)
 evaluate = row(p4,p3, means)
+choose = row (fontAccess, sizeAccess)
+test = column(choose, intro)
 tab1 = TabPanel(child=bs, title="Train")
-tab2 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
-tab4 = TabPanel(child = evaluate, title = "Evaluate")
+tab3 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
+tab2 = TabPanel(child = evaluate, title = "Evaluate")
+tab4 = TabPanel(child = test, title = "Instruction")
+
 #TODO: add evaluate tab, parity plot, synth line versus model line and mse/rmse displayed here
-tab3 = TabPanel(child = column(intro), title = "Instruction")
+
 
   
-all_tabs = Tabs(tabs=[tab1,tab4,tab2,tab3])
+all_tabs = Tabs(tabs=[tab1,tab2,tab3,tab4])
 # show(all_tabs)
 
 #Making the layout to show all of the information and the code ---------------------------------------------------------------------------------------------------------------------

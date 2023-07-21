@@ -4,7 +4,7 @@ import pandas
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
 
-color_options = ["default", "colorblind"]
+color_options = ["Light Mode", "Dark Mode"]
 
 colorAccess = Select(title="Color Options:", value="default", options= color_options, height = 60, width = 300)# Student chooses the loss function
 
@@ -31,7 +31,7 @@ def plot_graph(sources, color_option):
     #Removes previous lines and hover tools
     
     
-    if(color_option.value == "colorblind"):
+    if(color_option.value == "Dark Mode"):
         p.renderers = [] #removes previous lines
         p.tools = [] #removes previous hover tools
         curdoc().theme = "dark_minimal"# this makes the graph in dark mode
