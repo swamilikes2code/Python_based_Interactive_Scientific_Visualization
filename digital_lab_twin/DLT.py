@@ -596,7 +596,7 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
 parityDataPath = 'models/testPreds.csv'   
 if master:
     parityDataPath = prefix + parityDataPath
-parity_plot("models/testPreds.csv", p3)
+parity_plot(parityDataPath, p3)
 p3.legend.click_policy="hide"
 # display legend in top left corner (default is top right corner)
 p3.legend.location = "top_left"
