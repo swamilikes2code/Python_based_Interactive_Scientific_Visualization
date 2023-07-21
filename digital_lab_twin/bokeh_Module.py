@@ -497,6 +497,8 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   XDF['C_X_actual'] = experimentDataY['C_X'].to_numpy()
   XDF['C_N_actual'] = experimentDataY['C_N'].to_numpy()
   XDF['C_L_actual'] = experimentDataY['C_L'].to_numpy()
+  #remove the last row of XDF, it goes into the next experiment
+  XDF.drop(index=199, inplace=True)
   #export XDF to csv (for initial run)
   #XDF.to_csv('outputs/expPredVsDataset.csv', index=False)
   return lossDF, testPreds, mse, rmse, XDF
