@@ -31,7 +31,16 @@ warnings.filterwarnings("ignore", category=UserWarning, message="X does not have
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
 #This is the intro text section, it is a div, which is a bokeh object that allows you to write html and css in python
 #headers are made with <h1> </h1> tags, and paragraphs are made with <p> </p> tags, headers are automatically bolded
-
+#prefix holder so any file calls are relative to the current directory
+prefix = 'digital_lab_twin/'
+#boolean for if on master or not--false will keep things presuming you are running from dlt folder, otherwise append prefix
+master = True
+#when running, ask user if they are running from master or not
+"""master = input("Are you running from master? (y/n): ")
+if master == 'y':
+    master = True
+else:
+    master = False"""
 
 intro = Div(text="""
        
@@ -111,11 +120,19 @@ biomass_con = Slider(start=0.2, end=2, value=0.5, step=.05, title="Initial Bioma
 
 #pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
 #initial run so bokeh plot is not empty
-model = torch.load('models/model.pt')
+modelLocation = 'models/model.pt'
+if master:
+    modelLocation = prefix + modelLocation
+model = torch.load(modelLocation)
 model.eval()
 #scalers
-stScalerX = joblib.load('models/stScalerX.pkl')
-stScalerY = joblib.load('models/stScalerY.pkl')
+stScalerXLocation = 'models/stScalerX.pkl'
+stScalerYLocation = 'models/stScalerY.pkl'
+if master:
+    stScalerXLocation = prefix + stScalerXLocation
+    stScalerYLocation = prefix + stScalerYLocation
+stScalerX = joblib.load(stScalerXLocation)
+stScalerY = joblib.load(stScalerYLocation)
 
 
 #function takes in initial conditions and runs the model
@@ -182,10 +199,14 @@ def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
 #Data Generation Section ---------------------------------------------------------------------------------------------------------------------
 
 data = "outputs/prediction.csv"
+if master:
+    data = prefix + data
 datas = pandas.read_csv(data)
 source = ColumnDataSource(datas)
 #initial Data  for reset section ---------------------------------------------------------------------------------------------------------------------
 initial_csv1 = "outputs/prediction.csv"
+if master:
+    initial_csv1 = prefix + initial_csv1
 initial_data = pandas.read_csv(initial_csv1)
 initial_source = ColumnDataSource(initial_data)
 
@@ -419,7 +440,10 @@ reset_button_edit_tab.on_click(reset_button_edit_tab_function)
 #the below code is designed to drag and drop into the bokeh visualization
 #static section should run once on launch, dynamic section should run on each change
 ### Static (run once)
-rawData = pd.read_csv('STEMVisualsSynthData.csv', header=0)
+csvPath = 'STEMVisualsSynthData.csv'
+if master:
+    csvPath = prefix + csvPath
+rawData = pd.read_csv(csvPath, header=0)
 #remove unneeded column
 rawData.drop('Index_within_Experiment', axis = 1, inplace = True)
 #X is inputs--the three Concentrations, F_in, I0 (light intensity), and c_N_in (6)
@@ -437,7 +461,10 @@ X.drop(index=19999, inplace=True)
 #set device
 #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = 'cpu'
-lossCSV = pd.read_csv('models/losses.csv', header=0)
+lossCSVPath = 'models/losses.csv'
+if master:
+    lossCSVPath = prefix + lossCSVPath
+lossCSV = pd.read_csv(lossCSVPath, header=0)
 
 def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train,  n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options): #ts = test, vs = val_split,
     
@@ -535,7 +562,10 @@ def loss_graph(loss_data, p2): # function to plot the loss graph
     # Add the lines to the plot
     
     
-loss_graph("models/losses.csv", p2)
+lossInitPath = 'models/losses.csv'
+if master:
+    lossInitPath = prefix + lossInitPath
+loss_graph(lossInitPath, p2)
 
 #Parity Plot section ---------------------------------------------------------------------------------------------------------------------
 p3 = figure(title = "Parity Plot", x_axis_label = "Actual Concentration", y_axis_label = "Predicted Concentration", )
@@ -621,7 +651,10 @@ def versus_plot(vs_data, p4): # function to plot the parity graph
     p4.add_tools(HoverTool(renderers = [lutien_predicted], tooltips=[  ('Name', 'Lutein'), ('Time:', '@Time'), ('Concentration:', '@C_L') ],) )
     
     # Add the lines to the plot
-versus_plot("outputs/expPredVsDataset.csv", p4)
+expPredsCSVPath = 'outputs/expPredVsDataset.csv'
+if master:
+    expPredsCSVPath = prefix + expPredsCSVPath    
+versus_plot(expPredsCSVPath, p4)
 p4.legend.click_policy="hide"
 # display legend in top left corner (default is top right corner)
 p4.legend.location = "top_left"
