@@ -700,16 +700,14 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
 run_button_edit_tab.on_click(edit_run_button_function)
 
 #Fonts Slection******************************************************************************************************************************
-font_options = ["Arial", "San Serif", "Times New Roman", "OpenDyslexic"]
+font_options = ["Arial", "San Serif", "Times New Roman", ]
 fontAccess = Select(title="Font Options:", value="Arial", options= font_options, height = 60, width = 300)# Student chooses the loss function
 def font_Callback(attr, old, new):
     if(new == "Arial"):
         intro.styles = {"font-family": "Arial"}
     elif(new == "San Serif"):
         intro.styles = {"font-family": "San Serif"}
-    elif(new == "OpenDyslexic"):
-        intro.sytles = {"font-family": "opendyslexic"}
-    else:
+    elif(new == "Times New Roman "):
         intro.styles = {"font-family": "Times New Roman"}
     
 # fontAccess.on_change('value', font_Callback)
