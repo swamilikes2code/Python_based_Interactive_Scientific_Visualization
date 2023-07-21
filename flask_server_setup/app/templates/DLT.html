@@ -276,6 +276,42 @@ nav li {
     padding: 0 10px;
     border-radius: 17px;
 }
+
+.tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
 }
 .tab {
         overflow: hidden;
@@ -349,17 +385,20 @@ nav li {
                 font-size: 16px; /* Adjust the font size as desired */
             }
         </style>
-        <h1 class="head1">Photobioreactor Digital Lab Twin</h1>
+        <h1 class="head1">Photobioreactor Data-Driven Digital Lab Twin</h1>
         <div class="tab">
-            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
-            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Instructions')">Instructions</button>
-            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
+            <button class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+            <button class="tablinks" onclick="openTab(event, 'Instructions')">Instructions</button>
+            <button class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
           </div>
       
           <div class="flexwrap1">
           <div id="About" class="tabcontent">
             <h3>About</h3>
-            <p>In this module, we have trained a machine learning regression model to learn the ins and outs of a Photobioreactor system. The data was derived from an ODE simulating the system; generating 20,000 training datapoints over 100 different experimental parameters.</p>
+            <p>This module will dive into the creation, analysis, and optimization of a data-driven model. 
+              Neural networks are powerful, statistical models that, over the course of analysing past data, can learn to predict new outputs. 
+              We'll be using one to predict the outputs of a photobioreactor over a week's experimentation.
+              </p>
               <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="Example of a Photobioreactor" class="center" style="width:800px; border:5px solid black">
            </div>
           </div>
@@ -367,43 +406,19 @@ nav li {
           <div class="flexwrap1">
           <div id="Instructions" class="tabcontent">
             <h3>Instructions</h3>
-            <p>To use the model, simply adjust the sliders to the desired experimental parameters and the model will predict the output. There are 6 adjustable parameters: 3 to shift the initial concentrations of biomass, nitrate solution and lutein; and 3 to shift the light intensity, Nitrate solution flow rate and Nitrate flow concentration. Play as you wish, the model will keep parameters within 'expected' ranges. Hit "Reset" if you'd like to return the model to its original state. If you'd like to save the state of the model, hit "Export" to generate a CSV of the data you've found.</p>
+            <p>
+              To use the model, simply adjust sliders and dropdowns to your liking. Press the "run" button on the "Test" tab to create a new neural network. 
+              Analyse your model's performance with the "Evaluate" tab. 
+              Aim to lower your model's error and increase it's accuracy!
+              To optimize your model, use the "Optimize" tab. Change experimental parameters to your liking, and hit "Run" to generate new predictions.
+              To save predictions to your local machine, hit "Export Data". 
+            </p>
           </div>
           </div>
       
           <div class="flexwrap1">
           <div id="Questions" class="tabcontent">
-            <div class="text_row">
-                <div class="text_column">
-            <h3>Supplemental Questions</h3>
-            <p><strong>Introductory Questions</strong> 
-              <ol> 
-              <li> In the Data Exploration section, what combinations of methane conversion, temperature, and value of C2y will yield the most data points?</li>
-              <li> In the Correlation Matrix section, which two different features show the highest correlation between them? What could this indicate about how these features would perform in a regression model?</li>
-              </ol></p>
-              <p> <strong>Regression Section</strong> 
-                  <ol> 
-                  <li> As you select the different features and what outputs you want to go into the model, which combination of features and what output yields the best regression model? </li>
-                  <li> Looking at the model with all features selected, is it possible to tell which variables were the most important in predicting the output variable? If so, how would you do so and which are the most important variables? </li>
-                  <li> How does changing the type of regression from linear to quadratic to cubic affect the regression? </li>
-                  <li>  Is there any overfitting occurring in the regression model?</li>
-                  </ol> </p>
-                  </div>
-                <div class="text_column">
-                  <p> <strong>Unsupervised Learning Section</strong> 
-                  <ol> 
-                  <li> Is there a trend that can be noticed about the amount of variance explained by each principal component? How many principal components does it take to have at least 80 percent variance explained?</li>
-                  <li> According to the elbow plot, what is the ideal number of clusters(optimal k value) for the k-means clustering?</li>
-                  <li> As can be seen in the clustering plot, there is a lot of overlap between points and even clusters. What might this imply about the dataset used to build this plot?</li>
-                  </ol></p>
-                  <p> <strong>Classification Section</strong> 
-                      <ol> 
-                      <li> When selecting all features and selecting the linear kernel, how many C2s were predicted right?  How many were predicted wrong? </li>
-                      <li> Looking at the classification report, what are metrics such as precision, recall, and F1-score and how are they useful in evaluating classification models?</li>
-                      <li> Looking at the svm model, matrix, and report, which kernel performs the best? </li>
-                      </ol></p>
-                </div>
-            </div>
+            <h3>Supplemental Questions (WIP)</h3>
           </div>
         </div>
           <script>
@@ -440,7 +455,7 @@ document.addEventListener('keydown', (event) => {
           </script>
         <br>
     <br>
-{{bokeh_script_DLT|safe}}
+    {{bokeh_script_DLTModel|safe}}
 </body>
 <div class="footer1">
     <div class="flexcol5">
