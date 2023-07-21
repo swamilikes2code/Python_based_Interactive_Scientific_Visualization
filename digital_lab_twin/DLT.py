@@ -593,6 +593,9 @@ def parity_plot(parity_data, p3): # function to plot the parity graph
     p3.add_tools(HoverTool(renderers = [lutien], tooltips=[  ('Name', 'Lutein'), ('Lutein Actual:', '@Lutein_Actual'), ('Lutein Predicted:', '@Lutein_Predicted') ],) )
     
     # Add the lines to the plot
+parityDataPath = 'models/testPreds.csv'   
+if master:
+    parityDataPath = prefix + parityDataPath
 parity_plot("models/testPreds.csv", p3)
 p3.legend.click_policy="hide"
 # display legend in top left corner (default is top right corner)
