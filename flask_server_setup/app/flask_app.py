@@ -63,9 +63,9 @@ def DAC():
 
 @app.route("/DLT", methods=["GET"])
 def DLT():
-    #bokeh_script_DLTModel = server_document(url="https://srrweb.cc.lehigh.edu/DLT")
+    bokeh_script_DLTModel = server_document(url="https://srrweb.cc.lehigh.edu/DLT")
     #print('running DLT Model')
-    bokeh_script_DLTModel = server_document(url="http://localhost:5007/bokeh_Module")
+    #bokeh_script_DLTModel = server_document(url="http://localhost:5007/bokeh_Module")
     return render_template("DLT.html", bokeh_script_DLTModel=bokeh_script_DLTModel)
 
 
