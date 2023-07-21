@@ -14,7 +14,7 @@ def font_Callback(attr, old, new):
     elif(new == "San Serif"):
         intro.styles = {"font-family": "San Serif"}
     elif(new == "OpenDyslexic"):
-        intro.sytles = {"font-family": "opendyslexic"}
+        intro.styles = {"font-family": "opendyslexic"}
     else:
         intro.styles = {"font-family": "Times New Roman"}
     
