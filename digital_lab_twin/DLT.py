@@ -373,35 +373,35 @@ loss_options = ["MSE", "MAE"]
 #test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
 
 train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Train Split:(0.1-0.7)", )# 
-train_tooltip = Tooltip(content=("""Choose a train value from 0.1 - 0.7."""), position = "right")
+train_tooltip = Tooltip(content=("""Determine as a percentage how much of the data will be used to teach the model. What is left out of training will be used to validate and test."""), position = "right")
 train_help_button = HelpButton(tooltip=train_tooltip, button_type = "light", )
 
 #val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
-neurons_tooltip = Tooltip(content=("""Choose the number of neurons from 7 to 100."""), position = "right")
+neurons_tooltip = Tooltip(content=("""Determine how dense each neural network layer is. The network contains 3 layers, with an activator function in between each. Denser networks are resource intensive, but thinner networks may compromise accuracy."""), position = "right")
 neurons_help_button = HelpButton(tooltip=neurons_tooltip, button_type = "light")
 
 epochs = Slider (start = 5, end = 50, value = 25, step = 5, title = "Epochs")# 
-epochs_tooltip = Tooltip(content=("""Choose the number of epochs from 5 to 50."""), position = "right")
+epochs_tooltip = Tooltip(content=("""Determine how many times the network will read over the training data. This heavily impacts the model’s processing time."""), position = "right")
 epochs_help_button = HelpButton(tooltip=epochs_tooltip, button_type = "light")
     
 batch_Size = Slider (start = 25, end = 200, value = 25, step = 25, title = "Batch Size")# 
-batch_Size_tooltip = Tooltip(content=("""Choose the batch size from 25 to 200."""), position = "right")
+batch_Size_tooltip = Tooltip(content=("""Determine how many datapoints to feed the network at one time. An ideal batch size will help optimize runtime and model accuracy."""), position = "right")
 batch_Size_help_button = HelpButton(tooltip=batch_Size_tooltip, button_type = "light")
 
 
 learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
-learning_rate_tooltip = Tooltip(content=("""Choose the learning rate from 0.0001 to 0.01"""), position = "right")
+learning_rate_tooltip = Tooltip(content=("""Choose a maximum value by which the optimizer may adjust neuron weights. The lower this is, the smaller the changes any given epoch will have on the model."""), position = "right")
 learning_rate_help_button = HelpButton(tooltip=learning_rate_tooltip, button_type = "light")
 
 
 loss_Fn = Select(title="Loss Function:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
-loss_Fn_tooltip = Tooltip(content=f"Select one of the following options: {', '.join(loss_options)}", position = "right")
+loss_Fn_tooltip = Tooltip(content=f"Choose an algorithm to measure the accuracy of your predictions. MSE judges by square loss, whereas MAE judges by absolute loss. ", position = "right") #{', '.join(loss_options)}
 loss_Fn_help_button = HelpButton(tooltip=loss_Fn_tooltip, button_type = "light")
 
 optimizer = Select(title="Optimizer:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
-O_tooltip = Tooltip(content=f"Select one of the following options: {', '.join(optimizer_options)}", position="right")
+O_tooltip = Tooltip(content=f"Choose a maximum value by which the optimizer may adjust neuron weights. The lower this is, the smaller the changes any given epoch will have on the model.", position="right") # {', '.join(optimizer_options)}
 optimizer_help_button = HelpButton(tooltip=O_tooltip, button_type = "light")
 
 """
@@ -490,14 +490,12 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   batchSize = b.value #0 < int < 200
     
   ### Dynamic (run on each change)
-  #TODO: upon running, check params are valid then update these values
   #test the all-in-one function
   model, Y_test_tensor, testPreds, XTestTime, lossDF, stScalerX, stScalerY, testPreds, mse, rmse= mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
   #read in the losses
   lossCSV = lossDF
   #save testPreds to a csv
-  #testPreds.to_csv('models/testPreds.csv', index=False)
-  #TODO: pick an experiment to run, run it and return a df of its values  
+  #testPreds.to_csv('models/testPreds.csv', index=False) 
   #pick an experiment number (between zero and 100)
   experimentNum = random.randint(0, 100)
   #experimentnum times 200 will give the starting index, then add 199 to get the ending index
@@ -685,7 +683,7 @@ p4.legend.background_fill_alpha = 0.3
     
 mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
 root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
-lowest_mse_validation = TextInput(value = str(100), title = "Lowest MSE (Validation)", width = 300, disabled = True)
+lowest_mse_validation = TextInput(value = str(100), title = "Lowest Loss (Validation)", width = 300, disabled = True)
 epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Loss", width = 300, disabled = True)
 #TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
