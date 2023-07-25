@@ -88,9 +88,8 @@ css_rule = """
 # curdoc().add_root(CustomJS(code=css_rule))
 
 
-intro = Div(styles={"font-family": "Arial", 'font-size': '100%'}, text="""
-        <h3>Work In Progress!</h3>
-        <h2>Header</h2><p>This is a <em>formatted</em> paragraph.</p>
+intro = Div(text="""
+       
         <h3>Simple Photobioreactor Summary</h3>
         <p>A photobioreactor is a container, like a fish tank, filled with water and special microscopic plants called algae. 
         It provides the algae with light, nutrients, and carbon dioxide to help them grow. 
@@ -116,15 +115,21 @@ intro = Div(styles={"font-family": "Arial", 'font-size': '100%'}, text="""
         <p> This Button will reset the graph to the original position based on the initial conditions before the sliders were changed</p>
         
          <h3>Run Button</h3>
-        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions</p>
+        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions<br>
+        <b><u>Note</u></b>: There are two run buttons the run button on the Train Tab changes the graph in the Train tab and the Optimize tab, <br>
+        the run button on the Evaluate Tab on will only change the graph of the evaluate tab</p>
         
          <h3>Export Button</h3>
         <p> This Button will take the data points of the Time, Nitrate Concentration, Biomass concentration, and Lutine concentration<br>
         and put them in a csv file and this csv file will be located in your downloads folder the file will be named "exported_data_{timestamp}.csv"<br>
         the timestamp is the current time and will be formated as year-month-day-hour-minuete-second</p>
         
+         <h3>Help Button</h3>
+        <p> In the Train tab you can see little question mark buttons next to the interactive elements, these buttons will give you <br>
+        information on what this tool is used for and how it will can change your graph</p>
         
-        <h4> Section for bold text</h4>
+        
+        
     """)
 
 
