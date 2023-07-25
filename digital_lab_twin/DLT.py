@@ -69,12 +69,19 @@ intro = Div(text="""
         <p> This Button will reset the graph to the original position based on the initial conditions before the sliders were changed</p>
         
          <h3>Run Button</h3>
-        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions</p>
+        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions
+        <b><u>Note</u></b>: There are two run buttons the run button on the Train Tab changes the graph in the Train tab and the<br>
+        Optimize tab, the run button on the Evaluate Tab on will only change the graph of the evaluate tab</p>
         
          <h3>Export Button</h3>
         <p> This Button will take the data points of the Time, Nitrate Concentration, Biomass concentration, and Lutine concentration<br>
         and put them in a csv file and this csv file will be located in your downloads folder the file will be named "exported_data_{timestamp}.csv"<br>
         the timestamp is the current time and will be formated as year-month-day-hour-minuete-second</p>
+        
+         <h3>Help Button</h3>
+        <p> In the Train tab you can see little question mark buttons next to the interactive elements, these buttons will give you <br>
+        information on what this tool is used for and how it will can change your graph</p>
+        
         
         
     """)
