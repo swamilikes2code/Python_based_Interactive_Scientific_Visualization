@@ -500,7 +500,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   experimentNum = random.randint(0, 100)
   #experimentnum times 200 will give the starting index, then add 199 to get the ending index
   start = experimentNum * 200
-  end = start + 200
+  end = start + 199
   #get the experiment data
   experimentDataX = X.iloc[start:end]
   experimentDataY = Y.iloc[start:end]
@@ -526,11 +526,12 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #call predLoop
   XDF = predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
   #add the experiment data to the XDF
+  #remove the last row of XDF, it goes into the next experiment
+  XDF.drop(index=199, inplace=True)
   XDF['C_X_actual'] = experimentDataY['C_X'].to_numpy()
   XDF['C_N_actual'] = experimentDataY['C_N'].to_numpy()
   XDF['C_L_actual'] = experimentDataY['C_L'].to_numpy()
-  #remove the last row of XDF, it goes into the next experiment
-  XDF.drop(index=199, inplace=True)
+
   #export XDF to csv (for initial run)
   #XDF.to_csv('outputs/expPredVsDataset.csv', index=False)
   return lossDF, testPreds, mse, rmse, XDF
