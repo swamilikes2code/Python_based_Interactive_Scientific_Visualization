@@ -401,7 +401,7 @@ loss_Fn_tooltip = Tooltip(content=f"Choose an algorithm to measure the accuracy 
 loss_Fn_help_button = HelpButton(tooltip=loss_Fn_tooltip, button_type = "light")
 
 optimizer = Select(title="Optimizer:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
-O_tooltip = Tooltip(content=f"Choose a maximum value by which the optimizer may adjust neuron weights. The lower this is, the smaller the changes any given epoch will have on the model.", position="right") # {', '.join(optimizer_options)}
+O_tooltip = Tooltip(content=f"Choose an algorithm by which the neural network will adjust it’s inner neurons. Both choices can be efficient, but may require further tuning of other parameters.", position="right") # {', '.join(optimizer_options)}
 optimizer_help_button = HelpButton(tooltip=O_tooltip, button_type = "light")
 
 """
