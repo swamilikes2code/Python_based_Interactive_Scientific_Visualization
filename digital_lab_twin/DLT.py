@@ -340,8 +340,7 @@ def export_data():
 
 
 export_button = Button(label="Export Data", button_type="success",  height = 60, width = 300)
-export_button.js_on_event("button_click", CustomJS(args=dict(source=source),
-                            code=open(join(dirname(__file__), "download.js")).read()))
+
 
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
@@ -366,6 +365,8 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
     sourceS = ColumnDataSource(datas)
     #attempt to reset the graph IDEA: ADD     p.renderers = [] AT THE BEGINNING OF THE PLOTTING FUNCTION
     plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
+    export_button.js_on_event("button_click", CustomJS(args=dict(source=sourceS),
+                            code=open(join(dirname(__file__), "download.js")).read()))
 
 run_button.on_click(runbutton_function)
 
