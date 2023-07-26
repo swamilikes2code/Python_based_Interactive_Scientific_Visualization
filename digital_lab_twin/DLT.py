@@ -26,6 +26,7 @@ import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip
 import warnings
 import random
+from os.path import dirname, join
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
@@ -339,7 +340,8 @@ def export_data():
 
 
 export_button = Button(label="Export Data", button_type="success",  height = 60, width = 300)
-export_button.on_click(export_data)
+export_button.js_on_event("button_click", CustomJS(args=dict(source=source),
+                            code=open(join(dirname(__file__), "download.js")).read()))
 
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
