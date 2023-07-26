@@ -14,8 +14,19 @@ function table_to_csv(source) {
     return lines.join('\n').concat('\n')
 }
 
+// Get the current date and time
+let now = new Date();
+let year = now.getFullYear();
+let month = String(now.getMonth() + 1).padStart(2, '0');
+let day = String(now.getDate()).padStart(2, '0');
+let hours = String(now.getHours()).padStart(2, '0');
+let minutes = String(now.getMinutes()).padStart(2, '0');
+let seconds = String(now.getSeconds()).padStart(2, '0');
 
-const filename = 'data_result.csv'
+// Generate the timestamp and filename
+let timestamp = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+let filename = `exported_data_${timestamp}.csv`;
+
 const filetext = table_to_csv(source)
 const blob = new Blob([filetext], { type: 'text/csv;charset=utf-8;' })
 
