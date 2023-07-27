@@ -418,9 +418,7 @@ epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Lo
 #TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
 
-#create a empty pandas data frame that will hold the values from the tools above
-chart = pd.DataFrame({ 'Lowest Loss': [100], 'Epoch of Lowest Loss': ['N/A']})
-charts = ColumnDataSource(chart)
+
 
 
 """
@@ -716,8 +714,10 @@ def first_clicked(p2 = p2):
     
 run_button_edit_tab.on_click(first_clicked)
 
+
 #create dataframe to hold past runs, columns are LearnRate, lossFn, Optimizer, TrainSplit, Neurons, Epochs, BatchSize, LowestLoss, EpochofLowestLoss
 pastRuns =  pd.DataFrame(columns=['LearnRate', 'lossFn', 'Optimizer', 'TrainSplit', 'Neurons', 'Epochs', 'BatchSize', 'LowestLoss', 'EpochofLowestLoss'])
+charts = ColumnDataSource(pastRuns)
 
 def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, minValLoss = lowest_mse_validation, minValLossIndex = epoch_of_lowest_loss, charts = charts): #ts = test, vs = val_split,
     #Idea: have two functions and the inputs can be( lossDF, testPreds, mse, rmse, XDF ) insted of (lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4)
@@ -753,9 +753,7 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     #append this run to pastRuns
     pastRuns.loc[len(pastRuns)] = thisRun
     print(pastRuns)
-    data = {'Lowest Loss': [minValLoss.value], 'Epoch of Lowest Loss': [minValLossIndex.value]}
-    new_row = pd.DataFrame(data)
-    charts.stream(new_row)    
+    charts.stream(pastRuns)    
     #run_button_edit_tab.disabled = False
 
     #TODO: use XDF to plot the actual vs predicted values
@@ -806,10 +804,10 @@ sizeAccess.on_change('value', font_size_callback)
 #make pandas data frame for the chart
 
 # Define the columns for the DataTable
-columns = [TableColumn(field=column_name, title=column_name, formatter=NumberFormatter(format='0.00000')) for column_name in chart.columns]
+columns = [TableColumn(field=column_name, title=column_name,) for column_name in pastRuns.columns]
 
 # Create the DataTable
-chart_table = DataTable(source=charts, columns=columns, width=400, height=200)
+chart_table = DataTable(source=charts, columns=columns, width=800, height=200)
 
 
 
