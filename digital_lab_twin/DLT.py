@@ -753,7 +753,8 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     #append this run to pastRuns
     pastRuns.loc[len(pastRuns)] = thisRun
     print(pastRuns)
-    charts.stream(pastRuns)    
+    #access the most recent row of pastRuns and stream it to charts
+    charts.stream(pastRuns.iloc[-1:])
     #run_button_edit_tab.disabled = False
 
     #TODO: use XDF to plot the actual vs predicted values
