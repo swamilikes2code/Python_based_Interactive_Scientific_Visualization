@@ -229,20 +229,20 @@ def plot_graph(sources):
     
     # Example of updating CL value
 
-    line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
-    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
+    line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass (g/L)")
+    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass (g/L)'),
                                     ('Hour', '@Time'),
                                     ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
     ],))
 
-    line_b = p.line('Time', 'C_N', source = sources, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
-    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
+    line_b = p.line('Time', 'C_N', source = sources, line_width = 4 , line_color = "orange", legend_label = "Nitrate (g/L)")
+    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate (g/L)'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_N'), 
     ],))
     sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
-    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutein (x1000)")# CL is multiplied by 1000 to make it visible on the graph
-    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutein'),
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutein (g/L x 1000)")# CL is multiplied by 1000 to make it visible on the graph
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutein (g/L)'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@modified_C_L'), 
     ],)) 
