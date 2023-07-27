@@ -367,7 +367,6 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
     plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
     export_button.js_on_event("button_click", CustomJS(args=dict(source=sourceS),
                             code=open(join(dirname(__file__), "download.js")).read()))
-
 run_button.on_click(runbutton_function)
 
 
@@ -711,6 +710,8 @@ def first_clicked(p2 = p2):
     
 run_button_edit_tab.on_click(first_clicked)
 
+#create dataframe to hold past runs, columns are LearnRate, lossFn, Optimizer, TrainSplit, Neurons, Epochs, BatchSize, LowestLoss, EpochofLowestLoss
+pastRuns =  pd.DataFrame(columns=['LearnRate', 'lossFn', 'Optimizer', 'TrainSplit', 'Neurons', 'Epochs', 'BatchSize', 'LowestLoss', 'EpochofLowestLoss'])
 
 def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, minValLoss = lowest_mse_validation, minValLossIndex = epoch_of_lowest_loss): #ts = test, vs = val_split,
     #Idea: have two functions and the inputs can be( lossDF, testPreds, mse, rmse, XDF ) insted of (lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4)
@@ -741,6 +742,11 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     mean.value = str(mse)
     root_mean.value = str(rmse)
     versus_plot(XDF, p4)
+    #create array for this run
+    thisRun = np.array([learning_rate.value, loss.value, optimizer.value, train.value, neurons.value, epochs.value, batch_Size.value, minValLoss.value, minValLossIndex.value])
+    #append this run to pastRuns
+    pastRuns.loc[len(pastRuns)] = thisRun
+    print(pastRuns)
     #run_button_edit_tab.disabled = False
 
     #TODO: use XDF to plot the actual vs predicted values
