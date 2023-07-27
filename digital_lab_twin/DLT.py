@@ -26,6 +26,7 @@ import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip
 import warnings
 import random
+from os.path import dirname, join
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
 #Intro Text sectionSection ---------------------------------------------------------------------------------------------------------------------
@@ -69,12 +70,19 @@ intro = Div(text="""
         <p> This Button will reset the graph to the original position based on the initial conditions before the sliders were changed</p>
         
          <h3>Run Button</h3>
-        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions</p>
+        <p> This Button will take the slider conditions that you have and will create a new plot based on those new conditions<br>
+        <b><u>Note</u></b>: There are two run buttons the run button on the Train Tab changes the graph in the Train tab and the Optimize tab, <br>
+        the run button on the Evaluate Tab on will only change the graph of the evaluate tab</p>
         
          <h3>Export Button</h3>
         <p> This Button will take the data points of the Time, Nitrate Concentration, Biomass concentration, and Lutine concentration<br>
         and put them in a csv file and this csv file will be located in your downloads folder the file will be named "exported_data_{timestamp}.csv"<br>
         the timestamp is the current time and will be formated as year-month-day-hour-minuete-second</p>
+        
+         <h3>Help Button</h3>
+        <p> In the Train tab you can see little question mark buttons next to the interactive elements, these buttons will give you <br>
+        information on what this tool is used for and how it will can change your graph</p>
+        
         
         
     """)
@@ -221,20 +229,20 @@ def plot_graph(sources):
     
     # Example of updating CL value
 
-    line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass")
-    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass'),
+    line_a = p.line('Time', 'C_X', source = sources, line_width = 4 ,  line_color = "aqua", legend_label = "Biomass (g/L)")
+    p.add_tools(HoverTool(renderers = [line_a], tooltips=[  ('Name', 'Biomass (g/L)'),
                                     ('Hour', '@Time'),
                                     ('Concentration', '@C_X'),# adds the hover tool to the graph for the specifed line
     ],))
 
-    line_b = p.line('Time', 'C_N', source = sources, line_width = 4 , line_color = "orange", legend_label = "Nitrate")
-    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate'),
+    line_b = p.line('Time', 'C_N', source = sources, line_width = 4 , line_color = "orange", legend_label = "Nitrate (g/L)")
+    p.add_tools(HoverTool( renderers = [line_b],tooltips=[('Name', 'Nitrate (g/L)'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@C_N'), 
     ],))
     sources.data['modified_C_L'] = sources.data['C_L'] * 1000# CL is multiplied by 1000 to make it visible on the graph and this is done wih the column data source
-    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutein (x1000)")# CL is multiplied by 1000 to make it visible on the graph
-    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutein'),
+    line_c = p.line('Time', 'modified_C_L', source = sources , line_width = 4, line_color = "lime",  legend_label = "Lutein (g/L x 1000)")# CL is multiplied by 1000 to make it visible on the graph
+    p.add_tools(HoverTool( renderers = [line_c],tooltips=[('Name', 'Lutein (g/L)'),
                                     ('Hour', '@Time'), 
                                     ('Concentration', '@modified_C_L'), 
     ],)) 
@@ -296,6 +304,9 @@ reset_button.on_click(rest_button_callback)
  
 #Export Button******************************************************************************************************************************
 # File Export Data Area
+
+
+
 def export_data():
     # Get the data from the ColumnDataSource
     data = source.data
@@ -329,7 +340,7 @@ def export_data():
 
 
 export_button = Button(label="Export Data", button_type="success",  height = 60, width = 300)
-export_button.on_click(export_data)
+
 
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
@@ -354,6 +365,8 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
     sourceS = ColumnDataSource(datas)
     #attempt to reset the graph IDEA: ADD     p.renderers = [] AT THE BEGINNING OF THE PLOTTING FUNCTION
     plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
+    export_button.js_on_event("button_click", CustomJS(args=dict(source=sourceS),
+                            code=open(join(dirname(__file__), "download.js")).read()))
 
 run_button.on_click(runbutton_function)
 
@@ -366,35 +379,35 @@ loss_options = ["MSE", "MAE"]
 #test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
 
 train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Train Split:(0.1-0.7)", )# 
-train_tooltip = Tooltip(content=("""Choose a train value from 0.1 - 0.7."""), position = "right")
+train_tooltip = Tooltip(content=("""Determine as a percentage how much of the data will be used to teach the model. What is left out of training will be used to validate and test."""), position = "right")
 train_help_button = HelpButton(tooltip=train_tooltip, button_type = "light", )
 
 #val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
-neurons_tooltip = Tooltip(content=("""Choose the number of neurons from 7 to 100."""), position = "right")
+neurons_tooltip = Tooltip(content=("""Determine how dense each neural network layer is. The network contains 3 layers, with an activator function in between each. Denser networks are resource intensive, but thinner networks may compromise accuracy."""), position = "right")
 neurons_help_button = HelpButton(tooltip=neurons_tooltip, button_type = "light")
 
 epochs = Slider (start = 5, end = 50, value = 25, step = 5, title = "Epochs")# 
-epochs_tooltip = Tooltip(content=("""Choose the number of epochs from 5 to 50."""), position = "right")
+epochs_tooltip = Tooltip(content=("""Determine how many times the network will read over the training data. This heavily impacts the model’s processing time."""), position = "right")
 epochs_help_button = HelpButton(tooltip=epochs_tooltip, button_type = "light")
     
 batch_Size = Slider (start = 25, end = 200, value = 25, step = 25, title = "Batch Size")# 
-batch_Size_tooltip = Tooltip(content=("""Choose the batch size from 25 to 200."""), position = "right")
+batch_Size_tooltip = Tooltip(content=("""Determine how many datapoints to feed the network at one time. An ideal batch size will help optimize runtime and model accuracy."""), position = "right")
 batch_Size_help_button = HelpButton(tooltip=batch_Size_tooltip, button_type = "light")
 
 
 learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
-learning_rate_tooltip = Tooltip(content=("""Choose the learning rate from 0.0001 to 0.01"""), position = "right")
+learning_rate_tooltip = Tooltip(content=("""Choose a maximum value by which the optimizer may adjust neuron weights. The lower this is, the smaller the changes any given epoch will have on the model."""), position = "right")
 learning_rate_help_button = HelpButton(tooltip=learning_rate_tooltip, button_type = "light")
 
 
 loss_Fn = Select(title="Loss Function:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
-loss_Fn_tooltip = Tooltip(content=f"Select one of the following options: {', '.join(loss_options)}", position = "right")
+loss_Fn_tooltip = Tooltip(content=f"Choose an algorithm to measure the accuracy of your predictions. MSE judges by square loss, whereas MAE judges by absolute loss. ", position = "right") #{', '.join(loss_options)}
 loss_Fn_help_button = HelpButton(tooltip=loss_Fn_tooltip, button_type = "light")
 
 optimizer = Select(title="Optimizer:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
-O_tooltip = Tooltip(content=f"Select one of the following options: {', '.join(optimizer_options)}", position="right")
+O_tooltip = Tooltip(content=f"Choose an algorithm by which the neural network will adjust it’s inner neurons. Both choices can be efficient, but may require further tuning of other parameters.", position="right") # {', '.join(optimizer_options)}
 optimizer_help_button = HelpButton(tooltip=O_tooltip, button_type = "light")
 
 """
@@ -483,19 +496,17 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   batchSize = b.value #0 < int < 200
     
   ### Dynamic (run on each change)
-  #TODO: upon running, check params are valid then update these values
   #test the all-in-one function
   model, Y_test_tensor, testPreds, XTestTime, lossDF, stScalerX, stScalerY, testPreds, mse, rmse= mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
   #read in the losses
   lossCSV = lossDF
   #save testPreds to a csv
-  #testPreds.to_csv('models/testPreds.csv', index=False)
-  #TODO: pick an experiment to run, run it and return a df of its values  
+  #testPreds.to_csv('models/testPreds.csv', index=False) 
   #pick an experiment number (between zero and 100)
   experimentNum = random.randint(0, 100)
   #experimentnum times 200 will give the starting index, then add 199 to get the ending index
   start = experimentNum * 200
-  end = start + 200
+  end = start + 199
   #get the experiment data
   experimentDataX = X.iloc[start:end]
   experimentDataY = Y.iloc[start:end]
@@ -521,11 +532,12 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   #call predLoop
   XDF = predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
   #add the experiment data to the XDF
+  #remove the last row of XDF, it goes into the next experiment
+  XDF.drop(index=199, inplace=True)
   XDF['C_X_actual'] = experimentDataY['C_X'].to_numpy()
   XDF['C_N_actual'] = experimentDataY['C_N'].to_numpy()
   XDF['C_L_actual'] = experimentDataY['C_L'].to_numpy()
-  #remove the last row of XDF, it goes into the next experiment
-  XDF.drop(index=199, inplace=True)
+
   #export XDF to csv (for initial run)
   #XDF.to_csv('outputs/expPredVsDataset.csv', index=False)
   return lossDF, testPreds, mse, rmse, XDF
@@ -678,7 +690,7 @@ p4.legend.background_fill_alpha = 0.3
     
 mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
 root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
-lowest_mse_validation = TextInput(value = str(100), title = "Lowest MSE (Validation)", width = 300, disabled = True)
+lowest_mse_validation = TextInput(value = str(100), title = "Lowest Loss (Validation)", width = 300, disabled = True)
 epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Loss", width = 300, disabled = True)
 #TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
