@@ -112,7 +112,22 @@ font-family: 'Segoe UI';
   font-family: 'Segoe UI';
   }
 
-  .flexwrap {
+.flexwrap1 {
+width: auto;
+font-family: 'Segoe UI';
+color:#484848;
+font-weight: 600;
+font-size: 1.354vw;
+padding-left:10px;
+padding-right:10px;
+padding-bottom:10px;
+background: #b2e3f4;
+gap: 2.083vw;
+line-height: 1.5;
+margin: auto;
+}
+
+.flexwrap2 {
 display: flex;
 width: auto;
 font-family: 'Segoe UI';
@@ -128,20 +143,6 @@ line-height: 1.5;
 margin: auto;
 }
 
-.flexwrap1 {
-width: auto;
-font-family: 'Segoe UI';
-color:#484848;
-font-weight: 600;
-font-size: 1.354vw;
-padding-left:10px;
-padding-right:10px;
-padding-bottom:10px;
-background: #b2e3f4;
-gap: 2.083vw;
-line-height: 1.5;
-margin: auto;
-}
 .flexwrap {
 display:flex;
 width: 100%;
@@ -405,7 +406,7 @@ padding-top: 0.325vw;
           <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Slides')">Slides</button>
         </div>
     
-        <div class="flexwrap">
+        <div class="flexwrap2">
         <div id="About" class="tabcontent">
           <h3>About</h3>
           <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC Figure" class="center" style="width:500px; height: 300px; float: right; margin-right: 10px; border:5px solid black">
