@@ -23,7 +23,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import layout
 from bokeh.io import export_svgs
 import datetime
-from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip
+from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip, NumberFormatter
 import warnings
 import random
 from os.path import dirname, join
@@ -367,7 +367,6 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
     plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
     export_button.js_on_event("button_click", CustomJS(args=dict(source=sourceS),
                             code=open(join(dirname(__file__), "download.js")).read()))
-
 run_button.on_click(runbutton_function)
 
 
@@ -410,6 +409,18 @@ optimizer = Select(title="Optimizer:", value="ADAM", options= optimizer_options,
 O_tooltip = Tooltip(content=f"Choose an algorithm by which the neural network will adjust it’s inner neurons. Both choices can be efficient, but may require further tuning of other parameters.", position="right") # {', '.join(optimizer_options)}
 optimizer_help_button = HelpButton(tooltip=O_tooltip, button_type = "light")
 
+#Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
+    
+mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
+root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
+lowest_mse_validation = TextInput(value = str(100), title = "Lowest Loss (Validation)", width = 300, disabled = True)
+epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Loss", width = 300, disabled = True)
+#TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
+
+
+
+
+
 """
 # Define the callback function for the sliders
 def validate_sum(attr, old, new):
@@ -446,6 +457,9 @@ def reset_button_edit_tab_function():
     #test.value = 0.2
     epochs.value = 25
     batch_Size.value = 25
+    lowest_mse_validation.value = str(100)
+    epoch_of_lowest_loss.value = str('N/A')
+    p2.renderers = []
 reset_button_edit_tab.on_click(reset_button_edit_tab_function)
     
 #Model Loop section for edit tab_____________________________________________________________________________________________________________________
@@ -686,13 +700,6 @@ p4.legend.border_line_alpha = 0.8
 p4.legend.background_fill_color = "white"
 p4.legend.background_fill_alpha = 0.3
 
-#Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
-    
-mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
-root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
-lowest_mse_validation = TextInput(value = str(100), title = "Lowest Loss (Validation)", width = 300, disabled = True)
-epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Loss", width = 300, disabled = True)
-#TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
 
 #Run Button******************************************************************************************************************************
@@ -708,7 +715,11 @@ def first_clicked(p2 = p2):
 run_button_edit_tab.on_click(first_clicked)
 
 
-def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, minValLoss = lowest_mse_validation, minValLossIndex = epoch_of_lowest_loss): #ts = test, vs = val_split,
+#create dataframe to hold past runs, columns are LearnRate, lossFn, Optimizer, TrainSplit, Neurons, Epochs, BatchSize, LowestLoss, EpochofLowestLoss
+pastRuns =  pd.DataFrame(columns=['LearnRate', 'lossFn', 'Optimizer', 'TrainSplit', 'Neurons', 'Epochs', 'BatchSize', 'LowestLoss', 'EpochofLowestLoss'])
+charts = ColumnDataSource(pastRuns)
+
+def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, minValLoss = lowest_mse_validation, minValLossIndex = epoch_of_lowest_loss, charts = charts): #ts = test, vs = val_split,
     #Idea: have two functions and the inputs can be( lossDF, testPreds, mse, rmse, XDF ) insted of (lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4)
     #could also clear the graphs here before the actual graph functions
     #p2.renderers = []
@@ -737,6 +748,12 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     mean.value = str(mse)
     root_mean.value = str(rmse)
     versus_plot(XDF, p4)
+    #create array for this run
+    thisRun = np.array([learning_rate.value, loss.value, optimizer.value, train.value, neurons.value, epochs.value, batch_Size.value, minValLoss.value, minValLossIndex.value])
+    #append this run to pastRuns
+    pastRuns.loc[len(pastRuns)] = thisRun
+    print(pastRuns)
+    charts.stream(pastRuns)    
     #run_button_edit_tab.disabled = False
 
     #TODO: use XDF to plot the actual vs predicted values
@@ -784,6 +801,13 @@ sizeAccess.on_change('value', font_size_callback)
 
 
 
+#make pandas data frame for the chart
+
+# Define the columns for the DataTable
+columns = [TableColumn(field=column_name, title=column_name,) for column_name in pastRuns.columns]
+
+# Create the DataTable
+chart_table = DataTable(source=charts, columns=columns, width=800, height=200)
 
 
 
@@ -799,7 +823,7 @@ losses_help = row(loss_Fn, loss_Fn_help_button)
 ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error,)
-lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss)
+lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss, chart_table)
 bs = row(ls, rs, lowest_val_info)
 evaluate = row(p4,p3, means)
 choose = row (fontAccess, sizeAccess)
