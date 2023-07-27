@@ -112,6 +112,22 @@ font-family: 'Segoe UI';
   font-family: 'Segoe UI';
   }
 
+  .flexwrap {
+display: flex;
+width: auto;
+font-family: 'Segoe UI';
+color:#484848;
+font-weight: 600;
+font-size: 1.354vw;
+padding-left:10px;
+padding-right:10px;
+padding-bottom:10px;
+background: #b2e3f4;
+gap: 2.083vw;
+line-height: 1.5;
+margin: auto;
+}
+
 .flexwrap1 {
 width: auto;
 font-family: 'Segoe UI';
@@ -353,7 +369,6 @@ padding-top: 0.325vw;
   height: 29.2969vw;
 }
 
-
 </style>
 <!-- Starting adding elements to the page -->
   <!-- Putting headers -->
@@ -390,11 +405,11 @@ padding-top: 0.325vw;
           <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Slides')">Slides</button>
         </div>
     
-        <div class="flexwrap1">
+        <div class="flexwrap">
         <div id="About" class="tabcontent">
           <h3>About</h3>
+          <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC Figure" class="center" style="width:500px; height: 300px; float: right; margin-right: 10px; border:5px solid black">
           <p>Climate change is one of the most pressing issues in the world today. The rising temperatures caused by the increase of CO2 in the atmosphere has caused severe environmental catastrophes and can potentially get worse. Direct Air Capture, also known as DAC, is an important technology that allows for the removal  of carbon dioxide (CO2) from the atmosphere. This technology captures air from the atmosphere and removes CO2. We will be analyzing the rate of reaction, mass balance and the energy balance of the CO2 capture process in the reactor that will be demonstrated in the graphs below. Adjust the sliders for your desired input conditions and press the play button to see how it works.</p>
-            <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC Figure" class="center" style="width:800px; border:5px solid black">
          </div>
         </div>
 

@@ -296,6 +296,7 @@ nav li {
     <h1 class="head1">SIR Infectious Disease Model</h1>
       <div class="flexwrap1">
         <div class="text-container">
+            <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="center" style="width:500px; height:300px; float:right; margin-top: 20px">
         <p style="line-height: 1.5;">Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
         <p>
             <b style="text-align: center;">How to use:</b>
@@ -305,7 +306,6 @@ nav li {
             <li>Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.</li>
         </ol></p>
     </div>
-          <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="center" style="width:800px;">
       </div>
         {{bokeh_script_SIR|safe}}
         
