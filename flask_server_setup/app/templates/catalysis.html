@@ -105,6 +105,21 @@ nav a:hover::before {
     font-family: 'Segoe UI';
     max-width: 90rem;
 }
+.flexwrap1 {
+display: flex;
+width: auto;
+font-family: 'Segoe UI';
+color:#484848;
+font-weight: 600;
+font-size: 1.354vw;
+padding-left:10px;
+padding-right:10px;
+padding-bottom:10px;
+background: #b2e3f4;
+gap: 2.083vw;
+line-height: 1.5;
+margin: auto;
+}
 .flexcol {
     color:#484848;
     font-weight: 600;
@@ -131,7 +146,6 @@ nav a:hover::before {
   margin-right: auto;
   width: 52.083vw;
   height: 29.297vw;
-  padding: 0.651vw;
 }
 .footer {
     margin: 0;
@@ -263,6 +277,53 @@ nav li {
     border-radius: 17px;
 }
 }
+.tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+      }
+      
+/* Create two equal columns that floats next to each other */
+.text_column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Clear floats after the columns */
+.text_row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
      </style>
 </head>
 
@@ -289,28 +350,26 @@ nav li {
             }
         </style>
         <h1 class="head1">Catalysis Data Science Model</h1>
-        <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
-            <img src="{{url_for('static', filename='data science.jpg')}}" alt="ZECC Diagram" class="center">
-         </div>
-        <div class="flexwrap">
-            <div class="flexcol">
-            <p style="line-height: 1.5;">The dataset utilized in our module is called the “Catalysis dataset”. It describes a reaction known as the oxidative coupling of methane. What happens is methane and oxygen react together to form the desired products(ethane and ethylene) and the undesired products(carbon dioxide and carbon monoxide). This dataset contains over 10,000 points that represent instances of the catalytic reaction detailed above.
+        <div class="tab">
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
+          </div>
+      
+          <div class="flexwrap1">
+          <div id="About" class="tabcontent">
+            <h3>About</h3>
+            <p>The dataset utilized in our module is called the “Catalysis dataset”. It describes a reaction known as the oxidative coupling of methane. What happens is methane and oxygen react together to form the desired products(ethane and ethylene) and the undesired products(carbon dioxide and carbon monoxide). This dataset contains over 10,000 points that represent instances of the catalytic reaction detailed above.</p>
+            <p>Due to its massive size, we apply data science and machine learning concepts such as multivariable regression, classification, clustering, and principal component analysis to uncover different trends within the data. To get a full understanding of all these concepts, it is important to utilize the interactivity of this module. Make sure to play out as many scenarios as possible to see how the data changes or how the performance of specific models change. </p>
+              <img src="{{url_for('static', filename='data science.jpg')}}" alt="Data Picture" class="center" style="width:800px; border:5px solid black">
+           </div>
+          </div>
 
-            </p>
-            </div>
-            <div class="flexcol">
-            <p style="line-height: 1.5">Due to its massive size, we apply data science and machine learning concepts such as multivariable regression, classification, clustering, and principal component analysis to uncover different trends within the data. To get a full understanding of all these concepts, it is important to utilize the interactivity of this module. Make sure to play out as many scenarios as possible to see how the data changes or how the performance of specific models change. 
-            </p>
-        </div>
-        </div>
-
-        {{bokeh_script_catalysis_data_interactive_visualization|safe}}
-
-
-        <h2 class="head2">Supplemental Questions</h2>
-        <div class="flexwrap">
-            <div class="flexcol">
-                <p> <strong>Introductory Questions</strong> 
+          <div class="flexwrap1">
+            <div id="Questions" class="tabcontent">
+              <div class="text_row">
+                  <div class="text_column">
+              <h3>Supplemental Questions</h3>
+              <p><strong>Introductory Questions</strong> 
                 <ol> 
                 <li> In the Data Exploration section, what combinations of methane conversion, temperature, and value of C2y will yield the most data points?</li>
                 <li> In the Correlation Matrix section, which two different features show the highest correlation between them? What could this indicate about how these features would perform in a regression model?</li>
@@ -321,10 +380,10 @@ nav li {
                     <li> Looking at the model with all features selected, is it possible to tell which variables were the most important in predicting the output variable? If so, how would you do so and which are the most important variables? </li>
                     <li> How does changing the type of regression from linear to quadratic to cubic affect the regression? </li>
                     <li>  Is there any overfitting occurring in the regression model?</li>
-                    </ol></p>
-            </div>
-            <div class="flexcol">
-                <p> <strong>Unsupervised Learning Section</strong> 
+                    </ol> </p>
+                    </div>
+                  <div class="text_column">
+                    <p> <strong>Unsupervised Learning Section</strong> 
                     <ol> 
                     <li> Is there a trend that can be noticed about the amount of variance explained by each principal component? How many principal components does it take to have at least 80 percent variance explained?</li>
                     <li> According to the elbow plot, what is the ideal number of clusters(optimal k value) for the k-means clustering?</li>
@@ -336,11 +395,45 @@ nav li {
                         <li> Looking at the classification report, what are metrics such as precision, recall, and F1-score and how are they useful in evaluating classification models?</li>
                         <li> Looking at the svm model, matrix, and report, which kernel performs the best? </li>
                         </ol></p>
+                  </div>
+              </div>
             </div>
-        </div>
-
+          </div>
+          <script>
+            function openTab(evt, tabName) {
+              var i, tabcontent, tablinks;
+              tabcontent = document.getElementsByClassName("tabcontent");
+              for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablinks");
+              for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+              }
+              document.getElementById(tabName).style.display = "block";
+              evt.currentTarget.className += " active";
+            }
+            // Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+    const tablinks = document.querySelectorAll('.tablinks');
+    let currentTab = Array.from(tablinks).findIndex((tab) => tab.classList.contains('active'));
+    
+    if (event.key === 'ArrowRight') {
+      currentTab = (currentTab + 1) % tablinks.length;
+    } else if (event.key === 'ArrowLeft') {
+      currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+    } else {
+      return;
+    }
+    
+    tablinks[currentTab].click();
+  });
+          </script>
         <br>
     <br>
+    {{bokeh_script_catalysis_data_interactive_visualization|safe}}
 </body>
 <div class="footer1">
     <div class="flexcol5">
@@ -435,13 +528,13 @@ nav li {
                         <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
                         <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
                         <img
-            src="{{url_for('static', filename='Madeline_Judd.JPG')}}"
+            src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
             alt="Madeline"
             class="footerpic"
           />
           <br /><br /><br /><br /><br /><br />
           <img
-            src="{{url_for('static', filename='Tyreese_Davidson.JPG')}}"
+            src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
             alt="Tyreese"
             class="footerpic"
           />

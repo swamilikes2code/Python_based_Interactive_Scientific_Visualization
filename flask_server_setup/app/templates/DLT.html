@@ -115,7 +115,7 @@ font-size: 1.354vw;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:10px;
-background: #E8E8E8;
+background: #b2e3f4;
 gap: 2.083vw;
 line-height: 1.5;
 margin: auto;
@@ -313,6 +313,53 @@ nav li {
         border-top: none;
       }
 }
+.tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+      }
+
+/* Create two equal columns that floats next to each other */
+.text_column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  box-sizing:border-box;
+}
+
+/* Clear floats after the columns */
+.text_row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
      </style>
 </head>
 
@@ -390,6 +437,21 @@ nav li {
             }
             // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+    const tablinks = document.querySelectorAll('.tablinks');
+    let currentTab = Array.from(tablinks).findIndex((tab) => tab.classList.contains('active'));
+    
+    if (event.key === 'ArrowRight') {
+      currentTab = (currentTab + 1) % tablinks.length;
+    } else if (event.key === 'ArrowLeft') {
+      currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+    } else {
+      return;
+    }
+    
+    tablinks[currentTab].click();
+  });
           </script>
         <br>
     <br>
@@ -488,13 +550,13 @@ document.getElementById("defaultOpen").click();
                         <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
                         <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
                         <img
-            src="{{url_for('static', filename='Madeline_Judd.JPG')}}"
+            src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
             alt="Madeline"
             class="footerpic"
           />
           <br /><br /><br /><br /><br /><br />
           <img
-            src="{{url_for('static', filename='Tyreese_Davidson.JPG')}}"
+            src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
             alt="Tyreese"
             class="footerpic"
           />
