@@ -410,6 +410,14 @@ optimizer = Select(title="Optimizer:", value="ADAM", options= optimizer_options,
 O_tooltip = Tooltip(content=f"Choose an algorithm by which the neural network will adjust it’s inner neurons. Both choices can be efficient, but may require further tuning of other parameters.", position="right") # {', '.join(optimizer_options)}
 optimizer_help_button = HelpButton(tooltip=O_tooltip, button_type = "light")
 
+#Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
+    
+mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
+root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
+lowest_mse_validation = TextInput(value = str(100), title = "Lowest Loss (Validation)", width = 300, disabled = True)
+epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Loss", width = 300, disabled = True)
+#TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
+
 """
 # Define the callback function for the sliders
 def validate_sum(attr, old, new):
@@ -446,6 +454,9 @@ def reset_button_edit_tab_function():
     #test.value = 0.2
     epochs.value = 25
     batch_Size.value = 25
+    lowest_mse_validation.value = str(100)
+    epoch_of_lowest_loss.value = str('N/A')
+    p2.renderers = []
 reset_button_edit_tab.on_click(reset_button_edit_tab_function)
     
 #Model Loop section for edit tab_____________________________________________________________________________________________________________________
@@ -686,13 +697,6 @@ p4.legend.border_line_alpha = 0.8
 p4.legend.background_fill_color = "white"
 p4.legend.background_fill_alpha = 0.3
 
-#Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
-    
-mean_squared_error = TextInput(value = str(0.0206), title = "MSE (Test)", width = 300, disabled = True)
-root_mean_squared_error = TextInput(value = str(0.1437), title = "RMSE (Test)", width = 300, disabled = True)
-lowest_mse_validation = TextInput(value = str(100), title = "Lowest Loss (Validation)", width = 300, disabled = True)
-epoch_of_lowest_loss = TextInput(value = str('N/A'), title = "Epoch of Lowest Loss", width = 300, disabled = True)
-#TODO: get the final MSE from valLoss, RMSE is sqrt of that, plot those out same as above
 
 
 #Run Button******************************************************************************************************************************
