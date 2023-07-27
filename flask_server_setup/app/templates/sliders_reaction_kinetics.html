@@ -85,6 +85,21 @@ nav a:hover::before {
     font-family: 'Segoe UI';
     max-width: 90rem;
 }
+.flexwrap1 {
+display: flex;
+width: auto;
+font-family: 'Segoe UI';
+color:#484848;
+font-weight: 600;
+font-size: 1.354vw;
+padding-left:10px;
+padding-right:10px;
+padding-bottom:10px;
+background: #b2e3f4;
+gap: 2.083vw;
+line-height: 1.5;
+margin: auto;
+}
 .flexcol {
     color:#484848;
     font-weight: 600;
@@ -135,7 +150,6 @@ nav a:hover::before {
   margin-right: auto;
   width: 52.083vw;
   height: 29.297vw;
-  padding: 0.651vw;
 }
 .footer {
     margin: 0;
@@ -267,6 +281,38 @@ nav li {
     border-radius: 17px;
 }
 }
+.tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+      }
     </style>
 </head>
 
@@ -293,36 +339,37 @@ nav li {
         }
     </style>
     <h1 class="head1">Reaction Kinetics</h1>
-    <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
-        <img src="{{url_for('static', filename='CSTR-rxn-sequence.jpg')}}" alt="logo" class="center">
-     </div>
-    <div class="flexwrap">
-        <div class="flexcol">
-            <p> This is a simple example of a sequential set of reactions where a reactant "A" first undergoes a reaction to form B, the desired product. However, B undergoes a further (undesired) reaction to form C. It's a classical prototype of complex reactions we see all the time in natural (biological processes) and engineered reaction systems (chemical refineries, pharmaceuticals, etc.). As engineers, we would like to optimize the system to maximize the concentration of the desired product B. This, however, depends on a number of factors such as: 
-                <ol> <li>How fast each reaction occurs for a unit concentration (determined by rate constant k for each reaction)</li> <li> How sensitive the rate of consumption of A or B is to their concentration (determined by the order of reaction, greater the order more sensitive the reaction is to the concentration of the reactants)</li><li> How long you let the reactions take place.</li> </ol> </p>
-           </div>
-           <div class="flexcol">
-            <p>Note that 1 and 2 are natural properties of the reaction system (i.e. you do not have control over it) while 3 is a variable that the engineer sets.</p>
-            <p>Play around with the module below by varying rate constants and the order to see how the concentration of A, B, and C changes with time. 
-                <ul> <li> Can you come up with an explanation for what you see?  </li>
-                <li> When should you stop the reaction to maximize B if the rate constants and order were all 1.0? </li>
-                <li>How does this time change if the first reaction becomes faster or becomes more sensitive to concentration? </li>
-                <li>How does this time change if the second reaction becomes faster or becomes more sensitive to concentration?</li></ul></p>
-           </div>
-           </div>
-          
-    
-        
-   
-
-
-     <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
-
-    {{bokeh_script_sliders_reaction_kinetics|safe}}
-
-    <h2 class="head2">Supplemental Questions</h2>
-    <div class="questions">
-        <p> <ol>
+    <div class="tab">
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Instructions')">Instructions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
+      </div>
+  
+      <div class="flexwrap1">
+      <div id="About" class="tabcontent">
+        <h3>About</h3>
+        <p>This is a simple example of a sequential set of reactions where a reactant "A" first undergoes a reaction to form B, the desired product. However, B undergoes a further (undesired) reaction to form C. It's a classical prototype of complex reactions we see all the time in natural (biological processes) and engineered reaction systems (chemical refineries, pharmaceuticals, etc.). As engineers, we would like to optimize the system to maximize the concentration of the desired product B. This, however, depends on a number of factors such as: 
+            <ol> <li>How fast each reaction occurs for a unit concentration (determined by rate constant k for each reaction)</li> <li> How sensitive the rate of consumption of A or B is to their concentration (determined by the order of reaction, greater the order more sensitive the reaction is to the concentration of the reactants)</li><li> How long you let the reactions take place.</li> </ol> </p>
+          <img src="{{url_for('static', filename='CSTR-rxn-sequence.jpg')}}" alt="Reaction Kinetics Graph and Example" class="center" style="width:800px; border:5px solid black">
+       </div>
+      </div>
+      
+      <div class="flexwrap1">
+      <div id="Instructions" class="tabcontent">
+        <h3>Instructions</h3>
+        <p>Note that 1 and 2 are natural properties of the reaction system (i.e. you do not have control over it) while 3 is a variable that the engineer sets.</p>
+        <p>Play around with the module below by varying rate constants and the order to see how the concentration of A, B, and C changes with time. 
+            <ul> <li> Can you come up with an explanation for what you see?  </li>
+            <li> When should you stop the reaction to maximize B if the rate constants and order were all 1.0? </li>
+            <li>How does this time change if the first reaction becomes faster or becomes more sensitive to concentration? </li>
+            <li>How does this time change if the second reaction becomes faster or becomes more sensitive to concentration?</li></ul></p>
+      </div>
+      </div>
+  
+      <div class="flexwrap1">
+      <div id="Questions" class="tabcontent">
+        <h3>Supplemental Questions</h3>
+          <p><ol>
             <li>Where do the maxes occur relative to each other? Why is this the case? </li>
             <li>What values of each parameter will result in B reaching its highest possible value? At what time will it reach this value? </li>
             <li>What is the maximum value of C? For what values of parameters will C reach this value the soonest?</li>
@@ -333,7 +380,43 @@ nav li {
             <li>Approximately, where would you expect to find the maximums for a hypothetical reaction: k_AB = 4, k_BC = 2, Order_AB = 1, Order_ BC = 1?</li>
             <li>The process for producing B requires that B is collected after 4 seconds have passed. What values of k and order would give you a maximum for B at t=4 seconds?</li>
         </ol></p>
-    </div>
+            </div>
+          </div>
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+    // Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+const tablinks = document.querySelectorAll('.tablinks');
+let currentTab = Array.from(tablinks).findIndex((tab) => tab.classList.contains('active'));
+
+if (event.key === 'ArrowRight') {
+currentTab = (currentTab + 1) % tablinks.length;
+} else if (event.key === 'ArrowLeft') {
+currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+} else {
+return;
+}
+
+tablinks[currentTab].click();
+});
+  </script>
+     <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
+
+    {{bokeh_script_sliders_reaction_kinetics|safe}}
     <br>
     <br>
 </body>
@@ -430,13 +513,13 @@ nav li {
                         <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
                         <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
                         <img
-            src="{{url_for('static', filename='Madeline_Judd.JPG')}}"
+            src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
             alt="Madeline"
             class="footerpic"
           />
           <br /><br /><br /><br /><br /><br />
           <img
-            src="{{url_for('static', filename='Tyreese_Davidson.JPG')}}"
+            src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
             alt="Tyreese"
             class="footerpic"
           />

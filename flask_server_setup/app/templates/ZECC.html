@@ -101,33 +101,31 @@ nav a:hover::before {
 }
 
 .flexwrap1 {
-    display: flex;
-    width: auto;
-    font-family: 'Segoe UI';
-    color:#484848;
-    font-weight: 600; 
-    font-size: 1.354vw;
-    padding: 0.651vw;
-    background: #E8E8E8;
-    gap: 2.083vw;
-    line-height: 1.5;
-    margin: auto;
+width: auto;
+font-family: 'Segoe UI';
+color:#484848;
+font-weight: 600;
+font-size: 1.354vw;
+padding-left:10px;
+padding-right:10px;
+padding-bottom:10px;
+background: #b2e3f4;
+gap: 2.083vw;
+line-height: 1.5;
+margin: auto;
 }
 .flexwrap {
     display:flex;
     width: 100%;
     font-family: 'Segoe UI';
 }
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
 .flexcol {
-    width: 28%;
-    margin-left: 1.302vw;
-}
-.flexcol1H {
-    width:41%;
-}
-.flexcol2H {
-    width:30%;
-    margin-right: 1.302vw;
+  padding: 20px;
 }
 .head2 {
     text-align: center;
@@ -160,7 +158,6 @@ li{
   margin-right: auto;
   width: 52.083vw;
   height: 29.297vw;
-  padding: 0.651vw;
 }
 
 .flexcol3 {
@@ -292,6 +289,54 @@ nav li {
     padding-top: 0.325vw;
 }
 }
+.tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+      }
+.slide-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  margin: auto;
+  margin-top: 2.279vw;
+  max-width: 60rem;
+}
+
+.slide-iframe {
+  display: block;
+  width: 52.083vw;
+  height: 29.2969vw;
+}
+
 </style>
 </head>
     
@@ -319,47 +364,87 @@ nav li {
         }
     </style>
         <h1 class="head1">Zero Energy Cooling Chamber</h1>
-        <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; max-width:60rem; margin-bottom: 2.279vw;">
-            <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center">
-         </div>
-        <div class="flexwrap1">
+        <div class="tab">
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Slides')">Slides</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Points')">Points</button>
+          </div>
+      
+          <div class="flexwrap1">
+          <div id="About" class="tabcontent">
+            <h3>About</h3>
+            <div class="grid-container">
             <div class="flexcol">
-           <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
-            </div>
-          <div class="flexcol1H"> <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
-        </div> 
-        <div class="flexcol2H">
-            <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
+            <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
         </div>
-        </div>
-    
-                <div style="border:solid 0.1953vw #000; padding: 0.651vw;background: #E8E8E8;border-radius: 30px; width:auto; margin: auto; margin-top: 2.279vw; max-width: 60rem;">
-                <iframe src="{{url_for('static', filename='ZECC ppt.pdf')}}" style= "display:block; width: 52.083vw;height: 29.2969vw; padding: 0.651vw;margin-left: auto; margin-right: auto;">Loading…</iframe>
+      <div class="flexcol"> <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
+    </div> 
+    <div class="flexcol">
+        <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
+    </div>
+    </div>
+              <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center" style="width:800px; border:5px solid black">
+           </div>
+          </div>
+          
+          <div class="flexwrap1">
+          <div id="Slides" class="tabcontent">
+            <h3>ZECC Slides</h3>
+            <div class="slide-container">
+                <iframe src="{{url_for('static', filename='ZECC ppt.pdf')}}" alt = "ZECC Slides" class="slide-iframe" >Loading…</iframe>
                 </div>
+          </div>
+          </div>
+      
+          <div class="flexwrap1">
+            <div id="Points" class="tabcontent">
+              <h3>Points</h3>
+              <p> <ul>
+                <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
+                <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
+                <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
+                <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
+                <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
+                <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
+            </ul></p>
+            </div>
+            </div>
             
+          <script>
+            function openTab(evt, tabName) {
+              var i, tabcontent, tablinks;
+              tabcontent = document.getElementsByClassName("tabcontent");
+              for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablinks");
+              for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+              }
+              document.getElementById(tabName).style.display = "block";
+              evt.currentTarget.className += " active";
+            }
+            // Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+    const tablinks = document.querySelectorAll('.tablinks');
+    let currentTab = Array.from(tablinks).findIndex((tab) => tab.classList.contains('active'));
+    
+    if (event.key === 'ArrowRight') {
+      currentTab = (currentTab + 1) % tablinks.length;
+    } else if (event.key === 'ArrowLeft') {
+      currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+    } else {
+      return;
+    }
+    
+    tablinks[currentTab].click();
+  });
+          </script>
+        <br>
     <br>
-    <br>
-
-    <div>
-
         {{bokeh_script_ZECC|safe}}
-
-    </div>
-
-    <h2 class="head2">Points to Consider</h2>
-    <div class="questions">
-        <p> <ul>
-            <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
-            <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
-            <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
-            <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
-            <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
-            <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
-        </ul></p>
-    </div>
-
-    <br>
-    <br>
 
     <!--<div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
 
@@ -474,13 +559,13 @@ nav li {
                         <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
                         <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
                         <img
-            src="{{url_for('static', filename='Madeline_Judd.JPG')}}"
+            src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
             alt="Madeline"
             class="footerpic"
           />
           <br /><br /><br /><br /><br /><br />
           <img
-            src="{{url_for('static', filename='Tyreese_Davidson.JPG')}}"
+            src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
             alt="Tyreese"
             class="footerpic"
           />
