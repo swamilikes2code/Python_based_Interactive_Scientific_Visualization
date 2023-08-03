@@ -407,6 +407,27 @@
       >
         About
       </button>
+      <button
+        class="tablinks"
+        onclick="openTab(event, 'Photobioreactor Info')"
+        id="defaultOpen"
+      >
+        Photobioreactor Info
+      </button>
+      <button
+      class="tablinks"
+      onclick="openTab(event, 'Neural Network Info')"
+      id="defaultOpen"
+    >
+      Neural Network Info
+    </button>
+      <button
+        class="tablinks"
+        onclick="openTab(event, 'Tooltips')"
+        id="defaultOpen"
+      >
+        Tooltips
+      </button>
       <button class="tablinks" onclick="openTab(event, 'Instructions')">
         Instructions
       </button>
@@ -441,6 +462,187 @@
     </div>
 
     <div class="flexwrap1">
+      <div id="Photobioreactor Info" class="tabcontent">
+            <h3>Photobioreactor Info</h3>
+            <p>
+              <strong>Photobioreactor</strong>
+
+              <p>
+                This module lends itself to optimize a photobioreactor. A
+                photobioreactor utilizes characteristics of microalgae to obtain
+                a desired product. Whether that product be solely biomass or a
+                valuable pharmaceutical product, this diverse category of
+                microorganisms can be summarized by the use of solar energy to
+                fix inorganic material into organic products.
+              </p>
+              <p>
+                In this specific case, the focus product is Lutein whose
+                property is highlighted in the pharmaceutical and food
+                industries. The secondary product, biomass, can be used in the
+                fields of biofuel and nutrition.
+              </p>
+            </p>
+            <p>
+              <strong>What You'll Change - PBR </strong>
+
+              <p>
+                In this module, you will seek to understand how various inputs
+                will affect the output of the photobioreactor. The variation in
+                the inputs will allow discovery of optimal culture operating
+                conditions.
+              </p>
+              <p>
+                The flexible parameters for this photobioreactor are light
+                intensity, inlet flow of nitrates, inlet concentration of
+                nitrates, initial nitrate concentration, and initial biomass
+                value. Static features include CO2 percentage and its aeration
+                rate.
+              </p>
+            </p>
+
+            <p>
+              <strong>How to Evaluate</strong>
+
+              <p>To evaluate this module, one can look at the maximum production
+                of your desired product. Another option is performing a
+                cost-benefit analysis, considering the value of either product
+                as well as the cost of the materials used.</p>
+             
+            </p>
+          </div>
+        </div>
+
+          <div class="flexwrap1">
+            <div id="Neural Network Info" class="tabcontent">
+                  <h3>Neural Network Info</h3>
+            <p>
+              <strong>Machine Learning</strong>
+
+              <p>A subsection of data science that focuses on using data and
+                algorithms to mimic human styles of learning.</p>
+              
+            </p>
+            <p>
+              <strong>Neural Network</strong>
+
+              <p>
+                A machine learning architecture where data is fed through layers
+                of processing nodes called neurons. They excel at finding
+                patterns in sets of data, and can be used for both prediction
+                and classification. Named for their ability to mimic the
+                function of the human brain, subconsciously tying together
+                inputs to their respective outputs.
+              </p>
+            </p>
+            <p>
+              <strong>About This Module</strong>
+
+              <p>
+                Here, a problem has been identified and a dataset generated for
+                use. The goal of the network is to take an input of the
+                photobioreactor's state at a given time, and predict the state
+                of that photobioreactor at the next measured time. By looping
+                these single time-step predictions into each other, the neural
+                network generates a whole experiment's worth of predicted
+                values.
+              </p>
+            </p>
+            <p>
+              <strong>Data Background</strong>
+
+              <p>
+                The model is built upon a set of 20,000 datapoints spanning 100
+                different experiments. Each experiment spans 200 datapoints over
+                the course of about a week (150 hours). Experimental parameters
+                were chosen randomly within a range of reasonable
+                values-otherwise known as random sampling. </p>
+                <p>The model uses 6
+                inputs: the current state of the three concentrations we are
+                measuring, the light intensity, the inlet flow rate and inlet
+                concentration of nitrate (food) solution. Three outputs are
+                produced: the concentrations at the next timestep. Think of the
+                concentrations as being dynamic-they'll change with each
+                timestep. The other three input parameters are static, only
+                changing once per experiment.
+              </p>
+            </p>
+            <p>
+              <strong>What You'll Change - Neural Network</strong>
+
+              <p>
+                You get to decide the inner workings of this neural network, and
+                evaluate it based on a variety of accuracy measures. Start by
+                choosing an optimizer and loss function, as these are the
+                framework upon which all network adjustments are made. Then,
+                choose how granular training will be, focusing on achieving a
+                balance between high accuracy and quick runtime.
+              </p>
+            </p>
+            <p>
+              <strong>How to Evaluate</strong>
+
+              <p>
+                There are several tools at your disposal to judge a model's
+                accuracy. The simplest is the test loss, which applies the same
+                function you trained your model on to a set of holdout data. The
+                lower these values, the better. A parity plot is also drawn,
+                comparing actual values against model predicted values. A
+                perfectly accurate parity plot will draw a 45 degree line from
+                bottom left to top right. Finally, a test experiment is run,
+                comparing actual values against predicted ones. This will allow
+                you to see if the model can handle repeated predictions over
+                time.
+              </p>
+            </p>
+          </div>
+          </div>
+
+          <div class="flexwrap1">
+            <div id="Tooltips" class="tabcontent">
+                  <h3>Tooltips</h3>
+                  <p>
+                    <strong>Trainsplit:</strong>
+
+                      Determine as a percentage how much of the data will be used to teach the model. What is left out of training will be used to validate and test.
+
+                  </p>
+
+                  <p>
+                    <strong>Number of Neurons:</strong>
+                      Determine how dense each neural network layer is. The network contains 3 layers, with an activator function in between each. Denser networks are resource intensive, but thinner networks may compromise accuracy.
+                  </p>
+      
+                  <p>
+                    <strong>Epochs:</strong>
+Determine how many times the network will read over the training data. This heavily impacts the model's processing time-generally, the more times the network reads over a set of data, the closer it will fit to that data.
+                   
+                  </p>
+
+                  <p>
+                    <strong>Batch Size:</strong>
+      Determine how many data points to feed the network at one time. An ideal batch size will help optimize runtime and model accuracy.
+                   
+                  </p>
+
+                  <p>
+                    <strong>Learning Rate:</strong>
+      Choose a maximum value by which the optimizer may adjust neuron weights, the internal parameters by which each neuron makes decisions. The lower this is, the smaller the changes any given epoch will have on the model. 
+                   
+                  </p>
+
+                  <p>
+                    <strong>Optimizer:</strong>
+                    Choose an algorithm by which the neural network will adjust its inner neurons. Both choices can be efficient, but may require further tuning of other parameters.
+                  </p>
+
+                  <p>
+                    <strong>Loss Function:</strong>
+                    Choose an algorithm to measure the accuracy of your predictions. MSE judges by square loss, whereas MAE judges by absolute loss.
+                  </p>
+                </div>
+              </div>
+
+    <div class="flexwrap1">
       <div id="Instructions" class="tabcontent">
         <h3>Instructions</h3>
         <p>
@@ -457,7 +659,36 @@
 
     <div class="flexwrap1">
       <div id="Questions" class="tabcontent">
-        <h3>Supplemental Questions (WIP)</h3>
+        <div class="text_row">
+          <div class="text_column">
+      <p><strong>Questions - Machine Learning</strong> 
+        <ol> 
+        <li> Run the model under default conditions, and take note of the lowest loss. Change the training split to 0.1, and run again. What happens to loss?<ul><li>Move to the evaluate tab. Are your predictions over time more or less accurate using less training data?</li></ul></li>
+        <li>Do your predictions always make sense, understanding they represent concentrations in a solution? If not, what might this imply about the data-driven model?
+        </li>
+        <li>What single variable do you believe has the greatest impact on model accuracy?</li>
+        <li>What single variable has the greatest impact on training time?</li>
+        <li>Run the model under the same conditions multiple times. What results change upon each run?<ul><li>Continue to adjust parameters, this time with a focus on improving model consistency. </li></ul></li>
+        <li>After running the model many times, do you notice any trends in where the model tends to fail? Is it more accurate predicting one or more outputs than others?<ul><li>What steps might you take as a data scientist to improve your training data for the future?</li></ul></li>
+     <li>This module explores only a neural network as a tool for prediction. What other tools would be useful in solving this particular problem?</li>
+      </ol></p>
+            </div>
+
+          <div class="text_column">
+            <p> <strong>Questions - PBRs</strong> 
+            <ol> 
+              <li>Explore each of the inputs using the sliders. Which of these variables has the biggest effect on Lutein production? Why might this be the case?</li>
+            <li>Adjust the sliders with the intent to optimize lutein production. What are the inputs of this scenario?</li>
+            <li>Another way to optimize the photobioreactor is to perform a cost-benefit analysis. With the measurements you have taken within your digital experiment, calculate the profit of lutein and biomass using an estimation of their value. Compare this with the variability of the nitrate cost. After trying different combinations, record your highest value to cost ratio.</li>
+            <li>Another way to optimize the photobioreactor is to perform a cost-benefit analysis. With the measurements you have taken within your digital experiment, calculate the profit of lutein and biomass using an estimation of their value. Compare this with the variability of the nitrate cost. After trying different combinations, record your highest value to cost ratio.</li>
+          <li>List the different phases of algal growth. Looking at the biomass output, are you able to visualize these different stages? </li>
+          <li>Why may the outputs of this model be inherently different from experimental data? </li>
+          <li>Once an experiment is run, choose a way to calculate the difference between theoretical and experimental data.</li>
+          <li>Once an experiment is run, input the values used in the experiment into the model. Once a graph is generated, export the data and graph your theoretical and experimental results together.</li>
+        <li>Under high nitrate concentrations, biomass tends to increase rapidly. Why might we not see as high of an increase in lutein production?</li>
+        </ol></p>
+          </div>
+      </div>
       </div>
     </div>
     <script>
@@ -802,6 +1033,14 @@
     marginwidth="0"
     >Loading…</iframe
   >
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf9Ce2mndO4c4R3Jl1rK2_t58LjroODDVf9FqpADvZfnugqHA/viewform?embedded=true" style= "background-color: #262626" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-
+  <iframe
+    src="https://docs.google.com/forms/d/e/1FAIpQLSf9Ce2mndO4c4R3Jl1rK2_t58LjroODDVf9FqpADvZfnugqHA/viewform?embedded=true"
+    style="background-color: #262626"
+    width="100%"
+    height="500"
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+    >Loading…</iframe
+  >
 </html>
