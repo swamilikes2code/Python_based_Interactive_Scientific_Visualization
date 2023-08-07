@@ -19,7 +19,12 @@ app = Flask(__name__, static_url_path="/app/static")
 @app.route("/app", methods=["GET"])
 def index():
     return render_template("index.html")
-#most pages have been removed for simplicity.  See the flask_app.py in the flask_server_setup folder for a more complete version.
+#also route root to index page
+@app.route("/", methods=["GET"])
+def index2():
+    return render_template("index.html")
+
+#NOTE: most pages have been removed for simplicity.  See the flask_app.py in the flask_server_setup folder for a more complete version.
 
 #create a new route for our example HTML page
 @app.route("/example", methods=["GET"])
@@ -28,22 +33,6 @@ def example():
     bokeh_script_exampleModel = server_document(url="http://localhost:5006/bokehExample")
     #tell flask which template to render, and point it to the bokeh_script_exampleModel variable we just created
     return render_template("example.html", bokeh_script_exampleModel=bokeh_script_exampleModel)
-
-
-
-# @app.route("/acknowledgements", methods=['GET'])
-# def acknowledgements():
-#     return render_template("acknowledgements.html")
-
-# @app.route('/reports/<path:path>')
-# def send_report(path):
-#     return send_from_directory('reports', path)
-
-# @app.route("/DACModel", methods=['GET'])
-# def DACModel():
-#     print("running DAC Model")
-#     bokeh_script_DACModel = server_document(url="http://localhost:5006/DAC_animation")
-#     return render_template("DAC.html", bokeh_script_DACModel=bokeh_script_DACModel)
 
 # run the app
 if __name__ == "__main__":
