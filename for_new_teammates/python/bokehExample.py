@@ -1,7 +1,6 @@
 import bokeh #Base Bokeh import
 import bokeh.plotting #Bokeh plotting tools
 import numpy as np #Numpy for data manipulation
-import matplotlib.pyplot as plt #Matplotlib for additional customization and in-notebook plotting
 #extra bokeh imports to access specific functions
 from bokeh.plotting import figure, show, curdoc
 from bokeh.layouts import row, column
