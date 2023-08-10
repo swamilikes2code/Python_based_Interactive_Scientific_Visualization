@@ -106,6 +106,22 @@ p.legend.background_fill_alpha = 0.5
 
 p.toolbar.autohide = True
 
-test = row(p, colorAccess)
+from bokeh.plotting import figure, show
+from bokeh.models import Button
+
+# Create a button with different types
+button_default = Button(label="Default", button_type="default")
+button_primary = Button(label="Primary", button_type="primary")
+button_success = Button(label="Success", button_type="success")
+button_warning = Button(label="Warning", button_type="warning")
+button_danger = Button(label="Danger", button_type="danger")
+button_light = Button(label="Light", button_type="light")
+
+# Create a figure to display the buttons
+
+
+# Show the plot with buttons
+
+test = row(p, colorAccess, button_default, button_primary, button_success, button_warning, button_danger, button_light)
 
 curdoc().add_root(test)

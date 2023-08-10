@@ -459,8 +459,15 @@ def reset_button_edit_tab_function():
     batch_Size.value = 25
     lowest_mse_validation.value = str(100)
     epoch_of_lowest_loss.value = str('N/A')
-    p2.renderers = []
 reset_button_edit_tab.on_click(reset_button_edit_tab_function)
+#Clear Button******************************************************************************************************************************
+clear_button = Button(label = "Clear", button_type = "warning", height = 60, width = 300)
+
+def clear_button_callback():
+    p2.renderers = []
+
+clear_button.on_click(clear_button_callback)
+
     
 #Model Loop section for edit tab_____________________________________________________________________________________________________________________
 
@@ -821,7 +828,7 @@ batch = row(batch_Size, batch_Size_help_button)
 learning = row(learning_rate, learning_rate_help_button)
 optimizers = row(optimizer, optimizer_help_button)
 losses_help = row(loss_Fn, loss_Fn_help_button)
-ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
+ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_button_edit_tab, reset_button_edit_tab, clear_button) #test,val_split,
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error,)
 lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss, chart_table)
