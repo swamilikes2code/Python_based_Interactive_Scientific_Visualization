@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <!--TITLE FOR BROWSER TAB-->
+    <title>STEM Visualizations</title>
+    <style>
+      body {
+        margin: 0;
+        background: #fff;
+        font-family: "Work Sans", sans-serif;
+        font-weight: 400;
+      }
+
+      .container {
+        width: 85vw;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      header {
+        background: #262626;
+        height: 5.86vw;
+      }
+
+      Header::after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      .logo {
+        float: left;
+        padding: 0.651vw 0;
+        width: 22.79vw;
+        height: 100%;
+      }
+
+      nav {
+        float: right;
+      }
+
+      nav ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      nav li {
+        display: inline-block;
+        margin: left 3.56vw;
+        margin: 0 2.28vw;
+        padding-top: 2.21vw;
+        position: relative;
+      }
+
+      nav a {
+        color: rgb(255, 251, 251);
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 1.3vw;
+      }
+
+      nav a:hover {
+        color: #31a6ff;
+      }
+      nav a::before {
+        content: "";
+        display: block;
+        height: 5px;
+        width: 100%;
+        background-color: #31a6ff;
+
+        position: absolute;
+        width: 0%;
+        top: 0;
+        transition: all ease-in-out 250ms;
+      }
+
+      nav a:hover::before {
+        width: 100%;
+      }
+
+      .tile {
+        font-family: "Segoe UI";
+        font-size: 1.146vw;
+        color: #555;
+        font-weight: 600;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .head1 {
+        text-align: center;
+        color: #000;
+        font-size: 3.225vw;
+        padding: 1.04vw;
+      }
+
+      .para1 {
+        width: 50%;
+        margin-left: 7%;
+      }
+      .video {
+        margin: 0 7%;
+        width: 50%;
+      }
+      .video iframe {
+        width: 41.67vw;
+        height: 21.354vw;
+      }
+      .note {
+        text-align: center;
+      }
+
+      .flexwrap {
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+      }
+      .flexwrap1 {
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+      }
+      .flexcol {
+        color: #484848;
+        border: 3px;
+        border-style: solid;
+        border-color: #000;
+        padding: 10px;
+        width: 50%;
+        background: #e8e8e8;
+        height: 14.97vw;
+        border-radius: 30px;
+        font-size: 1.042vw;
+      }
+      #catalysis.flexcol {
+        position: relative;
+        height: 15.625vw;
+      }
+      #SIR.flexcol {
+        position: relative;
+        height: 15.625vw;
+      }
+      #ZECC.flexcol {
+        position: relative;
+      }
+      #reaction.flexcol {
+        position: relative;
+      }
+      #DLT.flexcol {
+        position: relative;
+        height: 15.625vw;
+      }
+      .head2 {
+        font-size: 2.083vw;
+        color: rgb(24, 24, 24);
+        text-decoration: underline;
+        text-align: center;
+      }
+      .container2 {
+        height: 7.8125vw;
+        position: relative;
+        background-color: #e8e8e8;
+      }
+      .head12 {
+        color: #000;
+        font-family: "Segoe UI";
+        font-size: 3.125vw;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+      }
+      .dark {
+        text-align: center;
+        font-family: "Segoe UI";
+        font-size: 1.2vw;
+        font-weight: 300;
+        color: rgb(24, 24, 24);
+        border: 3px;
+        border-style: solid;
+        border-color: #000;
+        padding: 10px;
+        background: #e8e8e8;
+        position: relative;
+        height: 6.51vw;
+        border-radius: 30px;
+      }
+      .test {
+        position: absolute;
+        left: 7%;
+        margin: -25px 0 0 -25px;
+      }
+
+      .button {
+        margin: 0;
+        position: absolute;
+        top: 70%;
+        left: 41%;
+        margin: -25px 0 0 -25px;
+        text-decoration: none;
+        color: #31a6ff;
+        font-family: "proxima nova";
+        font-weight: 200;
+        font-size: 1.3vw;
+        text-align: center;
+        background-color: #fff;
+
+        border: solid 2px #31a6ff;
+        border-radius: 50px;
+        padding: 0.651vw 5.208vw;
+
+        -webkit-transition-duration: 300ms;
+        transition-duration: 300ms;
+      }
+      .button1 {
+        margin: 0;
+        position: absolute;
+        top: 84%;
+        left: 35%;
+        margin: -25px 0 0 -25px;
+        text-decoration: none;
+        color: #31a6ff;
+        font-family: "proxima nova";
+        font-weight: 200;
+        font-size: 1.3vw;
+        text-align: center;
+        background-color: #fff;
+
+        border: solid 2px #31a6ff;
+        border-radius: 50px;
+        padding: 0.651vw 5.208vw;
+
+        -webkit-transition-duration: 300ms;
+        transition-duration: 300ms;
+      }
+      .button4 {
+        margin: 0;
+        position: absolute;
+        top: 84%;
+        left: 25%;
+        margin: -25px 0 0 -25px;
+        text-decoration: none;
+        color: #31a6ff;
+        font-family: "proxima nova";
+        font-weight: 200;
+        font-size: 1.3vw;
+        text-align: center;
+        background-color: #fff;
+
+        border: solid 2px #31a6ff;
+        border-radius: 50px;
+        padding: 0.651vw 5.208vw;
+
+        -webkit-transition-duration: 300ms;
+        transition-duration: 300ms;
+      }
+      .button1:hover {
+        background-color: #31a6ff;
+        color: #fff;
+      }
+      .button4:hover {
+        background-color: #31a6ff;
+        color: #fff;
+      }
+      .button:hover {
+        background-color: #31a6ff;
+        color: #fff;
+      }
+      .footer {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-decoration: none;
+        overflow: hidden;
+        padding: 1.953vw 0;
+        box-sizing: border-box;
+        background-color: #262626;
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+        margin-top: -180px;
+      }
+      .footer1 {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-decoration: none;
+        overflow: hidden;
+        padding: 1.953vw 0;
+        box-sizing: border-box;
+        background-color: #262626;
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+        margin-bottom: -4.883vw;
+      }
+      .footerpic {
+        width: 7.161vw;
+        height: 6.51vw;
+        padding: 0.65vw;
+      }
+      .flexcol1 {
+        position: relative;
+        color: #ddd;
+        padding: 0.65vw;
+        width: 50%;
+        background: #262626;
+        height: auto;
+        font-family: "work sans", sans-serif;
+        font-size: 1.042vw;
+      }
+      .flexcol1 p {
+        position: absolute;
+        left: 0;
+      }
+      .flexcol1 img {
+        position: absolute;
+        right: 0;
+      }
+
+      .flexcol2 {
+        width: 28%;
+        height: auto;
+        margin: 112px 0 0 0;
+      }
+      .flexcol4 {
+        width: 32%;
+        height: auto;
+        margin: 230px 0 0 0;
+      }
+      .flexcol3 {
+        width: 40%;
+        height: auto;
+        margin: 230px 0 0 0;
+        padding-right: 1.3vw;
+      }
+      .flexcol5 {
+        width: 45%;
+        position: relative;
+        height: auto;
+        padding-left: 5.21vw;
+      }
+      .flexcol6 {
+        width: 55%;
+        position: relative;
+        height: auto;
+      }
+      .footerbutton {
+        margin: 5px 2px;
+        text-decoration: none;
+        font-family: "proxima nova";
+        font-weight: 200;
+        font-size: 1.302vw;
+        width: 20px;
+        text-align: center;
+        background-color: #31a6ff;
+        color: #fff;
+
+        border: solid 2px #31a6ff;
+        border-radius: 50px;
+        padding: 0.521vw;
+
+        -webkit-transition-duration: 300ms;
+        transition-duration: 300ms;
+      }
+      .footerbutton:hover {
+        color: #31a6ff;
+        background-color: #fff;
+      }
+      .fa {
+        padding: 0.521vw;
+        font-size: 1.302vw;
+        width: 1.302vw;
+        text-align: center;
+        text-decoration: none;
+        margin: 5px 2px;
+        border-radius: 50%;
+      }
+      .fa:hover {
+        opacity: 0.7;
+      }
+      .fa-linkedin {
+        background: #007bb5;
+        color: white;
+      }
+      .fa-github {
+        border: 0.195vw solid #521d91;
+      }
+      #reaction.flexcol h2 {
+        position: absolute;
+        left: 33%;
+        top: 14%;
+        margin: -25px 0 0 -25px;
+      }
+      #reaction.flexcol p {
+        position: absolute;
+        left: 6%;
+        top: 42%;
+        margin: -25px 0 0 -25px;
+      }
+      #ZECC.flexcol h2 {
+        position: absolute;
+        left: 25%;
+        top: 14%;
+        margin: -25px 0 0 -25px;
+      }
+      #ZECC.flexcol p {
+        position: absolute;
+        left: 6%;
+        top: 42%;
+        margin: -25px 0 0 -25px;
+      }
+      #SIR.flexcol h2 {
+        position: absolute;
+        left: 25%;
+        top: 14%;
+        margin: -25px 0 0 -25px;
+      }
+      #SIR.flexcol p {
+        position: absolute;
+        left: 6%;
+        top: 42%;
+        margin: -25px 0 0 -25px;
+      }
+      #catalysis.flexcol p {
+        padding-right: 10px;
+      }
+      #DLT.flexcol h2 {
+        top: 14%;
+        margin: -1px 0 0 -1px;
+      }
+      #DLT.flexcol p {
+        position: absolute;
+        left: 6%;
+        top: 38%;
+        margin: -25px 0 0 -25px;
+      }
+
+      @media all and (max-width: 960px) {
+        .tile {
+          font-family: "Segoe UI";
+          font-size: 1.146vw;
+          color: #555;
+          font-weight: 600;
+          margin: 0 auto;
+          background-color: #ffffff;
+        }
+        .test h2 {
+          padding-top: 13px;
+          padding-left: 2px;
+        }
+        .button {
+          position: absolute;
+          top: 90%;
+          left: 43%;
+        }
+        #reaction.flexcol h2 {
+          position: absolute;
+          left: 37%;
+          top: 25%;
+        }
+        #reaction.flexcol p {
+          padding: 0 15px;
+          left: 8%;
+          top: 50%;
+        }
+        .button4 {
+          top: 94%;
+          left: 31%;
+        }
+        #ZECC.flexcol h2 {
+          left: 28%;
+          top: 25%;
+        }
+        #ZECC.flexcol p {
+          padding: 0 15px;
+          left: 8%;
+          top: 50%;
+        }
+        .button1 {
+          top: 94%;
+          left: 41%;
+        }
+        #SIR.flexcol h2 {
+          left: 30%;
+          top: 25%;
+        }
+        #SIR.flexcol p {
+          padding: 0 15px;
+          left: 8%;
+          top: 50%;
+        }
+        #catalysis.flexcol p {
+          padding: 0 15px;
+        }
+        nav li {
+          padding-top: 0.325vw;
+        }
+        #DLT.flexcol h2 {
+          left: 28%;
+          top: 20%;
+        }
+        #DLT.flexcol p {
+          padding: 0 15px;
+          left: 8%;
+          top: 50%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <img
+          src="{{url_for('static', filename='Logo2.JPG')}}"
+          alt="logo"
+          class="logo"
+        />
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/app" class="text-size">Home</a></li>
+          <li>
+            <a href="example" class="text-size"
+              >Example</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <style>
+      .text-size {
+        font-size: 16px; /* Adjust the font size as desired */
+      }
+    </style>
+    <!--THIS IS THE OPENING PARAGRAPH/TITLE, DON'T USE THIS PARAGRAPH FOR FORMATTING-->
+
+    <div class="tile">
+      <h1 class="head1">Welcome!</h1>
+      <div class="flexwrap">
+        <div class="para1">
+          <p>
+            This site was designed to help students learn conceptually complex
+            STEM problems by giving them a more interactive way of engaging with
+            course material. <br /><br />
+            Our long-term vision is to create an open repository for a range of
+            visualization-based models: from interactive data visualization
+            (through plots) of system response to more advanced graphics-based
+            simulations of complex natural and engineered systems. Our models
+            cover a variety of different topics and subjects, hopefully you find
+            these to be useful! <br /><br />
+            - Mountaintop Summer Team
+          </p>
+        </div>
+
+        <div class="video">
+          <iframe
+            src="https://player.vimeo.com/video/447232810"
+            frameborder="0"
+            allow="autoplay; fullscreen"
+          ></iframe>
+          <p class="note">
+            <a href="https://vimeo.com/447232810"
+              >STEM Learning Through Visualization Presentation</a
+            >
+            from <a href="https://vimeo.com/user121275255">Brian Lucas</a> on
+            <a href="https://vimeo.com">Vimeo</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--ENDING OF THE INTRODUCTION PARAGRAPH-->
+
+    <!--VIDEO DIVISION
+    
+    <div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
+    
+    <iframe src="https://player.vimeo.com/video/447232810" width="640" height="328" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    <p><a href="https://vimeo.com/447232810">STEM Learning Through Visualization Presentation</a> from <a href="https://vimeo.com/user121275255">Brian Lucas</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+        
+    </div>-->
+
+    <br /><br /><!--INCLUDE TWO SPACE BREAKS IN BETWEEN EVERY PARAGRAPH BOX-->
+
+    <!-------MODELS------------------------------------------------------>
+
+    <div class="container2">
+      <h1 class="head12">Models:</h1>
+      <!--THIS IS THE TITLE FOR THE MODELS-->
+    </div>
+    <div class="dark">
+      <div class="test">
+        <h2>
+          The Github repository containing all code and documentation related to
+          this project can be found below:
+        </h2>
+      </div>
+
+      <a
+        href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization"
+        class="button"
+        >Github Repository</a
+      >
+    </div>
+    <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
+    <div class="flexwrap">
+      <!--REACTION KINETICS DIVISION-->
+      <div class="flexcol" id="reaction">
+        <h2 class="head2">Reaction Kinetics:</h2>
+
+        <p>
+          Reaction kinetics is the branch of chemistry concerned with the rate
+          of transformation of reactant into product. Reaction rate is generally
+          expressed in terms of concentration per unit time. This program allows
+          you to see the change in A, B, and C concentrations as you change the
+          orders and initial k-constants.
+        </p>
+        <a href="sliders_reaction_kinetics" class="button4"
+          >Reaction Kinetics Model</a
+        >
+      </div>
+
+      <!--ZECC DIVISION-->
+      <div class="flexcol" id="ZECC">
+        <h2 class="head2">Zero Energy Cooling Chamber:</h2>
+
+        <p>
+          This program allows you to create a Zero Energy Cooling Chamber with
+          your chosen specified dimensions, material and location for the
+          chamber. A Zero Energy Cooling Chamber is an eco-friendly and
+          cost-effective way of storing food. Usually used in hot climates, it
+          uses passive evaporation to cool down the food storage chamber. Click
+          to see more information.
+        </p>
+
+        <a href="ZECC" class="button1">ZECC Model</a>
+      </div>
+    </div>
+    <div class="flexwrap">
+      <!--SIR DIVISION-->
+      <div class="flexcol" id="SIR">
+        <h2 class="head2">Infectious Disease Model:</h2>
+        <br /><br />
+
+        <p>
+          The SIR Model (Susceptible-Exposed-Infected-Recovered) is an
+          infectious disease model that relates different populations through a
+          set of ordinary differential equations.
+        </p>
+
+        <a href="SIR" class="button1">SIR Model</a>
+      </div>
+
+      <!--Catalysis DIVISION-->
+      <div class="flexcol" id="catalysis">
+        <div class="test">
+          <h2 class="head2">Catalysis Data Science Model:</h2>
+
+          <p>
+            Ever wonder how your email is classified as spam? How about how
+            forecasting is done in fields such as business, medicine, and many
+            others? The answer is data science and machine learning concepts.
+            Data science and machine learning are emerging fields which are
+            increasingly being used in the real world. Our module will introduce
+            many of the basic key concepts of data science and machine learning
+            which are used in many real world applications.
+          </p>
+        </div>
+        <a href="catalysis_data_interactive_visualization" class="button1"
+          >Catalysis Model</a
+        >
+      </div>
+    </div>
+    <div class="flexwrap">
+      <!--DAV-->
+      <div class="flexcol" id="catalysis">
+        <h2 class="head2">DAC Model:</h2>
+
+        <p>DESCRIPTION OF DAC Model</p>
+        <a href="DAC" class="button1">DAC Model</a>
+      </div>
+      <div class="flexcol" id="DLT">
+        <h2 class="head2">Digital Lab Twin:</h2>
+        <p>
+          Want to delve into machine learning? Interested in expediting your experiments?
+          The digital laboratory twin allows you to do both, by building your own neural network!
+          Our system allows you to customize a network and analyse it's capabilities in seconds.
+          Models can then be used to optimize the complex biochemical-engineering system called a photobioreactor,
+          adjusting initial conditions to perform 'experiments' and maximize valuable bioproducts.
+        </p> 
+        <a href="DLT" class="button1">DLT Model</a>
+      </div>
+    </div>
+
+    <br /><br />
+  </body>
+
+  <div class="footer1">
+    <div class="flexcol5">
+      <img
+        src="{{url_for('static', filename='Logo2.JPG')}}"
+        alt="logo"
+        style="margin: 5px; width: 44.14vw; height: 8.854vw"
+      />
+    </div>
+    <div class="flexcol6">
+      <h2
+        style="
+          font-family: Segoe UI;
+          text-align: center;
+          font-size: 3.125vw;
+          font-weight: 500;
+          color: #fff;
+        "
+      >
+        Acknowledgements
+      </h2>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="flexcol2">
+      <pre
+        style="
+          font-family: Segoe UI;
+          text-align: center;
+          font-size: 2.345vw;
+          font-weight: 250;
+          color: #fff;
+        "
+      >
+     Faculty & External Advisors:                                                  Developers:</pre
+      >
+      <div class="flexwrap1">
+        <div class="flexcol1">
+          <img
+            src="{{url_for('static', filename='rangarajan1.jpg')}}"
+            alt="Prof R"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Raghu.jpg')}}"
+            alt="Raghu"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='grassi1.jpg')}}"
+            alt="Dr. Grassi"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='steve.jpg')}}"
+            alt="Steve"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Joseph_Menicucci.jpg')}}"
+            alt="Joseph"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+        </div>
+        <div class="flexcol1" style="float: left">
+          <p>
+            <strong>Prof. Srinivas Rangarajan</strong> <br />
+            Principal Investigator <br /><br />
+            <a
+              href="https://sites.google.com/lehigh.edu/rangarajan-group/"
+              class="footerbutton"
+              >Bio</a
+            >
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Dr. Raghuram Thiagarajan</strong> <br />
+            Project Lead <br />
+            <a
+              href="https://www.linkedin.com/in/raghuramt/"
+              class="fa fa-linkedin"
+            ></a>
+            <a
+              href="https://github.com/swamilikes2code"
+              class="fa fa-github"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Dr. Vincent Grassi</strong> <br />
+            Assistant Lead <br /><br />
+            <a
+              href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"
+              class="footerbutton"
+              >Memo</a
+            >
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Steve Anthony</strong> <br />
+            Tech Assistant<br />
+            <a
+              href="https://www.linkedin.com/in/steve-anthony-99a1b014/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Dr. Joseph Menicucci</strong> <br />
+            External Advisor<br /><br />
+            <a
+              href="https://engineering.lehigh.edu/faculty/joseph-menicucci"
+              class="footerbutton"
+              >Bio</a
+            >
+          </p>
+          <br /><br /><br /><br /><br /><br />
+        </div>
+      </div>
+    </div>
+    <div class="flexcol4">
+      <div class="flexwrap1">
+        <div class="flexcol1">
+          <img
+            src="{{url_for('static', filename='Neel.jpg')}}"
+            alt="Neel"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Timothy.jpg')}}"
+            alt="Timothy"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Xu.jpg')}}"
+            alt="Xu"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Alex_Pellett.jpg')}}"
+            alt="Alex Pellett"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Alicia_Zhang.jpg')}}"
+            alt="Alicia"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+        </div>
+        <div class="flexcol1" style="float: left">
+          <p>
+            <strong>Neel Surya</strong> - Class of 2021 <br />
+            Design, Implementation and UI/UX Developer <br />
+            <a
+              href="https://www.linkedin.com/in/neel-surya-a6a4881b4/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/Neel-Surya" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Timothy Odom</strong> - Class of 2021 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/timothy-odom-831218216at3/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/too223" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Xu Chen</strong> - Class of 2021 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/xu-chen-lu/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/xuc323" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Alex Pellett</strong> - Class of 2023, 2024G <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/alexandria-pellett/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Alicia Zhang</strong> - Class of 2025 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/alicia-zhang1/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+        </div>
+      </div>
+    </div>
+    <div class="flexcol3" style="padding-right: 15px">
+      <div class="flexwrap1">
+        <div class="flexcol1">
+          <img
+            src="{{url_for('static', filename='Alex.JPG')}}"
+            alt="Alex"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='anna.JPG')}}"
+            alt="Anna"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='brian.JPG')}}"
+            alt="Brian"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
+            alt="Madeline"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
+            alt="Tyreese"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+        </div>
+        <div class="flexcol1" style="float: left">
+          <p>
+            <strong>Alex Outkou</strong> - Class of 2021 <br />
+            UI/UX and HTML Developer <br />
+            <a
+              href="https://www.linkedin.com/in/alex-outkou/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/ado323" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Anna Moragne</strong> - Class of 2020 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/anna-moragne/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/annamoragne" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Brian Lucas</strong> - Class of 2020 <br />
+            Design, Implementation and UI/UX Developer <br />
+            <a
+              href="https://www.linkedin.com/in/brian-lucas-327196216/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/cariocabrian" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Madeline Judd</strong> - Class of 2025 <br />
+            Core Developer <br />
+            <a href="https://github.com/kr225" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Tyreese Davidson</strong> - Class of 2026 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/tyreese-davidson/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+        </div>
+      </div>
+    </div>
+  </div>
+  <iframe
+    src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true"
+    style="background-color: #262626"
+    width="100%"
+    height="500"
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+    >Loading…</iframe
+  >
+  <!---------------------------------------------------------------------------------->
+
+  <foot> </foot>
+</html>

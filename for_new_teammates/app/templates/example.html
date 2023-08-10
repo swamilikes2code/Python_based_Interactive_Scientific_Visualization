@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <title>Example title</title>
+    <style>
+      body {
+        margin: 0;
+        background: #fff;
+        font-family: "Work Sans", sans-serif;
+        font-weight: 400;
+      }
+      .container {
+        width: 85vw;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      header {
+        background: #262626;
+        height: 5.86vw;
+      }
+
+      Header::after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      .logo {
+        float: left;
+        padding: 0.651vw 0;
+        width: 22.79vw;
+        height: 100%;
+      }
+
+      nav {
+        float: right;
+      }
+
+      nav ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      nav li {
+        display: inline-block;
+        margin: left 3.56vw;
+        margin: 0 2.28vw;
+        padding-top: 2.21vw;
+        position: relative;
+      }
+
+      nav a {
+        color: rgb(255, 251, 251);
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 1.3vw;
+      }
+
+      nav a:hover {
+        color: #31a6ff;
+      }
+      nav a::before {
+        content: "";
+        display: block;
+        height: 5px;
+        width: 100%;
+        background-color: #31a6ff;
+
+        position: absolute;
+        width: 0%;
+        top: 0;
+        transition: all ease-in-out 250ms;
+      }
+
+      nav a:hover::before {
+        width: 100%;
+      }
+
+      .head1 {
+        text-align: center;
+        color: #000;
+        font-size: vw;
+        padding: 1.042vw;
+      }
+
+      .head1 {
+        text-align: center;
+        color: #000;
+        font-size: 3.125vw;
+        font-weight: bold;
+        font-family: "Segoe UI";
+      }
+      .flexwrap {
+        display: flex;
+        width: auto;
+        margin: auto;
+        font-family: "Segoe UI";
+        max-width: 90rem;
+      }
+      .flexwrap1 {
+        display: flex;
+        width: auto;
+        font-family: "Segoe UI";
+        color: #484848;
+        font-weight: 600;
+        font-size: 1.354vw;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        background: #b2e3f4;
+        gap: 2.083vw;
+        line-height: 1.5;
+        margin: auto;
+      }
+      .flexcol {
+        color: #484848;
+        font-weight: 600;
+        border: 0.1953vw;
+        font-size: 1.3542vw;
+        border-style: solid;
+        border-color: #000;
+        padding: 0.651vw;
+        width: 50%;
+        background: #e8e8e8;
+        border-radius: 30px;
+        margin: 0 1.302vw;
+      }
+      .head2 {
+        text-align: center;
+        color: #000;
+        font-size: 2.604vw;
+        font-weight: 600;
+        font-family: "Segoe UI";
+      }
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 52.083vw;
+        height: 29.297vw;
+      }
+      .footer {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-decoration: none;
+        overflow: hidden;
+        padding: 1.953vw 0;
+        box-sizing: border-box;
+        background-color: #262626;
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+        margin-top: -180px;
+      }
+      .footer1 {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-decoration: none;
+        overflow: hidden;
+        padding: 1.953vw 0;
+        box-sizing: border-box;
+        background-color: #262626;
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+        margin-bottom: -4.883vw;
+      }
+      .footerpic {
+        width: 7.161vw;
+        height: 6.51vw;
+        padding: 0.65vw;
+      }
+      .flexcol1 {
+        position: relative;
+        color: #ddd;
+        padding: 0.65vw;
+        width: 50%;
+        background: #262626;
+        height: auto;
+        font-family: "work sans", sans-serif;
+        font-size: 1.042vw;
+      }
+      .flexcol1 p {
+        position: absolute;
+        left: 0;
+      }
+      .flexcol1 img {
+        position: absolute;
+        right: 0;
+      }
+
+      .flexcol2 {
+        width: 28%;
+        height: auto;
+        margin: 112px 0 0 0;
+      }
+      .flexcol4 {
+        width: 32%;
+        height: auto;
+        margin: 230px 0 0 0;
+      }
+      .flexcol3 {
+        width: 40%;
+        height: auto;
+        margin: 230px 0 0 0;
+        padding-right: 1.3vw;
+      }
+      .flexcol5 {
+        width: 45%;
+        position: relative;
+        height: auto;
+        padding-left: 5.21vw;
+      }
+      .flexcol6 {
+        width: 55%;
+        position: relative;
+        height: auto;
+      }
+      .footerbutton {
+        margin: 5px 2px;
+        text-decoration: none;
+        font-family: "proxima nova";
+        font-weight: 200;
+        font-size: 1.302vw;
+        width: 20px;
+        text-align: center;
+        background-color: #31a6ff;
+        color: #fff;
+
+        border: solid 2px #31a6ff;
+        border-radius: 50px;
+        padding: 0.521vw;
+
+        -webkit-transition-duration: 300ms;
+        transition-duration: 300ms;
+      }
+      .footerbutton:hover {
+        color: #31a6ff;
+        background-color: #fff;
+      }
+      .fa {
+        padding: 0.521vw;
+        font-size: 1.302vw;
+        width: 1.302vw;
+        text-align: center;
+        text-decoration: none;
+        margin: 5px 2px;
+        border-radius: 50%;
+      }
+      .fa:hover {
+        opacity: 0.7;
+      }
+      .fa-linkedin {
+        background: #007bb5;
+        color: white;
+      }
+      .fa-github {
+        border: 0.195vw solid #521d91;
+      }
+
+      @media all and (max-width: 960px) {
+        nav li {
+          padding-top: 0.325vw;
+        }
+        .flexcol {
+          padding: 0 10px;
+          border-radius: 17px;
+        }
+
+        .tab {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+          font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
+        }
+      }
+      .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+      }
+
+      /* Create two equal columns that floats next to each other */
+      .text_column {
+        float: left;
+        width: 50%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      /* Clear floats after the columns */
+      .text_row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <img
+          src="{{url_for('static', filename='Logo2.JPG')}}"
+          alt="logo"
+          class="logo"
+        />
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/app" class="text-size">Home</a></li>
+          <li>
+            <a href="example" class="text-size"
+              >Example</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <style>
+      .text-size {
+        font-size: 16px; /* Adjust the font size as desired */
+      }
+    </style>
+    <h1 class="head1">Example Page</h1>
+    <div class="tab">
+      <button
+        class="tablinks"
+        onclick="openTab(event, 'About')"
+        id="defaultOpen"
+      >
+        About
+      </button>
+      <button class="tablinks" onclick="openTab(event, 'Instructions')">
+        Instructions
+      </button>
+      <button class="tablinks" onclick="openTab(event, 'Questions')">
+        Questions
+      </button>
+    </div>
+
+    <div class="flexwrap1">
+      <div id="About" class="tabcontent">
+        <h3>About</h3>
+        <p>
+          Provide some background on your module here!
+        </p>
+      </div>
+    </div>
+
+    <div class="flexwrap1">
+      <div id="Instructions" class="tabcontent">
+        <h3>Instructions</h3>
+        <p>
+          Make sure the user knows how to use the module!
+        </p>
+      </div>
+    </div>
+
+    <div class="flexwrap1">
+      <div id="Questions" class="tabcontent">
+        <h3>Supplemental Questions</h3>
+        <p>
+          Provide some questions for the user to answer here!
+        </p>
+      </div>
+    </div>
+    <script>
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+      // Get the element with id="defaultOpen" and click on it
+      document.getElementById("defaultOpen").click();
+      // Keyboard navigation
+      document.addEventListener("keydown", (event) => {
+        const tablinks = document.querySelectorAll(".tablinks");
+        let currentTab = Array.from(tablinks).findIndex((tab) =>
+          tab.classList.contains("active")
+        );
+
+        if (event.key === "ArrowRight") {
+          currentTab = (currentTab + 1) % tablinks.length;
+        } else if (event.key === "ArrowLeft") {
+          currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+        } else {
+          return;
+        }
+
+        tablinks[currentTab].click();
+      });
+      /* Here is where you'll add your bokeh module in, just change the name to match what's referenced in flask_app.py */
+    </script>
+    <br />
+    <br />
+    {{bokeh_script_exampleModel|safe}}
+  </body>
+  <div class="footer1">
+    <div class="flexcol5">
+      <img
+        src="{{url_for('static', filename='Logo2.JPG')}}"
+        alt="logo"
+        style="margin: 5px; width: 44.14vw; height: 8.854vw"
+      />
+    </div>
+    <div class="flexcol6">
+      <h2
+        style="
+          font-family: Segoe UI;
+          text-align: center;
+          font-size: 3.125vw;
+          font-weight: 500;
+          color: #fff;
+        "
+      >
+        Acknowledgements
+      </h2>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="flexcol2">
+      <pre
+        style="
+          font-family: Segoe UI;
+          text-align: center;
+          font-size: 2.345vw;
+          font-weight: 250;
+          color: #fff;
+        "
+      >
+     Faculty & External Advisors:                                                  Developers:</pre
+      >
+      <div class="flexwrap">
+        <div class="flexcol1">
+          <img
+            src="{{url_for('static', filename='rangarajan1.jpg')}}"
+            alt="Prof R"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Raghu.jpg')}}"
+            alt="Raghu"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='grassi1.jpg')}}"
+            alt="Dr. Grassi"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='steve.jpg')}}"
+            alt="Steve"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Joseph_Menicucci.jpg')}}"
+            alt="Joseph"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+        </div>
+        <div class="flexcol1" style="float: left">
+          <p>
+            <strong>Prof. Srinivas Rangarajan</strong> <br />
+            Principal Investigator <br /><br />
+            <a
+              href="https://sites.google.com/lehigh.edu/rangarajan-group/"
+              class="footerbutton"
+              >Bio</a
+            >
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Dr. Raghuram Thiagarajan</strong> <br />
+            Project Lead <br />
+            <a
+              href="https://www.linkedin.com/in/raghuramt/"
+              class="fa fa-linkedin"
+            ></a>
+            <a
+              href="https://github.com/swamilikes2code"
+              class="fa fa-github"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Dr. Vincent Grassi</strong> <br />
+            Assistant Lead <br /><br />
+            <a
+              href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"
+              class="footerbutton"
+              >Memo</a
+            >
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Steve Anthony</strong> <br />
+            Tech Assistant<br />
+            <a
+              href="https://www.linkedin.com/in/steve-anthony-99a1b014/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Dr. Joseph Menicucci</strong> <br />
+            External Advisor<br /><br />
+            <a
+              href="https://engineering.lehigh.edu/faculty/joseph-menicucci"
+              class="footerbutton"
+              >Bio</a
+            >
+          </p>
+          <br /><br /><br /><br /><br /><br />
+        </div>
+      </div>
+    </div>
+    <div class="flexcol4">
+      <div class="flexwrap">
+        <div class="flexcol1">
+          <img
+            src="{{url_for('static', filename='Neel.jpg')}}"
+            alt="Neel"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Timothy.jpg')}}"
+            alt="Timothy"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Xu.jpg')}}"
+            alt="Xu"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Alex_Pellett.jpg')}}"
+            alt="Alex Pellett"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Alicia_Zhang.jpg')}}"
+            alt="Alicia"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+        </div>
+        <div class="flexcol1" style="float: left">
+          <p>
+            <strong>Neel Surya</strong> - Class of 2021 <br />
+            Design, Implementation and UI/UX Developer <br />
+            <a
+              href="https://www.linkedin.com/in/neel-surya-a6a4881b4/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/Neel-Surya" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Timothy Odom</strong> - Class of 2021 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/timothy-odom-831218216at3/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/too223" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Xu Chen</strong> - Class of 2021 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/xu-chen-lu/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/xuc323" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Alex Pellett</strong> - Class of 2023, 2024G <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/alexandria-pellett/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Alicia Zhang</strong> - Class of 2025 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/alicia-zhang1/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+        </div>
+      </div>
+    </div>
+    <div class="flexcol3" style="padding-right: 15px">
+      <div class="flexwrap">
+        <div class="flexcol1">
+          <img
+            src="{{url_for('static', filename='Alex.JPG')}}"
+            alt="Alex"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='anna.JPG')}}"
+            alt="Anna"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='brian.JPG')}}"
+            alt="Brian"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
+            alt="Madeline"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+          <img
+            src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
+            alt="Tyreese"
+            class="footerpic"
+          />
+          <br /><br /><br /><br /><br /><br />
+        </div>
+        <div class="flexcol1" style="float: left">
+          <p>
+            <strong>Alex Outkou</strong> - Class of 2021 <br />
+            UI/UX and HTML Developer <br />
+            <a
+              href="https://www.linkedin.com/in/alex-outkou/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/ado323" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Anna Moragne</strong> - Class of 2020 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/anna-moragne/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/annamoragne" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Brian Lucas</strong> - Class of 2020 <br />
+            Design, Implementation and UI/UX Developer <br />
+            <a
+              href="https://www.linkedin.com/in/brian-lucas-327196216/"
+              class="fa fa-linkedin"
+            ></a>
+            <a href="https://github.com/cariocabrian" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Madeline Judd</strong> - Class of 2025 <br />
+            Core Developer <br />
+            <a href="https://github.com/kr225" class="fa fa-github"></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+          <p>
+            <strong>Tyreese Davidson</strong> - Class of 2026 <br />
+            Core Developer <br />
+            <a
+              href="https://www.linkedin.com/in/tyreese-davidson/"
+              class="fa fa-linkedin"
+            ></a>
+          </p>
+          <br /><br /><br /><br /><br /><br />
+        </div>
+      </div>
+    </div>
+  </div>
+  <iframe
+    src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true"
+    style="background-color: #262626"
+    width="100%"
+    height="500"
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+    >Loading…</iframe
+  >
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf9Ce2mndO4c4R3Jl1rK2_t58LjroODDVf9FqpADvZfnugqHA/viewform?embedded=true" style= "background-color: #262626" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+
+</html>
