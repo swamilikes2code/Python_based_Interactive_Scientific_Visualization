@@ -683,7 +683,7 @@ def kmean_preset():
         kmeans = KMeans(n_clusters=i)
         kmeans.fit(unsuper_learn_std_df)
         Error.append(kmeans.inertia_)
-    unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
+    unsuper_learn_elbow_source.data = dict(x=[*range(1, 11)], y=Error)
 
 
 def update_unsuper_learning():
