@@ -26,6 +26,7 @@ import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip, NumberFormatter
 import warnings
 import random
+import time
 from os.path import dirname, join
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
@@ -35,7 +36,8 @@ warnings.filterwarnings("ignore", category=UserWarning, message="X does not have
 #prefix holder so any file calls are relative to the current directory
 prefix = 'digital_lab_twin/'
 #boolean for if on master or not--false will keep things presuming you are running from dlt folder, otherwise append prefix
-master = True
+#master = True
+master = False
 #when running, ask user if they are running from master or not
 """master = input("Are you running from master? (y/n): ")
 if master == 'y':
@@ -383,11 +385,11 @@ train_help_button = HelpButton(tooltip=train_tooltip, button_type = "light", )
 
 #val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
-neurons = Slider (start = 7, end = 100, value = 18, step = 1, title = "Number of Neurons")# 
+neurons = Slider (start = 7, end = 50, value = 18, step = 1, title = "Number of Neurons")# 
 neurons_tooltip = Tooltip(content=("""Determine how dense each neural network layer is. The network contains 3 layers, with an activator function in between each. Denser networks are resource intensive, but thinner networks may compromise accuracy."""), position = "right")
 neurons_help_button = HelpButton(tooltip=neurons_tooltip, button_type = "light")
 
-epochs = Slider (start = 5, end = 50, value = 25, step = 5, title = "Epochs")# 
+epochs = Slider (start = 5, end = 30, value = 25, step = 5, title = "Epochs")# 
 epochs_tooltip = Tooltip(content=("""Determine how many times the network will read over the training data. This heavily impacts the model’s processing time."""), position = "right")
 epochs_help_button = HelpButton(tooltip=epochs_tooltip, button_type = "light")
     
@@ -511,7 +513,82 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
     
   ### Dynamic (run on each change)
   #test the all-in-one function
-  model, Y_test_tensor, testPreds, XTestTime, lossDF, stScalerX, stScalerY, testPreds, mse, rmse= mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
+  ## model, Y_test_tensor, testPreds, XTestTime, lossDF, stScalerX, stScalerY, testPreds, mse, rmse= mnn.trainAndSaveModel(X, Y, trainSplit,  initNeuronNum, loss, optimizer, learnRate, epochs, batchSize, device) #valSplit, testSplit,
+  #split the data
+  X_train, X_val, X_test, Y_train, Y_val, Y_test, XTrainTime, XValTime, XTestTime = mnn.dataSplitter(X, Y, trainSplit)
+  #scale the data
+  stScalerX, stScalerY, X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled= mnn.scaleData(X_train, X_val, X_test, Y_train, Y_val, Y_test)
+  #tensorize the data
+  X_train_tensor, X_val_tensor, X_test_tensor, Y_train_tensor, Y_val_tensor, Y_test_tensor = mnn.tensors(X_train_scaled, X_val_scaled, X_test_scaled, Y_train_scaled, Y_val_scaled, Y_test_scaled)
+  #if possible, move the tensors to the GPU
+  X_train_tensor = X_train_tensor.to(device)
+  X_val_tensor = X_val_tensor.to(device)
+  X_test_tensor = X_test_tensor.to(device)
+  Y_train_tensor = Y_train_tensor.to(device)
+  Y_val_tensor = Y_val_tensor.to(device)
+  Y_test_tensor = Y_test_tensor.to(device)
+
+  #create the model
+  model, lossFunction, optimizer = mnn.modelCreator(initNeuronNum, loss, optimizer, learnRate)
+  #if possible, move the model to the GPU
+  model = model.to(device)
+  #train the model
+  #model, trainLoss, valLoss = trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor, X_val_tensor, Y_train_tensor, Y_val_tensor)
+  batch_start = torch.arange(0, len(X_train_tensor), batchSize)
+    
+# Hold the best model
+  best_mse = np.inf   # init to infinity
+  best_weights = None
+  trainLoss = []
+  valLoss = []
+  # starting the training, want to add a timer to see how long it takes (print only to console)
+  timeStart = time.perf_counter()
+  # training loop
+  for epoch in range(epochs):
+        model.train()
+        with tqdm.tqdm(batch_start, unit="batch", mininterval=0, disable=True) as bar:
+            bar.set_description(f"Epoch {epoch}")
+            for start in bar:
+                # take a batch
+                X_batch = X_train_tensor[start:start+batchSize]
+                y_batch = Y_train_tensor[start:start+batchSize]
+                # forward pass
+                y_pred = model(X_batch)
+                loss = lossFunction(y_pred, y_batch)
+                # backward pass
+                for param in model.parameters():
+                    param.grad = None
+                loss.backward()
+                # update weights
+                optimizer.step()
+                # print progress
+                bar.set_postfix(mse=float(loss))
+        # evaluate accuracy at end of each epoch
+        model.eval()
+        y_pred = model(X_train_tensor)
+        mse = lossFunction(y_pred, Y_train_tensor)
+        mse = float(mse)
+        trainLoss.append(mse)
+        if mse < best_mse:
+            best_mse = mse
+            best_weights = copy.deepcopy(model.state_dict())
+        
+        #validation loss
+        y_pred = model(X_val_tensor)
+        mse = lossFunction(y_pred, Y_val_tensor)
+        mse = float(mse)
+        valLoss.append(mse)
+    
+    # restore model and return best accuracy
+  model.load_state_dict(best_weights)
+  #time end
+  timeEnd = time.perf_counter()
+  #total time for training
+  totalTime = timeEnd - timeStart
+  print(f"Total time for training: {totalTime:0.4f} seconds")
+  lossDF = mnn.saveLosses(trainLoss, valLoss)
+  #saveModel(model, stScalerX, stScalerY)
+  testPreds, mse, rmse = mnn.testPredictions(model, X_test_tensor, lossFunction, Y_test_tensor) #3 columns, 1 for each output (biomass/nitrate/lutein)
   #read in the losses
   lossCSV = lossDF
   #save testPreds to a csv
