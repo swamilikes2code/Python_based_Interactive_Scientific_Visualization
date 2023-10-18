@@ -36,8 +36,8 @@ warnings.filterwarnings("ignore", category=UserWarning, message="X does not have
 #prefix holder so any file calls are relative to the current directory
 prefix = 'digital_lab_twin/'
 #boolean for if on master or not--false will keep things presuming you are running from dlt folder, otherwise append prefix
-#master = True
-master = False
+master = True
+#master = False
 #when running, ask user if they are running from master or not
 """master = input("Are you running from master? (y/n): ")
 if master == 'y':
