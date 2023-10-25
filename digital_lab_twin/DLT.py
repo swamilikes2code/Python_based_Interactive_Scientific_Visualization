@@ -809,6 +809,8 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     #could also clear the graphs here before the actual graph functions
     #p2.renderers = []
     #run_button_edit_tab.disabled = True
+    #function start timer
+    functionStart = time.perf_counter()
     run_button_edit_tab.label = "Run"
     run_button_edit_tab.button_type = "primary"
     learning_rate = lR
@@ -841,7 +843,11 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     #access the most recent row of pastRuns and stream it to charts
     charts.stream(pastRuns.iloc[-1:])
     #run_button_edit_tab.disabled = False
-
+    #function end timer
+    functionEnd = time.perf_counter()
+    #total time for function
+    functionTime = functionEnd - functionStart
+    print(f"Total time for function: {functionTime:0.4f} seconds")
     #TODO: use XDF to plot the actual vs predicted values
     #'Time' on X axis, then two lines per output (actual and predicted) on Y axis
     #C_X, C_N, C_L are model outputs, C_X_actual, C_N_actual, C_L_actual are actual values
