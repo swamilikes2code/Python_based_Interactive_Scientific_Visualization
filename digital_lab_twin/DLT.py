@@ -496,7 +496,8 @@ if master:
 lossCSV = pd.read_csv(lossCSVPath, header=0)
 
 def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train,  n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options): #ts = test, vs = val_split,
-    
+  #create a timer for whole model loop
+  modelStart = time.perf_counter()  
   #user defined parameters: current values can serve as a default
   #splits - expects 3 floats that add to 1
   trainSplit = tr.value
@@ -631,6 +632,13 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 
   #export XDF to csv (for initial run)
   #XDF.to_csv('outputs/expPredVsDataset.csv', index=False)
+  #model end timer
+  modelEnd = time.perf_counter()
+  #total time for model
+  modelTime = modelEnd - modelStart
+  print(f"Total time for model: {modelTime:0.4f} seconds")
+  #show model time without training
+  print(f"Total time for model without training: {modelTime - totalTime:0.4f} seconds")
   return lossDF, testPreds, mse, rmse, XDF
 
     
