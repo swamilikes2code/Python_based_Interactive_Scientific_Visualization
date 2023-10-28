@@ -60,6 +60,12 @@ slider_cor = Slider(title="Co-efficient of Restitution"+" (initial: "+str(cor_st
 
 slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step, width=500)
 
+def animate_update():
+    current_time = slider_time.value + time_step
+    if current_time > end_time:
+        current_time = start_time
+    slider_time.value = current_time
+
 # Function to update the plot data
 def update_data(attrname, old, new):
     cor_value = slider_cor.value
@@ -87,7 +93,7 @@ def update_data(attrname, old, new):
         
 for w in [slider_cor, slider_time]:
     w.on_change('value', update_data)
-'''    
+   
 def animate():
     global callback_id
     if animate_button.label == '► Play':
@@ -99,9 +105,9 @@ def animate():
 
 animate_button = Button(label='► Play', width=50)
 animate_button.on_event('button_click', animate)
-'''
+
 # Set up layouts and add to document
-layout_bouncing_ball = row(column(slider_cor, slider_time), plot_ball)
+layout_bouncing_ball = row(column(slider_cor, slider_time, animate_button), plot_ball)
         
 # Setup server
 curdoc().add_root(layout_bouncing_ball)
