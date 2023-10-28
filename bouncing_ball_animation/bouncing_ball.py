@@ -47,8 +47,8 @@ plot_ball = figure(height=450, width=550, tools=TOOLS, tooltips=TOOLTIPS,
               title="Bouncing Ball Animation")
 plot_ball.line('x', 'y', source=source, line_width=3, line_alpha=0.6, line_color="mediumblue",
                legend_label="Trace")
-#plot_ball.circle('x', 'y', source=source_time, color="navy", size=15.0, alpha=0.75,
-#               legend_label="Current Location")
+plot_ball.circle('x', 'y', source=source_time, color="navy", size=15.0, alpha=0.75,
+               legend_label="Current Location")
 plot_ball.xaxis.axis_label = "x (m)"
 plot_ball.yaxis.axis_label = "y (m)"
 plot_ball.legend.location = "top_right"
@@ -80,10 +80,10 @@ def update_data(attrname, old, new):
         t_data=np.around(t_data, 3)
         new_data['t'].append(t_data)
     source.data=new_data
-    #index_time_value = new_data['t'].index(np.float(np.around(time_value, 3)))
-    #print(index_time_value)
-    #circle_dict = dict(x=[new_data['x'][index_time_value]], y=[new_data['y'][index_time_value]])
-    #source_time.data=circle_dict
+    index_time_value = new_data['t'].index(np.float(np.around(time_value, 3)))
+    print(index_time_value)
+    circle_dict = dict(x=[new_data['x'][index_time_value]], y=[new_data['y'][index_time_value]])
+    source_time.data=circle_dict
         
 for w in [slider_cor, slider_time]:
     w.on_change('value', update_data)
