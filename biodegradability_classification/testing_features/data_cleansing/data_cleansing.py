@@ -8,7 +8,7 @@ import numpy as np
 df = pd.read_csv("./original_dataset_all.csv")
 
 # Columns to be removed
-columns_to_remove = ['Source', 'CAS Number', 'Name type', 'Index', 'Smiles']
+columns_to_remove = ['Source', 'CAS Number', 'Name type', 'Index']
 
 # Drop the specified columns
 df_cleaned = df.drop(columns=columns_to_remove)
