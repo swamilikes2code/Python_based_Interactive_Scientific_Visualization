@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 # read in file
-csv_file_path = "./biodegradation_class_all.csv" #replace with personal file loc
+csv_file_path = "./biodegrad.csv" #replace with personal file loc
 df = pd.read_csv(csv_file_path)
 
 # drop unnecessary cols
