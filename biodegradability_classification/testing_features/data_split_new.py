@@ -12,12 +12,8 @@ from sklearn.metrics import accuracy_score
 csv_file_path = "./biodegrad.csv" #replace with personal file loc
 df = pd.read_csv(csv_file_path)
 
-# drop unnecessary cols
-columns_to_remove = ['Source', 'CAS Number', 'Name type']
-df = df.drop(columns=columns_to_remove)
-
 # set features and target
-X = df.drop(columns=['Index', 'Substance Name', 'Smiles', 'Class']) #all pka, alpha, fingerprint (to be added)
+X = df.drop(columns=['Substance Name', 'Smiles', 'Class']) #all pka, alpha, fingerprint (to be added)
 y = df['Class']
 
 # initialize model
