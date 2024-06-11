@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
-output_notebook()
+# --------------- DATA SELECTION ---------------
 
 # Load data from the CSV file
 file_path = r'biodegrad.csv'
@@ -24,7 +24,7 @@ for col in mandatory_columns:
         df[col] = "N/A"
 
 # saved list to append to
-saved_list = []
+saved_col_list = []
 
 # Limit the dataframe to the first 10 rows
 df_subset = df.head(10)
@@ -46,7 +46,7 @@ figure = DataTable(source=source, columns=columns, width=1800)
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
 
 # Create status message Div
-status_message = Div(text='Columns saved', styles={'color': 'green', 'font-size': '16px'})
+status_message = Div(text='Configuration saved', styles={'color': 'green', 'font-size': '16px'})
 
 # Update columns to display
 def update_cols(display_columns):
@@ -58,36 +58,15 @@ def update_cols(display_columns):
 def update(attr, old, new):
     cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
     update_cols(display_columns=cols_to_display)
-    status_message.text = 'Columns not saved'
+    status_message.text = 'Configuration not saved'
     status_message.styles = {'color': 'red', 'font-size': '16px'}
 
-checkbox_button_group.on_change('active', update)
 
-# Save columns to global saved list
-def save_columns():
-    saved_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    saved_columns = sorted(saved_columns)
-    saved_list.clear()
-    saved_list.append(saved_columns)
-    status_message.text = 'Columns saved'
-    status_message.styles = {'color': 'green', 'font-size': '16px'}
-    print('Columns saved')
 
-# Save button
-save_button = Button(label="Save Selected Columns", button_type="success")
-
-# Attach callback to the save button
-save_button.on_click(save_columns)
-
-table_layout = column(checkbox_button_group, figure, save_button, status_message)
-
-print(saved_list)
-
-# --------------- DATA SPLIT---------------
+# --------------- DATA SPLIT ---------------
 '''
 # set features and target
-print(saved_list)
-X = df.loc[[saved_list]] #all pka, alpha, fingerprint (to be added)
+X = df.loc[[saved_col_list]] #all pka, alpha, fingerprint (to be added)
 y = df['Class']
 
 
@@ -115,6 +94,9 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
     return f"<div>Training split: {train_percentage}</div><div>Validation split: {val_percentage}</div><div>Testing split: {test_percentage}</div><div><b>Validation Accuracy:</b> {val_accuracy:.2f} | <b>Test Accuracy:</b> {test_accuracy:.2f}</div>"
 '''
 
+# saved split list to write to
+saved_split_list = [] #initialize to the first tvt value
+
 # helper function to produce string
 def update_text(train_percentage, val_percentage, test_percentage):
     accuracy_display.text = f"<div>Training split: {train_percentage}</div><div>Validation split: {val_percentage}</div><div>Testing split: {test_percentage}</div>"
@@ -127,7 +109,11 @@ def update_values(attrname, old, new):
     if train_percentage < 10 or val_percentage < 10 or test_percentage < 10:
         return
     # print("train_percentage and temp:", train_percentage, temp, "val and test:", val_percentage, test_percentage)
+    status_message.text = 'Configuration not saved'
+    status_message.styles = {'color': 'red', 'font-size': '16px'}
     update_text(train_percentage, val_percentage, test_percentage)
+    global saved_split_list
+    saved_split_list = [train_percentage, val_percentage, test_percentage]
 
 # js function to limit the range slider
 callback = CustomJS(args = dict(), 
@@ -154,14 +140,39 @@ tvt = RangeSlider(title="Train-Validate-Test (%)", value=(50, 75), start=0, end=
 tvt.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 accuracy_display = Div(text="<div>Training split: 50</div><div>Validation split: 25</div><div>Testing split: 25</div>")
 
-# adding update functions to slider
+
+# --------------- SAVE BUTTON ---------------
+# table on change
+checkbox_button_group.on_change('active', update)
+
+table_layout = column(checkbox_button_group, figure)
+
+# range slider on change
 tvt.js_on_change('value', callback)
 tvt.on_change('value', update_values)
 
+# Save columns to saved list
+def save_config():
+    # print('Configuration saved')
 
-# initializing model training and accuracy display
-# accuracy_display.text = update_text(50, 25, 25)
+    saved_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    # saved_columns = sorted(saved_columns)
+    saved_col_list.clear()
+    saved_col_list.append(saved_columns)
+
+    status_message.text = 'Configuration saved'
+    status_message.styles = {'color': 'green', 'font-size': '16px'}
+
+    # print(saved_col_list)
+    # print(saved_split_list)
+    
+
+# Save button
+save_button = Button(label="Save Current Configuration", button_type="success")
+
+# Attach callback to the save button
+save_button.on_click(save_config)
 
 # add and display
-slider_layout = column(tvt, accuracy_display)
+slider_layout = column(tvt, accuracy_display, save_button, status_message)
 curdoc().add_root(row(slider_layout, table_layout))
