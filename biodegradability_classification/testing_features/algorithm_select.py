@@ -1,6 +1,6 @@
 import pandas as pd
 from bokeh.io import curdoc
-from bokeh.models import Select, Button, Div
+from bokeh.models import Select, Button, Div, ColumnDataSource, Whisker
 from bokeh.models.callbacks import CustomJS
 from bokeh.layouts import column
 from sklearn.tree import DecisionTreeClassifier
@@ -44,6 +44,11 @@ select.on_change('value', update_algorithm)
 
 # creating widgets
 accuracy_display = Div(text="<div>Validation Accuracy: N/A | Test Accuracy: N/A</div>")
+global val_accuracy
+val_accuracy = []
+
+global test_accuracy
+test_accuracy = []
 
 def run_config():
     status_message.text = f'Running {my_alg}'
@@ -57,32 +62,39 @@ def run_config():
     else:
         model = LinearSVC(random_state=42, max_iter=10000)
 
-    
 
 
     # function to split data and train model
     def split_and_train_model(train_percentage, val_percentage, test_percentage):
-
-        # Was not running properly with fingerprint
-        df_new = shuffle(df)
-        X = df_new.drop(columns=['Substance Name', 'Smiles', 'Class', 'Fingerprint'])
-        y = df_new['Class']
-
-        # splitting
-        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage, random_state=1)
-        test_split = test_percentage / (100-train_percentage)
-        X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split, random_state=1)
         
-        # train model
-        model.fit(X_train, y_train)
-        
-        # calculating accuracy
-        # FIXME: implement tuning and validation
-        y_val_pred = model.predict(X_val)
-        val_accuracy = accuracy_score(y_val, y_val_pred)
-        y_test_pred = model.predict(X_test)
-        test_accuracy = accuracy_score(y_test, y_test_pred)
-        return f"<div>Training split: {train_percentage}</div><div>Validation split: {val_percentage}</div><div>Testing split: {test_percentage}</div><div><b>Validation Accuracy:</b> {val_accuracy:.2f} | <b>Test Accuracy:</b> {test_accuracy:.2f}</div>"
+        val_accuracy = []
+        test_accuracy = []
+
+        # run and shuffle five times, and save result in list
+        for i in range(5):
+
+            # Was not running properly with fingerprint
+            df_new = shuffle(df)
+            X = df_new.drop(columns=['Substance Name', 'Smiles', 'Class', 'Fingerprint'])
+            y = df_new['Class']
+
+            # splitting
+            X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage, random_state=1)
+            test_split = test_percentage / (100-train_percentage)
+            X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split, random_state=1)
+            
+            # train model
+            model.fit(X_train, y_train)
+            
+            # calculating accuracy
+            # FIXME: implement tuning and validation
+
+            y_val_pred = model.predict(X_val)
+            val_accuracy.append(accuracy_score(y_val, y_val_pred))
+            y_test_pred = model.predict(X_test)
+            test_accuracy.append(accuracy_score(y_test, y_test_pred))
+
+        return f"<div><b>Validation Accuracy:</b> {str(val_accuracy)} | <b>Test Accuracy:</b> {str(test_accuracy)}</div>"
 
 
 
@@ -94,6 +106,11 @@ run_button = Button(label="Run chosen ML algorithm", button_type="success")
 
 # Attach callback to the run button
 run_button.on_click(run_config)
+
+# Create boxplot of prediction accuracy
+# Note: this will likely not be in the run tab
+
+
 
 layout = column(select, run_button, status_message, accuracy_display)
 
