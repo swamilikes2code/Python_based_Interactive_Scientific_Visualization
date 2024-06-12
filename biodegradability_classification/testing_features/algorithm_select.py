@@ -50,7 +50,7 @@ def run_config():
     elif my_alg == "NearestNeighbor":
         model = KNeighborsClassifier(n_neighbors=3)
     else:
-        model = LinearSVC()
+        model = LinearSVC(random_state=42, max_iter=10000)
 
     
     # Was not running properly with fingerprint
