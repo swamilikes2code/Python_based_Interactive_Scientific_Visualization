@@ -160,6 +160,9 @@ def save_config():
     saved_col_list.clear()
     saved_col_list.append(saved_columns)
 
+    #saved_split_list isn't located here as the split values update in the list upon the change of the range slider
+    #the collective save button is to make the design more cohesive
+
     status_message.text = 'Configuration saved'
     status_message.styles = {'color': 'green', 'font-size': '16px'}
 
