@@ -23,7 +23,7 @@ df_new = df
 global my_alg
 
 # default algorithm
-my_alg = 'DecisionTree'
+my_alg = 'Decision Tree'
 
 # Create status message Div
 status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
