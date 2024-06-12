@@ -14,6 +14,7 @@ from sklearn.metrics import accuracy_score
 # Load data from the CSV file
 file_path = r'biodegrad.csv'
 df = pd.read_csv(file_path)
+df = df.drop(columns = "Fingerprint Object") #don't need to display the reference, but can still access from file later
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
