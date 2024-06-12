@@ -217,12 +217,11 @@ def run_config():
     else:
         model = LinearSVC()
     
-    print(saved_split_list)
-    print(tuple(saved_split_list))
-    print(saved_col_list)
+    # print(saved_split_list)
+    # print(tuple(saved_split_list))
+    # print(saved_col_list)
     accuracy_display.text = split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
 
-    
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage):
     val_accuracy = []
