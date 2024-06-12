@@ -8,7 +8,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
-from sklearn.utils import shuffle
 
 # load data in from temp_data.csv (this is just a copy of biodegrad.csv, but in the testing_features folder)
 # this is just placeholder, will use data from phase_one.py
@@ -30,7 +29,7 @@ my_alg = 'DecisionTree'
 status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
 
 # Select button
-select = Select(title="ML Algorithm:", value="DecisionTree", options=["DecisionTree", "NearestNeighbor", "SVM"])
+select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
 
 
 def update_algorithm(attr, old, new):
@@ -55,12 +54,12 @@ def run_config():
     status_message.styles = {'color': 'green', 'font-size': '16px'}
 
     # Assigning model based on selected ML algorithm, using default hyperparameters
-    if my_alg == "DecisionTree":
+    if my_alg == "Decision Tree":
         model = DecisionTreeClassifier()
-    elif my_alg == "NearestNeighbor":
-        model = KNeighborsClassifier(n_neighbors=3)
+    elif my_alg == "K-Nearest Neighbor":
+        model = KNeighborsClassifier()
     else:
-        model = LinearSVC(random_state=42, max_iter=10000)
+        model = LinearSVC()
 
 
 
@@ -74,14 +73,13 @@ def run_config():
         for i in range(5):
 
             # Was not running properly with fingerprint
-            df_new = shuffle(df)
             X = df_new.drop(columns=['Substance Name', 'Smiles', 'Class', 'Fingerprint'])
             y = df_new['Class']
 
             # splitting
-            X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage, random_state=1)
+            X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage)
             test_split = test_percentage / (100-train_percentage)
-            X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split, random_state=1)
+            X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
             
             # train model
             model.fit(X_train, y_train)
