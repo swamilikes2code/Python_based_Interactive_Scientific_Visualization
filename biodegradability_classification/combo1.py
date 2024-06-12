@@ -183,7 +183,7 @@ save_button.on_click(save_config)
 my_alg = 'Decision Tree'
 
 # Create status message Div
-alg_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
+train_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
 
 # Create select button
 select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
@@ -191,8 +191,8 @@ select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision
 def update_algorithm(attr, old, new):
     global my_alg
     my_alg = new
-    alg_status_message.text = 'Not running'
-    alg_status_message.styles = {'color': 'red', 'font-size': '16px'}
+    train_status_message.text = 'Not running'
+    train_status_message.styles = {'color': 'red', 'font-size': '16px'}
 
 # Attach callback to Select widget
 select.on_change('value', update_algorithm)
@@ -205,8 +205,8 @@ val_accuracy = []
 test_accuracy = []
 
 def run_config():
-    alg_status_message.text = f'Running {my_alg}'
-    alg_status_message.styles = {'color': 'green', 'font-size': '16px'}
+    train_status_message.text = f'Running {my_alg}'
+    train_status_message.styles = {'color': 'green', 'font-size': '16px'}
     global model
 
     # Assigning model based on selected ML algorithm, using default hyperparameters
@@ -265,7 +265,7 @@ run_button.on_click(run_config)
 # creating widget layouts
 table_layout = column(checkbox_button_group, figure)
 slider_layout = column(tvt, split_display, save_button, save_status_message)
-tab2_layout = column(select, run_button, alg_status_message, accuracy_display)
+tab2_layout = column(select, run_button, train_status_message, accuracy_display)
 
 # just to see the elements
 test_layout = column(slider_layout, tab2_layout)
