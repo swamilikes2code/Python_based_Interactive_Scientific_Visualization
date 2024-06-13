@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, VBar
 from bokeh.io import curdoc, output_notebook
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
@@ -47,11 +47,11 @@ cols = list(df_dict.keys())
 optional_columns = [col for col in cols if col not in mandatory_columns]
 
 # Create column datasource
-source = ColumnDataSource(data=df_subset)
+table_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 columns = [TableColumn(field=col, title=col) for col in cols]
-datatable = DataTable(source=source, columns=columns, width=1800)
+datatable = DataTable(source=table_source, columns=columns, width=1800)
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
@@ -184,8 +184,7 @@ val_accuracy = []
 test_accuracy = []
 
 # Create empty list
-# global combo_list
-combo_list = [.1,.2,.3,.4,.5,.6, .7, .8, .8, .9, .2, .2, .3, .4, .4, .5, .5, .6, .7, .8] # dummy data
+combo_list = [None for i in range(20)]
 
 def run_config():
     train_status_message.text = f'Running {my_alg}'
@@ -253,14 +252,15 @@ train_button.on_click(run_config)
 
 
 # --------------- VISUALIZATIONS ---------------
+plot_counter = 0 #the amount of times button has been pressed
+
 # Create empty plot
 p = figure(x_range=['current', 'saved'], y_range = (0.0, 1.0), tools="", toolbar_location=None,
             title="Validation Accuracy saved vs. current",
             background_fill_color="#eaefef", y_axis_label="accuracy")
 
 df_box = pd.DataFrame()
-
-
+source = ColumnDataSource()
 
 def update_df_box():
     # making the initial boxplot
@@ -292,46 +292,66 @@ def update_df_box():
         df_box.iloc[index, -1] = minmax[1]
 
     global source
-    source = ColumnDataSource(df_box)
+    source.data = dict(df_box)
 
 def get_minmax(kind):
     if kind == 'current':
-        return min(combo_list[:10]), max(combo_list[:10])
+        if combo_list[0] == None: # when module is first loaded
+            return 0,0
+        else:
+            return min(combo_list[:10]), max(combo_list[:10])
     elif kind == 'saved':
-        return min(combo_list[10:]), max(combo_list[10:])
+        if combo_list[-1] == None:
+            return 0,0
+        else:
+            return min(combo_list[10:]), max(combo_list[10:])
 
-# fill initial df_box
-update_df_box()
-print(df_box)
+def make_glyphs():
+    # make all of the glyphs
+    # outlier range
+    global whisker
+    whisker = Whisker(base="kind", upper="max", lower="min", source=source)
+    whisker.upper_head.size = whisker.lower_head.size = 20
+    p.add_layout(whisker)
 
+    # quantile boxes
+    global kinds, cmap, top_box, bottom_box
+    kinds = df_box.kind.unique()
+    cmap = factor_cmap("kind", "Paired3", kinds)
+    top_box = p.vbar(x = "kind", width = 0.7, bottom = "q2", top = "q3", color=cmap, line_color="black", source = source)
+    bottom_box = p.vbar("kind", 0.7, "q1", "q2", color=cmap, line_color="black", source = source)
 
-# make all of the glyphs
-# outlier range
-whisker = Whisker(base="kind", upper="max", lower="min", source=source)
-whisker.upper_head.size = whisker.lower_head.size = 20
-p.add_layout(whisker)
+    # outliers
+    global outlier_points
+    initial_outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+    outlier_points = p.scatter("kind", "accuracy", source=initial_outliers, size=6, color="black", alpha=0.3)
 
-# quantile boxes
-kinds = df_box.kind.unique()
-cmap = factor_cmap("kind", "Paired3", kinds)
-top_box = p.vbar("kind", 0.7, "q2", "q3", source=source, color=cmap, line_color="black")
-bottom_box = p.vbar("kind", 0.7, "q1", "q2", source=source, color=cmap, line_color="black")
-
-# outliers
-initial_outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
-outlier_points = p.scatter("kind", "accuracy", source=initial_outliers, size=6, color="black", alpha=0.3)
-
-# constant plot features
-p.xgrid.grid_line_color = None
-p.axis.major_label_text_font_size="14px"
-p.axis.axis_label_text_font_size="12px"
+    # constant plot features
+    p.xgrid.grid_line_color = None
+    p.axis.major_label_text_font_size="14px"
+    p.axis.axis_label_text_font_size="12px"
 
 def update_boxplot():
-    # re-establish dictionary and remake dataframe
-    update_df_box()
+    global df_box
     global source
+    global plot_counter
+    update_df_box()
+
+    if plot_counter == 0:
+        make_glyphs()
+
+    print(df_box)
 
     whisker.source = source
+    top_box.data_source = source
+    bottom_box.data_source = source
+    outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+    if df_box.iloc[-1, -1] != 0:
+        outlier_points.data_source = outliers
+
+    plot_counter += 1
+
+
 
 
 # Update plot button
