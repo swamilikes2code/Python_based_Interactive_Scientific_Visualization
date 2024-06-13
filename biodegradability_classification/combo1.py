@@ -1,9 +1,11 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker
 from bokeh.io import curdoc, output_notebook
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
+from bokeh.plotting import figure
+from bokeh.transform import factor_cmap
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
@@ -44,7 +46,7 @@ source = ColumnDataSource(data=df_subset)
 
 # Create figure
 columns = [TableColumn(field=col, title=col) for col in cols]
-figure = DataTable(source=source, columns=columns, width=1800)
+fig = DataTable(source=source, columns=columns, width=1800)
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
@@ -56,8 +58,8 @@ save_status_message = Div(text='Configuration saved', styles={'color': 'green', 
 def update_cols(display_columns):
     # Always include mandatory columns
     all_columns = mandatory_columns + display_columns
-    figure.columns = [col for col in columns if col.title in all_columns]
-    figure.width = np.size(all_columns) * 90
+    fig.columns = [col for col in columns if col.title in all_columns]
+    fig.width = np.size(all_columns) * 90
 
 def update(attr, old, new):
     cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
@@ -177,7 +179,7 @@ save_button = Button(label="Save Current Configuration", button_type="success")
 # Attach callback to the save button
 save_button.on_click(save_config)
 
-# --------------- ALGORITHM SELECT ---------------
+# --------------- ALGORITHM SELECT + BOXPLOT ---------------
 
 # algorithm name holder
 my_alg = 'Decision Tree'
@@ -187,6 +189,17 @@ train_status_message = Div(text='Not running', styles={'color': 'red', 'font-siz
 
 # Create select button
 select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
+
+# Create empty plot
+global p
+p = figure(x_range=['current', 'saved'], tools="", toolbar_location=None,
+            title="Validation Accuracy saved vs. current",
+            background_fill_color="#eaefef", y_axis_label="accuracy")
+
+# Create empty list
+global combo_list
+combo_list = [0, 0, 0, 0, 0, None, None, None, None, None]
+
 
 def update_algorithm(attr, old, new):
     global my_alg
@@ -199,10 +212,11 @@ select.on_change('value', update_algorithm)
 
 # creating widgets
 accuracy_display = Div(text="<div>Validation Accuracy: N/A | Test Accuracy: N/A</div>")
-# global val_accuracy
+global val_accuracy
 val_accuracy = []
 # global test_accuracy
 test_accuracy = []
+
 
 def run_config():
     train_status_message.text = f'Running {my_alg}'
@@ -217,19 +231,23 @@ def run_config():
     else:
         model = LinearSVC()
     
-    # print(saved_split_list)
-    # print(tuple(saved_split_list))
-    # print(saved_col_list)
-    accuracy_display.text = split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
+    [val_accuracy, test_accuracy] = split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
+
+    # Changing the list used to create boxplot
+    saved_list = [None, None, None, None, None]
+    combo_list.clear()
+    combo_list.append(val_accuracy + saved_list)
+
+    # Updating accuracy display
+    accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy} | <b>Test Accuracy:</b> {test_accuracy}</div>"
 
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage):
-    val_accuracy = []
-    test_accuracy = []
 
     # run and shuffle five times, and save result in list
+    val_accuracy = []
+    test_accuracy = []
     for i in range(5):
-
         # Was not running properly with fingerprint
         # TODO: implement fingerprint decoder so model can read them
         X = df[saved_col_list]
@@ -244,28 +262,75 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         model.fit(X_train, y_train)
         
         # calculating accuracy
-
         y_val_pred = model.predict(X_val)
-        val_accuracy.append(accuracy_score(y_val, y_val_pred))
+        val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
         y_test_pred = model.predict(X_test)
-        test_accuracy.append(accuracy_score(y_test, y_test_pred))
+        test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
 
-    return f"<div><b>Validation Accuracy:</b> {str(val_accuracy)} | <b>Test Accuracy:</b> {str(test_accuracy)}</div>"
+
+    return [val_accuracy, test_accuracy]
+
+def update_boxplot():
+    d = {'kind': ['current', 'current', 'current', 'current', 'current',
+                'saved', 'saved', 'saved', 'saved', 'saved'],
+        'accuracy': combo_list
+        }
+    df_box = pd.DataFrame(data=d)
+
+    kinds = df_box.kind.unique()
+
+    # compute quantiles
+    qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
+    qs = qs.unstack().reset_index()
+    qs.columns = ["kind", "q1", "q2", "q3"]
+    df_box = pd.merge(df_box, qs, on="kind", how="left")
+
+    # compute IQR outlier bounds
+    iqr = df_box.q3 - df_box.q1
+    df_box["upper"] = df_box.q3 + 1.5*iqr
+    df_box["lower"] = df_box.q1 - 1.5*iqr
+
+    source = ColumnDataSource(df_box)
+
+    # outlier range
+    whisker = Whisker(base="kind", upper="upper", lower="lower", source=source)
+    whisker.upper_head.size = whisker.lower_head.size = 20
+    p.add_layout(whisker)
+
+    # quantile boxes
+    cmap = factor_cmap("kind", "Paired3", kinds)
+    p.vbar("kind", 0.7, "q2", "q3", source=source, color=cmap, line_color="black")
+    p.vbar("kind", 0.7, "q1", "q2", source=source, color=cmap, line_color="black")
+
+    # outliers
+    outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+    p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
+
+    p.xgrid.grid_line_color = None
+    p.axis.major_label_text_font_size="14px"
+    p.axis.axis_label_text_font_size="12px"
 
 # Run button
-run_button = Button(label="Run chosen ML algorithm", button_type="success")
+run_button = Button(label="Run ML algorithm", button_type="success")
 
 # Attach callback to the run button
 run_button.on_click(run_config)
 
+# Update plot button
+update_plot_button = Button(label="Update boxplot", button_type="warning")
+
+# Attach callback to the update_plot button
+update_plot_button.on_click(update_boxplot)
 
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
-table_layout = column(checkbox_button_group, figure)
+table_layout = column(checkbox_button_group, fig)
 slider_layout = column(tvt, split_display, save_button, save_status_message)
 tab2_layout = column(select, run_button, train_status_message, accuracy_display)
 
 # just to see the elements
-test_layout = column(slider_layout, tab2_layout)
+test_layout = column(slider_layout, tab2_layout, p, update_plot_button)
 curdoc().add_root(row(test_layout, table_layout))
+
+# FIXME: update_plot_button and update_boxplot() currently do not work!

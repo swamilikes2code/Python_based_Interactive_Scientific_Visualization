@@ -13,7 +13,6 @@ global saved_list
 saved_list = [None, None, None, None, None]
 
 combined_list = current_list + saved_list
-print(combined_list)
 
 d = {'kind': ['current', 'current', 'current', 'current', 'current',
               'saved', 'saved', 'saved', 'saved', 'saved'],
@@ -22,6 +21,7 @@ d = {'kind': ['current', 'current', 'current', 'current', 'current',
 df = pd.DataFrame(data=d)
 
 kinds = df.kind.unique()
+print(kinds)
 
 # compute quantiles
 qs = df.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
