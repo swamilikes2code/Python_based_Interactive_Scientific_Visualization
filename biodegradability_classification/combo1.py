@@ -57,7 +57,7 @@ datatable = DataTable(source=source, columns=columns, width=1800)
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
 
 # Create status message Div
-data_save_message = Div(text='Configuration saved', styles={'color': 'green', 'font-size': '16px'})
+data_save_message = Div(text='Configuration not saved', styles={'color': 'red', 'font-size': '16px'})
 
 # Update columns to display
 def update_cols(display_columns):
@@ -185,7 +185,7 @@ test_accuracy = []
 
 # Create empty list
 # global combo_list
-combo_list = []
+combo_list = [.1,.2,.3,.4,.5,.6, .7, .8, .8, .9, .2, .2, .3, .4, .4, .5, .5, .6, .7, .8] # dummy data
 
 def run_config():
     train_status_message.text = f'Running {my_alg}'
@@ -254,22 +254,22 @@ train_button.on_click(run_config)
 
 # --------------- VISUALIZATIONS ---------------
 # Create empty plot
-global p
 p = figure(x_range=['current', 'saved'], y_range = (0.0, 1.0), tools="", toolbar_location=None,
             title="Validation Accuracy saved vs. current",
             background_fill_color="#eaefef", y_axis_label="accuracy")
 
+df_box = pd.DataFrame()
 
 
-def update_boxplot():
-    
+
+def update_df_box():
+    # making the initial boxplot
     d = {'kind': ['current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current',
                 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved'],
         'accuracy': combo_list
         }
+    global df_box
     df_box = pd.DataFrame(data=d)
-
-    kinds = df_box.kind.unique()
 
     # compute quantiles
     qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
@@ -282,25 +282,57 @@ def update_boxplot():
     df_box["upper"] = df_box.q3 + 1.5*iqr
     df_box["lower"] = df_box.q1 - 1.5*iqr
 
+    # set max and mins for whiskers
+    df_box['min'] = ''
+    df_box['max'] = ''
+    
+    for index, entry in enumerate(df_box['kind']):
+        minmax = get_minmax(entry)
+        df_box.iloc[index, -2] = minmax[0]
+        df_box.iloc[index, -1] = minmax[1]
+
+    global source
     source = ColumnDataSource(df_box)
 
-    # outlier range
-    whisker = Whisker(base="kind", upper="upper", lower="lower", source=source)
-    whisker.upper_head.size = whisker.lower_head.size = 20
-    p.add_layout(whisker)
+def get_minmax(kind):
+    if kind == 'current':
+        return min(combo_list[:10]), max(combo_list[:10])
+    elif kind == 'saved':
+        return min(combo_list[10:]), max(combo_list[10:])
 
-    # quantile boxes
-    cmap = factor_cmap("kind", "Paired3", kinds)
-    p.vbar("kind", 0.7, "q2", "q3", source=source, color=cmap, line_color="black")
-    p.vbar("kind", 0.7, "q1", "q2", source=source, color=cmap, line_color="black")
+# fill initial df_box
+update_df_box()
+print(df_box)
 
-    # outliers
-    outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
-    p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
 
-    p.xgrid.grid_line_color = None
-    p.axis.major_label_text_font_size="14px"
-    p.axis.axis_label_text_font_size="12px"
+# make all of the glyphs
+# outlier range
+whisker = Whisker(base="kind", upper="max", lower="min", source=source)
+whisker.upper_head.size = whisker.lower_head.size = 20
+p.add_layout(whisker)
+
+# quantile boxes
+kinds = df_box.kind.unique()
+cmap = factor_cmap("kind", "Paired3", kinds)
+top_box = p.vbar("kind", 0.7, "q2", "q3", source=source, color=cmap, line_color="black")
+bottom_box = p.vbar("kind", 0.7, "q1", "q2", source=source, color=cmap, line_color="black")
+
+# outliers
+initial_outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+outlier_points = p.scatter("kind", "accuracy", source=initial_outliers, size=6, color="black", alpha=0.3)
+
+# constant plot features
+p.xgrid.grid_line_color = None
+p.axis.major_label_text_font_size="14px"
+p.axis.axis_label_text_font_size="12px"
+
+def update_boxplot():
+    # re-establish dictionary and remake dataframe
+    update_df_box()
+    global source
+
+    whisker.source = source
+
 
 # Update plot button
 update_plot_button = Button(label="Update boxplot", button_type="warning")
