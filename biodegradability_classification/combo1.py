@@ -15,11 +15,16 @@ from sklearn.metrics import accuracy_score
 This file is a draft for combining tab 1 (data) with tab 2(model selection and first run based on data config)
 '''
 
+#for ref:
+# df is original csv, holds fingerprint list and 167 cols of fingerprint bits
+# df_display > df_subset > df_dict are for displaying table
+
 # --------------- DATA SELECTION ---------------
 # Load data from the csv file
 file_path = r'biodegrad.csv'
 df = pd.read_csv(file_path)
-df_display = df.drop(columns = "Fingerprint Object") #don't need to display the reference, but can still access from file later
+df_display = df.iloc[:,:22] #don't need to display the other 167 rows of fingerprint bits
+df = df.drop(columns=['Fingerprint List']) #removing the display column, won't be useful in training
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
@@ -46,59 +51,30 @@ source = ColumnDataSource(data=df_subset)
 
 # Create figure
 columns = [TableColumn(field=col, title=col) for col in cols]
-fig = DataTable(source=source, columns=columns, width=1800)
+datatable = DataTable(source=source, columns=columns, width=1800)
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
 
 # Create status message Div
-save_status_message = Div(text='Configuration saved', styles={'color': 'green', 'font-size': '16px'})
+data_save_message = Div(text='Configuration saved', styles={'color': 'green', 'font-size': '16px'})
 
 # Update columns to display
 def update_cols(display_columns):
     # Always include mandatory columns
     all_columns = mandatory_columns + display_columns
-    fig.columns = [col for col in columns if col.title in all_columns]
-    fig.width = np.size(all_columns) * 90
+    datatable.columns = [col for col in columns if col.title in all_columns]
+    datatable.width = np.size(all_columns) * 90
 
-def update(attr, old, new):
+def update_table(attr, old, new):
     cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
     update_cols(display_columns=cols_to_display)
-    save_status_message.text = 'Configuration not saved'
-    save_status_message.styles = {'color': 'red', 'font-size': '16px'}
+    data_save_message.text = 'Configuration not saved'
+    data_save_message.styles = {'color': 'red', 'font-size': '16px'}
 
 
 
 # --------------- DATA SPLIT ---------------
-'''
-# set features and target
-X = df.loc[[saved_col_list]] #all pka, alpha, fingerprint (to be added)
-y = df['Class']
-
-
-# initialize model
-model = DecisionTreeClassifier()
-
-# function to split data and train model
-def split_and_train_model(train_percentage, val_percentage, test_percentage):
-    # print("test percentage:", test_percentage)
-
-    # splitting
-    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage, random_state=1)
-    test_split = test_percentage / (100-train_percentage)
-    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split, random_state=1)
-    
-    # train model
-    model.fit(X_train, y_train)
-    
-    # calculating accuracy
-    # FIXME: implement tuning and validation
-    y_val_pred = model.predict(X_val)
-    val_accuracy = accuracy_score(y_val, y_val_pred)
-    y_test_pred = model.predict(X_test)
-    test_accuracy = accuracy_score(y_test, y_test_pred)
-    return f"<div>Training split: {train_percentage}</div><div>Validation split: {val_percentage}</div><div>Testing split: {test_percentage}</div><div><b>Validation Accuracy:</b> {val_accuracy:.2f} | <b>Test Accuracy:</b> {test_accuracy:.2f}</div>"
-'''
 
 # saved split list to write to
 saved_split_list = [50,25,25] #0-train, 1-val, 2-test
@@ -115,8 +91,8 @@ def update_values(attrname, old, new):
     if train_percentage < 10 or val_percentage < 10 or test_percentage < 10:
         return
     # print("train_percentage and temp:", train_percentage, temp, "val and test:", val_percentage, test_percentage)
-    save_status_message.text = 'Configuration not saved'
-    save_status_message.styles = {'color': 'red', 'font-size': '16px'}
+    data_save_message.text = 'Configuration not saved'
+    data_save_message.styles = {'color': 'red', 'font-size': '16px'}
     update_text(train_percentage, val_percentage, test_percentage)
     global saved_split_list
     saved_split_list = [train_percentage, val_percentage, test_percentage]
@@ -148,7 +124,7 @@ split_display = Div(text="<div>Training split: 50</div><div>Validation split: 25
 
 # --------------- SAVE BUTTON ---------------
 # table on change
-checkbox_button_group.on_change('active', update)
+checkbox_button_group.on_change('active', update_table)
 
 # range slider on change
 tvt.js_on_change('value', callback)
@@ -167,19 +143,19 @@ def save_config():
     #saved_split_list isn't located here as the split values update in the list upon the change of the range slider
     #the collective save button is to make the design more cohesive
 
-    save_status_message.text = 'Configuration saved'
-    save_status_message.styles = {'color': 'green', 'font-size': '16px'}
+    data_save_message.text = 'Configuration saved'
+    data_save_message.styles = {'color': 'green', 'font-size': '16px'}
 
     # print(saved_col_list)
     # print(saved_split_list)
     
 # Save button
-save_button = Button(label="Save Current Configuration", button_type="success")
+save_config_button = Button(label="Save Current Configuration", button_type="success")
 
 # Attach callback to the save button
-save_button.on_click(save_config)
+save_config_button.on_click(save_config)
 
-# --------------- ALGORITHM SELECT + BOXPLOT ---------------
+# --------------- ALGORITHM SELECT AND RUN ---------------
 
 # algorithm name holder
 my_alg = 'Decision Tree'
@@ -188,17 +164,7 @@ my_alg = 'Decision Tree'
 train_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
 
 # Create select button
-select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
-
-# Create empty plot
-global p
-p = figure(x_range=['current', 'saved'], tools="", toolbar_location=None,
-            title="Validation Accuracy saved vs. current",
-            background_fill_color="#eaefef", y_axis_label="accuracy")
-
-# Create empty list
-global combo_list
-combo_list = [0, 0, 0, 0, 0, None, None, None, None, None]
+alg_select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
 
 
 def update_algorithm(attr, old, new):
@@ -208,15 +174,18 @@ def update_algorithm(attr, old, new):
     train_status_message.styles = {'color': 'red', 'font-size': '16px'}
 
 # Attach callback to Select widget
-select.on_change('value', update_algorithm)
+alg_select.on_change('value', update_algorithm)
 
 # creating widgets
 accuracy_display = Div(text="<div>Validation Accuracy: N/A | Test Accuracy: N/A</div>")
-global val_accuracy
+# global val_accuracy
 val_accuracy = []
 # global test_accuracy
 test_accuracy = []
 
+# Create empty list
+# global combo_list
+combo_list = [0, 0, 0, 0, 0, None, None, None, None, None]
 
 def run_config():
     train_status_message.text = f'Running {my_alg}'
@@ -231,12 +200,16 @@ def run_config():
     else:
         model = LinearSVC()
     
-    [val_accuracy, test_accuracy] = split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
+    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
 
     # Changing the list used to create boxplot
     saved_list = [None, None, None, None, None]
+    global combo_list
     combo_list.clear()
-    combo_list.append(val_accuracy + saved_list)
+    combo_list = val_accuracy + saved_list
+    print("val", val_accuracy)
+    print("test",test_accuracy)
+    print("combo",combo_list)
 
     # Updating accuracy display
     accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy} | <b>Test Accuracy:</b> {test_accuracy}</div>"
@@ -245,8 +218,8 @@ def run_config():
 def split_and_train_model(train_percentage, val_percentage, test_percentage):
 
     # run and shuffle five times, and save result in list
-    val_accuracy = []
-    test_accuracy = []
+    global val_accuracy, test_accuracy
+
     for i in range(5):
         # Was not running properly with fingerprint
         # TODO: implement fingerprint decoder so model can read them
@@ -266,9 +239,26 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
         y_test_pred = model.predict(X_test)
         test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+        print(i, '. val', val_accuracy)
+        print(i, '. test', test_accuracy)
 
 
-    return [val_accuracy, test_accuracy]
+# Run button
+train_button = Button(label="Run ML algorithm", button_type="success")
+
+# Attach callback to the run button
+train_button.on_click(run_config)
+
+
+# --------------- VISUALIZATIONS ---------------
+'''
+# Create empty plot
+global p
+p = figure(x_range=['current', 'saved'], tools="", toolbar_location=None,
+            title="Validation Accuracy saved vs. current",
+            background_fill_color="#eaefef", y_axis_label="accuracy")
+
+
 
 def update_boxplot():
     d = {'kind': ['current', 'current', 'current', 'current', 'current',
@@ -310,27 +300,21 @@ def update_boxplot():
     p.axis.major_label_text_font_size="14px"
     p.axis.axis_label_text_font_size="12px"
 
-# Run button
-run_button = Button(label="Run ML algorithm", button_type="success")
-
-# Attach callback to the run button
-run_button.on_click(run_config)
-
 # Update plot button
 update_plot_button = Button(label="Update boxplot", button_type="warning")
 
 # Attach callback to the update_plot button
 update_plot_button.on_click(update_boxplot)
-
+'''
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
-table_layout = column(checkbox_button_group, fig)
-slider_layout = column(tvt, split_display, save_button, save_status_message)
-tab2_layout = column(select, run_button, train_status_message, accuracy_display)
+table_layout = column(checkbox_button_group, datatable)
+slider_layout = column(tvt, split_display, save_config_button, data_save_message)
+tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 
 # just to see the elements
-test_layout = column(slider_layout, tab2_layout, p, update_plot_button)
+test_layout = column(slider_layout, tab2_layout) #p, update_plot_button
 curdoc().add_root(row(test_layout, table_layout))
 
 # FIXME: update_plot_button and update_boxplot() currently do not work!
