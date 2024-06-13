@@ -185,7 +185,7 @@ test_accuracy = []
 
 # Create empty list
 # global combo_list
-combo_list = [0, 0, 0, 0, 0, None, None, None, None, None]
+combo_list = []
 
 def run_config():
     train_status_message.text = f'Running {my_alg}'
@@ -203,7 +203,7 @@ def run_config():
     split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
 
     # Changing the list used to create boxplot
-    saved_list = [None, None, None, None, None]
+    saved_list = [None for i in range(10)]
     global combo_list
     combo_list.clear()
     combo_list = val_accuracy + saved_list
@@ -212,15 +212,17 @@ def run_config():
     print("combo",combo_list)
 
     # Updating accuracy display
-    accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy} | <b>Test Accuracy:</b> {test_accuracy}</div>"
+    accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
 
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage):
 
     # run and shuffle five times, and save result in list
     global val_accuracy, test_accuracy
+    val_accuracy.clear()
+    test_accuracy.clear()
 
-    for i in range(5):
+    for i in range(10):
         # Was not running properly with fingerprint
         # TODO: implement fingerprint decoder so model can read them
         X = df[saved_col_list]
@@ -251,18 +253,18 @@ train_button.on_click(run_config)
 
 
 # --------------- VISUALIZATIONS ---------------
-'''
 # Create empty plot
 global p
-p = figure(x_range=['current', 'saved'], tools="", toolbar_location=None,
+p = figure(x_range=['current', 'saved'], y_range = (0.0, 1.0), tools="", toolbar_location=None,
             title="Validation Accuracy saved vs. current",
             background_fill_color="#eaefef", y_axis_label="accuracy")
 
 
 
 def update_boxplot():
-    d = {'kind': ['current', 'current', 'current', 'current', 'current',
-                'saved', 'saved', 'saved', 'saved', 'saved'],
+    
+    d = {'kind': ['current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current',
+                'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved'],
         'accuracy': combo_list
         }
     df_box = pd.DataFrame(data=d)
@@ -305,7 +307,7 @@ update_plot_button = Button(label="Update boxplot", button_type="warning")
 
 # Attach callback to the update_plot button
 update_plot_button.on_click(update_boxplot)
-'''
+
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
@@ -314,7 +316,7 @@ slider_layout = column(tvt, split_display, save_config_button, data_save_message
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 
 # just to see the elements
-test_layout = column(slider_layout, tab2_layout) #p, update_plot_button
+test_layout = column(slider_layout, tab2_layout, p, update_plot_button)
 curdoc().add_root(row(test_layout, table_layout))
 
 # FIXME: update_plot_button and update_boxplot() currently do not work!
