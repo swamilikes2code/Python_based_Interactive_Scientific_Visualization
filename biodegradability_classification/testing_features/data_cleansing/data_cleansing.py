@@ -24,15 +24,30 @@ def smiles_to_molecule(smiles): #function that converts Smiles to RDKit molecule
 # Apply the conversion function to the SMILES column
 RDLogger.DisableLog('rdApp.*') #ignoring hydrogen warning
 df['Molecule'] = df['Smiles'].apply(smiles_to_molecule)
-df_cleaned['Fingerprint Object'] = [MACCSkeys.GenMACCSKeys(mol) for mol in df['Molecule']]
-df_cleaned['Fingerprint'] = [np.frombuffer(fp_vec.ToBitString().encode(), 'u1') - ord('0') for fp_vec in df_cleaned['Fingerprint Object']] #right now, just for display purposes
-# df_cleaned['Fingerprint Array2'] = [DataStructs.ConvertToNumpyArray(fp_vec, np.zeros((0,),dtype = int)) for fp_vec in df_cleaned['Fingerprint']]
+df['MACCS Fingerprint Object'] = [MACCSkeys.GenMACCSKeys(mol) for mol in df['Molecule']]
 
-'''
-# creating list representations of the fingerprint vectors
-temp = np.array([list(fp) for fp in df['Fingerprint']]).tolist()
-df_cleaned['Fingerprint'] = np.array([list(fp) for fp in df['Fingerprint']])
-'''
+# a list of fingerprint arrays, one array per molec
+fp_vec = [(np.array(fp)) for fp in df['MACCS Fingerprint Object']]
+
+# add the lists for table display purposes
+df_cleaned['Fingerprint List'] = fp_vec
+
+# an array from fp_vec --> a df of fp_array --> to concat to main df
+fp_array = np.stack(fp_vec, axis = 0)
+fp_df = pd.DataFrame(fp_array)
+
+# df_new holds each bit in separate column to be read by the model later
+df_new = pd.concat([df_cleaned, pd.DataFrame(fp_array)], axis = 1)
+
+# for testing
+# print(type(fp_vec))
+# print(fp_vec[0])
+# print(type(fp_array))
+# print(fp_array.shape)
+# print(fp_array[:5])
+# print(fp_df[:5])
+print(df_new.shape)
+print(df_cleaned.shape)
 
 # Save the cleaned DataFrame to a new CSV file
-df_cleaned.to_csv("../../biodegrad.csv", index=False)
+df_new.to_csv("../../biodegrad.csv", index=False)
