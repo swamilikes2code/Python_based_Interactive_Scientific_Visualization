@@ -179,12 +179,15 @@ alg_select.on_change('value', update_algorithm)
 # creating widgets
 accuracy_display = Div(text="<div>Validation Accuracy: N/A | Test Accuracy: N/A</div>")
 # global val_accuracy
-val_accuracy = []
+# val_accuracy = []
 # global test_accuracy
 test_accuracy = []
 
-# Create empty list
-combo_list = [None for i in range(20)]
+# Create empty lists
+val_accuracy = [None for i in range(10)]
+saved_list = [None for i in range(10)]
+combo_list = val_accuracy + saved_list
+
 
 def run_config():
     train_status_message.text = f'Running {my_alg}'
@@ -202,13 +205,12 @@ def run_config():
     split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
 
     # Changing the list used to create boxplot
-    saved_list = [None for i in range(10)]
     global combo_list
     combo_list.clear()
     combo_list = val_accuracy + saved_list
-    print("val", val_accuracy)
-    print("test",test_accuracy)
-    print("combo",combo_list)
+    # print("val", val_accuracy)
+    # print("test",test_accuracy)
+    # print("combo",combo_list)
 
     # Updating accuracy display
     accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
@@ -216,8 +218,9 @@ def run_config():
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage):
 
-    # run and shuffle five times, and save result in list
-    global val_accuracy, test_accuracy
+    # run and shuffle ten times, and save result in list
+    global val_accuracy
+    global test_accuracy
     val_accuracy.clear()
     test_accuracy.clear()
 
@@ -240,8 +243,8 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
         y_test_pred = model.predict(X_test)
         test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
-        print(i, '. val', val_accuracy)
-        print(i, '. test', test_accuracy)
+        # print(i, '. val', val_accuracy)
+        # print(i, '. test', test_accuracy)
 
 
 # Run button
@@ -256,7 +259,7 @@ plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
 p = figure(x_range=['current', 'saved'], y_range = (0.0, 1.0), tools="", toolbar_location=None,
-            title="Validation Accuracy saved vs. current",
+            title="Validation Accuracy current vs. saved",
             background_fill_color="#eaefef", y_axis_label="accuracy")
 
 df_box = pd.DataFrame()
@@ -264,10 +267,13 @@ source = ColumnDataSource()
 
 def update_df_box():
     # making the initial boxplot
+    global combo_list
     d = {'kind': ['current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current',
                 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved'],
         'accuracy': combo_list
         }
+    
+    # print(d)
     global df_box
     df_box = pd.DataFrame(data=d)
 
@@ -293,6 +299,7 @@ def update_df_box():
 
     global source
     source.data = dict(df_box)
+    # print('update successful')
 
 def get_minmax(kind):
     if kind == 'current':
@@ -321,10 +328,12 @@ def make_glyphs():
     top_box = p.vbar(x = "kind", width = 0.7, bottom = "q2", top = "q3", color=cmap, line_color="black", source = source)
     bottom_box = p.vbar("kind", 0.7, "q1", "q2", color=cmap, line_color="black", source = source)
 
+    # FIXME this code for outliers works for the intial plot, but could not get it to work on saved plots
+
     # outliers
-    global outlier_points
-    initial_outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
-    outlier_points = p.scatter("kind", "accuracy", source=initial_outliers, size=6, color="black", alpha=0.3)
+    # global outlier_points
+    # initial_outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+    # outlier_points = p.scatter("kind", "accuracy", source=initial_outliers, size=6, color="black", alpha=0.3)
 
     # constant plot features
     p.xgrid.grid_line_color = None
@@ -340,25 +349,45 @@ def update_boxplot():
     if plot_counter == 0:
         make_glyphs()
 
-    print(df_box)
+    # print(df_box)
 
     whisker.source = source
+
     top_box.data_source = source
+
     bottom_box.data_source = source
-    outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
-    if df_box.iloc[-1, -1] != 0:
-        outlier_points.data_source = outliers
+
+    # FIXME other part of outliers code
+
+    # outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+    # if df_box.iloc[-1, -1] != 0:
+    # outlier_points.data_source = outliers
 
     plot_counter += 1
 
-
+def save_plot():
+    global combo_list
+    global saved_list
+    saved_list.clear()
+    saved_list = combo_list[0:10]
+    combo_list.clear()
+    val_accuracy = [None for i in range(10)]
+    combo_list = val_accuracy + saved_list
+    # print(combo_list)
 
 
 # Update plot button
-update_plot_button = Button(label="Update boxplot", button_type="warning")
+update_plot_button = Button(label="Update boxplot", button_type="success")
 
 # Attach callback to the update_plot button
 update_plot_button.on_click(update_boxplot)
+
+# Save plot button
+save_plot_button = Button(label="Save plot", button_type="warning")
+
+# Attach callback to the update_plot button
+save_plot_button.on_click(save_plot)
+
 
 # --------------- LAYOUTS ---------------
 
@@ -368,7 +397,5 @@ slider_layout = column(tvt, split_display, save_config_button, data_save_message
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 
 # just to see the elements
-test_layout = column(slider_layout, tab2_layout, p, update_plot_button)
+test_layout = column(slider_layout, tab2_layout, p, update_plot_button, save_plot_button)
 curdoc().add_root(row(test_layout, table_layout))
-
-# FIXME: update_plot_button and update_boxplot() currently do not work!
