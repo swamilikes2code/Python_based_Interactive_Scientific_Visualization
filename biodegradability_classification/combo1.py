@@ -178,9 +178,7 @@ alg_select.on_change('value', update_algorithm)
 
 # creating widgets
 accuracy_display = Div(text="<div>Validation Accuracy: N/A | Test Accuracy: N/A</div>")
-# global val_accuracy
 # val_accuracy = []
-# global test_accuracy
 test_accuracy = []
 
 # Create empty lists
@@ -265,6 +263,11 @@ p = figure(x_range=['current', 'saved'], y_range = (0.0, 1.0), tools="", toolbar
 df_box = pd.DataFrame()
 source = ColumnDataSource()
 
+# Create status message Div
+saved_config_message = Div(text='Saved config: N/A', styles={'color': 'red', 'font-size': '16px'})
+saved_alg_message = Div(text='Saved alg: N/A', styles={'color': 'red', 'font-size': '16px'})
+saved_data_message = Div(text='Saved val acc: N/A', styles={'color': 'red', 'font-size': '16px'})
+
 def update_df_box():
     # making the initial boxplot
     global combo_list
@@ -297,6 +300,13 @@ def update_df_box():
         df_box.iloc[index, -2] = minmax[0]
         df_box.iloc[index, -1] = minmax[1]
 
+    # update outliers
+    global outlier_points
+    outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+    print(outliers)
+    outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
+    # p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
+    
     global source
     source.data = dict(df_box)
     # print('update successful')
@@ -317,6 +327,7 @@ def make_glyphs():
     # make all of the glyphs
     # outlier range
     global whisker
+    global outliers
     whisker = Whisker(base="kind", upper="max", lower="min", source=source)
     whisker.upper_head.size = whisker.lower_head.size = 20
     p.add_layout(whisker)
@@ -328,13 +339,6 @@ def make_glyphs():
     top_box = p.vbar(x = "kind", width = 0.7, bottom = "q2", top = "q3", color=cmap, line_color="black", source = source)
     bottom_box = p.vbar("kind", 0.7, "q1", "q2", color=cmap, line_color="black", source = source)
 
-    # FIXME this code for outliers works for the intial plot, but could not get it to work on saved plots
-
-    # outliers
-    # global outlier_points
-    # initial_outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
-    # outlier_points = p.scatter("kind", "accuracy", source=initial_outliers, size=6, color="black", alpha=0.3)
-
     # constant plot features
     p.xgrid.grid_line_color = None
     p.axis.major_label_text_font_size="14px"
@@ -344,6 +348,7 @@ def update_boxplot():
     global df_box
     global source
     global plot_counter
+    # global outliers
     update_df_box()
 
     if plot_counter == 0:
@@ -360,8 +365,12 @@ def update_boxplot():
     # FIXME other part of outliers code
 
     # outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
+    # print(outliers)
+    # outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
     # if df_box.iloc[-1, -1] != 0:
     # outlier_points.data_source = outliers
+
+    
 
     plot_counter += 1
 
@@ -370,6 +379,16 @@ def save_plot():
     global saved_list
     saved_list.clear()
     saved_list = combo_list[0:10]
+
+    saved_config_message.text = f'Saved config: {saved_col_list}'
+    saved_config_message.styles = {'color': 'green', 'font-size': '16px'}
+
+    saved_alg_message.text = f'Saved alg: {my_alg}'
+    saved_alg_message.styles = {'color': 'green', 'font-size': '16px'}
+
+    saved_data_message.text = f'Saved val acc: {saved_list}'
+    saved_data_message.styles = {'color': 'green', 'font-size': '16px'}
+
     combo_list.clear()
     val_accuracy = [None for i in range(10)]
     combo_list = val_accuracy + saved_list
@@ -397,5 +416,5 @@ slider_layout = column(tvt, split_display, save_config_button, data_save_message
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 
 # just to see the elements
-test_layout = column(slider_layout, tab2_layout, p, update_plot_button, save_plot_button)
+test_layout = column(slider_layout, tab2_layout, p, update_plot_button, save_plot_button, saved_config_message, saved_alg_message, saved_data_message)
 curdoc().add_root(row(test_layout, table_layout))
