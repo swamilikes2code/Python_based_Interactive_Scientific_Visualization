@@ -274,7 +274,8 @@ df_box = pd.DataFrame()
 source = ColumnDataSource()
 
 # Create status message Div
-saved_config_message = Div(text='Saved config: N/A', styles={'color': 'red', 'font-size': '16px'})
+saved_split_message = Div(text = 'Saved split: N/A', styles = {'color': 'red', 'font-size': '16px'})
+saved_col_message = Div(text='Saved columns: N/A', styles={'color': 'red', 'font-size': '16px'})
 saved_alg_message = Div(text='Saved alg: N/A', styles={'color': 'red', 'font-size': '16px'})
 saved_data_message = Div(text='Saved val acc: N/A', styles={'color': 'red', 'font-size': '16px'})
 
@@ -414,8 +415,11 @@ def save_plot():
     saved_list.clear()
     saved_list = combo_list[0:10]
 
-    saved_config_message.text = f'Saved config: {saved_col_list}'
-    saved_config_message.styles = {'color': 'green', 'font-size': '16px'}
+    saved_split_message.text = f'Saved split: Training split: {saved_split_list[0]} | Validation split: {saved_split_list[1]} | Testing split: {saved_split_list[2]}'
+    saved_split_message.styles = {'color': 'green', 'font-size': '16px'}
+
+    saved_col_message.text = f'Saved columns: {saved_col_list}'
+    saved_col_message.styles = {'color': 'green', 'font-size': '16px'}
 
     saved_alg_message.text = f'Saved alg: {my_alg}'
     saved_alg_message.styles = {'color': 'green', 'font-size': '16px'}
@@ -450,5 +454,5 @@ slider_layout = column(tvt, split_display, save_config_button, data_save_message
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 
 # just to see the elements
-test_layout = column(slider_layout, tab2_layout, p, update_plot_button, save_plot_button, saved_config_message, saved_alg_message, saved_data_message)
+test_layout = column(slider_layout, tab2_layout, p, update_plot_button, save_plot_button, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
 curdoc().add_root(row(test_layout, table_layout))
