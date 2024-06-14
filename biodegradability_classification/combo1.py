@@ -224,7 +224,7 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
     global saved_col_list
     train_col_list = []
     train_col_list += saved_col_list
-    print(train_col_list)
+    # print(train_col_list)
     if 'Fingerprint List' in saved_col_list:
         train_col_list.remove("Fingerprint List")
         train_col_list += [str(i) for i in range(167)]
@@ -387,7 +387,6 @@ def update_boxplot():
     global source
     global plot_counter
     global outliers
-    # global outliers
     update_df_box()
 
     if plot_counter == 0:
@@ -403,9 +402,6 @@ def update_boxplot():
 
     # FIXME other part of outliers code
     outlier_points.data_source = outliers
-
-    # global outlier_points
-    # global outliers
 
     # outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
     # print(outliers)
