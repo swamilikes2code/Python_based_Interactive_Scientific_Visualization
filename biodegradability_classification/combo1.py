@@ -316,12 +316,36 @@ def get_minmax(kind):
         if combo_list[0] == None: # when module is first loaded
             return 0,0
         else:
-            return min(combo_list[:10]), max(combo_list[:10])
+            combo_list_current = combo_list[:10]
+            abs_min = min(combo_list_current)
+            while abs_min < df_box["lower"][0]:
+                combo_list_current.remove(abs_min)
+                abs_min = min(combo_list_current)
+
+            abs_max = max(combo_list_current)
+            while abs_max > df_box["upper"][0]:
+                combo_list_current.remove(abs_max)
+                abs_max = max(combo_list_current)
+
+            return abs_min, abs_max
+
     elif kind == 'saved':
         if combo_list[-1] == None:
             return 0,0
         else:
-            return min(combo_list[10:]), max(combo_list[10:])
+            combo_list_saved = combo_list[10:]
+            abs_min = min(combo_list_saved)
+            while abs_min < df_box["lower"][0]:
+                combo_list_saved.remove(abs_min)
+                abs_min = min(combo_list_saved)
+
+            abs_max = max(combo_list_saved)
+            while abs_max > df_box["upper"][0]:
+                combo_list_saved.remove(abs_max)
+                abs_max = max(combo_list_saved)
+
+            return abs_min, abs_max
+
 
 def make_glyphs():
     # make all of the glyphs
