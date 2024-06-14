@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, VBar
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox
 from bokeh.io import curdoc, output_notebook
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
@@ -20,6 +20,7 @@ This file is a draft for combining tab 1 (data) with tab 2(model selection and f
 # df_display > df_subset > df_dict are for displaying table
 
 # --------------- DATA SELECTION ---------------
+
 # Load data from the csv file
 file_path = r'biodegrad.csv'
 df = pd.read_csv(file_path)
@@ -57,7 +58,7 @@ datatable = DataTable(source=table_source, columns=columns, width=1800)
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
 
 # Create status message Div
-data_save_message = Div(text='Configuration not saved', styles={'color': 'red', 'font-size': '16px'})
+saved_config_message = Div(text='Configuration not saved', styles={'color': 'red', 'font-size': '16px'})
 
 # Update columns to display
 def update_cols(display_columns):
@@ -69,8 +70,8 @@ def update_cols(display_columns):
 def update_table(attr, old, new):
     cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
     update_cols(display_columns=cols_to_display)
-    data_save_message.text = 'Configuration not saved'
-    data_save_message.styles = {'color': 'red', 'font-size': '16px'}
+    saved_config_message.text = 'Configuration not saved'
+    saved_config_message.styles = {'color': 'red', 'font-size': '16px'}
 
 
 
@@ -91,8 +92,8 @@ def update_values(attrname, old, new):
     if train_percentage < 10 or val_percentage < 10 or test_percentage < 10:
         return
     # print("train_percentage and temp:", train_percentage, temp, "val and test:", val_percentage, test_percentage)
-    data_save_message.text = 'Configuration not saved'
-    data_save_message.styles = {'color': 'red', 'font-size': '16px'}
+    saved_config_message.text = 'Configuration not saved'
+    saved_config_message.styles = {'color': 'red', 'font-size': '16px'}
     update_text(train_percentage, val_percentage, test_percentage)
     global saved_split_list
     saved_split_list = [train_percentage, val_percentage, test_percentage]
@@ -122,7 +123,8 @@ tvt = RangeSlider(title="Train-Validate-Test (%)", value=(50, 75), start=0, end=
 tvt.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 split_display = Div(text="<div>Training split: 50</div><div>Validation split: 25</div><div>Testing split: 25</div>")
 
-# --------------- SAVE BUTTON ---------------
+# --------------- SAVE DATA BUTTON ---------------
+
 # table on change
 checkbox_button_group.on_change('active', update_table)
 
@@ -143,8 +145,8 @@ def save_config():
     #saved_split_list isn't located here as the split values update in the list upon the change of the range slider
     #the collective save button is to make the design more cohesive
 
-    data_save_message.text = 'Configuration saved'
-    data_save_message.styles = {'color': 'green', 'font-size': '16px'}
+    saved_config_message.text = 'Configuration saved'
+    saved_config_message.styles = {'color': 'green', 'font-size': '16px'}
 
     # print(saved_col_list)
     # print(saved_split_list)
@@ -262,7 +264,151 @@ train_button = Button(label="Run ML algorithm", button_type="success")
 train_button.on_click(run_config)
 
 
+# --------------- HYPERPARAMETER TUNING ---------------
+
+# hyperparameter tuning widgets
+hp_slider = Slider()
+hp_select = Select()
+hp_toggle = Checkbox()
+hp_toggle.margin = (24, 10, 24, 10)
+
+if my_alg == 'Decision Tree':
+    #hyperparameters are 
+    # splitter strategy (splitter, best vs. random, select)
+    # max_depth of tree (max_depth, int slider)
+    model = DecisionTreeClassifier()
+
+    # testing purposes
+    def print_vals():
+        print("slider", hp_slider.value)
+        print("switch", hp_toggle.active)
+        print("model", model.max_depth)
+        print("model splitter", model.splitter)
+
+    # if switch on, max_depth = None
+    def hp_toggle_callback(attr, old, new):
+        if new == True:
+            hp_slider.update(disabled = True, bar_color = 'black', show_value = False)
+            # hp_slider.disabled = True
+            # hp_slider.bar_color = 'gray'
+            # hp_slider.show_value = False
+            model.max_depth = None
+        elif new == False:
+            hp_slider.update(disabled = False, bar_color = '#e6e6e6', show_value = True)
+            model.max_depth = hp_slider.value
+        print_vals()
+
+    def hp_slider_callback(attr, old, new):
+        if hp_slider.disabled == True:
+            return
+        model.max_depth = new
+        print_vals()
+
+    def hp_select_callback(attr, old, new):
+        model.splitter = new
+        print_vals()
+
+    hp_slider.update(
+        title = "Max Depth of Tree",
+        start= 0,
+        end = 15,
+        value = 2,
+        step = 1
+    )
+    hp_slider.on_change('value', hp_slider_callback)
+
+    hp_toggle.update(
+        label = "None",
+        visible = True,
+        active = False
+    )
+    hp_toggle.on_change('active', hp_toggle_callback)
+
+    hp_select.update(
+        title = "Splitter strategy",
+        value = "best",
+        options = ["best", "random"]
+    )
+    hp_select.on_change('value', hp_select_callback)
+
+elif my_alg == 'K-Nearest Neighbors':
+    #hyperparameters are 
+    # K (n_neighbors, int slider)
+    # weights (weights, uniform vs. distance, select)
+    model = KNeighborsClassifier()
+
+    # testing
+    def print_vals():
+        print("slider", hp_slider.value)
+        print("n_neighbors", model.n_neighbors)
+        print("weights", model.weights)
+
+    def hp_slider_callback(attr, old, new):
+        model.n_neighbors = new
+        print_vals()
+    
+    def hp_select_callback(attr, old, new):
+        model.weights = new
+        print_vals()
+
+    hp_slider.update(
+        title = "Number of neighbors",
+        start = 0,
+        end = 30,
+        value = 5,
+        step = 5
+    )
+    hp_slider.on_change('value', hp_slider_callback)
+
+    hp_toggle.visible = False
+
+    hp_select.update(
+        title = "Weights",
+        value = "uniform",
+        options = ["uniform", "distance"]
+    )
+    hp_select.on_change('value', hp_select_callback)
+
+elif my_alg == 'Support Vector Classification':
+    #hyperparameters are 
+    # loss (loss, hinge vs. squared_hinge, select) 
+    # the max iterations to be run (max_iter, int slider)
+    model = LinearSVC()
+
+    def print_vals():
+        print("slider", hp_slider.value)
+        print("max iter", model.max_iter)
+        print("loss func", model.loss)
+
+    def hp_slider_callback(attr, old, new):
+        model.max_iter = new
+        print_vals()
+    
+    def hp_select_callback(attr, old, new):
+        model.loss = new
+        print_vals()
+
+    hp_slider.update(
+        title = "Maximum iterations", #default is 1000
+        start = 500,
+        end = 1500,
+        value = 1000,
+        step = 100
+    )
+    hp_slider.on_change('value', hp_slider_callback)
+
+    hp_toggle.visible = False
+
+    hp_select.update(
+        title = "Loss function",
+        value = "squared_hinge",
+        options = ["squared_hinge", "hinge"]
+    )
+    hp_select.on_change('value', hp_select_callback)
+
+
 # --------------- VISUALIZATIONS ---------------
+
 plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
@@ -357,7 +503,6 @@ def get_minmax(kind):
                 abs_max = max(combo_list_saved)
 
             return abs_min, abs_max
-
 
 def make_glyphs():
     # make all of the glyphs
@@ -454,9 +599,11 @@ save_plot_button.on_click(save_plot)
 
 # creating widget layouts
 table_layout = column(checkbox_button_group, datatable)
-slider_layout = column(tvt, split_display, save_config_button, data_save_message)
+slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
+hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select)
+plot_layout = column(p, update_plot_button, save_plot_button, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
 
 # just to see the elements
-test_layout = column(table_layout, slider_layout, tab2_layout, p, update_plot_button, save_plot_button, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
+test_layout = column(table_layout, slider_layout, tab2_layout, hyperparam_layout, plot_layout)
 curdoc().add_root(test_layout)
