@@ -346,12 +346,12 @@ def get_minmax(kind):
         else:
             combo_list_saved = combo_list[10:]
             abs_min = min(combo_list_saved)
-            while abs_min < df_box["lower"][0]:
+            while abs_min < df_box["lower"][10]:
                 combo_list_saved.remove(abs_min)
                 abs_min = min(combo_list_saved)
 
             abs_max = max(combo_list_saved)
-            while abs_max > df_box["upper"][0]:
+            while abs_max > df_box["upper"][10]:
                 combo_list_saved.remove(abs_max)
                 abs_max = max(combo_list_saved)
 
