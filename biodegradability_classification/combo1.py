@@ -312,11 +312,12 @@ def update_df_box():
         df_box.iloc[index, -1] = minmax[1]
 
     # update outliers
-    global outlier_points
-    outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
-    print(outliers)
-    outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
-    # p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
+    # global outlier_points
+    global outliers
+    outliers = ColumnDataSource(df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)])
+    # # print(outliers)
+    # outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
+    # # p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
     
     global source
     source.data = dict(df_box)
@@ -362,10 +363,12 @@ def make_glyphs():
     # make all of the glyphs
     # outlier range
     global whisker
-    global outliers
+    global outlier_points
     whisker = Whisker(base="kind", upper="max", lower="min", source=source)
     whisker.upper_head.size = whisker.lower_head.size = 20
     p.add_layout(whisker)
+
+    outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
 
     # quantile boxes
     global kinds, cmap, top_box, bottom_box
@@ -383,6 +386,7 @@ def update_boxplot():
     global df_box
     global source
     global plot_counter
+    global outliers
     # global outliers
     update_df_box()
 
@@ -398,6 +402,10 @@ def update_boxplot():
     bottom_box.data_source = source
 
     # FIXME other part of outliers code
+    outlier_points.data_source = outliers
+
+    # global outlier_points
+    # global outliers
 
     # outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
     # print(outliers)
