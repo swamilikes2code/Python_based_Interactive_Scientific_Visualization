@@ -225,6 +225,12 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
     for i in range(10):
         # Was not running properly with fingerprint
         # TODO: implement fingerprint decoder so model can read them
+        global saved_col_list
+        if 'Fingerprint List' in saved_col_list:
+            saved_col_list.remove("Fingerprint List")
+            saved_col_list += [str(i) for i in range(167)]
+            print(saved_col_list)
+
         X = df[saved_col_list]
         y = df['Class']
 
