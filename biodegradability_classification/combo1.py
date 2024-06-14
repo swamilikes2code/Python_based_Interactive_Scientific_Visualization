@@ -440,7 +440,7 @@ update_plot_button = Button(label="Update boxplot", button_type="success")
 update_plot_button.on_click(update_boxplot)
 
 # Save plot button
-save_plot_button = Button(label="Save plot", button_type="warning")
+save_plot_button = Button(label="Save current plot", button_type="warning")
 
 # Attach callback to the update_plot button
 save_plot_button.on_click(save_plot)
@@ -454,5 +454,5 @@ slider_layout = column(tvt, split_display, save_config_button, data_save_message
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 
 # just to see the elements
-test_layout = column(slider_layout, tab2_layout, p, update_plot_button, save_plot_button, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
-curdoc().add_root(row(test_layout, table_layout))
+test_layout = column(table_layout, slider_layout, tab2_layout, p, update_plot_button, save_plot_button, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
+curdoc().add_root(test_layout)
