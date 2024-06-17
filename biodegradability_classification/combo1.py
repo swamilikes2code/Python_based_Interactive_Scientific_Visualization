@@ -72,7 +72,7 @@ optional_columns = [col for col in cols if col not in mandatory_columns]
 table_source = ColumnDataSource(data=df_subset)
 
 # Create figure
-columns = [TableColumn(field=col, title=col) for col in cols]
+columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
 datatable = DataTable(source=table_source, columns=columns, width=900, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
@@ -704,10 +704,11 @@ save_plot_button.on_click(load_save)
 # creating widget layouts
 table_layout = row(checkbox_button_group, datatable)
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
+tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
 plot_layout = column(p, update_plot_button, save_plot_button, plot_status_message, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
 
 # just to see the elements
-test_layout = column(table_layout, slider_layout, tab2_layout, hyperparam_layout, plot_layout)
+test_layout = column(tab1_layout, tab2_layout, hyperparam_layout, plot_layout)
 curdoc().add_root(test_layout)
