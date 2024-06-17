@@ -19,6 +19,15 @@ This file is a draft for combining tab 1 (data) with tab 2(model selection and f
 # df is original csv, holds fingerprint list and 167 cols of fingerprint bits
 # df_display > df_subset > df_dict are for displaying table
 
+
+# ---------------STATUS MESSAGES-----------------
+
+saved_config_message = Div(text='Configuration not saved', styles={'color': 'red', 'font-size': '16px'})
+train_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
+tune_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
+plot_status_message = Div(text='Plot not updated', styles={'color': 'red', 'font-size': '16px'})
+
+
 # --------------- DATA SELECTION ---------------
 
 # Load data from the csv file
@@ -57,9 +66,6 @@ datatable = DataTable(source=table_source, columns=columns, width=1800)
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
 
-# Create status message Div
-saved_config_message = Div(text='Configuration not saved', styles={'color': 'red', 'font-size': '16px'})
-
 # Update columns to display
 def update_cols(display_columns):
     # Always include mandatory columns
@@ -72,7 +78,6 @@ def update_table(attr, old, new):
     update_cols(display_columns=cols_to_display)
     saved_config_message.text = 'Configuration not saved'
     saved_config_message.styles = {'color': 'red', 'font-size': '16px'}
-
 
 
 # --------------- DATA SPLIT ---------------
@@ -154,6 +159,16 @@ def save_config():
 def load_config():
     saved_config_message.text = "Loading config..."
     saved_config_message.styles = {'color': 'orange', 'font-size': '16px'}
+
+    train_status_message.text='Not running'
+    train_status_message.styles={'color': 'red', 'font-size': '16px'}
+
+
+    tune_status_message.text='Not running'
+    tune_status_message.styles={'color': 'red', 'font-size': '16px'}
+
+    plot_status_message.text = 'Plot not updated'
+    plot_status_message.styles={'color': 'red', 'font-size': '16px'}
     curdoc().add_next_tick_callback(save_config)
     
 # Save button
@@ -166,9 +181,6 @@ save_config_button.on_click(load_config)
 
 # algorithm name holder
 my_alg = 'Decision Tree'
-
-# Create status message Div
-train_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
 
 # Create select button
 alg_select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
@@ -277,14 +289,20 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         # print(i, '. test', test_accuracy)
 
 
-
-# Run button
-train_button = Button(label="Run ML algorithm", button_type="success")
-
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
     train_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+
+    tune_status_message.text='Not running'
+    tune_status_message.styles={'color': 'red', 'font-size': '16px'}
+
+    plot_status_message.text = 'Plot not updated'
+    plot_status_message.styles={'color': 'red', 'font-size': '16px'}
     curdoc().add_next_tick_callback(run_ML)
+
+
+# Run button
+train_button = Button(label="Run ML algorithm", button_type="success")
 
 # Attach callback to the run button
 train_button.on_click(load_ML)
@@ -300,7 +318,6 @@ tuned_val_accuracy = [None for i in range(10)]
 
 # create displays
 tuned_accuracy_display = Div(text = "Tuned Validation Accuracy: N/A | Tuned Test Accuracy: N/A")
-tune_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
 
 def run_tuned_config():
     global my_alg, stage
@@ -477,6 +494,9 @@ elif my_alg == 'Support Vector Classification':
 def load_tuned_config():
     tune_status_message.text = "Loading tuned config..."
     tune_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    
+    plot_status_message.text = 'Plot not updated'
+    plot_status_message.styles={'color': 'red', 'font-size': '16px'}
     curdoc().add_next_tick_callback(run_tuned_config)
 
 # Tune button
@@ -488,7 +508,7 @@ tune_button.on_click(load_tuned_config)
 
 # --------------- VISUALIZATIONS ---------------
 
-plot_status_message = Div(text='Plot not updated', styles={'color': 'green', 'font-size': '16px'})
+
 
 plot_counter = 0 #the amount of times button has been pressed
 
