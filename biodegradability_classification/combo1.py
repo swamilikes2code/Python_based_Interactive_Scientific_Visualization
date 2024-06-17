@@ -36,7 +36,6 @@ plot_status_message = Div(text='Plot not updated', styles=not_updated)
 save_config_button = Button(label="Save Current Configuration", button_type="success")
 train_button = Button(label="Run ML algorithm", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
-update_plot_button = Button(label="Update boxplot", button_type="success")
 save_plot_button = Button(label="Save current plot", button_type="warning")
 
 
@@ -699,10 +698,7 @@ def load_save():
     plot_status_message.styles = loading
     curdoc().add_next_tick_callback(save_plot)
 
-# Attach callback to the update_plot button
-update_plot_button.on_click(load_boxplot)
-
-# Attach callback to the update_plot button
+# Attach callback to the save_plot button
 save_plot_button.on_click(load_save)
 
 
@@ -714,7 +710,7 @@ slider_layout = column(tvt, split_display, save_config_button, saved_config_mess
 tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
-plot_layout = column(p, update_plot_button, save_plot_button, plot_status_message, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
+plot_layout = column(p, save_plot_button, plot_status_message, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
 tab3_layout = row(hyperparam_layout, plot_layout)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
