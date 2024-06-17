@@ -299,6 +299,9 @@ train_button.on_click(load_ML)
 
 
 # --------------- HYPERPARAMETER TUNING + BUTTON ---------------
+general_hyperparams = []
+
+
 
 # Create empty lists
 tuned_test_accuracy = []
@@ -485,10 +488,10 @@ df_box = pd.DataFrame()
 source = ColumnDataSource()
 
 # Create status message Div
-saved_split_message = Div(text = 'Saved split: N/A', styles = not_updated)
-saved_col_message = Div(text='Saved columns: N/A', styles=not_updated)
-saved_alg_message = Div(text='Saved alg: N/A', styles=not_updated)
-saved_data_message = Div(text='Saved val acc: N/A', styles=not_updated)
+# saved_split_message = Div(text = 'Saved split: N/A', styles = not_updated)
+# saved_col_message = Div(text='Saved columns: N/A', styles=not_updated)
+# saved_alg_message = Div(text='Saved alg: N/A', styles=not_updated)
+# saved_data_message = Div(text='Saved val acc: N/A', styles=not_updated)
 
 def update_df_box():
     # making the initial boxplot
@@ -628,23 +631,66 @@ def load_boxplot():
     plot_status_message.styles = loading
     curdoc().add_next_tick_callback(update_boxplot)
 
+
+
+# Define an empty data source
+saved_data = dict(
+    training_split = [],
+    validation_split = [],
+    testing_split = [],
+    saved_columns = [],
+    saved_algorithm = [],
+    saved_hyperparams = []
+)
+save_source = ColumnDataSource(saved_data)
+
+# Define table columns
+saved_columns = [
+    TableColumn(field="training_split", title="Training split"),
+    TableColumn(field="validation_split", title="Validation split"),
+    TableColumn(field="testing_split", title="Testing split"),
+    TableColumn(field="saved_columns", title="Saved columns"),
+    TableColumn(field="saved_algorithm", title="Saved algorithm"),
+    TableColumn(field="saved_hyperparams", title="Saved hyperparams")
+]
+
+# Create a DataTable
+saved_data_table = DataTable(source=save_source, columns=saved_columns, width=720, height=280)
+
+
 def save_plot():
     global combo_list
     global saved_list
+    global new_training_split
+    global new_validation_split
+    global new_testing_split
+    global new_saved_columns
+    global new_saved_algorithm
+    global new_saved_hyperparams
+
     saved_list.clear()
     saved_list = combo_list[10:20]
 
-    saved_split_message.text = f'Saved split: Training split: {saved_split_list[0]} | Validation split: {saved_split_list[1]} | Testing split: {saved_split_list[2]}'
-    saved_split_message.styles = updated
+    new_training_split = saved_split_list[0]
+    new_validation_split = saved_split_list[1]
+    new_testing_split = saved_split_list[2]
+    new_saved_columns = saved_col_list
+    new_saved_algorithm = my_alg
+    new_saved_hyperparams = 'FIX THIS'
 
-    saved_col_message.text = f'Saved columns: {saved_col_list}'
-    saved_col_message.styles = updated
+    add_row()
 
-    saved_alg_message.text = f'Saved alg: {my_alg}'
-    saved_alg_message.styles = updated
+    # saved_split_message.text = f'Saved split: Training split: {saved_split_list[0]} | Validation split: {saved_split_list[1]} | Testing split: {saved_split_list[2]}'
+    # saved_split_message.styles = updated
 
-    saved_data_message.text = f'Saved val acc: {saved_list}'
-    saved_data_message.styles = updated
+    # saved_col_message.text = f'Saved columns: {saved_col_list}'
+    # saved_col_message.styles = updated
+
+    # saved_alg_message.text = f'Saved alg: {my_alg}'
+    # saved_alg_message.styles = updated
+
+    # saved_data_message.text = f'Saved val acc: {saved_list}'
+    # saved_data_message.styles = updated
 
     combo_list.clear()
     val_accuracy = [None for i in range(10)]
@@ -653,6 +699,18 @@ def save_plot():
 
     plot_status_message.text = 'Plot saved'
     plot_status_message.styles = updated
+
+# Add new row to datatable every time a plot is saved
+def add_row():
+    new_data = {
+        'training_split': [new_training_split],
+        'validation_split': [new_validation_split],
+        'testing_split': [new_testing_split],
+        'saved_columns': [new_saved_columns],
+        'saved_algorithm': [new_saved_algorithm],
+        'saved_hyperparams': [new_saved_hyperparams]
+    }
+    save_source.stream(new_data)
 
 def load_save():
     plot_status_message.text = 'Updating saved data...'
@@ -671,8 +729,8 @@ slider_layout = column(tvt, split_display, save_config_button, saved_config_mess
 tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
-plot_layout = column(p, save_plot_button, plot_status_message, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
-tab3_layout = row(hyperparam_layout, plot_layout)
+plot_layout = column(p, save_plot_button, plot_status_message)
+tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
                     TabPanel(child = tab2_layout, title = 'Train'),
