@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel
 from bokeh.io import curdoc, output_notebook
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
@@ -12,7 +12,7 @@ from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 '''
-This file is a draft for combining tab 1 (data) with tab 2(model selection and first run based on data config)
+This file is a draft for combining the module's features
 '''
 
 #for ref:
@@ -708,7 +708,14 @@ tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
 plot_layout = column(p, update_plot_button, save_plot_button, plot_status_message, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
+tab3_layout = row(hyperparam_layout, plot_layout)
+
+tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
+                    TabPanel(child = tab2_layout, title = 'Train'),
+                    TabPanel(child = tab3_layout, title = 'Fine-Tune')
+                ])
+
 
 # just to see the elements
-test_layout = column(tab1_layout, tab2_layout, hyperparam_layout, plot_layout)
-curdoc().add_root(test_layout)
+# test_layout = column(tab1_layout, tab2_layout, hyperparam_layout, plot_layout)
+curdoc().add_root(tabs)
