@@ -190,6 +190,8 @@ combo_list = val_accuracy + saved_list
 
 
 def run_config():
+    global stage #train or tune, determines which list to write to
+    stage = 'Train'
     train_status_message.text = f'Running {my_alg}'
     train_status_message.styles = {'color': 'green', 'font-size': '16px'}
     global model
@@ -219,11 +221,17 @@ def run_config():
 def split_and_train_model(train_percentage, val_percentage, test_percentage):
 
     # run and shuffle ten times, and save result in list
-    global val_accuracy
-    global test_accuracy
-    val_accuracy.clear()
-    test_accuracy.clear()
-    global saved_col_list
+    global val_accuracy, test_accuracy
+    global tuned_val_accuracy, tuned_test_accuracy
+
+    if stage == 'Train':
+        val_accuracy.clear()
+        test_accuracy.clear()
+    elif stage == 'Tune':
+        tuned_val_accuracy.clear()
+        tuned_test_accuracy.clear()
+
+    global saved_col_list, train_col_list
     train_col_list = []
     train_col_list += saved_col_list
     # print(train_col_list)
@@ -250,9 +258,16 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         
         # calculating accuracy
         y_val_pred = model.predict(X_val)
-        val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
         y_test_pred = model.predict(X_test)
-        test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+
+        if stage == 'Train':
+            val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
+            test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+        elif stage == 'Tune':
+            tuned_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
+            tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+
+
         # print(i, '. val', val_accuracy)
         # print(i, '. test', test_accuracy)
 
@@ -264,7 +279,38 @@ train_button = Button(label="Run ML algorithm", button_type="success")
 train_button.on_click(run_config)
 
 
-# --------------- HYPERPARAMETER TUNING ---------------
+# --------------- HYPERPARAMETER TUNING + BUTTON ---------------
+
+# Create empty lists
+tuned_test_accuracy = []
+tuned_val_accuracy = [None for i in range(10)]
+# saved_list = [None for i in range(10)]
+# combo_list = val_accuracy + saved_list
+
+# create displays
+tuned_accuracy_display = Div(text = "Tuned Validation Accuracy: N/A | Tuned Test Accuracy: N/A")
+tune_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
+
+def run_tuned_config():
+    global my_alg, stage
+    stage = 'Tune'
+    tune_status_message.text = f'Running {my_alg}'
+    tune_status_message.styles = {'color': 'green', 'font-size': '16px'}
+    global model
+
+    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
+
+    # Changing the list used to create boxplot
+    # global combo_list
+    # combo_list.clear()
+    # combo_list = val_accuracy + saved_list
+    # print("val", val_accuracy)
+    # print("test",test_accuracy)
+    # print("combo",combo_list)
+
+    # Updating accuracy display
+    tuned_accuracy_display.text = f"<div><b>Validation Accuracy:</b> {tuned_val_accuracy}</div><div><b>Test Accuracy:</b> {tuned_test_accuracy}</div>"
+
 
 # hyperparameter tuning widgets
 hp_slider = Slider()
@@ -272,18 +318,29 @@ hp_select = Select()
 hp_toggle = Checkbox()
 hp_toggle.margin = (24, 10, 24, 10)
 
+def print_vals():
+    global my_alg
+    if my_alg == 'Decision Tree':
+        print("slider", hp_slider.value)
+        print("switch", hp_toggle.active)
+        print("model", model.max_depth)
+        print("model splitter", model.splitter)
+    elif my_alg == 'K-Nearest Neighbors':
+        print("slider", hp_slider.value)
+        print("n_neighbors", model.n_neighbors)
+        print("weights", model.weights)
+    elif my_alg == 'Support Vector Classification':
+        print("slider", hp_slider.value)
+        print("max iter", model.max_iter)
+        print("loss func", model.loss)
+    
+
+
 if my_alg == 'Decision Tree':
     #hyperparameters are 
     # splitter strategy (splitter, best vs. random, select)
     # max_depth of tree (max_depth, int slider)
     model = DecisionTreeClassifier()
-
-    # testing purposes
-    def print_vals():
-        print("slider", hp_slider.value)
-        print("switch", hp_toggle.active)
-        print("model", model.max_depth)
-        print("model splitter", model.splitter)
 
     # if switch on, max_depth = None
     def hp_toggle_callback(attr, old, new):
@@ -296,17 +353,17 @@ if my_alg == 'Decision Tree':
         elif new == False:
             hp_slider.update(disabled = False, bar_color = '#e6e6e6', show_value = True)
             model.max_depth = hp_slider.value
-        print_vals()
+        # print_vals()
 
     def hp_slider_callback(attr, old, new):
         if hp_slider.disabled == True:
             return
         model.max_depth = new
-        print_vals()
+        # print_vals()
 
     def hp_select_callback(attr, old, new):
         model.splitter = new
-        print_vals()
+        # print_vals()
 
     hp_slider.update(
         title = "Max Depth of Tree",
@@ -345,11 +402,11 @@ elif my_alg == 'K-Nearest Neighbors':
 
     def hp_slider_callback(attr, old, new):
         model.n_neighbors = new
-        print_vals()
+        # print_vals()
     
     def hp_select_callback(attr, old, new):
         model.weights = new
-        print_vals()
+        # print_vals()
 
     hp_slider.update(
         title = "Number of neighbors",
@@ -382,11 +439,11 @@ elif my_alg == 'Support Vector Classification':
 
     def hp_slider_callback(attr, old, new):
         model.max_iter = new
-        print_vals()
+        # print_vals()
     
     def hp_select_callback(attr, old, new):
         model.loss = new
-        print_vals()
+        # print_vals()
 
     hp_slider.update(
         title = "Maximum iterations", #default is 1000
@@ -405,6 +462,12 @@ elif my_alg == 'Support Vector Classification':
         options = ["squared_hinge", "hinge"]
     )
     hp_select.on_change('value', hp_select_callback)
+
+# Tune button
+tune_button = Button(label = "Tune", button_type = "success")
+
+# Can connect to the old funcs
+tune_button.on_click(run_tuned_config)
 
 
 # --------------- VISUALIZATIONS ---------------
@@ -601,7 +664,7 @@ save_plot_button.on_click(save_plot)
 table_layout = column(checkbox_button_group, datatable)
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
-hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select)
+hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
 plot_layout = column(p, update_plot_button, save_plot_button, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
 
 # just to see the elements
