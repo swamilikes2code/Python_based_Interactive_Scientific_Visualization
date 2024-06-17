@@ -19,13 +19,25 @@ This file is a draft for combining tab 1 (data) with tab 2(model selection and f
 # df is original csv, holds fingerprint list and 167 cols of fingerprint bits
 # df_display > df_subset > df_dict are for displaying table
 
+# ---------------MESSAGE STYLES-----------------
+not_updated = {'color': 'red', 'font-size': '16px'}
+loading = {'color': 'orange', 'font-size': '16px'}
+updated = {'color': 'green', 'font-size': '16px'}
 
 # ---------------STATUS MESSAGES-----------------
 
-saved_config_message = Div(text='Configuration not saved', styles={'color': 'red', 'font-size': '16px'})
-train_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
-tune_status_message = Div(text='Not running', styles={'color': 'red', 'font-size': '16px'})
-plot_status_message = Div(text='Plot not updated', styles={'color': 'red', 'font-size': '16px'})
+saved_config_message = Div(text='Configuration not saved', styles=not_updated)
+train_status_message = Div(text='Not running', styles=not_updated)
+tune_status_message = Div(text='Not running', styles=not_updated)
+plot_status_message = Div(text='Plot not updated', styles=not_updated)
+
+# -------------------BUTTONS--------------------
+
+save_config_button = Button(label="Save Current Configuration", button_type="success")
+train_button = Button(label="Run ML algorithm", button_type="success")
+tune_button = Button(label = "Tune", button_type = "success")
+update_plot_button = Button(label="Update boxplot", button_type="success")
+save_plot_button = Button(label="Save current plot", button_type="warning")
 
 
 # --------------- DATA SELECTION ---------------
@@ -77,7 +89,7 @@ def update_table(attr, old, new):
     cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
     update_cols(display_columns=cols_to_display)
     saved_config_message.text = 'Configuration not saved'
-    saved_config_message.styles = {'color': 'red', 'font-size': '16px'}
+    saved_config_message.styles = not_updated
 
 
 # --------------- DATA SPLIT ---------------
@@ -98,7 +110,7 @@ def update_values(attrname, old, new):
         return
     # print("train_percentage and temp:", train_percentage, temp, "val and test:", val_percentage, test_percentage)
     saved_config_message.text = 'Configuration not saved'
-    saved_config_message.styles = {'color': 'red', 'font-size': '16px'}
+    saved_config_message.styles = not_updated
     update_text(train_percentage, val_percentage, test_percentage)
     global saved_split_list
     saved_split_list = [train_percentage, val_percentage, test_percentage]
@@ -151,28 +163,25 @@ def save_config():
     #the collective save button is to make the design more cohesive
 
     saved_config_message.text = 'Configuration saved'
-    saved_config_message.styles = {'color': 'green', 'font-size': '16px'}
+    saved_config_message.styles = updated
 
     # print(saved_col_list)
     # print(saved_split_list)
 
 def load_config():
     saved_config_message.text = "Loading config..."
-    saved_config_message.styles = {'color': 'orange', 'font-size': '16px'}
+    saved_config_message.styles = loading
 
     train_status_message.text='Not running'
-    train_status_message.styles={'color': 'red', 'font-size': '16px'}
+    train_status_message.styles=not_updated
 
 
     tune_status_message.text='Not running'
-    tune_status_message.styles={'color': 'red', 'font-size': '16px'}
+    tune_status_message.styles=not_updated
 
     plot_status_message.text = 'Plot not updated'
-    plot_status_message.styles={'color': 'red', 'font-size': '16px'}
+    plot_status_message.styles=not_updated
     curdoc().add_next_tick_callback(save_config)
-    
-# Save button
-save_config_button = Button(label="Save Current Configuration", button_type="success")
 
 # Attach callback to the save button
 save_config_button.on_click(load_config)
@@ -190,7 +199,7 @@ def update_algorithm(attr, old, new):
     global my_alg
     my_alg = new
     train_status_message.text = 'Not running'
-    train_status_message.styles = {'color': 'red', 'font-size': '16px'}
+    train_status_message.styles = not_updated
 
 # Attach callback to Select widget
 alg_select.on_change('value', update_algorithm)
@@ -210,7 +219,7 @@ def run_ML():
     global stage #train or tune, determines which list to write to
     stage = 'Train'
     train_status_message.text = f'Algorithm: {my_alg}'
-    train_status_message.styles = {'color': 'green', 'font-size': '16px'}
+    train_status_message.styles = updated
     global model
 
     # Assigning model based on selected ML algorithm, using default hyperparameters
@@ -291,18 +300,15 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
 
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
-    train_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    train_status_message.styles = loading
 
     tune_status_message.text='Not running'
-    tune_status_message.styles={'color': 'red', 'font-size': '16px'}
+    tune_status_message.styles=not_updated
 
     plot_status_message.text = 'Plot not updated'
-    plot_status_message.styles={'color': 'red', 'font-size': '16px'}
+    plot_status_message.styles=not_updated
     curdoc().add_next_tick_callback(run_ML)
 
-
-# Run button
-train_button = Button(label="Run ML algorithm", button_type="success")
 
 # Attach callback to the run button
 train_button.on_click(load_ML)
@@ -323,7 +329,7 @@ def run_tuned_config():
     global my_alg, stage
     stage = 'Tune'
     tune_status_message.text = f'Algorithm: {my_alg}'
-    tune_status_message.styles = {'color': 'green', 'font-size': '16px'}
+    tune_status_message.styles = updated
     global model
 
     split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
@@ -493,22 +499,17 @@ elif my_alg == 'Support Vector Classification':
 
 def load_tuned_config():
     tune_status_message.text = "Loading tuned config..."
-    tune_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    tune_status_message.styles = loading
     
     plot_status_message.text = 'Plot not updated'
-    plot_status_message.styles={'color': 'red', 'font-size': '16px'}
+    plot_status_message.styles=not_updated
     curdoc().add_next_tick_callback(run_tuned_config)
-
-# Tune button
-tune_button = Button(label = "Tune", button_type = "success")
 
 # Can connect to the old funcs
 tune_button.on_click(load_tuned_config)
 
 
 # --------------- VISUALIZATIONS ---------------
-
-
 
 plot_counter = 0 #the amount of times button has been pressed
 
@@ -521,10 +522,10 @@ df_box = pd.DataFrame()
 source = ColumnDataSource()
 
 # Create status message Div
-saved_split_message = Div(text = 'Saved split: N/A', styles = {'color': 'red', 'font-size': '16px'})
-saved_col_message = Div(text='Saved columns: N/A', styles={'color': 'red', 'font-size': '16px'})
-saved_alg_message = Div(text='Saved alg: N/A', styles={'color': 'red', 'font-size': '16px'})
-saved_data_message = Div(text='Saved val acc: N/A', styles={'color': 'red', 'font-size': '16px'})
+saved_split_message = Div(text = 'Saved split: N/A', styles = not_updated)
+saved_col_message = Div(text='Saved columns: N/A', styles=not_updated)
+saved_alg_message = Div(text='Saved alg: N/A', styles=not_updated)
+saved_data_message = Div(text='Saved val acc: N/A', styles=not_updated)
 
 def update_df_box():
     # making the initial boxplot
@@ -571,7 +572,7 @@ def update_df_box():
     # print('update successful')
 
     plot_status_message.text = 'Plot updated'
-    plot_status_message.styles = {'color': 'green', 'font-size': '16px'}
+    plot_status_message.styles = updated
 
 def get_minmax(kind):
     if kind == 'current':
@@ -658,16 +659,12 @@ def update_boxplot():
     # if df_box.iloc[-1, -1] != 0:
     # outlier_points.data_source = outliers
 
-
-
     plot_counter += 1
 
 def load_boxplot():
     plot_status_message.text = 'Updating plot...'
-    plot_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    plot_status_message.styles = loading
     curdoc().add_next_tick_callback(update_boxplot)
-
-
 
 
 def save_plot():
@@ -677,16 +674,16 @@ def save_plot():
     saved_list = combo_list[0:10]
 
     saved_split_message.text = f'Saved split: Training split: {saved_split_list[0]} | Validation split: {saved_split_list[1]} | Testing split: {saved_split_list[2]}'
-    saved_split_message.styles = {'color': 'green', 'font-size': '16px'}
+    saved_split_message.styles = updated
 
     saved_col_message.text = f'Saved columns: {saved_col_list}'
-    saved_col_message.styles = {'color': 'green', 'font-size': '16px'}
+    saved_col_message.styles = updated
 
     saved_alg_message.text = f'Saved alg: {my_alg}'
-    saved_alg_message.styles = {'color': 'green', 'font-size': '16px'}
+    saved_alg_message.styles = updated
 
     saved_data_message.text = f'Saved val acc: {saved_list}'
-    saved_data_message.styles = {'color': 'green', 'font-size': '16px'}
+    saved_data_message.styles = updated
 
     combo_list.clear()
     val_accuracy = [None for i in range(10)]
@@ -694,21 +691,15 @@ def save_plot():
     # print(combo_list)
 
     plot_status_message.text = 'Plot saved'
-    plot_status_message.styles = {'color': 'green', 'font-size': '16px'}
+    plot_status_message.styles = updated
 
 def load_save():
     plot_status_message.text = 'Updating saved data...'
-    plot_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    plot_status_message.styles = loading
     curdoc().add_next_tick_callback(save_plot)
-
-# Update plot button
-update_plot_button = Button(label="Update boxplot", button_type="success")
 
 # Attach callback to the update_plot button
 update_plot_button.on_click(load_boxplot)
-
-# Save plot button
-save_plot_button = Button(label="Save current plot", button_type="warning")
 
 # Attach callback to the update_plot button
 save_plot_button.on_click(load_save)
