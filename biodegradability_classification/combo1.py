@@ -204,7 +204,7 @@ def update_algorithm(attr, old, new):
 alg_select.on_change('value', update_algorithm)
 
 # creating widgets
-accuracy_display = Div(text="<div>Validation Accuracy: N/A | Test Accuracy: N/A</div>")
+accuracy_display = Div(text="<div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>")
 test_accuracy = []
 
 # Create empty lists
@@ -240,7 +240,7 @@ def run_ML():
     # print("test",test_accuracy)
     # print("combo",combo_list)
 
-    load_boxplot()
+    update_boxplot()
 
     # Updating accuracy display
     accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
@@ -318,12 +318,11 @@ train_button.on_click(load_ML)
 
 # Create empty lists
 tuned_test_accuracy = []
-tuned_val_accuracy = [None for i in range(10)]
 # saved_list = [None for i in range(10)]
 # combo_list = val_accuracy + saved_list
 
 # create displays
-tuned_accuracy_display = Div(text = "Tuned Validation Accuracy: N/A | Tuned Test Accuracy: N/A")
+tuned_accuracy_display = Div(text = "<div><b>Tuned Validation Accuracy:</b> N/A</div><div><b>Tuned Test Accuracy:</b> N/A</div>")
 
 def run_tuned_config():
     global my_alg, stage
@@ -334,15 +333,17 @@ def run_tuned_config():
 
     split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
 
-    load_boxplot()
 
     # Changing the list used to create boxplot
-    # global combo_list
+    global combo_list
     # combo_list.clear()
+    combo_list[10:20] = tuned_val_accuracy.copy()
     # combo_list = val_accuracy + saved_list
     # print("val", val_accuracy)
     # print("test",test_accuracy)
     # print("combo",combo_list)
+
+    update_boxplot()
 
     # Updating accuracy display
     tuned_accuracy_display.text = f"<div><b>Validation Accuracy:</b> {tuned_val_accuracy}</div><div><b>Test Accuracy:</b> {tuned_test_accuracy}</div>"
@@ -587,7 +588,7 @@ def get_minmax(kind):
 
             return abs_min, abs_max
     elif kind == 'posttune':
-        if combo_list[0] == None: # when module is first loaded
+        if combo_list[10] == None: # when module is first loaded
             return 0,0
         else:
             combo_list_posttune = combo_list[10:20]
@@ -602,7 +603,6 @@ def get_minmax(kind):
                 abs_max = max(combo_list_posttune)
 
             return abs_min, abs_max
-
     elif kind == 'saved':
         if combo_list[-1] == None:
             return 0,0
@@ -661,7 +661,6 @@ def update_boxplot():
 
     bottom_box.data_source = source
 
-    # FIXME other part of outliers code
     outlier_points.data_source = outliers
 
     # outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
