@@ -150,12 +150,17 @@ def save_config():
 
     # print(saved_col_list)
     # print(saved_split_list)
+
+def load_config():
+    saved_config_message.text = "Loading config..."
+    saved_config_message.styles = {'color': 'orange', 'font-size': '16px'}
+    curdoc().add_next_tick_callback(save_config)
     
 # Save button
 save_config_button = Button(label="Save Current Configuration", button_type="success")
 
 # Attach callback to the save button
-save_config_button.on_click(save_config)
+save_config_button.on_click(load_config)
 
 # --------------- ALGORITHM SELECT AND RUN ---------------
 
@@ -189,10 +194,10 @@ saved_list = [None for i in range(10)]
 combo_list = val_accuracy + saved_list
 
 
-def run_config():
+def run_ML():
     global stage #train or tune, determines which list to write to
     stage = 'Train'
-    train_status_message.text = f'Running {my_alg}'
+    train_status_message.text = f'Algorithm: {my_alg}'
     train_status_message.styles = {'color': 'green', 'font-size': '16px'}
     global model
 
@@ -272,11 +277,17 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         # print(i, '. test', test_accuracy)
 
 
+
 # Run button
 train_button = Button(label="Run ML algorithm", button_type="success")
 
+def load_ML():
+    train_status_message.text = f'Running {my_alg}...'
+    train_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    curdoc().add_next_tick_callback(run_ML)
+
 # Attach callback to the run button
-train_button.on_click(run_config)
+train_button.on_click(load_ML)
 
 
 # --------------- HYPERPARAMETER TUNING + BUTTON ---------------
@@ -294,7 +305,7 @@ tune_status_message = Div(text='Not running', styles={'color': 'red', 'font-size
 def run_tuned_config():
     global my_alg, stage
     stage = 'Tune'
-    tune_status_message.text = f'Running {my_alg}'
+    tune_status_message.text = f'Algorithm: {my_alg}'
     tune_status_message.styles = {'color': 'green', 'font-size': '16px'}
     global model
 
@@ -463,14 +474,21 @@ elif my_alg == 'Support Vector Classification':
     )
     hp_select.on_change('value', hp_select_callback)
 
+def load_tuned_config():
+    tune_status_message.text = "Loading tuned config..."
+    tune_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    curdoc().add_next_tick_callback(run_tuned_config)
+
 # Tune button
 tune_button = Button(label = "Tune", button_type = "success")
 
 # Can connect to the old funcs
-tune_button.on_click(run_tuned_config)
+tune_button.on_click(load_tuned_config)
 
 
 # --------------- VISUALIZATIONS ---------------
+
+plot_status_message = Div(text='Plot not updated', styles={'color': 'green', 'font-size': '16px'})
 
 plot_counter = 0 #the amount of times button has been pressed
 
@@ -531,6 +549,9 @@ def update_df_box():
     global source
     source.data = dict(df_box)
     # print('update successful')
+
+    plot_status_message.text = 'Plot updated'
+    plot_status_message.styles = {'color': 'green', 'font-size': '16px'}
 
 def get_minmax(kind):
     if kind == 'current':
@@ -617,9 +638,17 @@ def update_boxplot():
     # if df_box.iloc[-1, -1] != 0:
     # outlier_points.data_source = outliers
 
-    
+
 
     plot_counter += 1
+
+def load_boxplot():
+    plot_status_message.text = 'Updating plot...'
+    plot_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    curdoc().add_next_tick_callback(update_boxplot)
+
+
+
 
 def save_plot():
     global combo_list
@@ -644,18 +673,25 @@ def save_plot():
     combo_list = val_accuracy + saved_list
     # print(combo_list)
 
+    plot_status_message.text = 'Plot saved'
+    plot_status_message.styles = {'color': 'green', 'font-size': '16px'}
+
+def load_save():
+    plot_status_message.text = 'Updating saved data...'
+    plot_status_message.styles = {'color': 'orange', 'font-size': '16px'}
+    curdoc().add_next_tick_callback(save_plot)
 
 # Update plot button
 update_plot_button = Button(label="Update boxplot", button_type="success")
 
 # Attach callback to the update_plot button
-update_plot_button.on_click(update_boxplot)
+update_plot_button.on_click(load_boxplot)
 
 # Save plot button
 save_plot_button = Button(label="Save current plot", button_type="warning")
 
 # Attach callback to the update_plot button
-save_plot_button.on_click(save_plot)
+save_plot_button.on_click(load_save)
 
 
 # --------------- LAYOUTS ---------------
@@ -665,7 +701,7 @@ table_layout = column(checkbox_button_group, datatable)
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
-plot_layout = column(p, update_plot_button, save_plot_button, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
+plot_layout = column(p, update_plot_button, save_plot_button, plot_status_message, saved_split_message, saved_col_message, saved_alg_message, saved_data_message)
 
 # just to see the elements
 test_layout = column(table_layout, slider_layout, tab2_layout, hyperparam_layout, plot_layout)
