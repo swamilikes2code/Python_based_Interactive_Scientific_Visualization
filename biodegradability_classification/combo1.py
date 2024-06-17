@@ -73,17 +73,16 @@ table_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 columns = [TableColumn(field=col, title=col) for col in cols]
-datatable = DataTable(source=table_source, columns=columns, width=1800)
+datatable = DataTable(source=table_source, columns=columns, width=900, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
-checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))))
+checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
 
 # Update columns to display
 def update_cols(display_columns):
     # Always include mandatory columns
     all_columns = mandatory_columns + display_columns
     datatable.columns = [col for col in columns if col.title in all_columns]
-    datatable.width = np.size(all_columns) * 90
 
 def update_table(attr, old, new):
     cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
@@ -708,7 +707,7 @@ save_plot_button.on_click(load_save)
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
-table_layout = column(checkbox_button_group, datatable)
+table_layout = row(checkbox_button_group, datatable)
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
