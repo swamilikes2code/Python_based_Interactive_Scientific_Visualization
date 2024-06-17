@@ -205,13 +205,13 @@ alg_select.on_change('value', update_algorithm)
 
 # creating widgets
 accuracy_display = Div(text="<div>Validation Accuracy: N/A | Test Accuracy: N/A</div>")
-# val_accuracy = []
 test_accuracy = []
 
 # Create empty lists
 val_accuracy = [None for i in range(10)]
+tuned_val_accuracy = [None for i in range(10)]
 saved_list = [None for i in range(10)]
-combo_list = val_accuracy + saved_list
+combo_list = val_accuracy + tuned_val_accuracy + saved_list
 
 def run_ML():
     global stage #train or tune, determines which list to write to
@@ -235,10 +235,12 @@ def run_ML():
     # Changing the list used to create boxplot
     global combo_list
     combo_list.clear()
-    combo_list = val_accuracy + saved_list
+    combo_list = val_accuracy + tuned_val_accuracy + saved_list
     # print("val", val_accuracy)
     # print("test",test_accuracy)
     # print("combo",combo_list)
+
+    load_boxplot()
 
     # Updating accuracy display
     accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
@@ -305,8 +307,6 @@ def load_ML():
     tune_status_message.text='Not running'
     tune_status_message.styles=not_updated
 
-    plot_status_message.text = 'Plot not updated'
-    plot_status_message.styles=not_updated
     curdoc().add_next_tick_callback(run_ML)
 
 
@@ -333,6 +333,8 @@ def run_tuned_config():
     global model
 
     split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
+
+    load_boxplot()
 
     # Changing the list used to create boxplot
     # global combo_list
@@ -495,8 +497,6 @@ def load_tuned_config():
     tune_status_message.text = "Loading tuned config..."
     tune_status_message.styles = loading
     
-    plot_status_message.text = 'Plot not updated'
-    plot_status_message.styles=not_updated
     curdoc().add_next_tick_callback(run_tuned_config)
 
 # Can connect to the old funcs
@@ -508,7 +508,7 @@ tune_button.on_click(load_tuned_config)
 plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
-p = figure(x_range=['current', 'saved'], y_range = (0.0, 1.0), tools="", toolbar_location=None,
+p = figure(x_range=['pretune', 'posttune', 'saved'], y_range = (0.0, 1.0), tools="", toolbar_location=None,
             title="Validation Accuracy current vs. saved",
             background_fill_color="#eaefef", y_axis_label="accuracy")
 
@@ -524,7 +524,8 @@ saved_data_message = Div(text='Saved val acc: N/A', styles=not_updated)
 def update_df_box():
     # making the initial boxplot
     global combo_list
-    d = {'kind': ['current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current', 'current',
+    d = {'kind': ['pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune',
+                  'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune',
                 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved'],
         'accuracy': combo_list
         }
@@ -569,20 +570,36 @@ def update_df_box():
     plot_status_message.styles = updated
 
 def get_minmax(kind):
-    if kind == 'current':
+    if kind == 'pretune':
         if combo_list[0] == None: # when module is first loaded
             return 0,0
         else:
-            combo_list_current = combo_list[:10]
-            abs_min = min(combo_list_current)
+            combo_list_pretune = combo_list[:10]
+            abs_min = min(combo_list_pretune)
             while abs_min < df_box["lower"][0]:
-                combo_list_current.remove(abs_min)
-                abs_min = min(combo_list_current)
+                combo_list_pretune.remove(abs_min)
+                abs_min = min(combo_list_pretune)
 
-            abs_max = max(combo_list_current)
+            abs_max = max(combo_list_pretune)
             while abs_max > df_box["upper"][0]:
-                combo_list_current.remove(abs_max)
-                abs_max = max(combo_list_current)
+                combo_list_pretune.remove(abs_max)
+                abs_max = max(combo_list_pretune)
+
+            return abs_min, abs_max
+    elif kind == 'posttune':
+        if combo_list[0] == None: # when module is first loaded
+            return 0,0
+        else:
+            combo_list_posttune = combo_list[10:20]
+            abs_min = min(combo_list_posttune)
+            while abs_min < df_box["lower"][10]:
+                combo_list_posttune.remove(abs_min)
+                abs_min = min(combo_list_posttune)
+
+            abs_max = max(combo_list_posttune)
+            while abs_max > df_box["upper"][10]:
+                combo_list_posttune.remove(abs_max)
+                abs_max = max(combo_list_posttune)
 
             return abs_min, abs_max
 
@@ -590,14 +607,14 @@ def get_minmax(kind):
         if combo_list[-1] == None:
             return 0,0
         else:
-            combo_list_saved = combo_list[10:]
+            combo_list_saved = combo_list[20:]
             abs_min = min(combo_list_saved)
-            while abs_min < df_box["lower"][10]:
+            while abs_min < df_box["lower"][20]:
                 combo_list_saved.remove(abs_min)
                 abs_min = min(combo_list_saved)
 
             abs_max = max(combo_list_saved)
-            while abs_max > df_box["upper"][10]:
+            while abs_max > df_box["upper"][20]:
                 combo_list_saved.remove(abs_max)
                 abs_max = max(combo_list_saved)
 
@@ -665,7 +682,7 @@ def save_plot():
     global combo_list
     global saved_list
     saved_list.clear()
-    saved_list = combo_list[0:10]
+    saved_list = combo_list[10:20]
 
     saved_split_message.text = f'Saved split: Training split: {saved_split_list[0]} | Validation split: {saved_split_list[1]} | Testing split: {saved_split_list[2]}'
     saved_split_message.styles = updated
@@ -681,7 +698,8 @@ def save_plot():
 
     combo_list.clear()
     val_accuracy = [None for i in range(10)]
-    combo_list = val_accuracy + saved_list
+    tuned_val_accuracy = [None for i in range(10)]
+    combo_list = val_accuracy + tuned_val_accuracy + saved_list
     # print(combo_list)
 
     plot_status_message.text = 'Plot saved'
