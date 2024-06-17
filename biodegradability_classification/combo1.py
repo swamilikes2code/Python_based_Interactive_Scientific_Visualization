@@ -631,10 +631,12 @@ def load_boxplot():
     plot_status_message.styles = loading
     curdoc().add_next_tick_callback(update_boxplot)
 
-
+global new_save_number
+new_save_number = 0
 
 # Define an empty data source
 saved_data = dict(
+    save_number = [],
     training_split = [],
     validation_split = [],
     testing_split = [],
@@ -646,21 +648,23 @@ save_source = ColumnDataSource(saved_data)
 
 # Define table columns
 saved_columns = [
-    TableColumn(field="training_split", title="Training split"),
-    TableColumn(field="validation_split", title="Validation split"),
-    TableColumn(field="testing_split", title="Testing split"),
-    TableColumn(field="saved_columns", title="Saved columns"),
-    TableColumn(field="saved_algorithm", title="Saved algorithm"),
-    TableColumn(field="saved_hyperparams", title="Saved hyperparams")
+    TableColumn(field="save_number", title="Save #"),
+    TableColumn(field="training_split", title="Train. split"),
+    TableColumn(field="validation_split", title="Val. split"),
+    TableColumn(field="testing_split", title="Test. split"),
+    TableColumn(field="saved_columns", title="Saved cols"),
+    TableColumn(field="saved_algorithm", title="Saved alg"),
+    TableColumn(field="saved_hyperparams", title="Saved params")
 ]
 
 # Create a DataTable
-saved_data_table = DataTable(source=save_source, columns=saved_columns, width=720, height=280)
+saved_data_table = DataTable(source=save_source, columns=saved_columns, width=600, height=280, index_position=None)
 
 
 def save_plot():
     global combo_list
     global saved_list
+    global new_save_number
     global new_training_split
     global new_validation_split
     global new_testing_split
@@ -670,6 +674,8 @@ def save_plot():
 
     saved_list.clear()
     saved_list = combo_list[10:20]
+
+    new_save_number += 1
 
     new_training_split = saved_split_list[0]
     new_validation_split = saved_split_list[1]
@@ -703,6 +709,7 @@ def save_plot():
 # Add new row to datatable every time a plot is saved
 def add_row():
     new_data = {
+        'save_number': [new_save_number],
         'training_split': [new_training_split],
         'validation_split': [new_validation_split],
         'testing_split': [new_testing_split],
