@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel
-from bokeh.io import curdoc, output_notebook
+from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
@@ -20,6 +20,7 @@ This file is a draft for combining the module's features
 # df_display > df_subset > df_dict are for displaying table
 
 # ---------------MESSAGE STYLES-----------------
+
 not_updated = {'color': 'red', 'font-size': '16px'}
 loading = {'color': 'orange', 'font-size': '16px'}
 updated = {'color': 'green', 'font-size': '16px'}
@@ -192,7 +193,6 @@ my_alg = 'Decision Tree'
 # Create select button
 alg_select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
 
-
 def update_algorithm(attr, old, new):
     global my_alg
     my_alg = new
@@ -235,15 +235,11 @@ def run_ML():
     global combo_list
     combo_list.clear()
     combo_list = val_accuracy + tuned_val_accuracy + saved_list
-    # print("val", val_accuracy)
-    # print("test",test_accuracy)
-    # print("combo",combo_list)
 
     update_boxplot()
 
     # Updating accuracy display
     accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
-
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage):
 
@@ -261,11 +257,9 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
     global saved_col_list, train_col_list
     train_col_list = []
     train_col_list += saved_col_list
-    # print(train_col_list)
     if 'Fingerprint List' in saved_col_list:
         train_col_list.remove("Fingerprint List")
         train_col_list += [str(i) for i in range(167)]
-        # print(train_col_list)
 
 
     for i in range(10):
@@ -291,7 +285,6 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
             tuned_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
             tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
 
-
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
     train_status_message.styles = loading
@@ -301,7 +294,6 @@ def load_ML():
 
     curdoc().add_next_tick_callback(run_ML)
 
-
 # Attach callback to the run button
 train_button.on_click(load_ML)
 
@@ -310,8 +302,6 @@ train_button.on_click(load_ML)
 
 # Create empty lists
 tuned_test_accuracy = []
-# saved_list = [None for i in range(10)]
-# combo_list = val_accuracy + saved_list
 
 # create displays
 tuned_accuracy_display = Div(text = "<div><b>Tuned Validation Accuracy:</b> N/A</div><div><b>Tuned Test Accuracy:</b> N/A</div>")
@@ -328,12 +318,7 @@ def run_tuned_config():
 
     # Changing the list used to create boxplot
     global combo_list
-    # combo_list.clear()
     combo_list[10:20] = tuned_val_accuracy.copy()
-    # combo_list = val_accuracy + saved_list
-    # print("val", val_accuracy)
-    # print("test",test_accuracy)
-    # print("combo",combo_list)
 
     update_boxplot()
 
@@ -399,16 +384,12 @@ def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
         if new == True:
             hp_slider.update(disabled = True, show_value = False)
-            # hp_slider.disabled = True
-            # hp_slider.bar_color = 'gray'
-            # hp_slider.show_value = False
             model.max_depth = None
         elif new == False:
             hp_slider.update(disabled = False, bar_color = '#e6e6e6', show_value = True)
             model.max_depth = hp_slider.value
 
 def set_hyperparameter_widgets():
-    # print('setting hyperparam widgets')
     global my_alg
     if my_alg == 'Decision Tree':
         #hyperparameters are 
@@ -434,7 +415,6 @@ def set_hyperparameter_widgets():
             value = "best",
             options = ["best", "random"]
         )
-
     elif my_alg == 'K-Nearest Neighbor':
         #hyperparameters are 
         # K (n_neighbors, int slider)
@@ -457,7 +437,6 @@ def set_hyperparameter_widgets():
             value = "uniform",
             options = ["uniform", "distance"]
         )
-
     elif my_alg == 'Support Vector Classification':
         #hyperparameters are 
         # loss (loss, hinge vs. squared_hinge, select) 
@@ -545,16 +524,11 @@ def update_df_box():
         df_box.iloc[index, -1] = minmax[1]
 
     # update outliers
-    # global outlier_points
     global outliers
     outliers = ColumnDataSource(df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)])
-    # # print(outliers)
-    # outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
-    # # p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
     
     global source
     source.data = dict(df_box)
-    # print('update successful')
 
     plot_status_message.text = 'Plot updated'
     plot_status_message.styles = updated
@@ -642,29 +616,17 @@ def update_boxplot():
     if plot_counter == 0:
         make_glyphs()
 
-    # print(df_box)
 
     whisker.source = source
-
     top_box.data_source = source
-
     bottom_box.data_source = source
-
     outlier_points.data_source = outliers
-
-    # outliers = df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)]
-    # print(outliers)
-    # outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
-    # if df_box.iloc[-1, -1] != 0:
-    # outlier_points.data_source = outliers
-
     plot_counter += 1
 
 def load_boxplot():
     plot_status_message.text = 'Updating plot...'
     plot_status_message.styles = loading
     curdoc().add_next_tick_callback(update_boxplot)
-
 
 def save_plot():
     global combo_list
@@ -688,7 +650,6 @@ def save_plot():
     val_accuracy = [None for i in range(10)]
     tuned_val_accuracy = [None for i in range(10)]
     combo_list = val_accuracy + tuned_val_accuracy + saved_list
-    # print(combo_list)
 
     plot_status_message.text = 'Plot saved'
     plot_status_message.styles = updated
