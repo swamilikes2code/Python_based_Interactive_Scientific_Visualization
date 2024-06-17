@@ -269,9 +269,6 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
 
 
     for i in range(10):
-        # Was not running properly with fingerprint
-        # TODO: implement fingerprint decoder so model can read them
-        
         X = df[train_col_list]
         y = df['Class']
 
@@ -293,10 +290,6 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         elif stage == 'Tune':
             tuned_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
             tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
-
-
-        # print(i, '. val', val_accuracy)
-        # print(i, '. test', test_accuracy)
 
 
 def load_ML():
@@ -401,13 +394,11 @@ def hp_select_callback(attr, old, new):
         model.splitter = new
     elif my_alg == 'K-Nearest Neighbor':
         model.weights = new
-    elif my_alg == 'Support Vector Classification':
-        model.loss = new
 
 def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
         if new == True:
-            hp_slider.update(disabled = True, bar_color = 'black', show_value = False)
+            hp_slider.update(disabled = True, show_value = False)
             # hp_slider.disabled = True
             # hp_slider.bar_color = 'gray'
             # hp_slider.show_value = False
@@ -415,7 +406,6 @@ def hp_toggle_callback(attr, old, new):
         elif new == False:
             hp_slider.update(disabled = False, bar_color = '#e6e6e6', show_value = True)
             model.max_depth = hp_slider.value
-
 
 def set_hyperparameter_widgets():
     # print('setting hyperparam widgets')
@@ -427,18 +417,18 @@ def set_hyperparameter_widgets():
 
         hp_slider.update(
             title = "Max Depth of Tree",
+            disabled = True,
+            show_value = False,
             start= 0,
             end = 15,
             value = 2,
             step = 1
         )
-
         hp_toggle.update(
             label = "None",
             visible = True,
-            active = False
+            active = True
         )
-
         hp_select.update(
             title = "Splitter strategy",
             value = "best",
@@ -452,9 +442,11 @@ def set_hyperparameter_widgets():
         
         hp_slider.update(
             title = "Number of neighbors",
-            start = 0,
+            disabled = False,
+            show_value = True,
+            start = 5,
             end = 30,
-            value = 5,
+            value = 10,
             step = 5
         )
 
@@ -474,6 +466,8 @@ def set_hyperparameter_widgets():
 
         hp_slider.update(
             title = "Maximum iterations", #default is 1000
+            disabled = False,
+            show_value = True,
             start = 500,
             end = 1500,
             value = 1000,
@@ -482,11 +476,7 @@ def set_hyperparameter_widgets():
 
         hp_toggle.visible = False
 
-        hp_select.update(
-            title = "Loss function",
-            value = "squared_hinge",
-            options = ["squared_hinge", "hinge"]
-        )
+        hp_select.visible = False
 
 hp_slider.on_change('value', hp_slider_callback)
 hp_select.on_change('value', hp_select_callback)
