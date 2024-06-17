@@ -214,7 +214,6 @@ val_accuracy = [None for i in range(10)]
 saved_list = [None for i in range(10)]
 combo_list = val_accuracy + saved_list
 
-
 def run_ML():
     global stage #train or tune, determines which list to write to
     stage = 'Train'
@@ -230,6 +229,8 @@ def run_ML():
     else:
         model = LinearSVC()
     
+    set_hyperparameter_widgets()
+
     split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
 
     # Changing the list used to create boxplot
@@ -345,13 +346,27 @@ def run_tuned_config():
     # Updating accuracy display
     tuned_accuracy_display.text = f"<div><b>Validation Accuracy:</b> {tuned_val_accuracy}</div><div><b>Test Accuracy:</b> {tuned_test_accuracy}</div>"
 
-
-# hyperparameter tuning widgets
-hp_slider = Slider()
-hp_select = Select()
-hp_toggle = Checkbox()
+# hyperparameter tuning widgets, default to decision tree
+hp_slider = Slider(
+    title = "Max Depth of Tree",
+    start= 0,
+    end = 15,
+    value = 2,
+    step = 1
+)
+hp_select = Select(
+    title = "Splitter strategy",
+    value = "best",
+    options = ["best", "random"]
+)
+hp_toggle = Checkbox(
+    label = "None",
+    visible = True,
+    active = False
+)
 hp_toggle.margin = (24, 10, 24, 10)
 
+# setting widget callbacks
 def print_vals():
     global my_alg
     if my_alg == 'Decision Tree':
@@ -359,7 +374,7 @@ def print_vals():
         print("switch", hp_toggle.active)
         print("model", model.max_depth)
         print("model splitter", model.splitter)
-    elif my_alg == 'K-Nearest Neighbors':
+    elif my_alg == 'K-Nearest Neighbor':
         print("slider", hp_slider.value)
         print("n_neighbors", model.n_neighbors)
         print("weights", model.weights)
@@ -367,17 +382,29 @@ def print_vals():
         print("slider", hp_slider.value)
         print("max iter", model.max_iter)
         print("loss func", model.loss)
-    
 
+def hp_slider_callback(attr, old, new):
+    global my_alg
+    if my_alg == 'Decision Tree':
+        if hp_slider.disabled == True:
+            return
+        model.max_depth = new
+    elif my_alg == 'K-Nearest Neighbor':
+        model.n_neighbors = new
+    elif my_alg == 'Support Vector Classification':
+        model.max_iter = new
 
-if my_alg == 'Decision Tree':
-    #hyperparameters are 
-    # splitter strategy (splitter, best vs. random, select)
-    # max_depth of tree (max_depth, int slider)
-    model = DecisionTreeClassifier()
+def hp_select_callback(attr, old, new):
+    global my_alg
+    if my_alg == 'Decision Tree':
+        model.splitter = new
+    elif my_alg == 'K-Nearest Neighbor':
+        model.weights = new
+    elif my_alg == 'Support Vector Classification':
+        model.loss = new
 
-    # if switch on, max_depth = None
-    def hp_toggle_callback(attr, old, new):
+def hp_toggle_callback(attr, old, new):
+    if my_alg == 'Decision Tree':
         if new == True:
             hp_slider.update(disabled = True, bar_color = 'black', show_value = False)
             # hp_slider.disabled = True
@@ -387,115 +414,83 @@ if my_alg == 'Decision Tree':
         elif new == False:
             hp_slider.update(disabled = False, bar_color = '#e6e6e6', show_value = True)
             model.max_depth = hp_slider.value
-        # print_vals()
 
-    def hp_slider_callback(attr, old, new):
-        if hp_slider.disabled == True:
-            return
-        model.max_depth = new
-        # print_vals()
 
-    def hp_select_callback(attr, old, new):
-        model.splitter = new
-        # print_vals()
+def set_hyperparameter_widgets():
+    # print('setting hyperparam widgets')
+    global my_alg
+    if my_alg == 'Decision Tree':
+        #hyperparameters are 
+        # splitter strategy (splitter, best vs. random, select)
+        # max_depth of tree (max_depth, int slider)
 
-    hp_slider.update(
-        title = "Max Depth of Tree",
-        start= 0,
-        end = 15,
-        value = 2,
-        step = 1
-    )
-    hp_slider.on_change('value', hp_slider_callback)
+        hp_slider.update(
+            title = "Max Depth of Tree",
+            start= 0,
+            end = 15,
+            value = 2,
+            step = 1
+        )
 
-    hp_toggle.update(
-        label = "None",
-        visible = True,
-        active = False
-    )
-    hp_toggle.on_change('active', hp_toggle_callback)
+        hp_toggle.update(
+            label = "None",
+            visible = True,
+            active = False
+        )
 
-    hp_select.update(
-        title = "Splitter strategy",
-        value = "best",
-        options = ["best", "random"]
-    )
-    hp_select.on_change('value', hp_select_callback)
+        hp_select.update(
+            title = "Splitter strategy",
+            value = "best",
+            options = ["best", "random"]
+        )
 
-elif my_alg == 'K-Nearest Neighbors':
-    #hyperparameters are 
-    # K (n_neighbors, int slider)
-    # weights (weights, uniform vs. distance, select)
-    model = KNeighborsClassifier()
+    elif my_alg == 'K-Nearest Neighbor':
+        #hyperparameters are 
+        # K (n_neighbors, int slider)
+        # weights (weights, uniform vs. distance, select)
+        
+        hp_slider.update(
+            title = "Number of neighbors",
+            start = 0,
+            end = 30,
+            value = 5,
+            step = 5
+        )
 
-    # testing
-    def print_vals():
-        print("slider", hp_slider.value)
-        print("n_neighbors", model.n_neighbors)
-        print("weights", model.weights)
+        hp_toggle.visible = False
 
-    def hp_slider_callback(attr, old, new):
-        model.n_neighbors = new
-        # print_vals()
-    
-    def hp_select_callback(attr, old, new):
-        model.weights = new
-        # print_vals()
+        hp_select.update(
+            title = "Weights",
+            value = "uniform",
+            options = ["uniform", "distance"]
+        )
 
-    hp_slider.update(
-        title = "Number of neighbors",
-        start = 0,
-        end = 30,
-        value = 5,
-        step = 5
-    )
-    hp_slider.on_change('value', hp_slider_callback)
+    elif my_alg == 'Support Vector Classification':
+        #hyperparameters are 
+        # loss (loss, hinge vs. squared_hinge, select) 
+        # the max iterations to be run (max_iter, int slider)
+        # model = LinearSVC()
 
-    hp_toggle.visible = False
+        hp_slider.update(
+            title = "Maximum iterations", #default is 1000
+            start = 500,
+            end = 1500,
+            value = 1000,
+            step = 100
+        )
 
-    hp_select.update(
-        title = "Weights",
-        value = "uniform",
-        options = ["uniform", "distance"]
-    )
-    hp_select.on_change('value', hp_select_callback)
+        hp_toggle.visible = False
 
-elif my_alg == 'Support Vector Classification':
-    #hyperparameters are 
-    # loss (loss, hinge vs. squared_hinge, select) 
-    # the max iterations to be run (max_iter, int slider)
-    model = LinearSVC()
+        hp_select.update(
+            title = "Loss function",
+            value = "squared_hinge",
+            options = ["squared_hinge", "hinge"]
+        )
 
-    def print_vals():
-        print("slider", hp_slider.value)
-        print("max iter", model.max_iter)
-        print("loss func", model.loss)
+hp_slider.on_change('value', hp_slider_callback)
+hp_select.on_change('value', hp_select_callback)
+hp_toggle.on_change('active', hp_toggle_callback)
 
-    def hp_slider_callback(attr, old, new):
-        model.max_iter = new
-        # print_vals()
-    
-    def hp_select_callback(attr, old, new):
-        model.loss = new
-        # print_vals()
-
-    hp_slider.update(
-        title = "Maximum iterations", #default is 1000
-        start = 500,
-        end = 1500,
-        value = 1000,
-        step = 100
-    )
-    hp_slider.on_change('value', hp_slider_callback)
-
-    hp_toggle.visible = False
-
-    hp_select.update(
-        title = "Loss function",
-        value = "squared_hinge",
-        options = ["squared_hinge", "hinge"]
-    )
-    hp_select.on_change('value', hp_select_callback)
 
 def load_tuned_config():
     tune_status_message.text = "Loading tuned config..."
