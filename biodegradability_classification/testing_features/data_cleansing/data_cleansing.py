@@ -39,6 +39,14 @@ fp_df = pd.DataFrame(fp_array)
 # df_new holds each bit in separate column to be read by the model later
 df_new = pd.concat([df_cleaned, pd.DataFrame(fp_array)], axis = 1)
 
+# dropping data from the non-biodegradable class to balance the data
+df_new = df_new.drop(df_new[df_new['Class'] == 0].sample(frac = .46).index)
+
+# checking
+# df_check = df_new.sort_values(by = ['Class'])
+# df_check.hist(column = ['Class'])
+print(df_new['Class'].value_counts())
+
 # for testing
 # print(type(fp_vec))
 # print(fp_vec[0])
@@ -46,8 +54,8 @@ df_new = pd.concat([df_cleaned, pd.DataFrame(fp_array)], axis = 1)
 # print(fp_array.shape)
 # print(fp_array[:5])
 # print(fp_df[:5])
-print(df_new.shape)
-print(df_cleaned.shape)
+# print(df_new.shape)
+# print(df_cleaned.shape)
 
 # Save the cleaned DataFrame to a new CSV file
 df_new.to_csv("../../biodegrad.csv", index=False)
