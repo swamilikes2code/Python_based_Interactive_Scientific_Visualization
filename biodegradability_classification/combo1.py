@@ -5,6 +5,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
+from bokeh.palettes import Category10
 from bokeh.transform import factor_cmap
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
@@ -74,7 +75,6 @@ cols = list(df_dict.keys())
 
 # Separate mandatory and optional columns
 optional_columns = [col for col in cols if col not in mandatory_columns]
-
 
 # Create column datasource
 table_source = ColumnDataSource(data=df_subset)
@@ -147,6 +147,53 @@ tvt = RangeSlider(title="Train-Validate-Test (%)", value=(50, 75), start=0, end=
 tvt.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 split_display = Div(text="<div>Training split: 50</div><div>Validation split: 25</div><div>Testing split: 25</div>")
 
+# --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
+
+# get columns
+column_names = df.columns.tolist()[:21]
+column_names.remove("Class")
+
+#convert the class columns to a categorical column if it's not
+df['Class'] = df['Class'].astype('category')
+print(df.iloc[312])
+# Create a ColumnDataSource
+source = ColumnDataSource(data=dict(x=[], y=[], class_color=[]))
+
+# Create a figure
+interactive_data_visualization_graph_for_tab_1 = figure(title="Interactive Scatter Plot", x_axis_label='X', y_axis_label='Y', 
+           tools="pan,wheel_zoom,box_zoom,reset,hover,save")
+
+# Create an initial scatter plot
+scatter = interactive_data_visualization_graph_for_tab_1.scatter(x='x', y='y', color='class_color', source=source, legend_field='class_color')
+
+# Create dropdown menus for X and Y axis
+select_x = Select(title="X Axis", value=column_names[0], options=column_names)
+select_y = Select(title="Y Axis", value=column_names[1], options=column_names)
+
+# Update the data based on the selections
+def update_data(attrname, old, new):
+    x = select_x.value
+    y = select_y.value
+    new_data = {
+        'x': df[x],
+        'y': df[y],
+        'class_color': [Category10[3][0] if cls == df['Class'].cat.categories[0] else Category10[3][1] for cls in df['Class']]
+    }
+        
+    # Update the ColumnDataSource with a plain Python dict
+    source.data = new_data
+    
+    # Update existing scatter plot glyph if needed
+    scatter.data_source.data = new_data
+    
+    interactive_data_visualization_graph_for_tab_1.xaxis.axis_label = x
+    interactive_data_visualization_graph_for_tab_1.yaxis.axis_label = y
+
+
+
+# Attach the update_data function to the dropdowns
+select_x.on_change('value', update_data)
+select_y.on_change('value', update_data)
 # --------------- SAVE DATA BUTTON ---------------
 
 # table on change
@@ -811,7 +858,8 @@ predict_button.on_click(load_predict)
 # creating widget layouts
 table_layout = column(row(checkbox_button_group, datatable))
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
-tab1_layout = row(slider_layout, table_layout)
+interactive_graph = column(row(select_x, select_y), interactive_data_visualization_graph_for_tab_1) #create data graph visualization 
+tab1_layout = column(row(slider_layout, table_layout), interactive_graph)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(p, plot_status_message, display_save_select, display_save_button)
