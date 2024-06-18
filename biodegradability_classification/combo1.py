@@ -664,7 +664,8 @@ saved_data = dict(
     testing_split = [],
     saved_columns = [],
     saved_algorithm = [],
-    saved_hyperparams = []
+    saved_hyperparams = [],
+    saved_val_acc = []
 )
 save_source = ColumnDataSource(saved_data)
 
@@ -676,7 +677,8 @@ saved_columns = [
     TableColumn(field="testing_split", title="Test. split", width = 200),
     TableColumn(field="saved_columns", title="Saved col."),
     TableColumn(field="saved_algorithm", title="Saved alg."),
-    TableColumn(field="saved_hyperparams", title="Saved hp.")
+    TableColumn(field="saved_hyperparams", title="Saved hp."),
+    TableColumn(field="saved_val_acc", title="Val. accuracies")
 ]
 
 # Create a DataTable
@@ -685,7 +687,7 @@ saved_data_table = DataTable(source=save_source, columns=saved_columns, width=60
 
 def save_plot():
     global combo_list
-    global saved_list
+    # global saved_list
     global hyperparam_list
     global new_save_number
     global new_training_split
@@ -694,9 +696,10 @@ def save_plot():
     global new_saved_columns
     global new_saved_algorithm
     global new_saved_hyperparams
+    global new_saved_val_acc
 
-    saved_list.clear()
-    saved_list = combo_list[10:20]
+    # saved_list.clear()
+    # saved_list = combo_list[10:20]
 
     new_save_number += 1
     save_num_select.options.append(str(new_save_number))
@@ -707,6 +710,7 @@ def save_plot():
     new_saved_columns = saved_col_list
     new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
+    new_saved_val_acc = combo_list[10:20]
 
     add_row()
 
@@ -722,10 +726,10 @@ def save_plot():
     # saved_data_message.text = f'Saved val acc: {saved_list}'
     # saved_data_message.styles = updated
 
-    combo_list.clear()
-    val_accuracy = [None for i in range(10)]
-    tuned_val_accuracy = [None for i in range(10)]
-    combo_list = val_accuracy + tuned_val_accuracy + saved_list
+    # combo_list.clear()
+    # val_accuracy = [None for i in range(10)]
+    # tuned_val_accuracy = [None for i in range(10)]
+    # combo_list = val_accuracy + tuned_val_accuracy + saved_list
 
     plot_status_message.text = 'Plot saved'
     plot_status_message.styles = updated
@@ -739,7 +743,8 @@ def add_row():
         'testing_split': [new_testing_split],
         'saved_columns': [new_saved_columns],
         'saved_algorithm': [new_saved_algorithm],
-        'saved_hyperparams': [new_saved_hyperparams]
+        'saved_hyperparams': [new_saved_hyperparams],
+        'saved_val_acc' : [new_saved_val_acc]
     }
     save_source.stream(new_data)
 
@@ -753,8 +758,11 @@ save_plot_button.on_click(load_save)
 
 
 def display_save():
-    #TODO: determine whether we are training the model with the saved settings OR just reloading the saved box plot (load the tuned_val_accuracy)
+    global saved_list, saved_data_table, combo_list
+    saved_list = save_source.data['saved_val_acc'][int(save_num_select.value)-1]
 
+    combo_list[20:] = saved_list
+    update_boxplot()
 
     plot_status_message.text = 'Plot updated'
     plot_status_message.styles = updated
@@ -776,7 +784,7 @@ slider_layout = column(tvt, split_display, save_config_button, saved_config_mess
 tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
-plot_layout = column(p, plot_status_message, save_num_select)
+plot_layout = column(p, plot_status_message, save_num_select, display_save_button)
 tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
