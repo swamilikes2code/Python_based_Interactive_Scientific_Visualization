@@ -29,8 +29,10 @@ updated = {'color': 'green', 'font-size': '16px'}
 
 # ---------------STATUS MESSAGES-----------------
 
+data_table_title = Div(text='Select columns for training', styles=updated)
 saved_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
+tuning_title = Div(text='Tune hyperparameters', styles=updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
 plot_status_message = Div(text='Plot not updated', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
@@ -72,6 +74,7 @@ cols = list(df_dict.keys())
 
 # Separate mandatory and optional columns
 optional_columns = [col for col in cols if col not in mandatory_columns]
+
 
 # Create column datasource
 table_source = ColumnDataSource(data=df_subset)
@@ -196,7 +199,7 @@ save_config_button.on_click(load_config)
 my_alg = 'Decision Tree'
 
 # Create select button
-alg_select = Select(title="ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
+alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
 
 def update_algorithm(attr, old, new):
     global my_alg
@@ -806,11 +809,11 @@ predict_button.on_click(load_predict)
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
-table_layout = row(checkbox_button_group, datatable)
+table_layout = column(data_table_title, row(checkbox_button_group, datatable))
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
 tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
-hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
+hyperparam_layout = column(tuning_title, row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(p, plot_status_message, display_save_select, display_save_button)
 tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
 tab4_layout = column(user_smiles_input, predict_select, predict_button, predict_status_message)
