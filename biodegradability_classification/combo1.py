@@ -785,11 +785,8 @@ def predict_biodegrad():
     user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
     user_df = pd.DataFrame(user_fp)
     user_df = user_df.transpose() #each bit has its own column
-    # print(user_fp)
-    # print(user_df)
-    # print(user_df.shape)
 
-    # user_biodegrad = model.predict(user_fp)
+    user_biodegrad = model.predict(user_df)
 
     predict_status_message.styles = updated
     # if user_biodegrad == 0:
