@@ -153,6 +153,10 @@ split_display = Div(text="<div>Training split: 50</div><div>Validation split: 25
 column_names = df.columns.tolist()[:21]
 column_names.remove("Class")
 
+#columns to exclude
+columns_to_exclude = ["Smiles", "Substance Name", "Fingerprint"]
+column_names = [col for col in column_names if col not in columns_to_exclude]
+
 #convert the class columns to a categorical column if it's not
 df['Class'] = df['Class'].astype('category')
 print(df.iloc[312])
@@ -160,7 +164,7 @@ print(df.iloc[312])
 source = ColumnDataSource(data=dict(x=[], y=[], class_color=[]))
 
 # Create a figure
-interactive_data_visualization_graph_for_tab_1 = figure(title="Interactive Scatter Plot", x_axis_label='X', y_axis_label='Y', 
+interactive_data_visualization_graph_for_tab_1 = figure(title="Data Exploration Scatter Plot - search for correlations between numeric variables", x_axis_label='X', y_axis_label='Y', 
            tools="pan,wheel_zoom,box_zoom,reset,hover,save")
 
 # Create an initial scatter plot
@@ -192,6 +196,8 @@ def update_data(attrname, old, new):
 # Attach the update_data function to the dropdowns
 select_x.on_change('value', update_data)
 select_y.on_change('value', update_data)
+
+update_data(None, None, None)
 # --------------- SAVE DATA BUTTON ---------------
 
 # table on change
