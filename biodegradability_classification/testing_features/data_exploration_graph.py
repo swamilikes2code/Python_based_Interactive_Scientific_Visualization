@@ -12,10 +12,6 @@ df = pd.read_csv('temp_data.csv')
 columns = df.columns.tolist()
 columns.remove("Class")
 
-# Exclude specific columns if they exist
-columns_to_exclude = ["Substance Name", "Smiles", "Fingerprint"]
-columns = [col for col in columns if col not in columns_to_exclude]
-
 # Convert the class column to a categorical column if it's not already
 df['Class'] = df['Class'].astype('category')
 
