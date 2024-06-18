@@ -470,7 +470,7 @@ def set_hyperparameter_widgets():
             title = "Max Depth of Tree",
             disabled = True,
             show_value = False,
-            start= 0,
+            start= 1,
             end = 15,
             value = 2,
             step = 1
@@ -494,10 +494,10 @@ def set_hyperparameter_widgets():
             title = "Number of neighbors",
             disabled = False,
             show_value = True,
-            start = 5,
+            start = 1,
             end = 30,
-            value = 10,
-            step = 5
+            value = 5,
+            step = 2
         )
 
         hp_toggle.visible = False
