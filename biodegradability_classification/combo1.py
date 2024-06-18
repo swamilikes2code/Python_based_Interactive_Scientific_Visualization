@@ -326,9 +326,9 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
         y = df['Class']
 
         # splitting
-        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage, random_state=123)
+        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage)
         test_split = test_percentage / (100-train_percentage)
-        X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split, random_state=123)
+        X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
         
         # train model
         model.fit(X_train, y_train)
