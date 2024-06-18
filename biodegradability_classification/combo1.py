@@ -384,6 +384,7 @@ def hp_slider_callback(attr, old, new):
         model.n_neighbors = new
     elif my_alg == 'Support Vector Classification':
         model.max_iter = new
+        hyperparam_list[1] = ""
 
 def hp_select_callback(attr, old, new):
     global my_alg
