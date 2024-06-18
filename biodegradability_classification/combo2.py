@@ -5,6 +5,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
+from bokeh.palettes import Category10
 from bokeh.transform import factor_cmap
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
@@ -30,7 +31,7 @@ updated = {'color': 'green', 'font-size': '16px'}
 # ---------------STATUS MESSAGES-----------------
 
 # data_table_title = Div(text='Select columns for training', styles=updated)
-saved_config_message = Div(text='Configuration not saved', styles=not_updated)
+save_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
 # tuning_title = Div(text='Tune hyperparameters', styles=updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
@@ -75,13 +76,12 @@ cols = list(df_dict.keys())
 # Separate mandatory and optional columns
 optional_columns = [col for col in cols if col not in mandatory_columns]
 
-
 # Create column datasource
-table_source = ColumnDataSource(data=df_subset)
+data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
-columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-datatable = DataTable(source=table_source, columns=columns, width=900, autosize_mode = "none")
+data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=900, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -90,19 +90,19 @@ checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list
 def update_cols(display_columns):
     # Always include mandatory columns
     all_columns = mandatory_columns + display_columns
-    datatable.columns = [col for col in columns if col.title in all_columns]
+    data_tab_table.columns = [col for col in data_tab_columns if col.title in all_columns]
 
 def update_table(attr, old, new):
     cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
     update_cols(display_columns=cols_to_display)
-    saved_config_message.text = 'Configuration not saved'
-    saved_config_message.styles = not_updated
+    save_config_message.text = 'Configuration not saved'
+    save_config_message.styles = not_updated
 
 
 # --------------- DATA SPLIT ---------------
 
 # saved split list to write to
-saved_split_list = [50,25,25] #0-train, 1-val, 2-test
+split_list = [50,25,25] #0-train, 1-val, 2-test
 
 # helper function to produce string
 def update_text(train_percentage, val_percentage, test_percentage):
@@ -110,17 +110,17 @@ def update_text(train_percentage, val_percentage, test_percentage):
 
 # function to update model and accuracy
 def update_values(attrname, old, new):
-    train_percentage, temp = tvt.value #first segment is train, range of the slider is validate, the rest is test
+    train_percentage, temp = tvt_slider.value #first segment is train, range of the slider is validate, the rest is test
     val_percentage = temp - train_percentage
     test_percentage = 100 - temp
     if train_percentage < 10 or val_percentage < 10 or test_percentage < 10:
         return
-    # print("train_percentage and temp:", train_percentage, temp, "val and test:", val_percentage, test_percentage)
-    saved_config_message.text = 'Configuration not saved'
-    saved_config_message.styles = not_updated
+
+    save_config_message.text = 'Configuration not saved'
+    save_config_message.styles = not_updated
     update_text(train_percentage, val_percentage, test_percentage)
-    global saved_split_list
-    saved_split_list = [train_percentage, val_percentage, test_percentage]
+    global split_list
+    split_list = [train_percentage, val_percentage, test_percentage]
 
 # js function to limit the range slider
 callback = CustomJS(args = dict(), 
@@ -143,9 +143,61 @@ callback = CustomJS(args = dict(),
             )
 
 # creating widgets
-tvt = RangeSlider(title="Train-Validate-Test (%)", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
-tvt.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
+tvt_slider = RangeSlider(title="Train-Validate-Test (%)", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
+tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 split_display = Div(text="<div>Training split: 50</div><div>Validation split: 25</div><div>Testing split: 25</div>")
+
+# --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
+
+# get columns
+data_vis_columns = df.columns.tolist()[:21]
+
+#columns to exclude
+data_vis_columns = [col for col in data_vis_columns if col not in ["Class", "Smiles", "Substance Name", "Fingerprint"]]
+
+#convert the class columns to a categorical column if it's not
+df['Class'] = df['Class'].astype('category')
+# print(df.iloc[312])
+
+# Create a ColumnDataSource
+data_vis_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[]))
+
+# Create a figure
+data_vis = figure(title="Data Exploration Scatter Plot - search for correlations between numeric variables", x_axis_label='X', y_axis_label='Y', 
+           tools="pan,wheel_zoom,box_zoom,reset,hover,save")
+
+# Create an initial scatter plot
+data_vis_scatter = data_vis.scatter(x='x', y='y', color='class_color', source=data_vis_source, legend_field='class_color')
+
+# Create dropdown menus for X and Y axis
+select_x = Select(title="X Axis", value=data_vis_columns[0], options=data_vis_columns)
+select_y = Select(title="Y Axis", value=data_vis_columns[1], options=data_vis_columns)
+
+# Update the data based on the selections
+def update_data_vis(attrname, old, new):
+    x = select_x.value
+    y = select_y.value
+    new_vis_data = {
+        'x': df[x],
+        'y': df[y],
+        'class_color': [Category10[3][0] if cls == df['Class'].cat.categories[0] else Category10[3][1] for cls in df['Class']]
+    }
+        
+    # Update the ColumnDataSource with a plain Python dict
+    data_vis_source.data = new_vis_data
+    
+    # Update existing scatter plot glyph if needed
+    data_vis_scatter.data_source.data = new_vis_data
+    
+    data_vis.xaxis.axis_label = x
+    data_vis.yaxis.axis_label = y
+
+# Attach the update_data function to the dropdowns
+select_x.on_change('value', update_data_vis)
+select_y.on_change('value', update_data_vis)
+
+update_data_vis(None, None, None)
+
 
 # --------------- SAVE DATA BUTTON ---------------
 
@@ -153,31 +205,25 @@ split_display = Div(text="<div>Training split: 50</div><div>Validation split: 25
 checkbox_button_group.on_change('active', update_table)
 
 # range slider on change
-tvt.js_on_change('value', callback)
-tvt.on_change('value', update_values)
+tvt_slider.js_on_change('value', callback)
+tvt_slider.on_change('value', update_values)
 
 # Save columns to saved list (split already saved)
 def save_config():
-    # print('Configuration saved')
-
     saved_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    # saved_columns = sorted(saved_columns)
     global saved_col_list
     saved_col_list.clear()
     saved_col_list = saved_columns
 
-    #saved_split_list isn't located here as the split values update in the list upon the change of the range slider
+    #split_list isn't located here as the split values update in the list upon the change of the range slider
     #the collective save button is to make the design more cohesive
 
-    saved_config_message.text = 'Configuration saved'
-    saved_config_message.styles = updated
-
-    # print(saved_col_list)
-    # print(saved_split_list)
+    save_config_message.text = 'Configuration saved'
+    save_config_message.styles = updated
 
 def load_config():
-    saved_config_message.text = "Loading config..."
-    saved_config_message.styles = loading
+    save_config_message.text = "Loading config..."
+    save_config_message.styles = loading
 
     train_status_message.text='Not running'
     train_status_message.styles=not_updated
@@ -217,15 +263,16 @@ test_accuracy = []
 # Create empty lists
 val_accuracy = [None for i in range(10)]
 tuned_val_accuracy = [None for i in range(10)]
-saved_list = [None for i in range(10)]
-combo_list = val_accuracy + tuned_val_accuracy + saved_list
+saved_accuracy = [None for i in range(10)]
+combo_list = val_accuracy + tuned_val_accuracy + saved_accuracy
 
 def run_ML():
-    global stage #train or tune, determines which list to write to
+    #stage can be train or tune, determines which list to write to
+    global stage
+    global model
     stage = 'Train'
     train_status_message.text = f'Algorithm: {my_alg}'
     train_status_message.styles = updated
-    global model
 
     # Assigning model based on selected ML algorithm, using default hyperparameters
     if my_alg == "Decision Tree":
@@ -237,12 +284,12 @@ def run_ML():
     
     set_hyperparameter_widgets()
 
-    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2], saved_col_list)
+    split_and_train_model(split_list[0],split_list[1],split_list[2], saved_col_list)
 
     # Changing the list used to create boxplot
     global combo_list
     combo_list.clear()
-    combo_list = val_accuracy + [None for i in range(10)] + saved_list
+    combo_list = val_accuracy + [None for i in range(10)] + saved_accuracy
 
     update_boxplot()
 
@@ -268,13 +315,14 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
         train_col_list.remove("Fingerprint List")
         train_col_list += [str(i) for i in range(167)]
 
+    np.random.seed(123)
 
     for i in range(10):
         X = df[train_col_list]
         y = df['Class']
 
         # splitting
-        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage)
+        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-train_percentage)/100)
         test_split = test_percentage / (100-train_percentage)
         X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
         
@@ -326,7 +374,7 @@ def run_tuned_config():
     tune_status_message.styles = updated
     global model
 
-    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2], saved_col_list)
+    split_and_train_model(split_list[0],split_list[1],split_list[2], saved_col_list)
 
 
     # Changing the list used to create boxplot
@@ -425,7 +473,7 @@ def set_hyperparameter_widgets():
             title = "Max Depth of Tree",
             disabled = True,
             show_value = False,
-            start= 0,
+            start= 1,
             end = 15,
             value = 2,
             step = 1
@@ -449,10 +497,10 @@ def set_hyperparameter_widgets():
             title = "Number of neighbors",
             disabled = False,
             show_value = True,
-            start = 5,
+            start = 1,
             end = 30,
-            value = 10,
-            step = 5
+            value = 5,
+            step = 2
         )
 
         hp_toggle.visible = False
@@ -692,7 +740,7 @@ saved_data_table = DataTable(source=save_source, columns=saved_columns, width=60
 
 def save_plot():
     global combo_list
-    # global saved_list
+    # global saved_accuracy
     global hyperparam_list
     global new_save_number
     global new_train_val_test_split
@@ -701,14 +749,14 @@ def save_plot():
     global new_saved_hyperparams
     global new_saved_val_acc
 
-    # saved_list.clear()
-    # saved_list = combo_list[10:20]
+    # saved_accuracy.clear()
+    # saved_accuracy = combo_list[10:20]
 
     new_save_number += 1
     display_save_select.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
 
-    new_train_val_test_split = str(saved_split_list[0]) + '/' + str(saved_split_list[1]) + '/' + str(saved_split_list[2])
+    new_train_val_test_split = str(split_list[0]) + '/' + str(split_list[1]) + '/' + str(split_list[2])
 
 
     new_saved_columns = saved_col_list
@@ -730,7 +778,7 @@ def save_plot():
 
 # Add new row to datatable every time a plot is saved
 def add_row():
-    new_data = {
+    new_saved_data = {
         'save_number': [new_save_number],
         'train_val_test_split': [new_train_val_test_split],
         'saved_columns': [new_saved_columns],
@@ -738,7 +786,7 @@ def add_row():
         'saved_hyperparams': [new_saved_hyperparams],
         'saved_val_acc' : [new_saved_val_acc]
     }
-    save_source.stream(new_data)
+    save_source.stream(new_saved_data)
 
 def load_save():
     plot_status_message.text = 'Updating saved data...'
@@ -750,10 +798,10 @@ save_plot_button.on_click(load_save)
 
 
 def display_save():
-    global saved_list, saved_data_table, combo_list
-    saved_list = save_source.data['saved_val_acc'][int(display_save_select.value)-1]
+    global saved_accuracy, saved_data_table, combo_list
+    saved_accuracy = save_source.data['saved_val_acc'][int(display_save_select.value)-1]
 
-    combo_list[20:] = saved_list
+    combo_list[20:] = saved_accuracy
     update_boxplot()
 
     plot_status_message.text = 'Plot updated'
@@ -809,9 +857,10 @@ predict_button.on_click(load_predict)
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
-table_layout = column(row(checkbox_button_group, datatable))
-slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
-tab1_layout = row(slider_layout, table_layout)
+table_layout = column(row(checkbox_button_group, data_tab_table))
+slider_layout = column(tvt_slider, split_display, save_config_button, save_config_message)
+interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
+tab1_layout = column(row(slider_layout, table_layout), interactive_graph)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(p, plot_status_message, display_save_select, display_save_button)
