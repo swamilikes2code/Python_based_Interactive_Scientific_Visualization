@@ -660,9 +660,9 @@ new_save_number = 0
 # Define an empty data source
 saved_data = dict(
     save_number = [],
-    training_split = [],
-    validation_split = [],
-    testing_split = [],
+
+    train_val_test_split = [],
+
     saved_columns = [],
     saved_algorithm = [],
     saved_hyperparams = [],
@@ -673,12 +673,10 @@ save_source = ColumnDataSource(saved_data)
 # Define table columns
 saved_columns = [
     TableColumn(field="save_number", title="#", width = 25),
-    TableColumn(field="training_split", title="Train. split", width = 200),
-    TableColumn(field="validation_split", title="Val. split", width = 200),
-    TableColumn(field="testing_split", title="Test. split", width = 200),
+    TableColumn(field="train_val_test_split", title="Train/Val/Test split", width = 220),
     TableColumn(field="saved_columns", title="Saved col."),
-    TableColumn(field="saved_algorithm", title="Saved alg."),
-    TableColumn(field="saved_hyperparams", title="Saved hp."),
+    TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
+    TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
     TableColumn(field="saved_val_acc", title="Val. accuracies")
 ]
 
@@ -691,9 +689,7 @@ def save_plot():
     # global saved_list
     global hyperparam_list
     global new_save_number
-    global new_training_split
-    global new_validation_split
-    global new_testing_split
+    global new_train_val_test_split
     global new_saved_columns
     global new_saved_algorithm
     global new_saved_hyperparams
@@ -705,32 +701,22 @@ def save_plot():
     new_save_number += 1
     save_num_select.options.append(str(new_save_number))
 
-    new_training_split = saved_split_list[0]
-    new_validation_split = saved_split_list[1]
-    new_testing_split = saved_split_list[2]
+    new_train_val_test_split = str(saved_split_list[0]) + '/' + str(saved_split_list[1]) + '/' + str(saved_split_list[2])
+
+
     new_saved_columns = saved_col_list
-    new_saved_algorithm = my_alg
+    if my_alg == 'Decision Tree':
+        new_saved_algorithm = 'DT'
+    elif my_alg == 'K-Nearest Neighbor':
+        new_saved_algorithm = 'KNN'
+    elif my_alg == 'Support Vector Classification':
+        new_saved_algorithm = 'SVC'
+    else:
+        new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
     new_saved_val_acc = combo_list[10:20]
 
     add_row()
-
-    # saved_split_message.text = f'Saved split: Training split: {saved_split_list[0]} | Validation split: {saved_split_list[1]} | Testing split: {saved_split_list[2]}'
-    # saved_split_message.styles = updated
-
-    # saved_col_message.text = f'Saved columns: {saved_col_list}'
-    # saved_col_message.styles = updated
-
-    # saved_alg_message.text = f'Saved alg: {my_alg}'
-    # saved_alg_message.styles = updated
-
-    # saved_data_message.text = f'Saved val acc: {saved_list}'
-    # saved_data_message.styles = updated
-
-    # combo_list.clear()
-    # val_accuracy = [None for i in range(10)]
-    # tuned_val_accuracy = [None for i in range(10)]
-    # combo_list = val_accuracy + tuned_val_accuracy + saved_list
 
     plot_status_message.text = 'Plot saved'
     plot_status_message.styles = updated
@@ -739,9 +725,7 @@ def save_plot():
 def add_row():
     new_data = {
         'save_number': [new_save_number],
-        'training_split': [new_training_split],
-        'validation_split': [new_validation_split],
-        'testing_split': [new_testing_split],
+        'train_val_test_split': [new_train_val_test_split],
         'saved_columns': [new_saved_columns],
         'saved_algorithm': [new_saved_algorithm],
         'saved_hyperparams': [new_saved_hyperparams],
