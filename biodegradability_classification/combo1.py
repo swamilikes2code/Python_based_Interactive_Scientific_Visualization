@@ -189,8 +189,6 @@ def update_data(attrname, old, new):
     interactive_data_visualization_graph_for_tab_1.xaxis.axis_label = x
     interactive_data_visualization_graph_for_tab_1.yaxis.axis_label = y
 
-
-
 # Attach the update_data function to the dropdowns
 select_x.on_change('value', update_data)
 select_y.on_change('value', update_data)
