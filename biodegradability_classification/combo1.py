@@ -313,15 +313,16 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
         train_col_list.remove("Fingerprint List")
         train_col_list += [str(i) for i in range(167)]
 
+    np.random.seed(123)
 
     for i in range(10):
         X = df[train_col_list]
         y = df['Class']
 
         # splitting
-        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage)
+        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=100-train_percentage, random_state=123)
         test_split = test_percentage / (100-train_percentage)
-        X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
+        X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split, random_state=123)
         
         # train model
         model.fit(X_train, y_train)
