@@ -1,11 +1,13 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
 from bokeh.transform import factor_cmap
+from rdkit import Chem, RDLogger
+from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
@@ -31,6 +33,7 @@ saved_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
 plot_status_message = Div(text='Plot not updated', styles=not_updated)
+predict_status_message = Div(text = 'Not running', styles=not_updated)
 
 # -------------------BUTTONS--------------------
 
@@ -39,6 +42,7 @@ train_button = Button(label="Run ML algorithm", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
 save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
+predict_button = Button(label = 'Predict')
 
 
 # --------------- DATA SELECTION ---------------
@@ -230,7 +234,7 @@ def run_ML():
     
     set_hyperparameter_widgets()
 
-    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
+    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2], saved_col_list)
 
     # Changing the list used to create boxplot
     global combo_list
@@ -242,7 +246,7 @@ def run_ML():
     # Updating accuracy display
     accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
 
-def split_and_train_model(train_percentage, val_percentage, test_percentage):
+def split_and_train_model(train_percentage, val_percentage, test_percentage, col_list):
 
     # run and shuffle ten times, and save result in list
     global val_accuracy, test_accuracy
@@ -255,10 +259,9 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage):
         tuned_val_accuracy.clear()
         tuned_test_accuracy.clear()
 
-    global saved_col_list, train_col_list
     train_col_list = []
-    train_col_list += saved_col_list
-    if 'Fingerprint List' in saved_col_list:
+    train_col_list += col_list
+    if 'Fingerprint List' in col_list:
         train_col_list.remove("Fingerprint List")
         train_col_list += [str(i) for i in range(167)]
 
@@ -320,7 +323,7 @@ def run_tuned_config():
     tune_status_message.styles = updated
     global model
 
-    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2])
+    split_and_train_model(saved_split_list[0],saved_split_list[1],saved_split_list[2], saved_col_list)
 
 
     # Changing the list used to create boxplot
@@ -654,7 +657,8 @@ def load_boxplot():
     curdoc().add_next_tick_callback(update_boxplot)
 
 # making select to choose save num to display/use
-save_num_select = Select(title = "Choose a save to display", options = [])
+display_save_select = Select(title = "Choose a save to display", options = [])
+predict_select = Select(title = 'Choose a save to predict with', options = [])
 global new_save_number
 new_save_number = 0
 
@@ -700,7 +704,8 @@ def save_plot():
     # saved_list = combo_list[10:20]
 
     new_save_number += 1
-    save_num_select.options.append(str(new_save_number))
+    display_save_select.options.append(str(new_save_number))
+    predict_select.options.append(str(new_save_number))
 
     new_train_val_test_split = str(saved_split_list[0]) + '/' + str(saved_split_list[1]) + '/' + str(saved_split_list[2])
 
@@ -745,7 +750,7 @@ save_plot_button.on_click(load_save)
 
 def display_save():
     global saved_list, saved_data_table, combo_list
-    saved_list = save_source.data['saved_val_acc'][int(save_num_select.value)-1]
+    saved_list = save_source.data['saved_val_acc'][int(display_save_select.value)-1]
 
     combo_list[20:] = saved_list
     update_boxplot()
@@ -762,6 +767,41 @@ def load_display_save():
 # callback to display_save button
 display_save_button.on_click(load_display_save)
 
+# --------------- TESTING ---------------
+
+user_smiles_input = TextInput(title = 'Enter a SMILES string:')
+
+def predict_biodegrad():
+    temp_train= save_source.data['training_split'][int(predict_select.value)-1]
+    temp_val = save_source.data['validation_split'][int(predict_select.value)-1]
+    temp_test = save_source.data['testing_split'][int(predict_select.value)-1]
+    temp_cols = save_source.data['saved_columns'][int(predict_select.value)-1]
+    split_and_train_model(temp_train,temp_val,temp_test, temp_cols)
+
+    user_molec = Chem.MolFromSmiles(user_smiles_input.value)
+    user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
+    user_fp = user_fp.reshape(-1,1)
+
+    user_biodegrad = model.predict(user_fp)
+
+    predict_status_message.styles = updated
+    if user_biodegrad == 0:
+        predict_status_message.text = 'Molecule is not readily biodegradable (class 0)'
+    elif user_biodegrad == 1:
+        predict_status_message.text = 'Molecule is readily biodegradable (class 1)'
+    else:
+        predict_status_message.text = 'error'
+
+    return
+
+def load_predict():
+    predict_status_message.text = 'Predicting...'
+    predict_status_message.styles = loading
+    curdoc().add_next_tick_callback(predict_biodegrad)
+
+# callback for predict button
+predict_button.on_click(load_predict)
+
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
@@ -770,12 +810,14 @@ slider_layout = column(tvt, split_display, save_config_button, saved_config_mess
 tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
-plot_layout = column(p, plot_status_message, save_num_select, display_save_button)
+plot_layout = column(p, plot_status_message, display_save_select, display_save_button)
 tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
+tab4_layout = column(user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
                     TabPanel(child = tab2_layout, title = 'Train'),
-                    TabPanel(child = tab3_layout, title = 'Fine-Tune')
+                    TabPanel(child = tab3_layout, title = 'Fine-Tune'),
+                    TabPanel(child = tab4_layout, title = 'Test')
                 ])
 
 
