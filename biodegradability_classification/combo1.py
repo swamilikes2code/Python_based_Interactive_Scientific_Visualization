@@ -234,7 +234,7 @@ def run_ML():
     # Changing the list used to create boxplot
     global combo_list
     combo_list.clear()
-    combo_list = val_accuracy + tuned_val_accuracy + saved_list
+    combo_list = val_accuracy + [None for i in range(10)] + saved_list
 
     update_boxplot()
 
@@ -299,9 +299,12 @@ train_button.on_click(load_ML)
 
 
 # --------------- HYPERPARAMETER TUNING + BUTTON ---------------
-general_hyperparams = []
 
-
+# a list of an int an string
+## decision tree - int/None, string
+## KNN - int, string
+## SVC - int, ""
+hyperparam_list = [None,"best"]
 
 # Create empty lists
 tuned_test_accuracy = []
@@ -366,7 +369,12 @@ def print_vals():
         print("loss func", model.loss)
 
 def hp_slider_callback(attr, old, new):
+    if hp_slider.disabled == True:
+        return
+
     global my_alg
+    hyperparam_list[0] = new
+
     if my_alg == 'Decision Tree':
         if hp_slider.disabled == True:
             return
@@ -378,19 +386,24 @@ def hp_slider_callback(attr, old, new):
 
 def hp_select_callback(attr, old, new):
     global my_alg
+    hyperparam_list[1] = new
     if my_alg == 'Decision Tree':
         model.splitter = new
     elif my_alg == 'K-Nearest Neighbor':
         model.weights = new
+    else:
+        hyperparam_list[1] = ""
 
 def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
         if new == True:
             hp_slider.update(disabled = True, show_value = False)
             model.max_depth = None
+            hyperparam_list[0] = None
         elif new == False:
             hp_slider.update(disabled = False, bar_color = '#e6e6e6', show_value = True)
             model.max_depth = hp_slider.value
+            hyperparam_list[0] = hp_slider.value
 
 def set_hyperparameter_widgets():
     global my_alg
@@ -480,9 +493,15 @@ tune_button.on_click(load_tuned_config)
 plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
-p = figure(x_range=['pretune', 'posttune', 'saved'], y_range = (0.0, 1.0), tools="", toolbar_location=None,
-            title="Validation Accuracy current vs. saved",
-            background_fill_color="#eaefef", y_axis_label="accuracy")
+p = figure(x_range=['pretune', 'posttune', 'saved'],
+            y_range = (0.0, 1.0),
+            width = 500,
+            height = 500,
+            tools="",
+            toolbar_location=None,
+            background_fill_color="#eaefef",
+            title="Validation Accuracies",
+            y_axis_label="accuracy")
 
 df_box = pd.DataFrame()
 source = ColumnDataSource()
@@ -648,13 +667,13 @@ save_source = ColumnDataSource(saved_data)
 
 # Define table columns
 saved_columns = [
-    TableColumn(field="save_number", title="Save #"),
-    TableColumn(field="training_split", title="Train. split"),
-    TableColumn(field="validation_split", title="Val. split"),
-    TableColumn(field="testing_split", title="Test. split"),
-    TableColumn(field="saved_columns", title="Saved cols"),
-    TableColumn(field="saved_algorithm", title="Saved alg"),
-    TableColumn(field="saved_hyperparams", title="Saved params")
+    TableColumn(field="save_number", title="#", width = 25),
+    TableColumn(field="training_split", title="Train. split", width = 200),
+    TableColumn(field="validation_split", title="Val. split", width = 200),
+    TableColumn(field="testing_split", title="Test. split", width = 200),
+    TableColumn(field="saved_columns", title="Saved col."),
+    TableColumn(field="saved_algorithm", title="Saved alg."),
+    TableColumn(field="saved_hyperparams", title="Saved hp.")
 ]
 
 # Create a DataTable
@@ -664,6 +683,7 @@ saved_data_table = DataTable(source=save_source, columns=saved_columns, width=60
 def save_plot():
     global combo_list
     global saved_list
+    global hyperparam_list
     global new_save_number
     global new_training_split
     global new_validation_split
@@ -682,7 +702,7 @@ def save_plot():
     new_testing_split = saved_split_list[2]
     new_saved_columns = saved_col_list
     new_saved_algorithm = my_alg
-    new_saved_hyperparams = 'FIX THIS'
+    new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
 
     add_row()
 
@@ -735,8 +755,8 @@ table_layout = row(checkbox_button_group, datatable)
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
 tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
-hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display)
-plot_layout = column(p, save_plot_button, plot_status_message)
+hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
+plot_layout = column(p, plot_status_message)
 tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
