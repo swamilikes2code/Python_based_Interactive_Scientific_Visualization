@@ -38,6 +38,7 @@ save_config_button = Button(label="Save Current Configuration", button_type="suc
 train_button = Button(label="Run ML algorithm", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
 save_plot_button = Button(label="Save current plot", button_type="warning")
+display_save_button = Button(label = "Display save")
 
 
 # --------------- DATA SELECTION ---------------
@@ -488,7 +489,7 @@ def load_tuned_config():
 tune_button.on_click(load_tuned_config)
 
 
-# --------------- VISUALIZATIONS ---------------
+# --------------- BOX PLOT AND SAVE ---------------
 
 plot_counter = 0 #the amount of times button has been pressed
 
@@ -650,6 +651,8 @@ def load_boxplot():
     plot_status_message.styles = loading
     curdoc().add_next_tick_callback(update_boxplot)
 
+# making select to choose save num to display/use
+save_num_select = Select(title = "Choose a save to display", options = [])
 global new_save_number
 new_save_number = 0
 
@@ -696,6 +699,7 @@ def save_plot():
     saved_list = combo_list[10:20]
 
     new_save_number += 1
+    save_num_select.options.append(str(new_save_number))
 
     new_training_split = saved_split_list[0]
     new_validation_split = saved_split_list[1]
@@ -748,6 +752,22 @@ def load_save():
 save_plot_button.on_click(load_save)
 
 
+def display_save():
+    #TODO: determine whether we are training the model with the saved settings OR just reloading the saved box plot (load the tuned_val_accuracy)
+
+
+    plot_status_message.text = 'Plot updated'
+    plot_status_message.styles = updated
+
+
+def load_display_save():
+    plot_status_message.text = 'Updating plot...'
+    plot_status_message.styles = loading
+    curdoc().add_next_tick_callback(display_save)
+
+# callback to display_save button
+display_save_button.on_click(load_display_save)
+
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
@@ -756,7 +776,7 @@ slider_layout = column(tvt, split_display, save_config_button, saved_config_mess
 tab1_layout = row(slider_layout, table_layout)
 tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
-plot_layout = column(p, plot_status_message)
+plot_layout = column(p, plot_status_message, save_num_select)
 tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
