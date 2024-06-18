@@ -665,9 +665,7 @@ new_save_number = 0
 # Define an empty data source
 saved_data = dict(
     save_number = [],
-
     train_val_test_split = [],
-
     saved_columns = [],
     saved_algorithm = [],
     saved_hyperparams = [],
@@ -772,25 +770,31 @@ display_save_button.on_click(load_display_save)
 user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 
 def predict_biodegrad():
-    temp_train= save_source.data['training_split'][int(predict_select.value)-1]
-    temp_val = save_source.data['validation_split'][int(predict_select.value)-1]
-    temp_test = save_source.data['testing_split'][int(predict_select.value)-1]
+    temp_tvt_list = new_train_val_test_split.split("/")
+    temp_train = int(temp_tvt_list[0])
+    temp_val = int(temp_tvt_list[1])
+    temp_test = int(temp_tvt_list[2])
+
     temp_cols = save_source.data['saved_columns'][int(predict_select.value)-1]
     split_and_train_model(temp_train,temp_val,temp_test, temp_cols)
 
     user_molec = Chem.MolFromSmiles(user_smiles_input.value)
     user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
-    user_fp = user_fp.reshape(-1,1)
+    user_df = pd.DataFrame(user_fp)
+    user_df = user_df.transpose() #each bit has its own column
+    # print(user_fp)
+    # print(user_df)
+    # print(user_df.shape)
 
-    user_biodegrad = model.predict(user_fp)
+    # user_biodegrad = model.predict(user_fp)
 
     predict_status_message.styles = updated
-    if user_biodegrad == 0:
-        predict_status_message.text = 'Molecule is not readily biodegradable (class 0)'
-    elif user_biodegrad == 1:
-        predict_status_message.text = 'Molecule is readily biodegradable (class 1)'
-    else:
-        predict_status_message.text = 'error'
+    # if user_biodegrad == 0:
+    #     predict_status_message.text = 'Molecule is not readily biodegradable (class 0)'
+    # elif user_biodegrad == 1:
+    #     predict_status_message.text = 'Molecule is readily biodegradable (class 1)'
+    # else:
+    #     predict_status_message.text = 'error'
 
     return
 
