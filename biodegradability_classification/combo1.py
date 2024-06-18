@@ -378,6 +378,7 @@ def hp_slider_callback(attr, old, new):
 
     if my_alg == 'Decision Tree':
         if hp_slider.disabled == True:
+            hyperparam_list[0] = None
             return
         model.max_depth = new
     elif my_alg == 'K-Nearest Neighbor':
