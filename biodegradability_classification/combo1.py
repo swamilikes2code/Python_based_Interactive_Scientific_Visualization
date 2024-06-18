@@ -472,7 +472,7 @@ def set_hyperparameter_widgets():
             title = "Max Depth of Tree",
             disabled = True,
             show_value = False,
-            start= 0,
+            start= 1,
             end = 15,
             value = 2,
             step = 1
