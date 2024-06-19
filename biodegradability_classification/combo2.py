@@ -222,7 +222,7 @@ data_vis_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names =
 
 # configure hovertool
 tooltips = [
-    ("name", "@names"),
+    #("name", "@names"),
     ("index", "$index")
 ]
 
@@ -247,7 +247,7 @@ def update_data_vis(attrname, old, new):
     new_vis_data = {
         'x': df[x],
         'y': df[y],
-        'names' : df['Substance Name'],
+        #'names' : df['Substance Name'],
         'class_color': ['#900C3F' if cls == df['Class'].cat.categories[0] else '#1DBD4D' for cls in df['Class']],
         'class_label': ['Not readily biodegradable' if cls == df['Class'].cat.categories[0] else 'Readily biodegradable' for cls in df['Class']]
     }
