@@ -49,7 +49,9 @@ predict_button = Button(label = 'Predict')
 
 # -----------------INSTRUCTIONS-----------------
 
-intro_instr = Div(text="""<div>Start by opening the <b>data</b> tab. This tab is used for preparing the biodegradability data for training. 
+intro_instr = Div(text="""
+                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                  <div>Start by opening the <b>data</b> tab. This tab is used for preparing the biodegradability data for training. 
                   You will have the option to split the data into <i>training, validation, and testing</i>, and select which columns 
                   of data (each of which represent a <i>molecular property</i>) should be used to train the mode. Once you are done 
                   preparing your data, save your choices, and continue on to the next tab.</div>
@@ -64,26 +66,39 @@ intro_instr = Div(text="""<div>Start by opening the <b>data</b> tab. This tab is
                   <div>‎</div>
                   <div>The <b>test</b> tab is where you will be able to test any of the saved models. FINISH THIS WHEN TEST TAB IS READY.</div>
                   <div>‎</div>
-                  <div>For more information about each of the italicized vocab words, see the above navigation menu.</div>""",
-width=500, height=500)
+                  <div>For more information about each of the italicized vocab words, see the above navigation menu.</div>
+                  </div>""",
+width=750, height=500)
 
-data_instr = Div(text="""Use the <b>slider</b> to split the data into <i>train/validate/test</i> percentages,
-                       and <b>select/deselect</b> property columns for training the model. 
-                       You can see the graphical relationship between any two properties in the plot below.
-                       Finally, <b>save</b> the configuration.""",
-width=200, height=140)
+data_instr = Div(text="""
+                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                 Use the <b>slider</b> to split the data into <i>train/validate/test</i> percentages,
+                 and <b>select/deselect</b> property columns for training the model. 
+                 You can see the graphical relationship between any two properties in the plot below.
+                 Finally, <b>save</b> the configuration.
+                 </div>""",
+width=300, height=150)
 
-train_instr = Div(text="""Select and run one of the following <b>Machine Learning algorithms</b>""",
-width=200, height=50)
+train_instr = Div(text="""
+                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                  Select and run one of the following <b>Machine Learning algorithms:</b>
+                  </div>""",
+width=300, height=75)
 
 # This will likely be changed when validation and testing are two different buttons
-tune_instr = Div(text="""Change <b>hyperparameters</b> based on your chosen ML algorithm, 
-                        and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
-                        on the boxplot. You can <b>save</b> any model at any time and <b>display</b> any saved model on the plot""",
-width=200, height=120)
+tune_instr = Div(text="""
+                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                 Change <b>hyperparameters</b> based on your chosen ML algorithm, 
+                 and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
+                 on the boxplot. You can <b>save</b> any model at any time and <b>display</b> any saved model on the plot.
+                 </div>""",
+width=300, height=150)
 
-test_instr = Div(text="""TEST INSTRUCTIONS GO HERE""",
-width=200, height=100)
+test_instr = Div(text="""
+                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                 TEST INSTRUCTIONS GO HERE:
+                 </div>""",
+width=300, height=75)
 
 
 # --------------- DATA SELECTION ---------------
