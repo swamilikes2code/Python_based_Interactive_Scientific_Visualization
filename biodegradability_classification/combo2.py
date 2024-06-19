@@ -160,7 +160,7 @@ split_list = [50,25,25] #0-train, 1-val, 2-test
 
 # helper function to produce string
 def update_text(train_percentage, val_percentage, test_percentage):
-    split_display.text = f"Training split: {train_percentage} / Validation split: {val_percentage} / Testing split: {test_percentage}"
+    split_display.text = f"<div>Training split: {train_percentage}%</div><div>Validation split: {val_percentage}%</div><div>Testing split: {test_percentage}%</div>"
 
 # function to update model and accuracy
 def update_values(attrname, old, new):
@@ -197,9 +197,9 @@ callback = CustomJS(args = dict(),
             )
 
 # creating widgets
-tvt_slider = RangeSlider(title="Train-Validate-Test (%)", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
+tvt_slider = RangeSlider(title="Train-Validate-Test Slider</b>", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
 tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
-split_display = Div(text="Training split: 50 / Validation split: 25 / Testing split: 25")
+split_display = Div(text="<div>Training split: 50%</div><div>Validation split: 25%</div><div>Testing split: 25%</div>")
 
 # --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
 
@@ -935,8 +935,8 @@ predict_button.on_click(load_predict)
 # creating widget layouts
 tab0_layout = intro_instr
 
-table_layout = row(checkbox_button_group, data_tab_table)
-slider_layout = column(tvt_slider, split_display, row(save_config_button, save_config_message))
+table_layout = row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message))
+slider_layout = column(tvt_slider, split_display)
 interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
 tab1_layout = row(column(row(data_instr, slider_layout), table_layout), interactive_graph)
 tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_selection_button, feature_selection_status_message)
