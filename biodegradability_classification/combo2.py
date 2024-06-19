@@ -138,7 +138,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=650, height=300, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=750, height=300, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -200,9 +200,9 @@ callback = CustomJS(args = dict(),
             )
 
 # creating widgets
-tvt_slider = RangeSlider(title="Train-Validate-Test Slider</b>", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
+tvt_slider = RangeSlider(title="Train-Validate-Test Slider", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
 tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
-split_display = Div(text="Training split: 50 / Validation split: 25 / Testing split: 25")
+split_display = Div(text="<div>Training split: 50%</div><div>Validation split: 25%</div><div>Testing split: 25%</div>")
 
 # --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
 
@@ -227,7 +227,7 @@ tooltips = [
 ]
 
 # Create a figure
-data_vis = figure(title="Data Exploration: search for correlations between properties", width = 450, height = 300, x_axis_label='X', y_axis_label='Y', 
+data_vis = figure(title="Data Exploration: search for correlations between properties", width = 650, height = 450, x_axis_label='X', y_axis_label='Y', 
            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
 
 # Create an initial scatter plot
@@ -249,7 +249,7 @@ def update_data_vis(attrname, old, new):
         'y': df[y],
         'names' : df['Substance Name'],
         'class_color': ['#900C3F' if cls == df['Class'].cat.categories[0] else '#1DBD4D' for cls in df['Class']],
-        'class_label': ['Nonbiodegradable' if cls == df['Class'].cat.categories[0] else 'Biodegradable' for cls in df['Class']]
+        'class_label': ['Not readily biodegradable' if cls == df['Class'].cat.categories[0] else 'Readily biodegradable' for cls in df['Class']]
     }
         
     # Update the ColumnDataSource with a plain Python dict
@@ -1026,9 +1026,13 @@ predict_button.on_click(load_predict)
 tab0_layout = intro_instr
 
 table_layout = row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message))
+
 slider_layout = column(tvt_slider, split_display)
-interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
-tab1_layout = row(column(data_instr, slider_layout), table_layout, interactive_graph)
+
+interactive_graph = column(data_vis, row(select_x, select_y)) #create data graph visualization 
+
+tab1_layout = row(column(row(data_instr, slider_layout), row(table_layout)), interactive_graph)
+
 tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
