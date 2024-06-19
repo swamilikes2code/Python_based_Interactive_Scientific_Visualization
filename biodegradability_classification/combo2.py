@@ -49,6 +49,24 @@ predict_button = Button(label = 'Predict')
 
 # -----------------INSTRUCTIONS-----------------
 
+intro_instr = Div(text="""<div>Start by opening the <b>data</b> tab. This tab is used for preparing the biodegradability data for training. 
+                  You will have the option to split the data into <i>training, validation, and testing</i>, and select which columns 
+                  of data (each of which represent a <i>molecular property</i>) should be used to train the mode. Once you are done 
+                  preparing your data, save your choices, and continue on to the next tab.</div>
+                  <div>‎</div>
+                  <div>The <b>train</b> tab is used to actually train the data, choosing the <i>Machine Learning algorithm</i> of your choice. 
+                  Once you set and run the ML algorithm of your choice, continue to the next tab.</div>
+                  <div>‎</div>
+                  <div>The <b>fine-tune</b> tab is where you are able to fine-tune the <i>hyperparameters</i> of your chosen model, 
+                  and validate the results between two of your tunes on a boxplot. You will also be able to save any model that you have created 
+                  with these past three tabs, and display these saved models on the boxplot. Once you have saved at least one model, 
+                  you can continue to the final tab.</div>
+                  <div>‎</div>
+                  <div>The <b>test</b> tab is where you will be able to test any of the saved models. FINISH THIS WHEN TEST TAB IS READY.</div>
+                  <div>‎</div>
+                  <div>For more information about each of the italicized vocab words, see the above navigation menu.</div>""",
+width=500, height=500)
+
 data_instr = Div(text="""Use the <b>slider</b> to split the data into <i>train/validate/test</i> percentages,
                        and <b>select/deselect</b> property columns for training the model. 
                        You can see the graphical relationship between any two properties in the plot below.
@@ -856,6 +874,7 @@ predict_button.on_click(load_predict)
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
+tab0_layout = intro_instr
 table_layout = column(row(checkbox_button_group, data_tab_table))
 slider_layout = column(tvt_slider, split_display, save_config_button, save_config_message)
 interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
@@ -866,7 +885,8 @@ plot_layout = column(boxplot, plot_status_message, display_save_select, display_
 tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
-tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
+tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
+                    TabPanel(child = tab1_layout, title = 'Data'),
                     TabPanel(child = tab2_layout, title = 'Train'),
                     TabPanel(child = tab3_layout, title = 'Fine-Tune'),
                     TabPanel(child = tab4_layout, title = 'Test')
