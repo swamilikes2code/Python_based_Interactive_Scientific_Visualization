@@ -449,7 +449,6 @@ train_button.on_click(load_ML)
 # --------------- FEATURE SELECTION ALGORITHM ---------------
 
 # df our data frame
- 
 # Remove non-numeric columns and NaN values
 non_numeric_columns = ['Substance Name', 'Smiles']
 df.drop(columns=non_numeric_columns, inplace=True)
@@ -511,10 +510,11 @@ def run_FS():
     y_pred = model.predict(X_test_rfecv)
 
     accuracy = accuracy_score(y_test, y_pred)
-    report = classification_report(y_test, y_pred)
+    
 
     # Update the result text
-    result_text.text = f"Accuracy: {accuracy}\n\nClassification Report:\n{report}"
+    #report = classification_report(y_test, y_pred)
+    result_text.text = f"Accuracy: {accuracy}\n"#\nClassification Report:\n{report}"
     feature_selection_status_message.text = "Feature selection completed successfully."
     feature_selection_status_message.styles = updated
 
@@ -533,23 +533,6 @@ def load_FS():
 
 #when the feature selection button gets clicks
 feature_selection_button.on_click(load_FS)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
