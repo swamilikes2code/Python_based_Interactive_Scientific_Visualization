@@ -450,8 +450,8 @@ train_button.on_click(load_ML)
 
 # df our data frame
 # Remove non-numeric columns and NaN values
-non_numeric_columns = ['Substance Name', 'Smiles']
-df.drop(columns=non_numeric_columns, inplace=True)
+# non_numeric_columns = ['Substance Name', 'Smiles']
+# df.drop(columns=non_numeric_columns, inplace=True)
 
 #move these to the top once finished
 feature_selection_status_message = Div(text='Not running', styles=not_updated)
@@ -477,7 +477,7 @@ def run_FS():
     print(df)
     
     # Prepare data (excluding 'Class' as it is the target variable)
-    X = df.drop(columns=['Class'])  # Features
+    X = df.drop(columns=['Class', 'Substance Name', 'Smiles'])  # Features
     y = df['Class']  # Target
     #ensure columns are numeric
     X = X.apply(pd.to_numeric, errors='coerce').fillna(0)  # Convert to numeric and fill NaNs with 0
