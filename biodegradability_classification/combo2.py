@@ -205,7 +205,7 @@ data_vis = figure(title="Data Exploration Scatter Plot - search for correlations
            tools="pan,wheel_zoom,box_zoom,reset,hover,save")
 
 # Create an initial scatter plot
-data_vis_scatter = data_vis.scatter(x='x', y='y', color='class_color', source=data_vis_source, legend_field='class_color')
+data_vis_scatter = data_vis.scatter(x='x', y='y', color='class_color', source=data_vis_source, legend_field='class_label')
 
 # Create dropdown menus for X and Y axis
 select_x = Select(title="X Axis", value=data_vis_columns[0], options=data_vis_columns)
@@ -218,7 +218,8 @@ def update_data_vis(attrname, old, new):
     new_vis_data = {
         'x': df[x],
         'y': df[y],
-        'class_color': [Category10[3][0] if cls == df['Class'].cat.categories[0] else Category10[3][1] for cls in df['Class']]
+        'class_color': [Category10[3][0] if cls == df['Class'].cat.categories[0] else Category10[3][1] for cls in df['Class']],
+        'class_label': ['Nonbiodegradable' if cls == df['Class'].cat.categories[0] else 'Biodegradable' for cls in df['Class']]
     }
         
     # Update the ColumnDataSource with a plain Python dict
