@@ -134,7 +134,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=900, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=600, height=300, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -223,7 +223,7 @@ tooltips = [
 ]
 
 # Create a figure
-data_vis = figure(title="Data Exploration Scatter Plot - search for correlations between numeric variables", width = 800, height = 600, x_axis_label='X', y_axis_label='Y', 
+data_vis = figure(title="Data Exploration: search for correlations between properties", width = 450, height = 300, x_axis_label='X', y_axis_label='Y', 
            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
 
 # Create an initial scatter plot
@@ -905,7 +905,7 @@ tab0_layout = intro_instr
 table_layout = column(row(checkbox_button_group, data_tab_table))
 slider_layout = column(tvt_slider, split_display, save_config_button, save_config_message)
 interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
-tab1_layout = column(row(column(data_instr, slider_layout), table_layout), interactive_graph)
+tab1_layout = row(column(data_instr, slider_layout), table_layout, interactive_graph)
 tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
