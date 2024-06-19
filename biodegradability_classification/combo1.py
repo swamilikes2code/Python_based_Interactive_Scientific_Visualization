@@ -47,6 +47,27 @@ save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
 predict_button = Button(label = 'Predict')
 
+# -----------------INSTRUCTIONS-----------------
+
+data_instr = Div(text="""Use the <b>slider</b> to split the data into <i>train/validate/test</i> percentages,
+                       and <b>select/deselect</b> property columns for training the model. 
+                       You can see the graphical relationship between any two properties in the plot below.
+                       Finally, <b>save</b> the configuration.""",
+width=200, height=140)
+
+train_instr = Div(text="""Select and run one of the following <b>Machine Learning algorithms</b>""",
+width=200, height=50)
+
+# This will likely be changed when validation and testing are two different buttons
+tune_instr = Div(text="""Change <b>hyperparameters</b> based on your chosen ML algorithm, 
+                        and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
+                        on the boxplot. You can <b>save</b> any model at any time and <b>display</b> any saved model on the plot""",
+width=200, height=120)
+
+test_instr = Div(text="""TEST INSTRUCTIONS GO HERE""",
+width=200, height=100)
+
+
 
 # --------------- DATA SELECTION ---------------
 
@@ -864,12 +885,13 @@ predict_button.on_click(load_predict)
 table_layout = column(row(checkbox_button_group, datatable))
 slider_layout = column(tvt, split_display, save_config_button, saved_config_message)
 interactive_graph = column(row(select_x, select_y), interactive_data_visualization_graph_for_tab_1) #create data graph visualization 
-tab1_layout = column(row(slider_layout, table_layout), interactive_graph)
-tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
+
+tab1_layout = column(row(column(data_instr, slider_layout), table_layout), interactive_graph)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(p, plot_status_message, display_save_select, display_save_button)
-tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
-tab4_layout = column(user_smiles_input, predict_select, predict_button, predict_status_message)
+tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
+tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
                     TabPanel(child = tab2_layout, title = 'Train'),
