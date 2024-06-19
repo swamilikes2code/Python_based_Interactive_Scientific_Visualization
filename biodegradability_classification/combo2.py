@@ -764,7 +764,7 @@ saved_data = dict(
     saved_columns = [],
     saved_algorithm = [],
     saved_hyperparams = [],
-    saved_val_acc = []
+    saved_test_acc = []
 )
 save_source = ColumnDataSource(saved_data)
 
@@ -775,7 +775,7 @@ saved_columns = [
     TableColumn(field="saved_columns", title="Saved col."),
     TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
     TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
-    TableColumn(field="saved_val_acc", title="Val. accuracies")
+    TableColumn(field="saved_test_acc", title="Test accuracies")
 ]
 
 # Create a DataTable
@@ -791,7 +791,7 @@ def save_plot():
     global new_saved_columns
     global new_saved_algorithm
     global new_saved_hyperparams
-    global new_saved_val_acc
+    global new_saved_test_acc
 
     # saved_accuracy.clear()
     # saved_accuracy = combo_list[10:20]
@@ -813,7 +813,7 @@ def save_plot():
     else:
         new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
-    new_saved_val_acc = combo_list[10:20]
+    new_saved_test_acc = combo_list[20:30]
 
     add_row()
 
@@ -828,7 +828,7 @@ def add_row():
         'saved_columns': [new_saved_columns],
         'saved_algorithm': [new_saved_algorithm],
         'saved_hyperparams': [new_saved_hyperparams],
-        'saved_val_acc' : [new_saved_val_acc]
+        'saved_test_acc' : [new_saved_test_acc]
     }
     save_source.stream(new_saved_data)
 
@@ -843,9 +843,9 @@ save_plot_button.on_click(load_save)
 
 def display_save():
     global saved_accuracy, saved_data_table, combo_list
-    saved_accuracy = save_source.data['saved_val_acc'][int(display_save_select.value)-1]
+    saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
 
-    combo_list[20:] = saved_accuracy
+    combo_list[30:] = saved_accuracy
     update_boxplot()
 
     plot_status_message.text = 'Plot updated'
