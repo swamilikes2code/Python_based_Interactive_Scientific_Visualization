@@ -88,6 +88,15 @@ train_instr = Div(text="""
                   </div>""",
 width=300, height=75)
 
+feature_select_instr = Div(text="""
+                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                  <div><b>Optional:</b> run <b>feature selection</b> for your chosen ML algorithm. This will display
+                           which columns are recommended for training this ML algorithm. Afterwards, you can update
+                           your chosen columns accordingly on the <b>data</b> tab, and rerun your algorithm.</div>
+                           <div><i>Note: <b>K-Nearest Neighbors</b> will <b>not</b> work for feature selection</i></div>
+                  </div>""",
+width=300, height=175)
+
 # This will likely be changed when validation and testing are two different buttons
 tune_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -1034,7 +1043,7 @@ interactive_graph = column(data_vis, row(select_x, select_y)) #create data graph
 
 tab1_layout = row(column(row(data_instr, slider_layout), row(table_layout)), interactive_graph)
 
-tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
 tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
