@@ -90,9 +90,10 @@ tune_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                  Change <b>hyperparameters</b> based on your chosen ML algorithm, 
                  and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
-                 on the boxplot. You can <b>save</b> any model at any time and <b>display</b> any saved model on the plot.
+                 on the boxplot, as well as your current tune's actual <b>testing accuracies</b>. 
+                 You can <b>save</b> any model at any time and <b>display</b> any saved model's <b>testing accuracy</b> on the plot.
                  </div>""",
-width=300, height=150)
+width=300, height=175)
 
 test_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -134,7 +135,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=600, height=300, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=650, height=300, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -645,14 +646,14 @@ tune_button.on_click(load_tuned_config)
 plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
-boxplot = figure(x_range=['pretune', 'posttune', 'test', 'saved'],
+boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
             y_range = (0.0, 1.0),
-            width = 500,
-            height = 500,
+            width = 400,
+            height = 400,
             tools="",
             toolbar_location=None,
             background_fill_color="#eaefef",
-            title="Validation Accuracies",
+            title="Model Accuracies",
             y_axis_label="accuracy")
 
 df_box = pd.DataFrame()
@@ -795,7 +796,7 @@ saved_data = dict(
     saved_columns = [],
     saved_algorithm = [],
     saved_hyperparams = [],
-    saved_val_acc = []
+    saved_test_acc = []
 )
 save_source = ColumnDataSource(saved_data)
 
@@ -806,7 +807,7 @@ saved_columns = [
     TableColumn(field="saved_columns", title="Saved col."),
     TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
     TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
-    TableColumn(field="saved_val_acc", title="Val. accuracies")
+    TableColumn(field="saved_test_acc", title="Test accuracies")
 ]
 
 # Create a DataTable
@@ -822,7 +823,7 @@ def save_plot():
     global new_saved_columns
     global new_saved_algorithm
     global new_saved_hyperparams
-    global new_saved_val_acc
+    global new_saved_test_acc
 
     # saved_accuracy.clear()
     # saved_accuracy = combo_list[10:20]
@@ -844,7 +845,7 @@ def save_plot():
     else:
         new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
-    new_saved_val_acc = combo_list[10:20]
+    new_saved_test_acc = combo_list[20:30]
 
     add_row()
 
@@ -859,7 +860,7 @@ def add_row():
         'saved_columns': [new_saved_columns],
         'saved_algorithm': [new_saved_algorithm],
         'saved_hyperparams': [new_saved_hyperparams],
-        'saved_val_acc' : [new_saved_val_acc]
+        'saved_test_acc' : [new_saved_test_acc]
     }
     save_source.stream(new_saved_data)
 
@@ -874,9 +875,9 @@ save_plot_button.on_click(load_save)
 
 def display_save():
     global saved_accuracy, saved_data_table, combo_list
-    saved_accuracy = save_source.data['saved_val_acc'][int(display_save_select.value)-1]
+    saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
 
-    combo_list[20:] = saved_accuracy
+    combo_list[30:] = saved_accuracy
     update_boxplot()
 
     plot_status_message.text = 'Plot updated'
