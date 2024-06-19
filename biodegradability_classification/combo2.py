@@ -47,6 +47,26 @@ save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
 predict_button = Button(label = 'Predict')
 
+# -----------------INSTRUCTIONS-----------------
+
+data_instr = Div(text="""Use the <b>slider</b> to split the data into <i>train/validate/test</i> percentages,
+                       and <b>select/deselect</b> property columns for training the model. 
+                       You can see the graphical relationship between any two properties in the plot below.
+                       Finally, <b>save</b> the configuration.""",
+width=200, height=140)
+
+train_instr = Div(text="""Select and run one of the following <b>Machine Learning algorithms</b>""",
+width=200, height=50)
+
+# This will likely be changed when validation and testing are two different buttons
+tune_instr = Div(text="""Change <b>hyperparameters</b> based on your chosen ML algorithm, 
+                        and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
+                        on the boxplot. You can <b>save</b> any model at any time and <b>display</b> any saved model on the plot""",
+width=200, height=120)
+
+test_instr = Div(text="""TEST INSTRUCTIONS GO HERE""",
+width=200, height=100)
+
 
 # --------------- DATA SELECTION ---------------
 
@@ -65,7 +85,7 @@ for col in mandatory_columns:
         df_display[col] = "N/A"
 
 # saved list to append to
-saved_col_list = []
+user_columns = []
 
 # Limit the dataframe to the first 10 rows
 df_subset = df_display.head(10)
@@ -210,10 +230,10 @@ tvt_slider.on_change('value', update_values)
 
 # Save columns to saved list (split already saved)
 def save_config():
-    saved_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    global saved_col_list
-    saved_col_list.clear()
-    saved_col_list = saved_columns
+    temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    global user_columns
+    user_columns.clear()
+    user_columns = temp_columns
 
     #split_list isn't located here as the split values update in the list upon the change of the range slider
     #the collective save button is to make the design more cohesive
@@ -284,7 +304,7 @@ def run_ML():
     
     set_hyperparameter_widgets()
 
-    split_and_train_model(split_list[0],split_list[1],split_list[2], saved_col_list)
+    split_and_train_model(split_list[0],split_list[1],split_list[2], user_columns)
 
     # Changing the list used to create boxplot
     global combo_list
@@ -296,7 +316,7 @@ def run_ML():
     # Updating accuracy display
     accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
 
-def split_and_train_model(train_percentage, val_percentage, test_percentage, col_list):
+def split_and_train_model(train_percentage, val_percentage, test_percentage, columns):
 
     # run and shuffle ten times, and save result in list
     global val_accuracy, test_accuracy
@@ -309,16 +329,16 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
         tuned_val_accuracy.clear()
         tuned_test_accuracy.clear()
 
-    train_col_list = []
-    train_col_list += col_list
-    if 'Fingerprint List' in col_list:
-        train_col_list.remove("Fingerprint List")
-        train_col_list += [str(i) for i in range(167)]
+    train_columns = []
+    train_columns += columns
+    if 'Fingerprint List' in columns:
+        train_columns.remove("Fingerprint List")
+        train_columns += [str(i) for i in range(167)]
 
     np.random.seed(123)
 
     for i in range(10):
-        X = df[train_col_list]
+        X = df[train_columns]
         y = df['Class']
 
         # splitting
@@ -374,7 +394,7 @@ def run_tuned_config():
     tune_status_message.styles = updated
     global model
 
-    split_and_train_model(split_list[0],split_list[1],split_list[2], saved_col_list)
+    split_and_train_model(split_list[0],split_list[1],split_list[2], user_columns)
 
 
     # Changing the list used to create boxplot
@@ -572,9 +592,7 @@ source = ColumnDataSource()
 def update_df_box():
     # making the initial boxplot
     global combo_list
-    d = {'kind': ['pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune', 'pretune',
-                  'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune', 'posttune',
-                'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved', 'saved'],
+    d = {'kind': ['pretune' for i in range(10)] + ['posttune' for j in range(10)] + ['saved' for l in range(10)],
         'accuracy': combo_list
         }
     
@@ -710,7 +728,7 @@ def load_boxplot():
 # making select to choose save num to display/use
 display_save_select = Select(title = "Choose a save to display", options = [])
 predict_select = Select(title = 'Choose a save to predict with', options = [])
-global new_save_number
+
 new_save_number = 0
 
 # Define an empty data source
@@ -759,7 +777,7 @@ def save_plot():
     new_train_val_test_split = str(split_list[0]) + '/' + str(split_list[1]) + '/' + str(split_list[2])
 
 
-    new_saved_columns = saved_col_list
+    new_saved_columns = user_columns
     if my_alg == 'Decision Tree':
         new_saved_algorithm = 'DT'
     elif my_alg == 'K-Nearest Neighbor':
@@ -860,12 +878,12 @@ predict_button.on_click(load_predict)
 table_layout = column(row(checkbox_button_group, data_tab_table))
 slider_layout = column(tvt_slider, split_display, save_config_button, save_config_message)
 interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
-tab1_layout = column(row(slider_layout, table_layout), interactive_graph)
-tab2_layout = column(alg_select, train_button, train_status_message, accuracy_display)
+tab1_layout = column(row(column(data_instr, slider_layout), table_layout), interactive_graph)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(p, plot_status_message, display_save_select, display_save_button)
-tab3_layout = row(hyperparam_layout, plot_layout, saved_data_table)
-tab4_layout = column(user_smiles_input, predict_select, predict_button, predict_status_message)
+tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
+tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab1_layout, title = 'Data'),
                     TabPanel(child = tab2_layout, title = 'Train'),
