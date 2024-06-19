@@ -300,6 +300,10 @@ def load_config():
 
     plot_status_message.text = 'Plot not updated'
     plot_status_message.styles=not_updated
+
+    feature_selection_status_message.text = 'Not running'
+    feature_selection_status_message.styles=not_updated
+
     curdoc().add_next_tick_callback(save_config)
 
 # Attach callback to the save button
@@ -418,6 +422,33 @@ def load_ML():
 
 # Attach callback to the run button
 train_button.on_click(load_ML)
+
+
+# --------------- FEATURE SELECTION ALGORITHM ---------------
+
+# df our data frame
+ 
+# Remove non-numeric columns and NaN values
+non_numeric_columns = ['Substance Name', 'Smiles']
+df.drop(columns=non_numeric_columns, inplace=True)
+
+feature_selection_status_message = Div(text='Not running', styles=not_updated)
+
+feature_selection_button = Button(label="Run Feature Selection", button_type="success")
+
+feature_selection_button.on_click(load_ML)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # --------------- HYPERPARAMETER TUNING + BUTTON ---------------
@@ -907,11 +938,8 @@ tab0_layout = intro_instr
 table_layout = row(checkbox_button_group, data_tab_table)
 slider_layout = column(tvt_slider, split_display, row(save_config_button, save_config_message))
 interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
-
 tab1_layout = row(column(row(data_instr, slider_layout), table_layout), interactive_graph)
-
-
-tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_selection_button, feature_selection_status_message))
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
 tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
