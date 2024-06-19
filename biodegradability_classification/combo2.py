@@ -90,9 +90,10 @@ tune_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                  Change <b>hyperparameters</b> based on your chosen ML algorithm, 
                  and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
-                 on the boxplot. You can <b>save</b> any model at any time and <b>display</b> any saved model on the plot.
+                 on the boxplot, as well as your current tune's actual <b>testing accuracies</b>. 
+                 You can <b>save</b> any model at any time and <b>display</b> any saved model's <b>testing accuracy</b> on the plot.
                  </div>""",
-width=300, height=150)
+width=300, height=175)
 
 test_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -134,7 +135,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=600, height=300, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=650, height=300, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -614,14 +615,14 @@ tune_button.on_click(load_tuned_config)
 plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
-boxplot = figure(x_range=['pretune', 'posttune', 'test', 'saved'],
+boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
             y_range = (0.0, 1.0),
-            width = 500,
-            height = 500,
+            width = 400,
+            height = 400,
             tools="",
             toolbar_location=None,
             background_fill_color="#eaefef",
-            title="Validation Accuracies",
+            title="Model Accuracies",
             y_axis_label="accuracy")
 
 df_box = pd.DataFrame()
