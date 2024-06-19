@@ -138,7 +138,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=750, height=300, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=650, height=300, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -163,7 +163,9 @@ split_list = [50,25,25] #0-train, 1-val, 2-test
 
 # helper function to produce string
 def update_text(train_percentage, val_percentage, test_percentage):
-    split_display.text = f"<div>Training split: {train_percentage}%</div><div>Validation split: {val_percentage}%</div><div>Testing split: {test_percentage}%</div>"
+    split_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+    <div>Training split: {train_percentage}%</div><div>Validation split: {val_percentage}%</div><div>Testing split: {test_percentage}%</div>
+    </div>"""
 
 # function to update model and accuracy
 def update_values(attrname, old, new):
@@ -202,7 +204,10 @@ callback = CustomJS(args = dict(),
 # creating widgets
 tvt_slider = RangeSlider(title="Train-Validate-Test Slider", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
 tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
-split_display = Div(text="<div>Training split: 50%</div><div>Validation split: 25%</div><div>Testing split: 25%</div>")
+split_display = Div(text="""
+                    <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+                    <div>Training split: 50%</div><div>Validation split: 25%</div><div>Testing split: 25%</div>
+                    </div>""")
 
 # --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
 
@@ -330,7 +335,9 @@ def update_algorithm(attr, old, new):
 alg_select.on_change('value', update_algorithm)
 
 # creating widgets
-accuracy_display = Div(text="<div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>")
+accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+                       <div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
+                       </div>""")
 test_accuracy = []
 
 # Create empty lists
@@ -370,7 +377,9 @@ def run_ML():
     update_boxplot()
 
     # Updating accuracy display
-    accuracy_display.text = f"<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>"
+    accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+    <div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
+    </div>"""
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage, columns):
 
@@ -450,7 +459,9 @@ feature_selection_status_message = Div(text='Not running', styles=not_updated)
 feature_selection_button = Button(label="Run Feature Selection", button_type="success")
 result_text = PreText(text="", width=500, height=200)
 selected_features_text = Paragraph(text="")
-fs_accuracy_display = Div(text="<div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>")
+fs_accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+                          <div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
+                          </div>""")
 
 def run_FS():
     global my_alg, stage, model
@@ -510,7 +521,9 @@ def run_FS():
 
     split_and_train_model(split_list[0],split_list[1],split_list[2], selected_features.tolist())
     # Updating accuracy display
-    fs_accuracy_display.text = f"<div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>"
+    fs_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+    <div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>
+    </div>"""
 
 #first update the text that the feature selection algorithm is running
 def load_FS():
@@ -550,7 +563,10 @@ feature_selection_button.on_click(load_FS)
 hyperparam_list = [None,"best"]
 
 # create displays
-tuned_accuracy_display = Div(text = "<div><b>Tuned Validation Accuracy:</b> N/A</div><div><b>Tuned Test Accuracy:</b> N/A</div>")
+tuned_accuracy_display = Div(text = """
+                             <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+                             <div><b>Tuned Validation Accuracy:</b> N/A</div><div><b>Tuned Test Accuracy:</b> N/A</div>
+                             </div>""")
 
 def run_tuned_config():
     global my_alg, stage
@@ -570,7 +586,9 @@ def run_tuned_config():
     update_boxplot()
 
     # Updating accuracy display
-    tuned_accuracy_display.text = f"<div><b>Validation Accuracy:</b> {tuned_val_accuracy}</div><div><b>Test Accuracy:</b> {tuned_test_accuracy}</div>"
+    tuned_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+    <div><b>Validation Accuracy:</b> {tuned_val_accuracy}</div><div><b>Test Accuracy:</b> {tuned_test_accuracy}</div>
+    </div>"""
 
 # hyperparameter tuning widgets, default to decision tree
 hp_slider = Slider(
