@@ -283,8 +283,9 @@ test_accuracy = []
 # Create empty lists
 val_accuracy = [None for i in range(10)]
 tuned_val_accuracy = [None for i in range(10)]
+tuned_test_accuracy = [None for i in range(10)]
 saved_accuracy = [None for i in range(10)]
-combo_list = val_accuracy + tuned_val_accuracy + saved_accuracy
+combo_list = val_accuracy + tuned_val_accuracy + tuned_test_accuracy + saved_accuracy
 
 def run_ML():
     #stage can be train or tune, determines which list to write to
@@ -309,7 +310,7 @@ def run_ML():
     # Changing the list used to create boxplot
     global combo_list
     combo_list.clear()
-    combo_list = val_accuracy + [None for i in range(10)] + saved_accuracy
+    combo_list = val_accuracy + [None for i in range(20)] + saved_accuracy
 
     update_boxplot()
 
@@ -381,9 +382,6 @@ train_button.on_click(load_ML)
 ## SVC - int, ""
 hyperparam_list = [None,"best"]
 
-# Create empty lists
-tuned_test_accuracy = []
-
 # create displays
 tuned_accuracy_display = Div(text = "<div><b>Tuned Validation Accuracy:</b> N/A</div><div><b>Tuned Test Accuracy:</b> N/A</div>")
 
@@ -400,6 +398,7 @@ def run_tuned_config():
     # Changing the list used to create boxplot
     global combo_list
     combo_list[10:20] = tuned_val_accuracy.copy()
+    combo_list[20:30] = tuned_test_accuracy.copy()
 
     update_boxplot()
 
@@ -570,7 +569,7 @@ tune_button.on_click(load_tuned_config)
 plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
-p = figure(x_range=['pretune', 'posttune', 'saved'],
+boxplot = figure(x_range=['pretune', 'posttune', 'test', 'saved'],
             y_range = (0.0, 1.0),
             width = 500,
             height = 500,
@@ -592,7 +591,7 @@ source = ColumnDataSource()
 def update_df_box():
     # making the initial boxplot
     global combo_list
-    d = {'kind': ['pretune' for i in range(10)] + ['posttune' for j in range(10)] + ['saved' for l in range(10)],
+    d = {'kind': ['pretune' for i in range(10)] + ['posttune' for j in range(10)] + ['test' for k in range(10)] + ['saved' for l in range(10)],
         'accuracy': combo_list
         }
     
@@ -631,54 +630,36 @@ def update_df_box():
     plot_status_message.styles = updated
 
 def get_minmax(kind):
+    temp_list = []
+    temp_index = 0
+
     if kind == 'pretune':
-        if combo_list[0] == None: # when module is first loaded
-            return 0,0
-        else:
-            combo_list_pretune = combo_list[:10]
-            abs_min = min(combo_list_pretune)
-            while abs_min < df_box["lower"][0]:
-                combo_list_pretune.remove(abs_min)
-                abs_min = min(combo_list_pretune)
-
-            abs_max = max(combo_list_pretune)
-            while abs_max > df_box["upper"][0]:
-                combo_list_pretune.remove(abs_max)
-                abs_max = max(combo_list_pretune)
-
-            return abs_min, abs_max
+        temp_list = combo_list[:10]
     elif kind == 'posttune':
-        if combo_list[10] == None: # when module is first loaded
-            return 0,0
-        else:
-            combo_list_posttune = combo_list[10:20]
-            abs_min = min(combo_list_posttune)
-            while abs_min < df_box["lower"][10]:
-                combo_list_posttune.remove(abs_min)
-                abs_min = min(combo_list_posttune)
-
-            abs_max = max(combo_list_posttune)
-            while abs_max > df_box["upper"][10]:
-                combo_list_posttune.remove(abs_max)
-                abs_max = max(combo_list_posttune)
-
-            return abs_min, abs_max
+        temp_list = combo_list[10:20]
+        temp_index = 10
+    elif kind == 'test':
+        temp_list = combo_list[20:30]
+        temp_index = 20
     elif kind == 'saved':
-        if combo_list[-1] == None:
-            return 0,0
-        else:
-            combo_list_saved = combo_list[20:]
-            abs_min = min(combo_list_saved)
-            while abs_min < df_box["lower"][20]:
-                combo_list_saved.remove(abs_min)
-                abs_min = min(combo_list_saved)
+        temp_list = combo_list[30:]
+        temp_index = 30
 
-            abs_max = max(combo_list_saved)
-            while abs_max > df_box["upper"][20]:
-                combo_list_saved.remove(abs_max)
-                abs_max = max(combo_list_saved)
+    if combo_list[temp_index] == None: # when module is first loaded
+        return 0,0
+    else:
+        abs_min = min(temp_list)
+        while abs_min < df_box["lower"][temp_index]:
+            temp_list.remove(abs_min)
+            abs_min = min(temp_list)
 
-            return abs_min, abs_max
+        abs_max = max(temp_list)
+        while abs_max > df_box["upper"][temp_index]:
+            temp_list.remove(abs_max)
+            abs_max = max(temp_list)
+
+        return abs_min, abs_max
+    
 
 def make_glyphs():
     # make all of the glyphs
@@ -687,21 +668,21 @@ def make_glyphs():
     global outlier_points
     whisker = Whisker(base="kind", upper="max", lower="min", source=source)
     whisker.upper_head.size = whisker.lower_head.size = 20
-    p.add_layout(whisker)
+    boxplot.add_layout(whisker)
 
-    outlier_points = p.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
+    outlier_points = boxplot.scatter("kind", "accuracy", source=outliers, size=6, color="black", alpha=0.3)
 
     # quantile boxes
     global kinds, cmap, top_box, bottom_box
     kinds = df_box.kind.unique()
     cmap = factor_cmap("kind", "Paired3", kinds)
-    top_box = p.vbar(x = "kind", width = 0.7, bottom = "q2", top = "q3", color=cmap, line_color="black", source = source)
-    bottom_box = p.vbar("kind", 0.7, "q1", "q2", color=cmap, line_color="black", source = source)
+    top_box = boxplot.vbar(x = "kind", width = 0.7, bottom = "q2", top = "q3", color=cmap, line_color="black", source = source)
+    bottom_box = boxplot.vbar("kind", 0.7, "q1", "q2", color=cmap, line_color="black", source = source)
 
     # constant plot features
-    p.xgrid.grid_line_color = None
-    p.axis.major_label_text_font_size="14px"
-    p.axis.axis_label_text_font_size="12px"
+    boxplot.xgrid.grid_line_color = None
+    boxplot.axis.major_label_text_font_size="14px"
+    boxplot.axis.axis_label_text_font_size="12px"
 
 def update_boxplot():
     global df_box
@@ -844,8 +825,8 @@ def predict_biodegrad():
     temp_val = int(temp_tvt_list[1])
     temp_test = int(temp_tvt_list[2])
 
-    temp_cols = save_source.data['saved_columns'][int(predict_select.value)-1]
-    split_and_train_model(temp_train,temp_val,temp_test, temp_cols)
+    temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
+    split_and_train_model(temp_train,temp_val,temp_test, temp_columns)
 
     user_molec = Chem.MolFromSmiles(user_smiles_input.value)
     user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
@@ -881,7 +862,7 @@ interactive_graph = column(row(select_x, select_y), data_vis) #create data graph
 tab1_layout = column(row(column(data_instr, slider_layout), table_layout), interactive_graph)
 tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
-plot_layout = column(p, plot_status_message, display_save_select, display_save_button)
+plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
 tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
