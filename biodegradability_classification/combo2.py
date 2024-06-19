@@ -198,14 +198,24 @@ df['Class'] = df['Class'].astype('category')
 # print(df.iloc[312])
 
 # Create a ColumnDataSource
-data_vis_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[]))
+data_vis_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names = []))
+# print(df['Substance Name'])
+
+# configure hovertool
+tooltips = [
+    ("name", "@names"),
+    ("index", "$index")
+]
 
 # Create a figure
-data_vis = figure(title="Data Exploration Scatter Plot - search for correlations between numeric variables", x_axis_label='X', y_axis_label='Y', 
-           tools="pan,wheel_zoom,box_zoom,reset,hover,save")
+data_vis = figure(title="Data Exploration Scatter Plot - search for correlations between numeric variables", width = 800, height = 600, x_axis_label='X', y_axis_label='Y', 
+           tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
 
 # Create an initial scatter plot
 data_vis_scatter = data_vis.scatter(x='x', y='y', color='class_color', source=data_vis_source, legend_field='class_label')
+
+# legend
+data_vis.add_layout(data_vis.legend[0], 'right')
 
 # Create dropdown menus for X and Y axis
 select_x = Select(title="X Axis", value=data_vis_columns[0], options=data_vis_columns)
@@ -218,7 +228,8 @@ def update_data_vis(attrname, old, new):
     new_vis_data = {
         'x': df[x],
         'y': df[y],
-        'class_color': [Category10[3][0] if cls == df['Class'].cat.categories[0] else Category10[3][1] for cls in df['Class']],
+        'names' : df['Substance Name'],
+        'class_color': ['#900C3F' if cls == df['Class'].cat.categories[0] else '#1DBD4D' for cls in df['Class']],
         'class_label': ['Nonbiodegradable' if cls == df['Class'].cat.categories[0] else 'Biodegradable' for cls in df['Class']]
     }
         
