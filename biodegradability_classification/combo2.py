@@ -1,19 +1,22 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, Paragraph
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
 from bokeh.palettes import Category10
 from bokeh.transform import factor_cmap
+from bokeh.layouts import layout
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import RFECV
 '''
 This file is a draft for combining the module's features
 '''
@@ -334,6 +337,8 @@ test_accuracy = []
 val_accuracy = [None for i in range(10)]
 tuned_val_accuracy = [None for i in range(10)]
 tuned_test_accuracy = [None for i in range(10)]
+fs_val_accuracy = [None for i in range(10)]
+fs_test_accuracy = [None for i in range(10)]
 saved_accuracy = [None for i in range(10)]
 combo_list = val_accuracy + tuned_val_accuracy + tuned_test_accuracy + saved_accuracy
 
@@ -379,7 +384,11 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
     elif stage == 'Tune':
         tuned_val_accuracy.clear()
         tuned_test_accuracy.clear()
+    elif stage == 'FS':
+        fs_val_accuracy.clear()
+        fs_test_accuracy.clear()
 
+    
     train_columns = []
     train_columns += columns
     if 'Fingerprint List' in columns:
@@ -410,6 +419,10 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
         elif stage == 'Tune':
             tuned_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
             tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+        elif stage == 'FS':
+            fs_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
+            fs_test_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
+            
 
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
@@ -432,11 +445,88 @@ train_button.on_click(load_ML)
 non_numeric_columns = ['Substance Name', 'Smiles']
 df.drop(columns=non_numeric_columns, inplace=True)
 
+#move these to the top once finished
 feature_selection_status_message = Div(text='Not running', styles=not_updated)
-
 feature_selection_button = Button(label="Run Feature Selection", button_type="success")
+result_text = PreText(text="", width=500, height=200)
+selected_features_text = Paragraph(text="")
+fs_accuracy_display = Div(text="<div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>")
 
-feature_selection_button.on_click(load_ML)
+def run_FS():
+    global my_alg, stage, model
+    stage = 'FS'
+    
+    # Assigning model based on selected ML algorithm, using default hyperparameters
+    if my_alg == "Decision Tree":
+        model = DecisionTreeClassifier()
+    elif my_alg == "K-Nearest Neighbor":
+        model = KNeighborsClassifier()
+    else:
+        model = LinearSVC()
+    print(f'hi! {my_alg}')
+    print(df)
+    
+    # Prepare data (excluding 'Class' as it is the target variable)
+    X = df.drop(columns=['Class'])  # Features
+    y = df['Class']  # Target
+    #ensure columns are numeric
+    X = X.apply(pd.to_numeric, errors='coerce').fillna(0)  # Convert to numeric and fill NaNs with 0
+
+    np.random.seed(123)
+    #create training,validation,and test set
+    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-split_list[0])/100)
+    test_split = split_list[2] / (100-split_list[0])
+    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
+
+    #perform feature selection
+    rfecv = RFECV(estimator=model, step=1, cv=5, scoring='accuracy')  # 5-fold cross-validation
+    rfecv.fit(X_train, y_train)
+
+    #get optimal number of features
+    optimal_features = rfecv.n_features_
+    
+    # Get the selected features
+    selected_features = X.columns[rfecv.support_]
+    selected_features_text.text = f"Selected Features (top {optimal_features}): {', '.join(selected_features)}"
+
+    # Transform the training and testing data to keep only the selected features
+    X_train_rfecv = rfecv.transform(X_train)
+    X_test_rfecv = rfecv.transform(X_test)
+
+    # Fit the model using the selected features
+    model.fit(X_train_rfecv, y_train)
+
+    # Make predictions and evaluate the model
+    y_pred = model.predict(X_test_rfecv)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred)
+
+    # Update the result text
+    result_text.text = f"Accuracy: {accuracy}\n\nClassification Report:\n{report}"
+    feature_selection_status_message.text = "Feature selection completed successfully."
+    feature_selection_status_message.styles = updated
+
+
+    split_and_train_model(split_list[0],split_list[1],split_list[2], selected_features.tolist())
+    # Updating accuracy display
+    fs_accuracy_display.text = f"<div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>"
+
+#first update the text that the feature selection algorithm is running
+def load_FS():
+    feature_selection_status_message.text = f'Running Feature Selection with {my_alg}... This may take more than 30 seconds'
+    feature_selection_status_message.styles = loading
+    curdoc().add_next_tick_callback(run_FS)#then run the feature selection algorithm
+
+#when the feature selection button gets clicks
+feature_selection_button.on_click(load_FS)
+
+
+
+
+
+
+
 
 
 
@@ -938,7 +1028,7 @@ table_layout = column(row(checkbox_button_group, data_tab_table))
 slider_layout = column(tvt_slider, split_display, save_config_button, save_config_message)
 interactive_graph = column(row(select_x, select_y), data_vis) #create data graph visualization 
 tab1_layout = row(column(data_instr, slider_layout), table_layout, interactive_graph)
-tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_selection_button, feature_selection_status_message)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
 tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
