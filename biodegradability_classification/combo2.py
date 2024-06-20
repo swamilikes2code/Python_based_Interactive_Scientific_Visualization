@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from math import nan
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
@@ -202,7 +202,8 @@ data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in co
 data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=650, height=300, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
-checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
+# checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
+data_multiselect = MultiSelect(options = optional_columns, value = optional_columns, size = 8)
 
 # Update columns to display
 def update_cols(display_columns):
@@ -211,7 +212,8 @@ def update_cols(display_columns):
     data_tab_table.columns = [col for col in data_tab_columns if col.title in all_columns]
 
 def update_table(attr, old, new):
-    cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    # cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    cols_to_display = data_multiselect.value
     update_cols(display_columns=cols_to_display)
     save_config_message.text = 'Configuration not saved'
     save_config_message.styles = not_updated
@@ -338,7 +340,8 @@ update_data_exp(None, None, None)
 # --------------- SAVE DATA BUTTON ---------------
 
 # table on change
-checkbox_button_group.on_change('active', update_table)
+# checkbox_button_group.on_change('active', update_table)
+data_multiselect.on_change('value', update_table)
 
 # range slider on change
 tvt_slider.js_on_change('value', callback)
@@ -346,7 +349,8 @@ tvt_slider.on_change('value', update_values)
 
 # Save columns to saved list (split already saved)
 def save_config():
-    temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    # temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    temp_columns = data_multiselect.value
     if len(temp_columns) == 0:
         save_config_message.text = 'Error: must select at least one feature'
         save_config_message.styles = not_updated
@@ -1181,11 +1185,15 @@ fs_vis_button.on_click(toggle_feature_select_visibility)
 # creating widget layouts
 tab0_layout = intro_instr
 
-slider_layout = column(row(splitter_title, splitter_help), tvt_slider, split_display)
-table_layout = column(row(datatable_title, datatable_help), row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message)))
+slider_layout = column(splitter_help, tvt_slider, split_display, save_config_button, save_config_message)
+table_selection_layout = column(datatable_help, data_multiselect)
+table_layout = data_tab_table
 interactive_graph = column(data_exp_vis_button, row(datavis_title, datavis_help), data_exp, row(select_x, select_y)) #create data graph visualization 
 
-tab1_layout = row(column(row(slider_layout), row(table_layout)), interactive_graph)
+tab1_layout = layout(
+    [slider_layout, table_selection_layout, table_layout],
+    [interactive_graph]
+)
 
 fs_layout = column(fs_vis_button, row(fs_title, fs_help), fs_button, fs_status_message, fs_accuracy_display)
 tab2_layout = column(row(train_title, train_help), alg_select, train_button, train_status_message, accuracy_display, fs_layout)
