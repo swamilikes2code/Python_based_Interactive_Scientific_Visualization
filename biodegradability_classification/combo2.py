@@ -45,6 +45,7 @@ predict_status_message = Div(text = 'Not running', styles=not_updated)
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning")
 train_button = Button(label="Run ML algorithm", button_type="success")
+feature_selection_button = Button(label="Run Feature Selection", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
 save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
@@ -470,9 +471,9 @@ train_button.on_click(load_ML)
 # df.drop(columns=non_numeric_columns, inplace=True)
 
 #move these to the top once finished
-feature_selection_button = Button(label="Run Feature Selection", button_type="success")
-result_text = PreText(text="", width=500, height=200)
-selected_features_text = Div(text="")
+
+# result_text = PreText(text="", width=500, height=200)
+# selected_features_text = Div(text="")
 fs_accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
                           <div><b>Feature Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
                           </div>""")
@@ -1054,9 +1055,9 @@ predict_button.on_click(load_predict)
 # ---------------- VISIBILITY --------------
 
 # Data exploration plot
-data_vis.visible = not data_vis.visible
-select_x.visible = not select_x.visible
-select_y.visible = not select_y.visible
+data_vis.visible = False
+select_x.visible = False
+select_y.visible = False
 
 # Callback function to toggle visibility
 def toggle_data_vis_visibility():
@@ -1070,12 +1071,12 @@ data_exp_vis.on_click(toggle_data_vis_visibility)
 
 
 # Feature selection
-feature_select_instr.visible = not feature_select_instr.visible
-feature_selection_button.visible = not feature_selection_button.visible
-feature_selection_status_message.visible = not feature_selection_status_message.visible
-fs_accuracy_display.visible = not fs_accuracy_display.visible
-selected_features_text.visible = not selected_features_text.visible
-result_text.visible = not result_text.visible
+feature_select_instr.visible = False
+feature_selection_button.visible = False
+feature_selection_status_message.visible = False
+fs_accuracy_display.visible = False
+# selected_features_text.visible = not selected_features_text.visible
+# result_text.visible = not result_text.visible
 
 #Callback function to toggle visibility
 def toggle_feature_select_visibility():
@@ -1083,8 +1084,8 @@ def toggle_feature_select_visibility():
     feature_selection_button.visible = not feature_selection_button.visible
     feature_selection_status_message.visible = not feature_selection_status_message.visible
     fs_accuracy_display.visible = not fs_accuracy_display.visible
-    selected_features_text.visible = not selected_features_text.visible
-    result_text.visible = not result_text.visible
+    # selected_features_text.visible = not selected_features_text.visible
+    # result_text.visible = not result_text.visible
     feat_select_vis.label = "Show Feature Selection*" if not feature_select_instr.visible else "Hide Feature Selection*"
 
 # Link the button to the callback
@@ -1103,11 +1104,11 @@ tab0_layout = intro_instr
 
 table_layout = row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message))
 slider_layout = column(tvt_slider, split_display)
-interactive_graph = column(data_vis, row(select_x, select_y), data_exp_vis) #create data graph visualization 
+interactive_graph = column(data_exp_vis, data_vis, row(select_x, select_y)) #create data graph visualization 
 
 tab1_layout = row(column(row(data_instr, slider_layout), row(table_layout)), interactive_graph)
 
-feat_select_layout = column(feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text, feat_select_vis)
+feat_select_layout = column(feat_select_vis, feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display)
 tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feat_select_layout)
 
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
