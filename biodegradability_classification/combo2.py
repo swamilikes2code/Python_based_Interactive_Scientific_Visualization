@@ -768,7 +768,7 @@ source = ColumnDataSource()
 def update_df_box():
     # making the initial boxplot
     global combo_list
-    d = {'kind': ['pretune' for i in range(10)] + ['posttune' for j in range(10)] + ['test' for k in range(10)] + ['saved' for l in range(10)],
+    d = {'kind': ['pretune val' for i in range(10)] + ['posttune val' for j in range(10)] + ['test' for k in range(10)] + ['saved' for l in range(10)],
         'accuracy': combo_list
         }
     
@@ -810,9 +810,9 @@ def get_minmax(kind):
     temp_list = []
     temp_index = 0
 
-    if kind == 'pretune':
+    if kind == 'pretune val':
         temp_list = combo_list[:10]
-    elif kind == 'posttune':
+    elif kind == 'posttune val':
         temp_list = combo_list[10:20]
         temp_index = 10
     elif kind == 'test':
