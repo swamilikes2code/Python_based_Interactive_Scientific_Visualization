@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip
+from math import nan
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
@@ -31,6 +32,17 @@ This file is a draft for combining the module's features
 not_updated = {'color': 'red', 'font-size': '16px'}
 loading = {'color': 'orange', 'font-size': '16px'}
 updated = {'color': 'green', 'font-size': '16px'}
+
+# ---------------ACCURACY LISTS-----------------
+# Create empty lists - declare at the top to use everywhere
+val_accuracy = [nan for i in range(10)]
+tuned_val_accuracy = [nan for i in range(10)]
+tuned_test_accuracy = [nan for i in range(10)]
+fs_val_accuracy = [nan for i in range(10)]
+fs_test_accuracy = [nan for i in range(10)]
+saved_accuracy = [nan for i in range(10)]
+combo_list = val_accuracy + tuned_val_accuracy + tuned_test_accuracy + saved_accuracy
+
 
 # ---------------STATUS MESSAGES-----------------
 
@@ -335,9 +347,19 @@ tvt_slider.on_change('value', update_values)
 # Save columns to saved list (split already saved)
 def save_config():
     temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    if len(temp_columns) == 0:
+        save_config_message.text = 'Error: must select at least one feature'
+        save_config_message.styles = not_updated
+        return
+
     global user_columns
     user_columns.clear()
     user_columns = temp_columns
+
+    global combo_list
+    # combo_list.clear()
+    combo_list = [nan for i in range(40)]
+    update_boxplot()
 
     #split_list isn't located here as the split values update in the list upon the change of the range slider
     #the collective save button is to make the design more cohesive
@@ -356,8 +378,8 @@ def load_config():
     tune_status_message.text='Not running'
     tune_status_message.styles=not_updated
 
-    plot_status_message.text = 'Plot not updated'
-    plot_status_message.styles=not_updated
+    # plot_status_message.text = 'Plot not updated'
+    # plot_status_message.styles=not_updated
 
     fs_status_message.text = 'Not running'
     fs_status_message.styles=not_updated
@@ -390,16 +412,13 @@ accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 2
                        </div>""")
 test_accuracy = []
 
-# Create empty lists
-val_accuracy = [None for i in range(10)]
-tuned_val_accuracy = [None for i in range(10)]
-tuned_test_accuracy = [None for i in range(10)]
-fs_val_accuracy = [None for i in range(10)]
-fs_test_accuracy = [None for i in range(10)]
-saved_accuracy = [None for i in range(10)]
-combo_list = val_accuracy + tuned_val_accuracy + tuned_test_accuracy + saved_accuracy
 
 def run_ML():
+    if save_config_message.styles == not_updated:
+        train_status_message.text = 'Error: must save data configuration before training'
+        train_status_message.styles = not_updated
+        return
+
     #stage can be train or tune, determines which list to write to
     global stage
     global model
@@ -422,7 +441,7 @@ def run_ML():
     # Changing the list used to create boxplot
     global combo_list
     combo_list.clear()
-    combo_list = val_accuracy + [None for i in range(20)] + saved_accuracy
+    combo_list = val_accuracy + [nan for i in range(20)] + saved_accuracy
 
     update_boxplot()
 
@@ -512,6 +531,11 @@ fs_accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding
                           </div>""")
 
 def run_FS():
+    if save_config_message.styles == not_updated:
+        fs_status_message.text = 'Error: must save data configuration before feature selection'
+        fs_status_message.styles = not_updated
+        return
+
     global my_alg, stage, model
     stage = 'FS'
     
@@ -603,10 +627,10 @@ fs_button.on_click(load_FS)
 # --------------- HYPERPARAMETER TUNING + BUTTON ---------------
 
 # a list of an int an string
-## decision tree - int/None, string
+## decision tree - int/nan, string
 ## KNN - int, string
 ## SVC - int, ""
-hyperparam_list = [None,"best"]
+hyperparam_list = [nan,"best"]
 
 # create displays
 tuned_accuracy_display = Div(text = """
@@ -615,6 +639,15 @@ tuned_accuracy_display = Div(text = """
                              </div>""")
 
 def run_tuned_config():
+    if save_config_message.styles == not_updated:
+        tune_status_message.text = 'Error: must save data configuration before tuning'
+        tune_status_message.styles = not_updated
+        return
+    elif train_status_message.styles == not_updated:
+        tune_status_message.text = 'Error: must train model before tuning'
+        tune_status_message.styles = not_updated
+        return
+
     global my_alg, stage
     stage = 'Tune'
     tune_status_message.text = f'Algorithm: {my_alg}'
@@ -830,6 +863,8 @@ def update_df_box():
     global df_box
     df_box = pd.DataFrame(data=d)
 
+    print(df_box)
+
     # compute quantiles
     qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
     qs = qs.unstack().reset_index()
@@ -876,7 +911,7 @@ def get_minmax(kind):
         temp_list = combo_list[30:]
         temp_index = 30
 
-    if combo_list[temp_index] == None: # when module is first loaded
+    if combo_list[temp_index] == nan: # when module is first loaded
         return 0,0
     else:
         abs_min = min(temp_list)
@@ -969,6 +1004,11 @@ saved_data_table = DataTable(source=save_source, columns=saved_columns, width=60
 
 
 def save_plot():
+    if tune_status_message.styles == not_updated:
+        plot_status_message.text = 'Error: must tune model before saving'
+        plot_status_message.styles = not_updated
+        return
+
     global combo_list
     # global saved_accuracy
     global hyperparam_list
@@ -1036,7 +1076,6 @@ def display_save():
 
     plot_status_message.text = 'Plot updated'
     plot_status_message.styles = updated
-
 
 def load_display_save():
     plot_status_message.text = 'Updating plot...'
