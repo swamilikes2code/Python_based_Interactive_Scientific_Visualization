@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
+from bokeh.models.dom import HTML
 from bokeh.plotting import figure
 from bokeh.transform import factor_cmap
 from bokeh.layouts import layout
@@ -85,39 +86,66 @@ intro_instr = Div(text="""
                   </div>""",
 width=750, height=500)
 
-data_instr = Div(text="""
-                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 Use the <b>slider</b> to split the data into <i>train/validate/test</i> percentages,
-                 and <b>select/deselect</b> property columns for training the model. 
-                 You can see the graphical relationship between any two properties in the plot on the right.
-                 Finally, <b>save</b> the configuration.
-                 </div>""",
-width=300, height=150)
+splitter_title = Div(text="""
+<b>Split Data</b>
+""")
 
-train_instr = Div(text="""
+splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
+                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
+                 </div>""", width=300, height=75), position="right"))
+
+datatable_title = Div(text="""
+<b>Drop Data</b>
+""")
+
+datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
+                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 <b>Select/deselect</b> property columns for training the model.
+                 </div>""", width=300, height=75), position="right"))
+
+datavis_title = Div(text="""
+<b>Graph Data (opt)</b>
+""")
+
+datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
+                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 View the graphical relationship between any two properties.
+                 </div>""", width=300, height=75), position="right"))
+
+train_title = Div(text="""
+<b>Train Model</b>
+""")
+
+train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                   Select and run one of the following <b>Machine Learning algorithms:</b>
-                  </div>""",
-width=300, height=75)
+                  </div>""", width=300, height=75), position="right"))
 
-fs_instr = Div(text="""
+fs_title = Div(text="""
+<b>Feature Selection(opt)</b>
+""")
+
+
+fs_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                   <div><b>Optional:</b> run <b>feature selection</b> for your chosen ML algorithm. This will display
                            which columns are recommended for training this ML algorithm. Afterwards, you can update
                            your chosen columns accordingly on the <b>data</b> tab, and rerun your algorithm.</div>
                            <div><i>Note: Feature selection is <b>not</b> compatible with <b>K-Nearest Neighbors</b></i></div>
-                  </div>""",
-width=300, height=175)
+                  </div>""", width=300, height=75), position="right"))
 
-# This will likely be changed when validation and testing are two different buttons
-tune_instr = Div(text="""
+tune_title = Div(text="""
+<b>Hyperparameter Tuning</b>
+""") 
+
+tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                  Change <b>hyperparameters</b> based on your chosen ML algorithm, 
                  and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
                  on the boxplot, as well as your current tune's actual <b>testing accuracies</b>. 
                  You can <b>save</b> any model at any time and <b>display</b> any saved model's <b>testing accuracy</b> on the plot.
-                 </div>""",
-width=300, height=175)
+                 </div>""", width=300, height=75), position="right"))
 
 test_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -223,7 +251,7 @@ callback = CustomJS(args = dict(),
             )
 
 # creating widgets
-tvt_slider = RangeSlider(title="Train-Validate-Test Slider", value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
+tvt_slider = RangeSlider(value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
 tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 split_display = Div(text="""
                     <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
@@ -1060,12 +1088,16 @@ predict_button.on_click(load_predict)
 # ---------------- VISIBILITY --------------
 
 # Data exploration plot
+datavis_title.visible = False
+datavis_help.visible = False
 data_exp.visible = False
 select_x.visible = False
 select_y.visible = False
 
 # Callback function to toggle visibility
 def toggle_data_exp_visibility():
+    datavis_title.visible = not datavis_title.visible
+    datavis_help.visible = not datavis_help.visible
     data_exp.visible = not data_exp.visible
     select_x.visible = not select_x.visible
     select_y.visible = not select_y.visible
@@ -1077,7 +1109,8 @@ data_exp_vis_button.on_click(toggle_data_exp_visibility)
 
 
 # Feature selection
-fs_instr.visible = False
+fs_title.visible = False
+fs_help.visible = False
 fs_button.visible = False
 fs_status_message.visible = False
 fs_accuracy_display.visible = False
@@ -1086,13 +1119,13 @@ fs_accuracy_display.visible = False
 
 #Callback function to toggle visibility
 def toggle_feature_select_visibility():
-    fs_instr.visible = not fs_instr.visible
+
+    fs_title.visible = not fs_title.visible
+    fs_help.visible = not fs_help.visible
     fs_button.visible = not fs_button.visible
     fs_status_message.visible = not fs_status_message.visible
     fs_accuracy_display.visible = not fs_accuracy_display.visible
-    # selected_features_text.visible = not selected_features_text.visible
-    # result_text.visible = not result_text.visible
-    fs_vis_button.label = "Show Feature Selection*" if not fs_instr.visible else "Hide Feature Selection*"
+    fs_vis_button.label = "Show Feature Selection*" if not fs_title.visible else "Hide Feature Selection*"
     fs_vis_button.icon = down_arrow if not fs_vis_button.visible else up_arrow
 
 # Link the button to the callback
@@ -1109,19 +1142,19 @@ fs_vis_button.on_click(toggle_feature_select_visibility)
 # creating widget layouts
 tab0_layout = intro_instr
 
-table_layout = row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message))
-slider_layout = column(tvt_slider, split_display)
-interactive_graph = column(data_exp_vis_button, data_exp, row(select_x, select_y)) #create data graph visualization 
+slider_layout = column(row(splitter_title, splitter_help), tvt_slider, split_display)
+table_layout = column(row(datatable_title, datatable_help), row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message)))
+interactive_graph = column(data_exp_vis_button, row(datavis_title, datavis_help), data_exp, row(select_x, select_y)) #create data graph visualization 
 
-tab1_layout = row(column(row(data_instr, slider_layout), row(table_layout)), interactive_graph)
+tab1_layout = row(column(row(slider_layout), row(table_layout)), interactive_graph)
 
-fs_layout = column(fs_vis_button, fs_instr, fs_button, fs_status_message, fs_accuracy_display)
-tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, fs_layout)
+fs_layout = column(fs_vis_button, row(fs_title, fs_help), fs_button, fs_status_message, fs_accuracy_display)
+tab2_layout = column(row(train_title, train_help), alg_select, train_button, train_status_message, accuracy_display, fs_layout)
 
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
 
-tab3_layout = row(column(tune_instr, hyperparam_layout, saved_data_table), plot_layout)
+tab3_layout = row(column(row(tune_title, tune_help), hyperparam_layout, saved_data_table), plot_layout)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
