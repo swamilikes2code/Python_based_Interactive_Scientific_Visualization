@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText
-from bokeh.io import curdoc
+from bokeh.io import curdoc, show
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
@@ -49,6 +49,9 @@ tune_button = Button(label = "Tune", button_type = "success")
 save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
 predict_button = Button(label = 'Predict')
+
+data_exp_vis = Button(label="Show Data Exploration Plot", button_type="default")
+feat_select_vis = Button(label="Show Feature Selection", button_type="default")
 
 # -----------------INSTRUCTIONS-----------------
 
@@ -243,6 +246,7 @@ tooltips = [
 # Create a figure
 data_vis = figure(title="Data Exploration: search for correlations between properties", width = 650, height = 450, x_axis_label='X', y_axis_label='Y', 
            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
+
 
 # Create an initial scatter plot
 data_vis_scatter = data_vis.scatter(x='x', y='y', color='class_color', source=data_vis_source, legend_field='class_label')
@@ -1043,6 +1047,52 @@ def load_predict():
 # callback for predict button
 predict_button.on_click(load_predict)
 
+
+# ---------------- VISIBILITY --------------
+
+# Data exploration plot
+data_vis.visible = not data_vis.visible
+select_x.visible = not select_x.visible
+select_y.visible = not select_y.visible
+
+# Callback function to toggle visibility
+def toggle_data_vis_visibility():
+    data_vis.visible = not data_vis.visible
+    select_x.visible = not select_x.visible
+    select_y.visible = not select_y.visible
+    data_exp_vis.label = "Show Data Exploration Plot" if not data_vis.visible else "Hide Data Exploration Plot"
+
+# Link the button to the callback
+data_exp_vis.on_click(toggle_data_vis_visibility)
+
+
+# Feature selection
+feature_select_instr.visible = not feature_select_instr.visible
+feature_selection_button.visible = not feature_selection_button.visible
+feature_selection_status_message.visible = not feature_selection_status_message.visible
+fs_accuracy_display.visible = not fs_accuracy_display.visible
+selected_features_text.visible = not selected_features_text.visible
+result_text.visible = not result_text.visible
+
+#Callback function to toggle visibility
+def toggle_feature_select_visibility():
+    feature_select_instr.visible = not feature_select_instr.visible
+    feature_selection_button.visible = not feature_selection_button.visible
+    feature_selection_status_message.visible = not feature_selection_status_message.visible
+    fs_accuracy_display.visible = not fs_accuracy_display.visible
+    selected_features_text.visible = not selected_features_text.visible
+    result_text.visible = not result_text.visible
+    data_exp_vis.label = "Show Feature Selection" if not data_vis.visible else "Hide Feature Selection"
+
+# Link the button to the callback
+feat_select_vis.on_click(toggle_feature_select_visibility)
+
+
+
+
+
+
+
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
@@ -1052,11 +1102,11 @@ table_layout = row(checkbox_button_group, column(data_tab_table, save_config_but
 
 slider_layout = column(tvt_slider, split_display)
 
-interactive_graph = column(data_vis, row(select_x, select_y)) #create data graph visualization 
+interactive_graph = column(data_vis, row(select_x, select_y), data_exp_vis) #create data graph visualization 
 
 tab1_layout = row(column(row(data_instr, slider_layout), row(table_layout)), interactive_graph)
 
-tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text, feat_select_vis)
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
 tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
