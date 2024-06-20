@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, Paragraph
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
@@ -36,6 +36,7 @@ updated = {'color': 'green', 'font-size': '16px'}
 # data_table_title = Div(text='Select columns for training', styles=updated)
 save_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
+feature_selection_status_message = Div(text='Not running', styles=not_updated)
 # tuning_title = Div(text='Tune hyperparameters', styles=updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
 plot_status_message = Div(text='Plot not updated', styles=not_updated)
@@ -77,7 +78,7 @@ data_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                  Use the <b>slider</b> to split the data into <i>train/validate/test</i> percentages,
                  and <b>select/deselect</b> property columns for training the model. 
-                 You can see the graphical relationship between any two properties in the plot below.
+                 You can see the graphical relationship between any two properties in the plot on the right.
                  Finally, <b>save</b> the configuration.
                  </div>""",
 width=300, height=150)
@@ -345,7 +346,7 @@ alg_select.on_change('value', update_algorithm)
 
 # creating widgets
 accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                       <div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
+                       <div><b>Your Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
                        </div>""")
 test_accuracy = []
 
@@ -387,7 +388,7 @@ def run_ML():
 
     # Updating accuracy display
     accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
+    <div><b>Your Selected columns:</b> {user_columns}<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
     </div>"""
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage, columns):
@@ -463,12 +464,11 @@ train_button.on_click(load_ML)
 # df.drop(columns=non_numeric_columns, inplace=True)
 
 #move these to the top once finished
-feature_selection_status_message = Div(text='Not running', styles=not_updated)
 feature_selection_button = Button(label="Run Feature Selection", button_type="success")
 result_text = PreText(text="", width=500, height=200)
-selected_features_text = Paragraph(text="")
+selected_features_text = Div(text="")
 fs_accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                          <div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
+                          <div><b>Feature Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
                           </div>""")
 
 def run_FS():
@@ -479,7 +479,10 @@ def run_FS():
     if my_alg == "Decision Tree":
         model = DecisionTreeClassifier()
     elif my_alg == "K-Nearest Neighbor":
-        model = KNeighborsClassifier()
+        model = None
+        feature_selection_status_message.text = "Error, please select a different ML algorithm"
+        feature_selection_status_message.styles = not_updated
+        return
     else:
         model = LinearSVC()
     # print(f'hi! {my_alg}')
@@ -506,7 +509,18 @@ def run_FS():
     
     # Get the selected features
     selected_features = X.columns[rfecv.support_]
-    selected_features_text.text = f"Selected Features (top {optimal_features}): {', '.join(selected_features)}"
+
+    # Clean up fingerprint info
+    ideal_cols = []
+    contains_fingerprint = False
+    for feat in selected_features:
+        if 'pka' in feat or'α'in feat:
+            ideal_cols.append(feat)
+        else:
+            contains_fingerprint = True
+    if contains_fingerprint:
+        ideal_cols.append('Fingerprint List')
+    # selected_features_text.text = f"Selected Columns: {ideal_cols}"
 
     # Transform the training and testing data to keep only the selected features
     X_train_rfecv = rfecv.transform(X_train)
@@ -518,25 +532,25 @@ def run_FS():
     # Make predictions and evaluate the model
     y_pred = model.predict(X_test_rfecv)
 
-    accuracy = accuracy_score(y_test, y_pred)
+    # accuracy = round(accuracy_score(y_test, y_pred), 2)
     
 
     # Update the result text
-    #report = classification_report(y_test, y_pred)
-    result_text.text = f"Accuracy: {accuracy}\n"#\nClassification Report:\n{report}"
-    feature_selection_status_message.text = "Feature selection completed successfully."
+    # report = classification_report(y_test, y_pred)
+    # result_text.text = f"Accuracy: {accuracy}\n"#\nClassification Report:\n{report}"
+    feature_selection_status_message.text = f"Feature selection completed using {my_alg}."
     feature_selection_status_message.styles = updated
 
 
     split_and_train_model(split_list[0],split_list[1],split_list[2], selected_features.tolist())
     # Updating accuracy display
     fs_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>
+    <div><b>Feature Selected Columns:</b> {ideal_cols}</div><div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>
     </div>"""
 
 #first update the text that the feature selection algorithm is running
 def load_FS():
-    feature_selection_status_message.text = f'Running Feature Selection with {my_alg}... This may take more than 30 seconds'
+    feature_selection_status_message.text = f'Running Feature Selection with {my_alg}. This may take more than 30 seconds...'
     feature_selection_status_message.styles = loading
     curdoc().add_next_tick_callback(run_FS)#then run the feature selection algorithm
 
