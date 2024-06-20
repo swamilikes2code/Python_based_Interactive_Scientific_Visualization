@@ -7,6 +7,7 @@ from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
 from bokeh.transform import factor_cmap
 from bokeh.layouts import layout
+from bokeh.models.ui import SVGIcon
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
@@ -51,8 +52,12 @@ save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
 predict_button = Button(label = 'Predict')
 
-data_exp_vis = Button(label="Show Data Exploration*", button_type="primary")
-feat_select_vis = Button(label="Show Feature Selection*", button_type="primary")
+#svg icons for buttons
+up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>''')
+down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" /></svg>''')
+
+data_exp_vis = Button(label="Show Data Exploration*", button_type="primary", icon = down_arrow)
+feat_select_vis = Button(label="Show Feature Selection*", button_type="primary", icon = down_arrow)
 
 # -----------------INSTRUCTIONS-----------------
 
@@ -1065,6 +1070,7 @@ def toggle_data_vis_visibility():
     select_x.visible = not select_x.visible
     select_y.visible = not select_y.visible
     data_exp_vis.label = "Show Data Exploration*" if not data_vis.visible else "Hide Data Exploration*"
+    data_exp_vis.icon = down_arrow if not data_vis.visible else up_arrow
 
 # Link the button to the callback
 data_exp_vis.on_click(toggle_data_vis_visibility)
@@ -1087,6 +1093,7 @@ def toggle_feature_select_visibility():
     # selected_features_text.visible = not selected_features_text.visible
     # result_text.visible = not result_text.visible
     feat_select_vis.label = "Show Feature Selection*" if not feature_select_instr.visible else "Hide Feature Selection*"
+    feat_select_vis.icon = down_arrow if not data_vis.visible else up_arrow
 
 # Link the button to the callback
 feat_select_vis.on_click(toggle_feature_select_visibility)
