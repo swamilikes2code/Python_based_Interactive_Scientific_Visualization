@@ -93,7 +93,7 @@ feature_select_instr = Div(text="""
                   <div><b>Optional:</b> run <b>feature selection</b> for your chosen ML algorithm. This will display
                            which columns are recommended for training this ML algorithm. Afterwards, you can update
                            your chosen columns accordingly on the <b>data</b> tab, and rerun your algorithm.</div>
-                           <div><i>Note: <b>K-Nearest Neighbors</b> will <b>not</b> work for feature selection</i></div>
+                           <div><i>Note: Feature selection is <b>not</b> compatible with <b>K-Nearest Neighbors</b></i></div>
                   </div>""",
 width=300, height=175)
 
@@ -439,7 +439,7 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
             tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
         elif stage == 'FS':
             fs_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
-            fs_test_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
+            fs_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
             
 
 def load_ML():
@@ -482,8 +482,8 @@ def run_FS():
         model = KNeighborsClassifier()
     else:
         model = LinearSVC()
-    print(f'hi! {my_alg}')
-    print(df)
+    # print(f'hi! {my_alg}')
+    # print(df)
     
     # Prepare data (excluding 'Class' as it is the target variable)
     X = df.drop(columns=['Class', 'Substance Name', 'Smiles'])  # Features
