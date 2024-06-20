@@ -5,7 +5,6 @@ from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
 from bokeh.plotting import figure
-from bokeh.palettes import Category10
 from bokeh.transform import factor_cmap
 from bokeh.layouts import layout
 from rdkit import Chem, RDLogger
@@ -747,7 +746,7 @@ plot_counter = 0 #the amount of times button has been pressed
 
 # Create empty plot
 boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
-            y_range = (0.0, 1.0),
+            y_range = (0.4, 1.0),
             width = 400,
             height = 400,
             tools="",
