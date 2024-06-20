@@ -199,7 +199,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=650, height=300, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=700, height=325, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 # checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -295,7 +295,7 @@ tooltips = [
 ]
 
 # Create a figure
-data_exp = figure(title="Data Exploration: search for correlations between properties", width = 650, height = 450, x_axis_label='X', y_axis_label='Y', 
+data_exp = figure(title="Data Exploration: search for correlations between properties", width = 550, height = 300, x_axis_label='X', y_axis_label='Y', 
            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
 
 
@@ -1176,24 +1176,18 @@ fs_vis_button.on_click(toggle_feature_select_visibility)
 
 
 
-
-
-
-
 # --------------- LAYOUTS ---------------
 
 # creating widget layouts
 tab0_layout = intro_instr
 
-slider_layout = column(splitter_help, tvt_slider, split_display, save_config_button, save_config_message)
-table_selection_layout = column(datatable_help, data_multiselect)
+slider_layout = column(row(splitter_help, column(tvt_slider, split_display)), save_config_button, save_config_message)
+table_selection_layout = row(datatable_help, data_multiselect)
 table_layout = data_tab_table
-interactive_graph = column(data_exp_vis_button, row(datavis_title, datavis_help), data_exp, row(select_x, select_y)) #create data graph visualization 
+interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
 
-tab1_layout = layout(
-    [slider_layout, table_selection_layout, table_layout],
-    [interactive_graph]
-)
+tab1_layout = column(row(table_layout, column(table_selection_layout, slider_layout)), interactive_graph)
+
 
 fs_layout = column(fs_vis_button, row(fs_title, fs_help), fs_button, fs_status_message, fs_accuracy_display)
 tab2_layout = column(row(train_title, train_help), alg_select, train_button, train_status_message, accuracy_display, fs_layout)
