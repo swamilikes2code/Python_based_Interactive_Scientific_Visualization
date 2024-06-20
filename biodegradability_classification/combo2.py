@@ -1121,7 +1121,7 @@ tab2_layout = column(train_instr, alg_select, train_button, train_status_message
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
 
-tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
+tab3_layout = row(column(tune_instr, hyperparam_layout, saved_data_table), plot_layout)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
