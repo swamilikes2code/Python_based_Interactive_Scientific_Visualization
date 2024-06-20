@@ -36,7 +36,7 @@ updated = {'color': 'green', 'font-size': '16px'}
 # data_table_title = Div(text='Select columns for training', styles=updated)
 save_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
-feature_selection_status_message = Div(text='Not running', styles=not_updated)
+fs_status_message = Div(text='Not running', styles=not_updated)
 # tuning_title = Div(text='Tune hyperparameters', styles=updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
 plot_status_message = Div(text='Plot not updated', styles=not_updated)
@@ -46,7 +46,7 @@ predict_status_message = Div(text = 'Not running', styles=not_updated)
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning")
 train_button = Button(label="Run ML algorithm", button_type="success")
-feature_selection_button = Button(label="Run Feature Selection", button_type="success")
+fs_button = Button(label="Run Feature Selection", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
 save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
@@ -56,8 +56,8 @@ predict_button = Button(label = 'Predict')
 up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>''')
 down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" /></svg>''')
 
-data_exp_vis = Button(label="Show Data Exploration*", button_type="primary", icon = down_arrow)
-feat_select_vis = Button(label="Show Feature Selection*", button_type="primary", icon = down_arrow)
+data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primary", icon = down_arrow)
+fs_vis_button = Button(label="Show Feature Selection*", button_type="primary", icon = down_arrow)
 
 # -----------------INSTRUCTIONS-----------------
 
@@ -100,7 +100,7 @@ train_instr = Div(text="""
                   </div>""",
 width=300, height=75)
 
-feature_select_instr = Div(text="""
+fs_instr = Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                   <div><b>Optional:</b> run <b>feature selection</b> for your chosen ML algorithm. This will display
                            which columns are recommended for training this ML algorithm. Afterwards, you can update
@@ -233,17 +233,17 @@ split_display = Div(text="""
 # --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
 
 # get columns
-data_vis_columns = df.columns.tolist()[:21]
+data_exp_columns = df.columns.tolist()[:21]
 
 #columns to exclude
-data_vis_columns = [col for col in data_vis_columns if col not in ["Class", "Smiles", "Substance Name", "Fingerprint"]]
+data_exp_columns = [col for col in data_exp_columns if col not in ["Class", "Smiles", "Substance Name", "Fingerprint"]]
 
 #convert the class columns to a categorical column if it's not
 df['Class'] = df['Class'].astype('category')
 # print(df.iloc[312])
 
 # Create a ColumnDataSource
-data_vis_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names = []))
+data_exp_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names = []))
 # print(df['Substance Name'])
 
 # configure hovertool
@@ -253,22 +253,22 @@ tooltips = [
 ]
 
 # Create a figure
-data_vis = figure(title="Data Exploration: search for correlations between properties", width = 650, height = 450, x_axis_label='X', y_axis_label='Y', 
+data_exp = figure(title="Data Exploration: search for correlations between properties", width = 650, height = 450, x_axis_label='X', y_axis_label='Y', 
            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
 
 
 # Create an initial scatter plot
-data_vis_scatter = data_vis.scatter(x='x', y='y', color='class_color', source=data_vis_source, legend_field='class_label')
+data_exp_scatter = data_exp.scatter(x='x', y='y', color='class_color', source=data_exp_source, legend_field='class_label')
 
 # legend
-data_vis.add_layout(data_vis.legend[0], 'right')
+data_exp.add_layout(data_exp.legend[0], 'right')
 
 # Create dropdown menus for X and Y axis
-select_x = Select(title="X Axis", value=data_vis_columns[0], options=data_vis_columns)
-select_y = Select(title="Y Axis", value=data_vis_columns[1], options=data_vis_columns)
+select_x = Select(title="X Axis", value=data_exp_columns[0], options=data_exp_columns)
+select_y = Select(title="Y Axis", value=data_exp_columns[1], options=data_exp_columns)
 
 # Update the data based on the selections
-def update_data_vis(attrname, old, new):
+def update_data_exp(attrname, old, new):
     x = select_x.value
     y = select_y.value
     new_vis_data = {
@@ -280,19 +280,19 @@ def update_data_vis(attrname, old, new):
     }
         
     # Update the ColumnDataSource with a plain Python dict
-    data_vis_source.data = new_vis_data
+    data_exp_source.data = new_vis_data
     
     # Update existing scatter plot glyph if needed
-    data_vis_scatter.data_source.data = new_vis_data
+    data_exp_scatter.data_source.data = new_vis_data
     
-    data_vis.xaxis.axis_label = x
-    data_vis.yaxis.axis_label = y
+    data_exp.xaxis.axis_label = x
+    data_exp.yaxis.axis_label = y
 
 # Attach the update_data function to the dropdowns
-select_x.on_change('value', update_data_vis)
-select_y.on_change('value', update_data_vis)
+select_x.on_change('value', update_data_exp)
+select_y.on_change('value', update_data_exp)
 
-update_data_vis(None, None, None)
+update_data_exp(None, None, None)
 
 
 # --------------- SAVE DATA BUTTON ---------------
@@ -331,8 +331,8 @@ def load_config():
     plot_status_message.text = 'Plot not updated'
     plot_status_message.styles=not_updated
 
-    feature_selection_status_message.text = 'Not running'
-    feature_selection_status_message.styles=not_updated
+    fs_status_message.text = 'Not running'
+    fs_status_message.styles=not_updated
 
     curdoc().add_next_tick_callback(save_config)
 
@@ -492,8 +492,8 @@ def run_FS():
         model = DecisionTreeClassifier()
     elif my_alg == "K-Nearest Neighbor":
         model = None
-        feature_selection_status_message.text = "Error, please select a different ML algorithm"
-        feature_selection_status_message.styles = not_updated
+        fs_status_message.text = "Error, please select a different ML algorithm"
+        fs_status_message.styles = not_updated
         return
     else:
         model = LinearSVC()
@@ -517,7 +517,7 @@ def run_FS():
     rfecv.fit(X_train, y_train)
 
     #get optimal number of features
-    optimal_features = rfecv.n_features_
+    # optimal_features = rfecv.n_features_
     
     # Get the selected features
     selected_features = X.columns[rfecv.support_]
@@ -550,8 +550,8 @@ def run_FS():
     # Update the result text
     # report = classification_report(y_test, y_pred)
     # result_text.text = f"Accuracy: {accuracy}\n"#\nClassification Report:\n{report}"
-    feature_selection_status_message.text = f"Feature selection completed using {my_alg}."
-    feature_selection_status_message.styles = updated
+    fs_status_message.text = f"Feature selection completed using {my_alg}."
+    fs_status_message.styles = updated
 
 
     split_and_train_model(split_list[0],split_list[1],split_list[2], selected_features.tolist())
@@ -562,12 +562,12 @@ def run_FS():
 
 #first update the text that the feature selection algorithm is running
 def load_FS():
-    feature_selection_status_message.text = f'Running Feature Selection with {my_alg}. This may take more than 30 seconds...'
-    feature_selection_status_message.styles = loading
+    fs_status_message.text = f'Running Feature Selection with {my_alg}. This may take more than 30 seconds...'
+    fs_status_message.styles = loading
     curdoc().add_next_tick_callback(run_FS)#then run the feature selection algorithm
 
 #when the feature selection button gets clicks
-feature_selection_button.on_click(load_FS)
+fs_button.on_click(load_FS)
 
 
 
@@ -1060,43 +1060,43 @@ predict_button.on_click(load_predict)
 # ---------------- VISIBILITY --------------
 
 # Data exploration plot
-data_vis.visible = False
+data_exp.visible = False
 select_x.visible = False
 select_y.visible = False
 
 # Callback function to toggle visibility
-def toggle_data_vis_visibility():
-    data_vis.visible = not data_vis.visible
+def toggle_data_exp_visibility():
+    data_exp.visible = not data_exp.visible
     select_x.visible = not select_x.visible
     select_y.visible = not select_y.visible
-    data_exp_vis.label = "Show Data Exploration*" if not data_vis.visible else "Hide Data Exploration*"
-    data_exp_vis.icon = down_arrow if not data_vis.visible else up_arrow
+    data_exp_vis_button.label = "Show Data Exploration*" if not data_exp.visible else "Hide Data Exploration*"
+    data_exp_vis_button.icon = down_arrow if not data_exp.visible else up_arrow
 
 # Link the button to the callback
-data_exp_vis.on_click(toggle_data_vis_visibility)
+data_exp_vis_button.on_click(toggle_data_exp_visibility)
 
 
 # Feature selection
-feature_select_instr.visible = False
-feature_selection_button.visible = False
-feature_selection_status_message.visible = False
+fs_instr.visible = False
+fs_button.visible = False
+fs_status_message.visible = False
 fs_accuracy_display.visible = False
 # selected_features_text.visible = not selected_features_text.visible
 # result_text.visible = not result_text.visible
 
 #Callback function to toggle visibility
 def toggle_feature_select_visibility():
-    feature_select_instr.visible = not feature_select_instr.visible
-    feature_selection_button.visible = not feature_selection_button.visible
-    feature_selection_status_message.visible = not feature_selection_status_message.visible
+    fs_instr.visible = not fs_instr.visible
+    fs_button.visible = not fs_button.visible
+    fs_status_message.visible = not fs_status_message.visible
     fs_accuracy_display.visible = not fs_accuracy_display.visible
     # selected_features_text.visible = not selected_features_text.visible
     # result_text.visible = not result_text.visible
-    feat_select_vis.label = "Show Feature Selection*" if not feature_select_instr.visible else "Hide Feature Selection*"
-    feat_select_vis.icon = down_arrow if not data_vis.visible else up_arrow
+    fs_vis_button.label = "Show Feature Selection*" if not fs_instr.visible else "Hide Feature Selection*"
+    fs_vis_button.icon = down_arrow if not fs_vis_button.visible else up_arrow
 
 # Link the button to the callback
-feat_select_vis.on_click(toggle_feature_select_visibility)
+fs_vis_button.on_click(toggle_feature_select_visibility)
 
 
 
@@ -1111,12 +1111,12 @@ tab0_layout = intro_instr
 
 table_layout = row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message))
 slider_layout = column(tvt_slider, split_display)
-interactive_graph = column(data_exp_vis, data_vis, row(select_x, select_y)) #create data graph visualization 
+interactive_graph = column(data_exp_vis_button, data_exp, row(select_x, select_y)) #create data graph visualization 
 
 tab1_layout = row(column(row(data_instr, slider_layout), row(table_layout)), interactive_graph)
 
-feat_select_layout = column(feat_select_vis, feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display)
-tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feat_select_layout)
+fs_layout = column(fs_vis_button, fs_instr, fs_button, fs_status_message, fs_accuracy_display)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, fs_layout)
 
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
