@@ -43,15 +43,15 @@ predict_status_message = Div(text = 'Not running', styles=not_updated)
 
 # -------------------BUTTONS--------------------
 
-save_config_button = Button(label="Save Current Configuration", button_type="success")
+save_config_button = Button(label="Save Current Configuration", button_type="warning")
 train_button = Button(label="Run ML algorithm", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
 save_plot_button = Button(label="Save current plot", button_type="warning")
 display_save_button = Button(label = "Display save")
 predict_button = Button(label = 'Predict')
 
-data_exp_vis = Button(label="Show Data Exploration Plot", button_type="default")
-feat_select_vis = Button(label="Show Feature Selection", button_type="default")
+data_exp_vis = Button(label="Show Data Exploration*", button_type="primary")
+feat_select_vis = Button(label="Show Feature Selection*", button_type="primary")
 
 # -----------------INSTRUCTIONS-----------------
 
@@ -60,19 +60,22 @@ intro_instr = Div(text="""
                   <div>Start by opening the <b>data</b> tab. This tab is used for preparing the biodegradability data for training. 
                   You will have the option to split the data into <i>training, validation, and testing</i>, and select which columns 
                   of data (each of which represent a <i>molecular property</i>) should be used to train the mode. Once you are done 
-                  preparing your data, save your choices, and continue on to the next tab.</div>
+                  preparing your data, save your choices, and continue on to the next tab.*</div>
                   <div>‎</div>
-                  <div>The <b>train</b> tab is used to actually train the data, choosing the <i>Machine Learning algorithm</i> of your choice. 
-                  Once you set and run the ML algorithm of your choice, continue to the next tab.</div>
+                  <div>The <b>train</b> tab is used to actually train the data, using the <i>Machine Learning algorithm</i> of your choice. 
+                  Once you set and run your chosen algorithm, you may continue to the next tab.*</div>
                   <div>‎</div>
                   <div>The <b>fine-tune</b> tab is where you are able to fine-tune the <i>hyperparameters</i> of your chosen model, 
-                  and validate the results between two of your tunes on a boxplot. You will also be able to save any model that you have created 
-                  with these past three tabs, and display these saved models on the boxplot. Once you have saved at least one model, 
-                  you can continue to the final tab.</div>
+                  and <i>validate</i> the results between two of your tunes on a boxplot. You will also be able to save any model that you have created 
+                  with these past three tabs, and display their <i>testing accuracies</i> on the boxplot. Once you have saved at least one model, 
+                  you may continue to the final tab.</div>
                   <div>‎</div>
                   <div>The <b>test</b> tab is where you will be able to test any of the saved models. FINISH THIS WHEN TEST TAB IS READY.</div>
                   <div>‎</div>
-                  <div>For more information about each of the italicized vocab words, see the above navigation menu.</div>
+                  <div>For more information about each of the <i>italicized</i> vocab words, see the above navigation menu.</div>
+                  <div>‎</div>
+                  <div>*For those interested in more advanced Machine Learning topics, starred tabs contain optional plots and processes 
+                  that you may also use to inform your decisions throughout the module. These can be accessed using the <b>blue</b> buttons.</div>
                   </div>""",
 width=750, height=500)
 
@@ -1060,7 +1063,7 @@ def toggle_data_vis_visibility():
     data_vis.visible = not data_vis.visible
     select_x.visible = not select_x.visible
     select_y.visible = not select_y.visible
-    data_exp_vis.label = "Show Data Exploration Plot" if not data_vis.visible else "Hide Data Exploration Plot"
+    data_exp_vis.label = "Show Data Exploration*" if not data_vis.visible else "Hide Data Exploration*"
 
 # Link the button to the callback
 data_exp_vis.on_click(toggle_data_vis_visibility)
@@ -1082,7 +1085,7 @@ def toggle_feature_select_visibility():
     fs_accuracy_display.visible = not fs_accuracy_display.visible
     selected_features_text.visible = not selected_features_text.visible
     result_text.visible = not result_text.visible
-    data_exp_vis.label = "Show Feature Selection" if not data_vis.visible else "Hide Feature Selection"
+    feat_select_vis.label = "Show Feature Selection*" if not feature_select_instr.visible else "Hide Feature Selection*"
 
 # Link the button to the callback
 feat_select_vis.on_click(toggle_feature_select_visibility)
@@ -1099,16 +1102,17 @@ feat_select_vis.on_click(toggle_feature_select_visibility)
 tab0_layout = intro_instr
 
 table_layout = row(checkbox_button_group, column(data_tab_table, save_config_button, save_config_message))
-
 slider_layout = column(tvt_slider, split_display)
-
 interactive_graph = column(data_vis, row(select_x, select_y), data_exp_vis) #create data graph visualization 
 
 tab1_layout = row(column(row(data_instr, slider_layout), row(table_layout)), interactive_graph)
 
-tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text, feat_select_vis)
+feat_select_layout = column(feature_select_instr, feature_selection_button, feature_selection_status_message, fs_accuracy_display, selected_features_text, result_text, feat_select_vis)
+tab2_layout = column(train_instr, alg_select, train_button, train_status_message, accuracy_display, feat_select_layout)
+
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
 plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
+
 tab3_layout = row(column(tune_instr, hyperparam_layout), plot_layout, saved_data_table)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
