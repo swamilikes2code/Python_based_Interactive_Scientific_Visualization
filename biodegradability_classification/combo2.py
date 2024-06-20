@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from math import nan
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
