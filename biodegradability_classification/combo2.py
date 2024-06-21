@@ -829,13 +829,9 @@ boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
 
 df_box = pd.DataFrame()
 source = ColumnDataSource(df_box)
+df_hover_points = pd.DataFrame()
+hover_points_source = ColumnDataSource(df_hover_points)
 
-box_hover = HoverTool(tooltips=[
-                             ('q1', '@q1'),
-                             ('median', '@q2'),
-                             ('q3', '@q3'),
-                         ], mode='vline')
-boxplot.add_tools(box_hover)
 
 # Create status message Div
 # saved_split_message = Div(text = 'Saved split: N/A', styles = not_updated)
@@ -850,14 +846,23 @@ def update_df_box():
         'accuracy': combo_list
         }
     
+    dp = {'kind' : ['pretune val', 'posttune val', 'test', 'saved'],
+          'accuracy' : [.7, .7, .7, .7]}
+    
     global df_box
     df_box = pd.DataFrame(data=d)
+
+    global df_hover_points
+    df_hover_points = pd.DataFrame(data=dp)
 
     # compute quantiles
     qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
     qs = qs.unstack().reset_index()
     qs.columns = ["kind", "q1", "q2", "q3"]
     df_box = pd.merge(df_box, qs, on="kind", how="left")
+
+    df_hover_points = pd.merge(df_hover_points, qs, on="kind", how="left")
+    df_hover_points['accuracy'] = df_hover_points['q2']
 
     # compute IQR outlier bounds
     iqr = df_box.q3 - df_box.q1
@@ -873,12 +878,18 @@ def update_df_box():
         df_box.iloc[index, -2] = minmax[0]
         df_box.iloc[index, -1] = minmax[1]
 
+    df_hover_points['min'] = [df_box['min'][i] for i in [0, 10, 20, 30]]
+    df_hover_points['max'] = [df_box['max'][i] for i in [0, 10, 20, 30]]
+
     # update outliers
     global outliers
     outliers = ColumnDataSource(df_box[~df_box.accuracy.between(df_box.lower, df_box.upper)])
     
     global source
     source.data = dict(df_box)
+
+    global hover_points_source
+    hover_points_source.data = dict(df_hover_points)
 
     plot_status_message.text = 'Plot updated'
     plot_status_message.styles = updated
@@ -916,6 +927,10 @@ def get_minmax(kind):
 
 def make_glyphs():
     # make all of the glyphs
+
+    global hover_points
+    hover_points = boxplot.scatter("kind", "accuracy", source = hover_points_source, size = 50, alpha=0)
+
     # outlier range
     global whisker
     global outlier_points
@@ -931,6 +946,15 @@ def make_glyphs():
     cmap = factor_cmap("kind", "Paired3", kinds)
     top_box = boxplot.vbar(x = "kind", width = 0.7, bottom = "q2", top = "q3", color=cmap, line_color="black", source = source)
     bottom_box = boxplot.vbar("kind", 0.7, "q1", "q2", color=cmap, line_color="black", source = source)
+
+    box_hover = HoverTool(tooltips=[
+                            ('max', '@max'),
+                            ('q3', '@q3'),
+                            ('median', '@q2'),
+                            ('q1', '@q1'),
+                            ('min', '@min')
+                        ], mode='vline', renderers = [hover_points])
+    boxplot.add_tools(box_hover)
 
     # constant plot features
     boxplot.xgrid.grid_line_color = None
