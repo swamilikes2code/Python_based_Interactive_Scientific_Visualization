@@ -198,7 +198,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height=350, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height_policy = 'auto', autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 # checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -1177,25 +1177,33 @@ fs_vis_button.on_click(toggle_feature_select_visibility)
 
 # --------------- LAYOUTS ---------------
 
-block_spacer = Spacer(height = 30)
+height_spacer = Spacer(height = 30)
+small_height_spacer = Spacer(height = 15)
+button_spacer = Spacer(height = 30, width = 54)
 
 # creating widget layouts
 tab0_layout = intro_instr
 
-slider_layout = column(row(splitter_help, column(tvt_slider, split_display)), save_config_button, save_config_message)
-table_selection_layout = row(datatable_help, data_multiselect)
-table_layout = data_tab_table
+data_config_layout = layout(
+    [datatable_help, data_multiselect],
+    [small_height_spacer],
+    [splitter_help, column(tvt_slider, split_display)],
+    [small_height_spacer],
+    [button_spacer, column(save_config_button, save_config_message)]
+)
 interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
-
-tab1_layout = column(row(table_layout, column(table_selection_layout, slider_layout)), interactive_graph)
-
+tab1_layout = layout(
+    [data_tab_table, data_config_layout],
+    [small_height_spacer],
+    [interactive_graph]
+)
 
 fs_layout = column(fs_vis_button, fs_help, fs_button, fs_status_message, fs_accuracy_display)
 tab2_layout = column(train_help, alg_select, train_button, train_status_message, accuracy_display, fs_layout)
 
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, row(tune_button, save_plot_button), tune_status_message, tuned_accuracy_display)
 
-tab3_layout = row(column(tune_help, hyperparam_layout, block_spacer, row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)), boxplot)
+tab3_layout = row(column(tune_help, hyperparam_layout, height_spacer, row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)), boxplot)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
