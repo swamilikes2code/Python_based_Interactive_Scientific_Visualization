@@ -18,13 +18,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import RFECV
-'''
-This file is a draft for combining the module's features
-'''
 
-#for ref:
-# df is original csv, holds fingerprint list and 167 cols of fingerprint bits
-# df_display > df_subset > df_dict are for displaying table
+#CONTENTS/HEADERS throughout this code
+# message styles, accuracy lists, status messages, buttons
+# instructions
+# data selection, data split, interactive data exploration, save data button
+# algorithm select and run, feature selection algorithm
+# hyperparameter tuning + button, box plot and save
+# testing
+# visibility, layouts
 
 # ---------------MESSAGE STYLES-----------------
 
@@ -45,11 +47,9 @@ combo_list = val_accuracy + tuned_val_accuracy + tuned_test_accuracy + saved_acc
 
 # ---------------STATUS MESSAGES-----------------
 
-# data_table_title = Div(text='Select columns for training', styles=updated)
 save_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
 fs_status_message = Div(text='Not running', styles=not_updated)
-# tuning_title = Div(text='Tune hyperparameters', styles=updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
 plot_status_message = Div(text='Plot not updated', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
@@ -97,46 +97,25 @@ intro_instr = Div(text="""
                   </div>""",
 width=750, height=500)
 
-# splitter_title = Div(text="""
-# <b>Split Data</b>
-# """)
-
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
                  </div>""", width=280), position="right"))
-
-# datatable_title = Div(text="""
-# <b>Drop Data</b>
-# """)
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  <b>Select/deselect</b> property columns for training the model by dragging your mouse over them.
                  </div>""", width=280), position="right"))
 
-# datavis_title = Div(text="""
-# <b>Graph Data (opt)</b>
-# """)
-
 datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  View the graphical relationship between any two numerical properties.
                  </div>""", width=280), position="right"))
 
-# train_title = Div(text="""
-# <b>Train Model</b>
-# """)
-
 train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                   Select a <b>machine learning algorithm</b> and click <b>run ML algorithm</b> to see its performance.
                   </div>""", width=280), position="right"))
-
-# fs_title = Div(text="""
-# <b>Feature Selection(opt)</b>
-# """)
-
 
 fs_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -145,10 +124,6 @@ fs_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                            your chosen columns accordingly on the <b>data</b> tab, and rerun your algorithm.</div>
                            <div><i>Note: Feature selection is <b>not</b> compatible with <b>K-Nearest Neighbors</b></i></div>
                   </div>""", width=280), position="right"))
-
-# tune_title = Div(text="""
-# <b>Hyperparameter Tuning</b>
-# """) 
 
 tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -167,11 +142,15 @@ width=300, height=75)
 
 # --------------- DATA SELECTION ---------------
 
+#for ref:
+# df is original csv, holds fingerprint list and 167 cols of fingerprint bits
+# df_display > df_subset > df_dict are for displaying table
+
 # Load data from the csv file
 file_path = r'biodegrad.csv'
 df = pd.read_csv(file_path, low_memory=False)
-df_display = df.iloc[:,:22] #don't need to display the other 167 rows of fingerprint bits
-df = df.drop(columns=['Fingerprint List']) #removing the display column, won't be useful in training
+df_display = df.iloc[:,:22]  #don't need to display the other 167 rows of fingerprint bits
+df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
@@ -271,7 +250,7 @@ split_display = Div(text="""
                     Training split: 50% | Validation split: 25% | Testing split: 25%
                     </div>""")
 
-# --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
+# --------------- INTERACTIVE DATA EXPLORATION --------------- 
 
 # get columns
 data_exp_columns = df.columns.tolist()[:21]
@@ -281,11 +260,9 @@ data_exp_columns = [col for col in data_exp_columns if col not in ["Class", "Smi
 
 #convert the class columns to a categorical column if it's not
 df['Class'] = df['Class'].astype('category')
-# print(df.iloc[312])
 
 # Create a ColumnDataSource
 data_exp_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names = []))
-# print(df['Substance Name'])
 
 # configure hovertool
 tooltips = [
@@ -360,7 +337,6 @@ def save_config():
     user_columns = temp_columns.copy()
 
     global combo_list
-    # combo_list.clear()
     combo_list = [nan for i in range(40)]
     update_boxplot()
 
@@ -380,9 +356,6 @@ def load_config():
 
     tune_status_message.text='Not running'
     tune_status_message.styles=not_updated
-
-    # plot_status_message.text = 'Plot not updated'
-    # plot_status_message.styles=not_updated
 
     fs_status_message.text = 'Not running'
     fs_status_message.styles=not_updated
@@ -502,8 +475,7 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
             tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
         elif stage == 'FS':
             fs_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
-            fs_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
-            
+            fs_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))    
 
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
@@ -519,13 +491,6 @@ train_button.on_click(load_ML)
 
 
 # --------------- FEATURE SELECTION ALGORITHM ---------------
-
-# df our data frame
-# Remove non-numeric columns and NaN values
-# non_numeric_columns = ['Substance Name', 'Smiles']
-# df.drop(columns=non_numeric_columns, inplace=True)
-
-#move these to the top once finished
 
 # result_text = PreText(text="", width=500, height=200)
 # selected_features_text = Div(text="")
@@ -552,8 +517,6 @@ def run_FS():
         return
     else:
         model = LinearSVC()
-    # print(f'hi! {my_alg}')
-    # print(df)
     
     # Prepare data (excluding 'Class' as it is the target variable)
     X = df.drop(columns=['Class', 'Substance Name', 'Smiles'])  # Features
@@ -849,12 +812,6 @@ boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
 df_box = pd.DataFrame()
 source = ColumnDataSource()
 
-# Create status message Div
-# saved_split_message = Div(text = 'Saved split: N/A', styles = not_updated)
-# saved_col_message = Div(text='Saved columns: N/A', styles=not_updated)
-# saved_alg_message = Div(text='Saved alg: N/A', styles=not_updated)
-# saved_data_message = Div(text='Saved val acc: N/A', styles=not_updated)
-
 def update_df_box():
     # making the initial boxplot
     global combo_list
@@ -862,11 +819,8 @@ def update_df_box():
         'accuracy': combo_list
         }
     
-    # print(d)
     global df_box
     df_box = pd.DataFrame(data=d)
-
-    # print(df_box)
 
     # compute quantiles
     qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
@@ -914,7 +868,7 @@ def get_minmax(kind):
         temp_list = combo_list[30:]
         temp_index = 30
 
-    if combo_list[temp_index] == nan: # when module is first loaded
+    if combo_list[temp_index] == nan:  # when module is first loaded
         return 0,0
     else:
         abs_min = min(temp_list)
@@ -1012,7 +966,6 @@ def save_plot():
         return
 
     global combo_list
-    # global saved_accuracy
     global hyperparam_list
     global new_save_number
     global new_train_val_test_split
@@ -1020,9 +973,6 @@ def save_plot():
     global new_saved_algorithm
     global new_saved_hyperparams
     global new_saved_test_acc
-
-    # saved_accuracy.clear()
-    # saved_accuracy = combo_list[10:20]
 
     new_save_number += 1
     display_save_select.options.append(str(new_save_number))
@@ -1139,7 +1089,6 @@ predict_button.on_click(load_predict)
 # ---------------- VISIBILITY --------------
 
 # Data exploration plot
-# datavis_title.visible = False
 datavis_help.visible = False
 data_exp.visible = False
 select_x.visible = False
@@ -1147,7 +1096,6 @@ select_y.visible = False
 
 # Callback function to toggle visibility
 def toggle_data_exp_visibility():
-    # datavis_title.visible = not datavis_title.visible
     datavis_help.visible = not datavis_help.visible
     data_exp.visible = not data_exp.visible
     select_x.visible = not select_x.visible
@@ -1158,9 +1106,7 @@ def toggle_data_exp_visibility():
 # Link the button to the callback
 data_exp_vis_button.on_click(toggle_data_exp_visibility)
 
-
 # Feature selection
-# fs_title.visible = False
 fs_help.visible = False
 fs_button.visible = False
 fs_status_message.visible = False
@@ -1170,8 +1116,6 @@ fs_accuracy_display.visible = False
 
 #Callback function to toggle visibility
 def toggle_feature_select_visibility():
-
-    # fs_title.visible = not fs_title.visible
     fs_help.visible = not fs_help.visible
     fs_button.visible = not fs_button.visible
     fs_status_message.visible = not fs_status_message.visible
@@ -1230,7 +1174,4 @@ tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab4_layout, title = 'Test')
                 ])
 
-
-# just to see the elements
-# test_layout = column(tab1_layout, tab2_layout, hyperparam_layout, plot_layout)
 curdoc().add_root(tabs)
