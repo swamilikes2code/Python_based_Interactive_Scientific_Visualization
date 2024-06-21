@@ -357,7 +357,7 @@ def save_config():
 
     global user_columns
     user_columns.clear()
-    user_columns = temp_columns
+    user_columns = temp_columns.copy()
 
     global combo_list
     # combo_list.clear()
