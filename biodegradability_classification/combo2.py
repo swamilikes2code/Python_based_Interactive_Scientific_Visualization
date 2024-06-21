@@ -411,7 +411,7 @@ alg_select.on_change('value', update_algorithm)
 
 # creating widgets
 accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                       <div><b>Your Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
+                       <div><b>Your Data Split:</b> N/A </div><div><b>Your Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
                        </div>""", width=500)
 test_accuracy = []
 
@@ -450,7 +450,7 @@ def run_ML():
 
     # Updating accuracy display
     accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Your Selected columns:</b> {user_columns}<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
+    <div><b>Your Data Split:</b> {split_list} </div><div><b>Your Selected columns:</b> {user_columns}<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
     </div>"""
 
 def split_and_train_model(train_percentage, val_percentage, test_percentage, columns):
@@ -530,7 +530,7 @@ train_button.on_click(load_ML)
 # result_text = PreText(text="", width=500, height=200)
 # selected_features_text = Div(text="")
 fs_accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                          <div><b>Feature Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
+                          <div><b>Your Data Split:</b> N/A </div><div><b>Feature Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
                           </div>""", width=500)
 
 def run_FS():
@@ -612,7 +612,7 @@ def run_FS():
     split_and_train_model(split_list[0],split_list[1],split_list[2], selected_features.tolist())
     # Updating accuracy display
     fs_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Feature Selected Columns:</b> {ideal_cols}</div><div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>
+    <div><b>Your Data Split:</b> {split_list} </div><div><b>Feature Selected Columns:</b> {ideal_cols}</div><div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>
     </div>"""
 
 #first update the text that the feature selection algorithm is running
