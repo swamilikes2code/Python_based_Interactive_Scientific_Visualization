@@ -413,7 +413,7 @@ alg_select.on_change('value', update_algorithm)
 # creating widgets
 accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
                        <div><b>Your Data Split:</b> N/A </div><div><b>Your Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
-                       </div>""", width=500)
+                       </div>""", width=600)
 test_accuracy = []
 
 
@@ -496,14 +496,14 @@ def split_and_train_model(train_percentage, val_percentage, test_percentage, col
         y_test_pred = model.predict(X_test)
 
         if stage == 'Train':
-            val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
-            test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+            val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 3))
+            test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 3))
         elif stage == 'Tune':
-            tuned_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
-            tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+            tuned_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 3))
+            tuned_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 3))
         elif stage == 'FS':
-            fs_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 2))
-            fs_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 2))
+            fs_val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 3))
+            fs_test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 3))
             
 
 def load_ML():
@@ -532,7 +532,7 @@ train_button.on_click(load_ML)
 # selected_features_text = Div(text="")
 fs_accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
                           <div><b>Your Data Split:</b> N/A </div><div><b>Feature Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
-                          </div>""", width=500)
+                          </div>""", width=600)
 
 def run_FS():
     if save_config_message.styles == not_updated:
@@ -862,14 +862,13 @@ boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
             y_axis_label="prediction accuracy")
 
 df_box = pd.DataFrame()
-source = ColumnDataSource()
+source = ColumnDataSource(df_box)
 
 box_hover = HoverTool(tooltips=[
                              ('q1', '@q1'),
-                             ('q2', '@q2'),
+                             ('median', '@q2'),
                              ('q3', '@q3'),
-                             ('iqr', '@iqr')
-                         ])
+                         ], mode='vline')
 boxplot.add_tools(box_hover)
 
 # Create status message Div
