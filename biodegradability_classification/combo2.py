@@ -121,7 +121,7 @@ datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 View the graphical relationship between any two properties.
+                 View the graphical relationship between any two numerical properties.
                  </div>""", width=280), position="right"))
 
 # train_title = Div(text="""
@@ -130,7 +130,7 @@ datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                  Select and run one of the following <b>Machine Learning algorithms:</b>
+                  Select a <b>machine learning algorithm</b> and click <b>run ML algorithm</b> to see its performance.
                   </div>""", width=280), position="right"))
 
 # fs_title = Div(text="""
@@ -844,7 +844,7 @@ boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
             toolbar_location=None,
             background_fill_color="#eaefef",
             title="Model Accuracies",
-            y_axis_label="accuracy")
+            y_axis_label="prediction accuracy")
 
 df_box = pd.DataFrame()
 source = ColumnDataSource()
@@ -928,7 +928,6 @@ def get_minmax(kind):
             abs_max = max(temp_list)
 
         return abs_min, abs_max
-    
 
 def make_glyphs():
     # make all of the glyphs
@@ -1008,7 +1007,7 @@ saved_data_table = DataTable(source=save_source, columns=saved_columns, width=60
 
 def save_plot():
     if tune_status_message.styles == not_updated:
-        plot_status_message.text = 'Error: must tune model before saving'
+        plot_status_message.text = '<div>Error: must tune model</div><div>before saving</div>'
         plot_status_message.styles = not_updated
         return
 
@@ -1071,8 +1070,13 @@ save_plot_button.on_click(load_save)
 
 
 def display_save():
+    print(display_save_select.value)
     if len(display_save_select.options) == 0:
-        plot_status_message.text = 'Error: must save plot before displaying'
+        plot_status_message.text = '<div>Error: must save plot</div><div>before displaying</div>'
+        plot_status_message.styles = not_updated
+        return
+    elif type(display_save_select.value) != int:
+        plot_status_message.text = '<div>Error: must choose a save</div><div>before displaying</div>'
         plot_status_message.styles = not_updated
         return
 
