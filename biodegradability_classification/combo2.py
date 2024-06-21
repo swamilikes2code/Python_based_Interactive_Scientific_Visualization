@@ -77,7 +77,7 @@ fs_vis_button = Button(label="Show Feature Selection*", button_type="primary", i
 intro_instr = Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                   <div>Start by opening the <b>data</b> tab. This tab is used for preparing the biodegradability data for training. 
-                  You will have the option to split the data into <i>training, validation, and testing</i>, and select which columns 
+                  You will have the option to split the data into <i>training, validating, and testing</i>, and select which columns 
                   of data (each of which represent a <i>molecular property</i>) should be used to train the mode. Once you are done 
                   preparing your data, save your choices, and continue on to the next tab.*</div>
                   <div>‎</div>
@@ -98,45 +98,45 @@ intro_instr = Div(text="""
                   </div>""",
 width=750, height=500)
 
-splitter_title = Div(text="""
-<b>Split Data</b>
-""")
+# splitter_title = Div(text="""
+# <b>Split Data</b>
+# """)
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
-                 </div>""", width=300, height=75), position="right"))
+                 </div>""", width=280), position="right"))
 
-datatable_title = Div(text="""
-<b>Drop Data</b>
-""")
+# datatable_title = Div(text="""
+# <b>Drop Data</b>
+# """)
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 <b>Select/deselect</b> property columns for training the model.
-                 </div>""", width=300, height=75), position="right"))
+                 <b>Select/deselect</b> property columns for training the model by dragging your mouse over them.
+                 </div>""", width=280), position="right"))
 
-datavis_title = Div(text="""
-<b>Graph Data (opt)</b>
-""")
+# datavis_title = Div(text="""
+# <b>Graph Data (opt)</b>
+# """)
 
 datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  View the graphical relationship between any two properties.
-                 </div>""", width=300, height=75), position="right"))
+                 </div>""", width=280), position="right"))
 
-train_title = Div(text="""
-<b>Train Model</b>
-""")
+# train_title = Div(text="""
+# <b>Train Model</b>
+# """)
 
 train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                   Select and run one of the following <b>Machine Learning algorithms:</b>
-                  </div>""", width=300, height=75), position="right"))
+                  </div>""", width=280), position="right"))
 
-fs_title = Div(text="""
-<b>Feature Selection(opt)</b>
-""")
+# fs_title = Div(text="""
+# <b>Feature Selection(opt)</b>
+# """)
 
 
 fs_help = HelpButton(tooltip=Tooltip(content=Div(text="""
@@ -145,19 +145,19 @@ fs_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                            which columns are recommended for training this ML algorithm. Afterwards, you can update
                            your chosen columns accordingly on the <b>data</b> tab, and rerun your algorithm.</div>
                            <div><i>Note: Feature selection is <b>not</b> compatible with <b>K-Nearest Neighbors</b></i></div>
-                  </div>""", width=300, height=75), position="right"))
+                  </div>""", width=280), position="right"))
 
-tune_title = Div(text="""
-<b>Hyperparameter Tuning</b>
-""") 
+# tune_title = Div(text="""
+# <b>Hyperparameter Tuning</b>
+# """) 
 
 tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 Change <b>hyperparameters</b> based on your chosen ML algorithm, 
+                 <div>Change <b>hyperparameters</b> based on your chosen ML algorithm, 
                  and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
-                 on the boxplot, as well as your current tune's actual <b>testing accuracies</b>. 
-                 You can <b>save</b> any model at any time and <b>display</b> any saved model's <b>testing accuracy</b> on the plot.
-                 </div>""", width=300, height=75), position="right"))
+                 on the boxplot, as well as your current tune's actual <b>testing accuracies</b>.</div>
+                 <div>You can <b>save</b> any model at any time and <b>display</b> any saved model's <b>testing accuracy</b> on the plot.</div>
+                 </div>""", width=280), position="right"))
 
 test_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -199,11 +199,11 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=700, height=325, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height=325, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 # checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
-data_multiselect = MultiSelect(options = optional_columns, value = optional_columns, size = 8)
+data_multiselect = MultiSelect(options = optional_columns, value = optional_columns, size = 12)
 
 # Update columns to display
 def update_cols(display_columns):
@@ -227,7 +227,7 @@ split_list = [50,25,25] #0-train, 1-val, 2-test
 # helper function to produce string
 def update_text(train_percentage, val_percentage, test_percentage):
     split_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div>Training split: {train_percentage}%</div><div>Validation split: {val_percentage}%</div><div>Testing split: {test_percentage}%</div>
+    Training split: {train_percentage}% | Validation split: {val_percentage}% | Testing split: {test_percentage}%
     </div>"""
 
 # function to update model and accuracy
@@ -269,7 +269,7 @@ tvt_slider = RangeSlider(value=(50, 75), start=0, end=100, step=5, tooltips = Fa
 tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 split_display = Div(text="""
                     <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                    <div>Training split: 50%</div><div>Validation split: 25%</div><div>Testing split: 25%</div>
+                    Training split: 50% | Validation split: 25% | Testing split: 25%
                     </div>""")
 
 # --------------- INTERACTIVE DATA VISUALIZATION GRAPH --------------- 
@@ -295,7 +295,7 @@ tooltips = [
 ]
 
 # Create a figure
-data_exp = figure(title="Data Exploration: search for correlations between properties", width = 550, height = 300, x_axis_label='X', y_axis_label='Y', 
+data_exp = figure(title="Data Exploration: search for correlations between properties", width = 600, height = 320, x_axis_label='X', y_axis_label='Y', 
            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
 
 
@@ -413,7 +413,7 @@ alg_select.on_change('value', update_algorithm)
 # creating widgets
 accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
                        <div><b>Your Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
-                       </div>""")
+                       </div>""", width=500)
 test_accuracy = []
 
 
@@ -532,7 +532,7 @@ train_button.on_click(load_ML)
 # selected_features_text = Div(text="")
 fs_accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
                           <div><b>Feature Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
-                          </div>""")
+                          </div>""", width=500)
 
 def run_FS():
     if save_config_message.styles == not_updated:
@@ -839,8 +839,8 @@ plot_counter = 0 #the amount of times button has been pressed
 # Create empty plot
 boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
             y_range = (0.4, 1.0),
-            width = 400,
-            height = 400,
+            width = 450,
+            height = 450,
             tools="",
             toolbar_location=None,
             background_fill_color="#eaefef",
@@ -1131,7 +1131,7 @@ predict_button.on_click(load_predict)
 # ---------------- VISIBILITY --------------
 
 # Data exploration plot
-datavis_title.visible = False
+# datavis_title.visible = False
 datavis_help.visible = False
 data_exp.visible = False
 select_x.visible = False
@@ -1139,7 +1139,7 @@ select_y.visible = False
 
 # Callback function to toggle visibility
 def toggle_data_exp_visibility():
-    datavis_title.visible = not datavis_title.visible
+    # datavis_title.visible = not datavis_title.visible
     datavis_help.visible = not datavis_help.visible
     data_exp.visible = not data_exp.visible
     select_x.visible = not select_x.visible
@@ -1152,7 +1152,7 @@ data_exp_vis_button.on_click(toggle_data_exp_visibility)
 
 
 # Feature selection
-fs_title.visible = False
+# fs_title.visible = False
 fs_help.visible = False
 fs_button.visible = False
 fs_status_message.visible = False
@@ -1163,12 +1163,12 @@ fs_accuracy_display.visible = False
 #Callback function to toggle visibility
 def toggle_feature_select_visibility():
 
-    fs_title.visible = not fs_title.visible
+    # fs_title.visible = not fs_title.visible
     fs_help.visible = not fs_help.visible
     fs_button.visible = not fs_button.visible
     fs_status_message.visible = not fs_status_message.visible
     fs_accuracy_display.visible = not fs_accuracy_display.visible
-    fs_vis_button.label = "Show Feature Selection*" if not fs_title.visible else "Hide Feature Selection*"
+    fs_vis_button.label = "Show Feature Selection*" if not fs_help.visible else "Hide Feature Selection*"
     fs_vis_button.icon = down_arrow if not fs_vis_button.visible else up_arrow
 
 # Link the button to the callback
@@ -1189,13 +1189,12 @@ interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_ex
 tab1_layout = column(row(table_layout, column(table_selection_layout, slider_layout)), interactive_graph)
 
 
-fs_layout = column(fs_vis_button, row(fs_title, fs_help), fs_button, fs_status_message, fs_accuracy_display)
-tab2_layout = column(row(train_title, train_help), alg_select, train_button, train_status_message, accuracy_display, fs_layout)
+fs_layout = column(fs_vis_button, fs_help, fs_button, fs_status_message, fs_accuracy_display)
+tab2_layout = column(train_help, alg_select, train_button, train_status_message, accuracy_display, fs_layout)
 
-hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, tune_button, tune_status_message, tuned_accuracy_display, save_plot_button)
-plot_layout = column(boxplot, plot_status_message, display_save_select, display_save_button)
+hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, row(tune_button, save_plot_button), tune_status_message, tuned_accuracy_display)
 
-tab3_layout = row(column(row(tune_title, tune_help), hyperparam_layout, saved_data_table), plot_layout)
+tab3_layout = row(column(tune_help, hyperparam_layout, row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)), boxplot)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
