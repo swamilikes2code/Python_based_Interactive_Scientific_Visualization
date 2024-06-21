@@ -44,6 +44,8 @@ fs_test_accuracy = [nan for i in range(10)]
 saved_accuracy = [nan for i in range(10)]
 combo_list = val_accuracy + tuned_val_accuracy + tuned_test_accuracy + saved_accuracy
 
+saved_test_acc = []
+
 
 # ---------------STATUS MESSAGES-----------------
 
@@ -1003,7 +1005,7 @@ def save_plot():
     global new_saved_columns
     global new_saved_algorithm
     global new_saved_hyperparams
-    global new_saved_test_acc
+    global saved_test_acc
     global new_mean_saved_test_acc
     global new_std_saved_test_acc
 
@@ -1025,6 +1027,8 @@ def save_plot():
         new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
     new_saved_test_acc = combo_list[20:30]
+
+    saved_test_acc.append(new_saved_test_acc)
 
     new_mean_saved_test_acc = round(np.mean(new_saved_test_acc), 3)
     new_std_saved_test_acc = round(np.std(new_saved_test_acc), 3)
@@ -1057,7 +1061,7 @@ save_plot_button.on_click(load_save)
 
 
 def display_save():
-    print(display_save_select.value)
+    # print(display_save_select.value)
     if len(display_save_select.options) == 0:
         plot_status_message.text = '<div>Error: must save plot</div><div>before displaying</div>'
         plot_status_message.styles = not_updated
@@ -1067,10 +1071,11 @@ def display_save():
         plot_status_message.styles = not_updated
         return
 
-    global saved_accuracy, saved_data_table, combo_list
-    saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
+    global saved_accuracy, combo_list, saved_test_acc
+    index = int(display_save_select.value) - 1
+    saved_accuracy = saved_test_acc[index]
 
-    combo_list[30:] = saved_accuracy
+    combo_list[30:] = saved_accuracy.copy()
     update_boxplot()
 
     plot_status_message.text = 'Plot updated'
