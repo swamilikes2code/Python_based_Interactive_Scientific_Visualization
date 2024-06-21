@@ -1,15 +1,14 @@
 import pandas as pd
 import numpy as np
 from math import nan
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect
 from bokeh.io import curdoc, show
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer, layout
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
+from bokeh.models.ui import SVGIcon
 from bokeh.plotting import figure
 from bokeh.transform import factor_cmap
-from bokeh.layouts import layout
-from bokeh.models.ui import SVGIcon
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
@@ -29,9 +28,9 @@ This file is a draft for combining the module's features
 
 # ---------------MESSAGE STYLES-----------------
 
-not_updated = {'color': 'red', 'font-size': '16px'}
-loading = {'color': 'orange', 'font-size': '16px'}
-updated = {'color': 'green', 'font-size': '16px'}
+not_updated = {'color': 'red', 'font-size': '14px'}
+loading = {'color': 'orange', 'font-size': '14px'}
+updated = {'color': 'green', 'font-size': '14px'}
 
 # ---------------ACCURACY LISTS-----------------
 # Create empty lists - declare at the top to use everywhere
@@ -186,7 +185,7 @@ for col in mandatory_columns:
 user_columns = []
 
 # Limit the dataframe to the first 10 rows
-df_subset = df_display.head(10)
+df_subset = df_display.head(15)
 
 df_dict = df_subset.to_dict("list")
 cols = list(df_dict.keys())
@@ -199,7 +198,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height=325, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height=350, autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 # checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -867,7 +866,7 @@ def update_df_box():
     global df_box
     df_box = pd.DataFrame(data=d)
 
-    print(df_box)
+    # print(df_box)
 
     # compute quantiles
     qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
@@ -977,7 +976,7 @@ def load_boxplot():
     curdoc().add_next_tick_callback(update_boxplot)
 
 # making select to choose save num to display/use
-display_save_select = Select(title = "Choose a save to display", options = [])
+display_save_select = Select(title = "Choose a save to display", options = [], margin=(5, 40, 20, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
 new_save_number = 0
@@ -1178,6 +1177,8 @@ fs_vis_button.on_click(toggle_feature_select_visibility)
 
 # --------------- LAYOUTS ---------------
 
+block_spacer = Spacer(height = 30)
+
 # creating widget layouts
 tab0_layout = intro_instr
 
@@ -1194,7 +1195,7 @@ tab2_layout = column(train_help, alg_select, train_button, train_status_message,
 
 hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, row(tune_button, save_plot_button), tune_status_message, tuned_accuracy_display)
 
-tab3_layout = row(column(tune_help, hyperparam_layout, row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)), boxplot)
+tab3_layout = row(column(tune_help, hyperparam_layout, block_spacer, row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)), boxplot)
 tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
