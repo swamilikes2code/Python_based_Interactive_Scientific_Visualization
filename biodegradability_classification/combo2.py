@@ -1075,7 +1075,7 @@ def display_save():
         plot_status_message.text = '<div>Error: must save plot</div><div>before displaying</div>'
         plot_status_message.styles = not_updated
         return
-    elif type(display_save_select.value) != int:
+    elif display_save_select.value == '':
         plot_status_message.text = '<div>Error: must choose a save</div><div>before displaying</div>'
         plot_status_message.styles = not_updated
         return
