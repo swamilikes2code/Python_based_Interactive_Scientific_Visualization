@@ -690,7 +690,7 @@ hp_toggle = Checkbox(
     visible = True,
     active = False
 )
-hp_toggle.margin = (24, 10, 24, 10)
+hp_toggle.margin = (24, 10, 5, 10)
 
 # setting widget callbacks
 def print_vals():
@@ -976,7 +976,7 @@ def load_boxplot():
     curdoc().add_next_tick_callback(update_boxplot)
 
 # making select to choose save num to display/use
-display_save_select = Select(title = "Choose a save to display", options = [], margin=(5, 40, 20, 5))
+display_save_select = Select(title = "Choose a save to display", options = [], margin=(5, 40, 5, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
 new_save_number = 0
@@ -1071,6 +1071,11 @@ save_plot_button.on_click(load_save)
 
 
 def display_save():
+    if len(display_save_select.options) == 0:
+        plot_status_message.text = 'Error: must save plot before displaying'
+        plot_status_message.styles = not_updated
+        return
+
     global saved_accuracy, saved_data_table, combo_list
     saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
 
@@ -1179,10 +1184,13 @@ fs_vis_button.on_click(toggle_feature_select_visibility)
 
 height_spacer = Spacer(height = 30)
 small_height_spacer = Spacer(height = 15)
+large_height_spacer = Spacer(height = 45)
 button_spacer = Spacer(height = 30, width = 54)
+top_page_spacer = Spacer(height = 10)
+left_page_spacer = Spacer(width = 10)
 
 # creating widget layouts
-tab0_layout = intro_instr
+tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
 
 data_config_layout = layout(
     [datatable_help, data_multiselect],
@@ -1192,19 +1200,24 @@ data_config_layout = layout(
     [button_spacer, column(save_config_button, save_config_message)]
 )
 interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
-tab1_layout = layout(
-    [data_tab_table, data_config_layout],
-    [small_height_spacer],
-    [interactive_graph]
-)
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer, interactive_graph))
 
 fs_layout = column(fs_vis_button, fs_help, fs_button, fs_status_message, fs_accuracy_display)
-tab2_layout = column(train_help, alg_select, train_button, train_status_message, accuracy_display, fs_layout)
+tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, accuracy_display, height_spacer, fs_layout))
 
-hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, row(tune_button, save_plot_button), tune_status_message, tuned_accuracy_display)
+hyperparam_layout = layout(
+    [tune_help],
+    [hp_slider, hp_toggle],
+    [hp_select],
+    [tune_button, save_plot_button],
+    [tune_status_message],
+    [tuned_accuracy_display],
+    [large_height_spacer]
+)
+save_layout = row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)
+tab3_layout = row(left_page_spacer, column(top_page_spacer, hyperparam_layout, save_layout), boxplot)
 
-tab3_layout = row(column(tune_help, hyperparam_layout, height_spacer, row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)), boxplot)
-tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
+tab4_layout = row(left_page_spacer, column(top_page_spacer, test_instr, user_smiles_input, predict_select, predict_button, predict_status_message))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
