@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from math import nan
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row
 from bokeh.models.callbacks import CustomJS
@@ -131,7 +131,8 @@ datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                  Select and run one of the following <b>Machine Learning algorithms:</b>
+                  Select one of the following <b>Machine Learning algorithms</b>, and click <b>run</b>. This will
+                    run the algorithm 10 times, and display a list of these accuracy values.
                   </div>""", width=280), position="right"))
 
 # fs_title = Div(text="""
@@ -612,6 +613,8 @@ def run_FS():
 
     split_and_train_model(split_list[0],split_list[1],split_list[2], selected_features.tolist())
     # Updating accuracy display
+
+
     fs_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
     <div><b>Your Data Split:</b> {split_list} </div><div><b>Feature Selected Columns:</b> {ideal_cols}</div><div><b>Validation Accuracy:</b> {fs_val_accuracy}</div><div><b>Test Accuracy:</b> {fs_test_accuracy}</div>
     </div>"""
@@ -639,7 +642,10 @@ hyperparam_list = [nan,"best"]
 # create displays
 tuned_accuracy_display = Div(text = """
                              <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                             <div><b>Tuned Validation Accuracy:</b> N/A</div><div><b>Tuned Test Accuracy:</b> N/A</div>
+                             <div><b>Tuned Validation Accuracy:</b> N/A</div>
+                             <div>‎</div>
+                             <div>‎</div>
+                             <div><b>Tuned Test Accuracy:</b> N/A</div>
                              </div>""")
 
 def run_tuned_config():
@@ -668,9 +674,18 @@ def run_tuned_config():
 
     update_boxplot()
 
+    mean_tuned_val_accuracy = np.mean(tuned_val_accuracy)
+    std_tuned_val_accuracy = np.std(tuned_val_accuracy)
+    mean_tuned_test_accuracy = np.mean(tuned_test_accuracy)
+    std_tuned_test_accuracy = np.std(tuned_test_accuracy)
+
     # Updating accuracy display
     tuned_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Validation Accuracy:</b> {tuned_val_accuracy}</div><div><b>Test Accuracy:</b> {tuned_test_accuracy}</div>
+    <div><b>Tuned Validation Accuracy:</b></div> 
+    <div>Mean: {round(mean_tuned_val_accuracy, 3)}, Standard Dev: {round(std_tuned_val_accuracy, 3)}</div>
+    <div>‎</div>
+    <div><b>Tuned Test Accuracy:</b></div> 
+    <div>Mean: {round(mean_tuned_test_accuracy, 3)}, Standard Dev: {round(std_tuned_test_accuracy, 3)}</div>
     </div>"""
 
 # hyperparameter tuning widgets, default to decision tree
@@ -850,6 +865,14 @@ boxplot = figure(x_range=['pretune val', 'posttune val', 'test', 'saved'],
 df_box = pd.DataFrame()
 source = ColumnDataSource()
 
+box_hover = HoverTool(tooltips=[
+                             ('q1', '@q1'),
+                             ('q2', '@q2'),
+                             ('q3', '@q3'),
+                             ('iqr', '@iqr')
+                         ])
+boxplot.add_tools(box_hover)
+
 # Create status message Div
 # saved_split_message = Div(text = 'Saved split: N/A', styles = not_updated)
 # saved_col_message = Div(text='Saved columns: N/A', styles=not_updated)
@@ -989,18 +1012,20 @@ saved_data = dict(
     saved_columns = [],
     saved_algorithm = [],
     saved_hyperparams = [],
-    saved_test_acc = []
+    mean_saved_test_acc = [],
+    std_saved_test_acc = []
 )
 save_source = ColumnDataSource(saved_data)
 
 # Define table columns
 saved_columns = [
     TableColumn(field="save_number", title="#", width = 25),
-    TableColumn(field="train_val_test_split", title="Train/Val/Test split", width = 220),
+    TableColumn(field="train_val_test_split", title="Train/Val/Test split", width = 260),
     TableColumn(field="saved_columns", title="Saved col."),
     TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
     TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
-    TableColumn(field="saved_test_acc", title="Test accuracies")
+    TableColumn(field="mean_saved_test_acc", title="Mean Test acc.", width = 210),
+    TableColumn(field="std_saved_test_acc", title="Std Test acc.", width = 180)
 ]
 
 # Create a DataTable
@@ -1022,6 +1047,8 @@ def save_plot():
     global new_saved_algorithm
     global new_saved_hyperparams
     global new_saved_test_acc
+    global new_mean_saved_test_acc
+    global new_std_saved_test_acc
 
     # saved_accuracy.clear()
     # saved_accuracy = combo_list[10:20]
@@ -1045,6 +1072,9 @@ def save_plot():
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
     new_saved_test_acc = combo_list[20:30]
 
+    new_mean_saved_test_acc = round(np.mean(new_saved_test_acc), 3)
+    new_std_saved_test_acc = round(np.std(new_saved_test_acc), 3)
+
     add_row()
 
     plot_status_message.text = 'Plot saved'
@@ -1058,7 +1088,8 @@ def add_row():
         'saved_columns': [new_saved_columns],
         'saved_algorithm': [new_saved_algorithm],
         'saved_hyperparams': [new_saved_hyperparams],
-        'saved_test_acc' : [new_saved_test_acc]
+        'mean_saved_test_acc': [new_mean_saved_test_acc],
+        'std_saved_test_acc' : [new_std_saved_test_acc]
     }
     save_source.stream(new_saved_data)
 
@@ -1072,8 +1103,9 @@ save_plot_button.on_click(load_save)
 
 
 def display_save():
-    global saved_accuracy, saved_data_table, combo_list
-    saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
+    global saved_accuracy, saved_data_table, combo_list, new_saved_test_acc
+    # saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
+    saved_accuracy = new_saved_test_acc
 
     combo_list[30:] = saved_accuracy
     update_boxplot()
