@@ -859,7 +859,6 @@ def update_df_box():
     qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
     qs = qs.unstack().reset_index()
     qs.columns = ["kind", "q1", "q2", "q3"]
-    print(qs)
     df_box = pd.merge(df_box, qs, on="kind", how="left")
 
     df_hover_points = pd.merge(df_hover_points, qs, on="kind", how="left")
@@ -869,8 +868,6 @@ def update_df_box():
     iqr = df_box.q3 - df_box.q1
     df_box["upper"] = df_box.q3 + 1.5*iqr
     df_box["lower"] = df_box.q1 - 1.5*iqr
-    # df_hover_points["upper"] = df_hover_points.q3 + 1.5*iqr
-    # df_hover_points["lower"] = df_hover_points.q1 - 1.5*iqr
 
     # set max and mins for whiskers
     df_box['min'] = ''
@@ -883,7 +880,6 @@ def update_df_box():
 
     df_hover_points['min'] = [df_box['min'][i] for i in [0, 10, 20, 30]]
     df_hover_points['max'] = [df_box['max'][i] for i in [0, 10, 20, 30]]
-    print(df_hover_points)
 
     # update outliers
     global outliers
@@ -952,12 +948,12 @@ def make_glyphs():
     bottom_box = boxplot.vbar("kind", 0.7, "q1", "q2", color=cmap, line_color="black", source = source)
 
     box_hover = HoverTool(tooltips=[
-                             ('max', '@max'),
-                             ('q3', '@q3'),
-                             ('median', '@q2'),
-                             ('q1', '@q1'),
-                             ('min', '@min')
-                         ], mode='vline', renderers = [hover_points])
+                            ('max', '@max'),
+                            ('q3', '@q3'),
+                            ('median', '@q2'),
+                            ('q1', '@q1'),
+                            ('min', '@min')
+                        ], mode='vline', renderers = [hover_points])
     boxplot.add_tools(box_hover)
 
     # constant plot features
