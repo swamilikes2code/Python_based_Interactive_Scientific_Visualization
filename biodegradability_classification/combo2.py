@@ -787,10 +787,10 @@ def set_hyperparameter_widgets():
             title = "Maximum iterations", #default is 1000
             disabled = False,
             show_value = True,
-            start = 500,
-            end = 1500,
-            value = 1000,
-            step = 100
+            start = 1,
+            end = 20,
+            value = 10,
+            step = 1
         )
 
         hp_toggle.visible = False
