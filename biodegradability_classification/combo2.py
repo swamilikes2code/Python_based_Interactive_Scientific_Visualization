@@ -1,15 +1,14 @@
 import pandas as pd
 import numpy as np
 from math import nan
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
 from bokeh.io import curdoc, show
-from bokeh.layouts import column, row
+from bokeh.layouts import column, row, Spacer, layout
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
+from bokeh.models.ui import SVGIcon
 from bokeh.plotting import figure
 from bokeh.transform import factor_cmap
-from bokeh.layouts import layout
-from bokeh.models.ui import SVGIcon
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
@@ -29,9 +28,9 @@ This file is a draft for combining the module's features
 
 # ---------------MESSAGE STYLES-----------------
 
-not_updated = {'color': 'red', 'font-size': '16px'}
-loading = {'color': 'orange', 'font-size': '16px'}
-updated = {'color': 'green', 'font-size': '16px'}
+not_updated = {'color': 'red', 'font-size': '14px'}
+loading = {'color': 'orange', 'font-size': '14px'}
+updated = {'color': 'green', 'font-size': '14px'}
 
 # ---------------ACCURACY LISTS-----------------
 # Create empty lists - declare at the top to use everywhere
@@ -187,7 +186,7 @@ for col in mandatory_columns:
 user_columns = []
 
 # Limit the dataframe to the first 10 rows
-df_subset = df_display.head(10)
+df_subset = df_display.head(15)
 
 df_dict = df_subset.to_dict("list")
 cols = list(df_dict.keys())
@@ -200,7 +199,7 @@ data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height=325, autosize_mode = "none")
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height_policy = 'auto', autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 # checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
@@ -359,7 +358,7 @@ def save_config():
 
     global user_columns
     user_columns.clear()
-    user_columns = temp_columns
+    user_columns = temp_columns.copy()
 
     global combo_list
     # combo_list.clear()
@@ -706,7 +705,7 @@ hp_toggle = Checkbox(
     visible = True,
     active = False
 )
-hp_toggle.margin = (24, 10, 24, 10)
+hp_toggle.margin = (24, 10, 5, 10)
 
 # setting widget callbacks
 def print_vals():
@@ -890,7 +889,7 @@ def update_df_box():
     global df_box
     df_box = pd.DataFrame(data=d)
 
-    print(df_box)
+    # print(df_box)
 
     # compute quantiles
     qs = df_box.groupby("kind").accuracy.quantile([0.25, 0.5, 0.75])
@@ -1000,7 +999,7 @@ def load_boxplot():
     curdoc().add_next_tick_callback(update_boxplot)
 
 # making select to choose save num to display/use
-display_save_select = Select(title = "Choose a save to display", options = [])
+display_save_select = Select(title = "Choose a save to display", options = [], margin=(5, 40, 5, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
 new_save_number = 0
@@ -1103,9 +1102,13 @@ save_plot_button.on_click(load_save)
 
 
 def display_save():
-    global saved_accuracy, saved_data_table, combo_list, new_saved_test_acc
-    # saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
-    saved_accuracy = new_saved_test_acc
+    if len(display_save_select.options) == 0:
+        plot_status_message.text = 'Error: must save plot before displaying'
+        plot_status_message.styles = not_updated
+        return
+
+    global saved_accuracy, saved_data_table, combo_list
+    saved_accuracy = save_source.data['saved_test_acc'][int(display_save_select.value)-1]
 
     combo_list[30:] = saved_accuracy
     update_boxplot()
@@ -1210,24 +1213,42 @@ fs_vis_button.on_click(toggle_feature_select_visibility)
 
 # --------------- LAYOUTS ---------------
 
+height_spacer = Spacer(height = 30)
+small_height_spacer = Spacer(height = 15)
+large_height_spacer = Spacer(height = 45)
+button_spacer = Spacer(height = 30, width = 54)
+top_page_spacer = Spacer(height = 10)
+left_page_spacer = Spacer(width = 10)
+
 # creating widget layouts
-tab0_layout = intro_instr
+tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
 
-slider_layout = column(row(splitter_help, column(tvt_slider, split_display)), save_config_button, save_config_message)
-table_selection_layout = row(datatable_help, data_multiselect)
-table_layout = data_tab_table
+data_config_layout = layout(
+    [datatable_help, data_multiselect],
+    [small_height_spacer],
+    [splitter_help, column(tvt_slider, split_display)],
+    [small_height_spacer],
+    [button_spacer, column(save_config_button, save_config_message)]
+)
 interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
-
-tab1_layout = column(row(table_layout, column(table_selection_layout, slider_layout)), interactive_graph)
-
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer, interactive_graph))
 
 fs_layout = column(fs_vis_button, fs_help, fs_button, fs_status_message, fs_accuracy_display)
-tab2_layout = column(train_help, alg_select, train_button, train_status_message, accuracy_display, fs_layout)
+tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, accuracy_display, height_spacer, fs_layout))
 
-hyperparam_layout = column(row(hp_slider, hp_toggle), hp_select, row(tune_button, save_plot_button), tune_status_message, tuned_accuracy_display)
+hyperparam_layout = layout(
+    [tune_help],
+    [hp_slider, hp_toggle],
+    [hp_select],
+    [tune_button, save_plot_button],
+    [tune_status_message],
+    [tuned_accuracy_display],
+    [large_height_spacer]
+)
+save_layout = row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)
+tab3_layout = row(left_page_spacer, column(top_page_spacer, hyperparam_layout, save_layout), boxplot)
 
-tab3_layout = row(column(tune_help, hyperparam_layout, row(column(display_save_select, display_save_button, plot_status_message), saved_data_table)), boxplot)
-tab4_layout = column(test_instr, user_smiles_input, predict_select, predict_button, predict_status_message)
+tab4_layout = row(left_page_spacer, column(top_page_spacer, test_instr, user_smiles_input, predict_select, predict_button, predict_status_message))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
