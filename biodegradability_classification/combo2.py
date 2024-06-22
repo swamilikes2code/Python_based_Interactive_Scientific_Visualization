@@ -1116,22 +1116,33 @@ display_save_button.on_click(load_display_save)
 # --------------- TESTING ---------------
 
 user_smiles_input = TextInput(title = 'Enter a SMILES string:')
+# test in dataset C=C(C)C(=O)O
 
 def predict_biodegrad():
     temp_tvt_list = new_train_val_test_split.split("/")
     temp_train = int(temp_tvt_list[0])
     temp_val = int(temp_tvt_list[1])
     temp_test = int(temp_tvt_list[2])
-
     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
+
     split_and_train_model(temp_train,temp_val,temp_test, temp_columns)
 
     user_molec = Chem.MolFromSmiles(user_smiles_input.value)
+
     user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
+
     user_df = pd.DataFrame(user_fp)
+
     user_df = user_df.transpose() #each bit has its own column
 
+    # --------------TEST TAB WORKS UP UNTIL HERE-----------------------
+    # The model is not receiving the actual saved columns it needs, except for fingerprint. 
+    # For example, has 167 features, but is expecting 185 features as input (there are 18 columns, excluding fingerprint)
+    # If I get to it I'll try to fix this this weekend
+
     user_biodegrad = model.predict(user_df)
+
+    print(user_biodegrad)
 
     predict_status_message.styles = updated
     # if user_biodegrad == 0:
