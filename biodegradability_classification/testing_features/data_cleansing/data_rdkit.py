@@ -14,7 +14,7 @@ df = df.loc[:, ['Substance Name', 'Smiles', 'Class']]
 # dropping data from the non-biodegradable class to balance the data
 df = df.drop(df[df['Class'] == 0].sample(frac = .46).index)
 df.reset_index(drop=True, inplace=True)
-print(df)
+# print(df)
 
 # making molecules
 def smiles_to_molecule(smiles): #function that converts Smiles to RDKit molecule object
@@ -27,15 +27,15 @@ def smiles_to_molecule(smiles): #function that converts Smiles to RDKit molecule
 # Apply the conversion function to the SMILES column
 RDLogger.DisableLog('rdApp.*') #ignoring hydrogen warning
 molecs = df['Smiles'].apply(smiles_to_molecule)
-print(df)
+# print(df)
 
 # generating descriptors (using all descriptors, can specify list to generate)
 desc = [Descriptors.CalcMolDescriptors(mol) for mol in molecs]
 desc_df = pd.DataFrame(desc)
-print(desc_df)
+# print(desc_df)
 
 df = pd.concat([df, desc_df], axis = 1)
-print(df)
+# print(df)
 
 fp_obj = [MACCSkeys.GenMACCSKeys(mol) for mol in molecs]
 
@@ -68,4 +68,4 @@ df = pd.concat([df, pd.DataFrame(fp_array)], axis = 1)
 # # print(df_cleaned.shape)
 
 # Save the cleaned DataFrame to a new CSV file
-df.to_csv("./rdkit_test.csv", index=False)
+df.to_csv("../../rdkit_table.csv", index=False)
