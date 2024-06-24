@@ -152,7 +152,7 @@ width=300, height=75)
 # Load data from the csv file
 file_path = r'rdkit_table.csv'
 df = pd.read_csv(file_path, low_memory=False)
-df_display = df.iloc[:,:22]  #don't need to display the other 167 rows of fingerprint bits
+df_display = df.iloc[:,:214]  #don't need to display the other 167 rows of fingerprint bits
 df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
 
 # Columns that should always be shown
@@ -523,7 +523,7 @@ def run_FS():
         model = LinearSVC()
     
     # Prepare data (excluding 'Class' as it is the target variable)
-    X = df.drop(columns=['Class', 'Substance Name', 'Smiles'])  # Features
+    X = df.drop(columns=['Class', 'Substance Name', 'Smiles', 'MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc'])  # Features
     y = df['Class']  # Target
     #ensure columns are numeric
     X = X.apply(pd.to_numeric, errors='coerce').fillna(0)  # Convert to numeric and fill NaNs with 0
@@ -548,10 +548,11 @@ def run_FS():
     ideal_cols = []
     contains_fingerprint = False
     for feat in selected_features:
-        if 'pka' in feat or'α'in feat:
-            ideal_cols.append(feat)
-        else:
+        if feat in [str(i) for i in range(167)]:
             contains_fingerprint = True
+            break
+        else:
+            ideal_cols.append(feat)
     if contains_fingerprint:
         ideal_cols.append('Fingerprint List')
     # selected_features_text.text = f"Selected Columns: {ideal_cols}"
