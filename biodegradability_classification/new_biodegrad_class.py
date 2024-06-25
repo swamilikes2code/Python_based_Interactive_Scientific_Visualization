@@ -100,7 +100,8 @@ splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 UPDATE THIS WHEN DATA OPTIONS ARE READY
+                 <div>Select which group of <b>features</b> you wish to train the model with.</div>
+                                                        <div>You can also select the <b>molecular fingerprint</b>, if any.</div>
                  </div>""", width=280), position="right"))
 
 datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
@@ -172,8 +173,8 @@ cols = list(df_dict.keys())
 # optional_columns = [col for col in cols if col not in mandatory_columns]
 
 # Create 3 options for columns
-option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'NumHeteroatoms', 'Fingerprint List']
-option_two = ['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles', 'Fingerprint List']
+option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'NumHeteroatoms']
+option_two = ['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles']
 option_three = ['Fingerprint List']
 
 
@@ -189,7 +190,7 @@ data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, wid
 
 # menu = [("Item 1", "item_1"), ("Item 2", "item_2"), None, ("Item 3", "item_3")]
 
-data_select = Select(title="Data option:", options=["Fragments", "Molecular/Electronic", "Option 3"])
+data_select = Select(title="Select Features:", options=["Fragments", "Molecular/Electronic", "Fingerprint"])
 data_select.js_on_change("value", CustomJS(code="""
     console.log('select: value=' + this.value, this.toString())
 """))
