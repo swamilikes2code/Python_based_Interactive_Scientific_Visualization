@@ -416,6 +416,7 @@ def split_data(train_percentage, val_percentage, test_percentage, columns):
 
 def train_validate_model():
     # np.random.seed(123)
+    np.random.seed(123)
 
     # train model
     model.fit(X_train, y_train)
