@@ -392,6 +392,9 @@ save_config_button.on_click(load_config)
 # algorithm name holder
 my_alg = 'Decision Tree'
 
+# list of the models to use
+model_list = [DecisionTreeClassifier(), KNeighborsClassifier(), SVC()]
+
 # Create select button
 alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
 
@@ -426,11 +429,11 @@ def run_ML():
 
     # Assigning model based on selected ML algorithm, using default hyperparameters
     if my_alg == "Decision Tree":
-        model = DecisionTreeClassifier()
+        model = model_list[0]
     elif my_alg == "K-Nearest Neighbor":
-        model = KNeighborsClassifier()
+        model = model_list[1]
     else:
-        model = SVC()
+        model = model_list[2]
     
     set_hyperparameter_widgets()
 
