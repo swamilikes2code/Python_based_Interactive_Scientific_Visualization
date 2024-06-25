@@ -44,6 +44,7 @@ val_accuracy = []
 save_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
+temp_test_status_message = Div(text='Not running', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
 
 # -------------------BUTTONS--------------------
@@ -51,7 +52,8 @@ predict_status_message = Div(text = 'Not running', styles=not_updated)
 save_config_button = Button(label="Save Current Configuration", button_type="warning")
 train_button = Button(label="Run ML algorithm", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
-display_save_button = Button(label = "Display save")
+# display_save_button = Button(label = "Display save")
+test_button = Button(label = "Test", button_type = "success")
 predict_button = Button(label = 'Predict')
 
 #svg icons for buttons
@@ -117,21 +119,24 @@ tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                                                    and click <b>tune</b>. This will also add the run's validation accuracy to the data table.
                  </div>""", width=280), position="right"))
 
-test_instr = Div(text="""
-    <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-        To create your own SMILES String, go to 
-        <a href="http://pubchem.ncbi.nlm.nih.gov//edit3/index.html" target="_blank">
-            http://pubchem.ncbi.nlm.nih.gov//edit3/index.html
-        </a> 
-        (Additional instructions are located on 'Help' button)
-    </div>""",
-    width=300, height=100)
+test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
+                <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                <div>Select the save from the previous tab to test the model.</div>
+                <div>‎</div>     
+                <div>NOTE: This should be considered the <b>final</b> test of your model.</div>
+                <div>You are encouraged to keep exploring the module by continuing to the next tab, or
+                starting again from the <b>data</b> tab.</div>
+                <div>However, this is NOT intended for validation.</div>
+                </div>""", width=280), position="right"))
 
 predict_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 PREDICT INSTRUCTIONS GO HERE:
+                    To create your own SMILES String, go to 
+                    <a href="http://pubchem.ncbi.nlm.nih.gov//edit3/index.html" target="_blank">
+                    http://pubchem.ncbi.nlm.nih.gov//edit3/index.html </a>
+                    (Additional instructions are located on 'Help' button)
                  </div>""",
-width=300, height=75)
+width=300, height=120)
 
 
 # --------------- DATA SELECTION ---------------
@@ -186,7 +191,7 @@ data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, wid
 
 # menu = [("Item 1", "item_1"), ("Item 2", "item_2"), None, ("Item 3", "item_3")]
 
-data_select = Select(title="Select Features:", options=["Fragments", "Molecular/Electronic", "Fingerprint"])
+data_select = Select(title="Select Features:", options=["Fragments", "Molecular/Electronic", "Fingerprint List"])
 data_select.js_on_change("value", CustomJS(code="""
     console.log('select: value=' + this.value, this.toString())
 """))
@@ -203,7 +208,7 @@ def update_table(attr, old, new):
         cols_to_display = option_one
     elif data_select.value == 'Molecular/Electronic':
         cols_to_display = option_two
-    elif data_select.value == 'Option 3':
+    elif data_select.value == 'Fingerprint List':
         cols_to_display = option_three
     update_cols(display_columns=cols_to_display)
     save_config_message.text = 'Configuration not saved'
@@ -342,7 +347,7 @@ def save_config():
         temp_columns = option_one
     elif data_select.value == 'Molecular/Electronic':
         temp_columns = option_two
-    elif data_select.value == 'Option 3':
+    elif data_select.value == 'Fingerpint List':
         temp_columns = option_three
     else:
         save_config_message.text = 'Error: select an option before saving'
@@ -686,7 +691,7 @@ tune_button.on_click(load_tuned_config)
 # --------------- BOX PLOT AND SAVE ---------------
 
 # making select to choose save num to display/use
-display_save_select = Select(title = "Choose a save to display", options = [], margin=(5, 40, 5, 5))
+display_save_select = Select(title = "Choose a save to test", options = [], margin=(5, 40, 5, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
 new_save_number = 0
@@ -771,7 +776,40 @@ def add_row():
 # # callback to display_save button
 # display_save_button.on_click(load_display_save)
 
-# --------------- TESTING ---------------
+# --------------- TESTING -----------------
+def test_model():
+    np.random.seed(123)
+
+    model.fit(X_train, y_train)
+
+    y_test_pred = model.predict(X_test)
+
+    test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 3))
+
+
+def run_test():
+
+    global my_alg, stage
+    stage = 'Test'
+    global model
+
+    test_model()
+
+    # Updating accuracy display
+    temp_test_status_message.text = f"""{test_accuracy}</div> 
+    </div>"""
+    temp_test_status_message.styles = updated
+
+def load_test():
+    temp_test_status_message.text = "Testing..."
+    temp_test_status_message.styles = loading
+    
+    curdoc().add_next_tick_callback(run_test)
+
+test_button.on_click(load_test)
+
+
+# --------------- PREDICTING ---------------
 
 user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 # test in dataset C=C(C)C(=O)O
@@ -793,7 +831,7 @@ def predict_biodegrad():
 
     user_df = user_df.transpose() #each bit has its own column
 
-    # --------------TEST TAB WORKS UP UNTIL HERE-----------------------
+    # --------------TAB WORKS UP UNTIL HERE-----------------------
     # The model is not receiving the actual saved columns it needs, except for fingerprint. 
     # For example, has 167 features, but is expecting 185 features as input (there are 18 columns, excluding fingerprint)
     # If I get to it I'll try to fix this this weekend
@@ -875,9 +913,9 @@ hyperparam_layout = layout(
 tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, height_spacer, hyperparam_layout), left_page_spacer, saved_data_table)
 
 # save_layout = row(column(display_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, hyperparam_layout, saved_data_table))
+tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, display_save_select, test_button, temp_test_status_message))
 
-tab4_layout = row(left_page_spacer, column(top_page_spacer, test_instr, user_smiles_input, predict_select, predict_button, predict_status_message))
+tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
