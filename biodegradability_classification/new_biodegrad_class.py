@@ -149,20 +149,22 @@ user_columns = []
 # Limit the dataframe to the first 15 rows
 df_subset = df_display.head(15)
 
-df_dict = df_subset.to_dict("list")
+df_rounded = df_subset.round(3)
+
+df_dict = df_rounded.to_dict("list")
 cols = list(df_dict.keys())
 
 # Separate mandatory and optional columns
 # optional_columns = [col for col in cols if col not in mandatory_columns]
 
 # Create 3 options for columns
-option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'Fingerprint List']
-option_two = ['NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'Fingerprint List']
-option_three = ['MolWt', 'NumHeteroatoms', 'SlogP_VSA1', 'NumHAcceptors', 'NumHDonors']
+option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'NumHeteroatoms', 'Fingerprint List']
+option_two = ['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles', 'Fingerprint List']
+option_three = ['Fingerprint List']
 
 
 # Create column datasource
-data_tab_source = ColumnDataSource(data=df_subset)
+data_tab_source = ColumnDataSource(data=df_rounded)
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in cols]
@@ -173,7 +175,7 @@ data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, wid
 
 # menu = [("Item 1", "item_1"), ("Item 2", "item_2"), None, ("Item 3", "item_3")]
 
-data_select = Select(title="Data option:", value="Option 1", options=["Option 1", "Option 2", "Option 3"])
+data_select = Select(title="Data option:", options=["Fragments", "Molecular/Electronic", "Option 3"])
 data_select.js_on_change("value", CustomJS(code="""
     console.log('select: value=' + this.value, this.toString())
 """))
@@ -186,11 +188,11 @@ def update_cols(display_columns):
 
 def update_table(attr, old, new):
     # cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    if data_select.value == 'Option 1':
+    if data_select.value == 'Fragments':
         cols_to_display = option_one
-    elif data_select.value == 'Option 2':
+    elif data_select.value == 'Molecular/Electronic':
         cols_to_display = option_two
-    else:
+    elif data_select.value == 'Option 3':
         cols_to_display = option_three
     update_cols(display_columns=cols_to_display)
     save_config_message.text = 'Configuration not saved'
@@ -325,15 +327,15 @@ tvt_slider.on_change('value', update_values)
 # Save columns to saved list (split already saved)
 def save_config():
     # temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    if data_select.value == 'Option 1':
+    if data_select.value == 'Fragments':
         temp_columns = option_one
-    elif data_select.value == 'Option 2':
+    elif data_select.value == 'Molecular/Electronic':
         temp_columns = option_two
-    else:
+    elif data_select.value == 'Option 3':
         temp_columns = option_three
-    # if len(temp_columns) == 0:
-    #    save_config_message.text = 'Error: must select at least one feature'
-    #    save_config_message.styles = not_updated
+    else:
+        save_config_message.text = 'Error: select an option before saving'
+        save_config_message.styles = not_updated
         return
 
     global user_columns
@@ -865,9 +867,9 @@ tab4_layout = row(left_page_spacer, column(top_page_spacer, test_instr, user_smi
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
-                    TabPanel(child = tab2_layout, title = 'Train'),
-                    TabPanel(child = tab3_layout, title = 'Fine-Tune'),
-                    TabPanel(child = tab4_layout, title = 'Test')
+                    TabPanel(child = tab2_layout, title = 'Train and Validate'),
+                    TabPanel(child = tab3_layout, title = 'Test'),
+                    TabPanel(child = tab4_layout, title = 'Predict')
                 ])
 
 curdoc().add_root(tabs)
