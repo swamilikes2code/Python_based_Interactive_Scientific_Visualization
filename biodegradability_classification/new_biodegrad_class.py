@@ -163,8 +163,10 @@ for col in mandatory_columns:
     if col not in df_display.columns:
         df_display[col] = "N/A"
 
-# saved list to append to
+# for storing data
+user_data = ''
 user_columns = []
+data_opts = ["Fragments", "Molecular/Electronic", "Fingerprint List"]
 
 # Limit the dataframe to the first 15 rows
 df_subset = df_display.head(15)
@@ -195,7 +197,7 @@ data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, wid
 
 # menu = [("Item 1", "item_1"), ("Item 2", "item_2"), None, ("Item 3", "item_3")]
 
-data_select = Select(title="Select Features:", options=["Fragments", "Molecular/Electronic", "Fingerprint List"])
+data_select = Select(title="Select Features:", options=data_opts)
 data_select.js_on_change("value", CustomJS(code="""
     console.log('select: value=' + this.value, this.toString())
 """))
@@ -344,23 +346,33 @@ data_select.on_change('value', update_table)
 tvt_slider.js_on_change('value', callback)
 tvt_slider.on_change('value', update_values)
 
+def set_columns():
+    global user_columns, user_data
+    if user_data == 'Fragments':
+        user_columns = option_one
+    elif user_data == 'Molecular/Electronic':
+        user_columns = option_two
+    elif user_data == 'Fingerprint List':
+        user_columns = option_three
+
 # Save columns to saved list (split already saved)
 def save_config():
     # temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
+    global user_data, user_columns
+
     if data_select.value == 'Fragments':
-        temp_columns = option_one
+        user_data = 'Fragments'
+        user_columns = option_one
     elif data_select.value == 'Molecular/Electronic':
-        temp_columns = option_two
-    elif data_select.value == 'Fingerpint List':
-        temp_columns = option_three
+        user_data = 'Molecular/Electronic'
+        user_columns = option_two
+    elif data_select.value == 'Fingerprint List':
+        user_data = 'Fingerprint List'
+        user_columns = option_three
     else:
         save_config_message.text = 'Error: select an option before saving'
         save_config_message.styles = not_updated
         return
-
-    global user_columns
-    user_columns.clear()
-    user_columns = temp_columns.copy()
 
     #split_list isn't located here as the split values update in the list upon the change of the range slider
     #the collective save button is to make the design more cohesive
@@ -698,7 +710,7 @@ tune_button.on_click(load_tuned_config)
 
 # making select to choose save num to display/use
 delete_multiselect = MultiSelect(title = "Choose saves to delete", options = [], margin=(5, 40, 5, 5))
-display_save_select = Select(title = "Choose a save to test", options = [], margin=(5, 40, 5, 5))
+test_save_select = Select(title = "Choose a save to test", options = [], margin=(5, 40, 5, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
 new_save_number = 0
@@ -707,7 +719,7 @@ new_save_number = 0
 saved_data = dict(
     save_number = [],
     train_val_test_split = [],
-    saved_columns = [],
+    saved_data_choice = [],
     saved_algorithm = [],
     saved_hyperparams = [],
     saved_val_acc = []
@@ -718,7 +730,7 @@ save_source = ColumnDataSource(saved_data)
 saved_columns = [
     TableColumn(field="save_number", title="#", width = 25),
     TableColumn(field="train_val_test_split", title="Train/Val/Test split", width = 260),
-    TableColumn(field="saved_columns", title="Saved col."),
+    TableColumn(field="saved_data_choice", title="Saved col."),
     TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
     TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
     TableColumn(field="saved_val_acc", title="Pred. accuracy")
@@ -732,7 +744,7 @@ def save_model():
     global hyperparam_list
     global new_save_number
     global new_train_val_test_split
-    global new_saved_columns
+    global new_saved_data_choice
     global new_saved_algorithm
     global new_saved_hyperparams
     global new_saved_val_acc
@@ -740,14 +752,14 @@ def save_model():
     new_saved_val_acc = val_accuracy[new_save_number]  # access before save num is incremented
 
     new_save_number += 1
-    display_save_select.options.append(str(new_save_number))
+    test_save_select.options.append(str(new_save_number))
     delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
 
     new_train_val_test_split = str(split_list[0]) + '/' + str(split_list[1]) + '/' + str(split_list[2])
 
+    new_saved_data_choice = user_data
 
-    new_saved_columns = user_columns
     if my_alg == 'Decision Tree':
         new_saved_algorithm = 'DT'
     elif my_alg == 'K-Nearest Neighbor':
@@ -765,7 +777,7 @@ def add_row():
     new_saved_data = {
         'save_number': [new_save_number],
         'train_val_test_split': [new_train_val_test_split],
-        'saved_columns': [new_saved_columns],
+        'saved_data_choice': [new_saved_data_choice],
         'saved_algorithm': [new_saved_algorithm],
         'saved_hyperparams': [new_saved_hyperparams],
         'saved_val_acc' : [new_saved_val_acc]
@@ -774,7 +786,7 @@ def add_row():
 
 # def display_save():
 #     global saved_accuracy, saved_test_acc
-#     index = int(display_save_select.value) - 1
+#     index = int(test_save_select.value) - 1
 #     saved_accuracy = saved_test_acc[index]
 
 
@@ -797,6 +809,10 @@ def delete_save():
         options = temp.copy(),
         value = []
     )
+    test_save_select.update(
+        options = temp.copy(),
+        value = None
+    )
 
     for col in save_source.data:
         save_source.data[col] = [val for index, val in enumerate(save_source.data[col]) if (index+1) not in saves_to_del]
@@ -818,8 +834,38 @@ delete_button.on_click(load_delete_save)
 delete_multiselect.on_change('value', del_multiselect_callback)
 
 # --------------- TESTING -----------------
-def test_model():
+def train_test_model():
     np.random.seed(123)
+
+    save_num = int(test_save_select.value)
+    save_index = save_num-1
+    temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
+    temp_data_choice = save_source.data['saved_data_choice'][save_index]
+    temp_alg = save_source.data['saved_algorithm'][save_index]
+    temp_hyperparams = eval(save_source.data['saved_hyperparams'][save_index])
+
+    if temp_data_choice == 'Fragments':
+        temp_cols = option_one
+    elif temp_data_choice == 'Molecular/Electronic':
+        temp_cols = option_two
+    elif temp_data_choice == 'Fingerprint List':
+        temp_cols = option_three
+    
+    split_data(temp_split[0], temp_split[1], temp_split[2],temp_cols)
+
+    if temp_alg == 'DT':
+        model = model_list[0]
+        model.max_depth = temp_hyperparams[0]
+        model.splitter = temp_hyperparams[1]
+    elif temp_alg == 'KNN':
+        model = model_list[1]
+        model.n_neighbors = temp_hyperparams[0]
+        model.weights = temp_hyperparams[1]
+    elif temp_alg == 'SVC':
+        model = model_list[2]
+        model.C = temp_hyperparams[0]
+        model.kernel = temp_hyperparams[1]
+
 
     model.fit(X_train, y_train)
 
@@ -829,12 +875,11 @@ def test_model():
 
 
 def run_test():
-
     global my_alg, stage
     stage = 'Test'
     global model
 
-    test_model()
+    train_test_model()
 
     # Updating accuracy display
     temp_test_status_message.text = f"""{test_accuracy}</div> 
@@ -855,49 +900,49 @@ test_button.on_click(load_test)
 user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 # test in dataset C=C(C)C(=O)O
 
-def predict_biodegrad():
-    temp_tvt_list = new_train_val_test_split.split("/")
-    temp_train = int(temp_tvt_list[0])
-    temp_val = int(temp_tvt_list[1])
-    temp_test = int(temp_tvt_list[2])
-    temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
+# def predict_biodegrad():
+#     temp_tvt_list = new_train_val_test_split.split("/")
+#     temp_train = int(temp_tvt_list[0])
+#     temp_val = int(temp_tvt_list[1])
+#     temp_test = int(temp_tvt_list[2])
+#     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
 
-    train_validate_model(temp_train,temp_val,temp_test, temp_columns)
+#     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
 
-    user_molec = Chem.MolFromSmiles(user_smiles_input.value)
+#     user_molec = Chem.MolFromSmiles(user_smiles_input.value)
 
-    user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
+#     user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
 
-    user_df = pd.DataFrame(user_fp)
+#     user_df = pd.DataFrame(user_fp)
 
-    user_df = user_df.transpose() #each bit has its own column
+#     user_df = user_df.transpose() #each bit has its own column
 
-    # --------------TAB WORKS UP UNTIL HERE-----------------------
-    # The model is not receiving the actual saved columns it needs, except for fingerprint. 
-    # For example, has 167 features, but is expecting 185 features as input (there are 18 columns, excluding fingerprint)
-    # If I get to it I'll try to fix this this weekend
+#     # --------------TAB WORKS UP UNTIL HERE-----------------------
+#     # The model is not receiving the actual saved columns it needs, except for fingerprint. 
+#     # For example, has 167 features, but is expecting 185 features as input (there are 18 columns, excluding fingerprint)
+#     # If I get to it I'll try to fix this this weekend
 
-    user_biodegrad = model.predict(user_df)
+#     user_biodegrad = model.predict(user_df)
 
-    print(user_biodegrad)
+#     print(user_biodegrad)
 
-    predict_status_message.styles = updated
-    # if user_biodegrad == 0:
-    #     predict_status_message.text = 'Molecule is not readily biodegradable (class 0)'
-    # elif user_biodegrad == 1:
-    #     predict_status_message.text = 'Molecule is readily biodegradable (class 1)'
-    # else:
-    #     predict_status_message.text = 'error'
+#     predict_status_message.styles = updated
+#     # if user_biodegrad == 0:
+#     #     predict_status_message.text = 'Molecule is not readily biodegradable (class 0)'
+#     # elif user_biodegrad == 1:
+#     #     predict_status_message.text = 'Molecule is readily biodegradable (class 1)'
+#     # else:
+#     #     predict_status_message.text = 'error'
 
-    return
+#     return
 
-def load_predict():
-    predict_status_message.text = 'Predicting...'
-    predict_status_message.styles = loading
-    curdoc().add_next_tick_callback(predict_biodegrad)
+# def load_predict():
+#     predict_status_message.text = 'Predicting...'
+#     predict_status_message.styles = loading
+#     curdoc().add_next_tick_callback(predict_biodegrad)
 
-# callback for predict button
-predict_button.on_click(load_predict)
+# # callback for predict button
+# predict_button.on_click(load_predict)
 
 
 # ---------------- VISIBILITY --------------
@@ -959,8 +1004,8 @@ delete_layout = layout(
 
 tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
 
-# save_layout = row(column(display_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, display_save_select, test_button, temp_test_status_message))
+# save_layout = row(column(test_save_select, display_save_button), saved_data_table)
+tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, test_save_select, test_button, temp_test_status_message))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
