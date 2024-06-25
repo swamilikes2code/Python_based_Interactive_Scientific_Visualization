@@ -61,26 +61,25 @@ data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primar
 # -----------------INSTRUCTIONS-----------------
 
 intro_instr = Div(text="""
-                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                  <div>Start by opening the <b>data</b> tab. This tab is used for preparing the biodegradability data for training. 
-                  You will have the option to split the data into <i>training, validating, and testing</i>, and select which columns 
-                  of data (each of which represent a <i>molecular property</i>) should be used to train the mode. Once you are done 
-                  preparing your data, save your choices, and continue on to the next tab.*</div>
+                  <div style='background-color: #DEF2F1; padding: 25px; font-family: Arial, sans-serif;'>
+                  <div>Start by opening the <b>Data</b> tab. This tab is used for preparing the biodegradability data for training. 
+                  In a dropdown menu, you will be given four options containing various <i>fingerprints</i> and <i>molecular features</i> 
+                  that will be used to train the model. You will also have the option to split the data into <i>training, validating,</i> 
+                  and <i>testing</i>. Once you are done preparing your data, save your choices, and continue on to the next tab.</div>
                   <div>‎</div>
-                  <div>The <b>train</b> tab is used to actually train the data, using the <i>Machine Learning algorithm</i> of your choice. 
-                  Once you set and run your chosen algorithm, you may continue to the next tab.*</div>
+                  <div>On the <b>Train and Validate</b> tab, you will first select the <i>Machine Learning algorithm</i> of your choice, 
+                  and run it. This will display the validation accuracy of this run in a datatable. Once you set and run your chosen algorithm, 
+                  you will be able to fine-tune its <i>hyperparameters</i>, and compare these runs' validation accuracies with your past saved 
+                  ones in the table. Once you have run a model at least once, you may continue to the next tab.</div>
                   <div>‎</div>
-                  <div>The <b>fine-tune</b> tab is where you are able to fine-tune the <i>hyperparameters</i> of your chosen model, 
-                  and <i>validate</i> the results between two of your tunes on a boxplot. You will also be able to save any model that you have created 
-                  with these past three tabs, and display their <i>testing accuracies</i> on the boxplot. Once you have saved at least one model, 
-                  you may continue to the final tab.</div>
+                  <div>The <b>Test</b> tab is where you will be able to complete your final test of the saved model of your choice. This will 
+                  display your testing accuracy, as well as both a <i>confusion matrix</i> and <i>tsne</i> plot, which visually display certain 
+                  performance aspects of your model. Finally, once testing your model, you can continue to the final tab.</div>
                   <div>‎</div>
-                  <div>The <b>test</b> tab is where you will be able to test any of the saved models. FINISH THIS WHEN TEST TAB IS READY.</div>
+                  <div>The <b>Predict</b> tab is where you will be able to test any of the saved models by inputting a SMILES string. 
+                  FINISH THIS WHEN TEST TAB IS READY.</div>
                   <div>‎</div>
                   <div>For more information about each of the <i>italicized</i> vocab words, see the above navigation menu.</div>
-                  <div>‎</div>
-                  <div>*For those interested in more advanced Machine Learning topics, starred tabs contain optional plots and processes 
-                  that you may also use to inform your decisions throughout the module. These can be accessed using the <b>blue</b> buttons.</div>
                   </div>""",
 width=750, height=500)
 
@@ -91,31 +90,35 @@ splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 <b>Select/deselect</b> property columns for training the model by dragging your mouse over them.
+                 UPDATE THIS WHEN DATA OPTIONS ARE READY
                  </div>""", width=280), position="right"))
 
 datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 View the graphical relationship between any two numerical properties.
+                 UPDATE THIS WHEN HISTOGRAMS ARE IN
                  </div>""", width=280), position="right"))
 
 train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                  Select one of the following <b>Machine Learning algorithms</b>, and click <b>run</b>. This will
-                    run the algorithm 10 times, and display a list of these accuracy values.
+                  Select one of the following <b>Machine Learning algorithms</b>, and click <b>run</b>. This will display its initial 
+                                                    <b>validation accuracy</b> in the table on the right.
                   </div>""", width=280), position="right"))
 
 tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 <div>Change <b>hyperparameters</b> based on your chosen ML algorithm, 
-                 and click <b>tune</b> to compare the tuned model's <b>validation accuracies</b> to the untuned model 
-                 on the boxplot, as well as your current tune's actual <b>testing accuracies</b>.</div>
-                 <div>You can <b>save</b> any model at any time and <b>display</b> any saved model's <b>testing accuracy</b> on the plot.</div>
+                 Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy, 
+                                                   and click <b>tune</b>. This will also add the run's validation accuracy to the data table.
                  </div>""", width=280), position="right"))
 
 test_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                  TEST INSTRUCTIONS GO HERE:
+                 </div>""",
+width=300, height=75)
+
+predict_instr = Div(text="""
+                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                 PREDICT INSTRUCTIONS GO HERE:
                  </div>""",
 width=300, height=75)
 
