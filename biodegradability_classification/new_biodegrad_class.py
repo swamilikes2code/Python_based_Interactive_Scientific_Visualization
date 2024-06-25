@@ -695,7 +695,7 @@ tune_button.on_click(load_tuned_config)
 
 # making select to choose save num to display/use
 delete_multiselect = MultiSelect(title = "Choose saves to delete", options = [], margin=(5, 40, 5, 5))
-display_save_select = Select(title = "Choose a save to display", options = [], margin=(5, 40, 5, 5))
+display_save_select = Select(title = "Choose a save to test", options = [], margin=(5, 40, 5, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
 new_save_number = 0
@@ -737,6 +737,7 @@ def save_model():
     new_saved_val_acc = val_accuracy[new_save_number]  # access before save num is incremented
 
     new_save_number += 1
+    display_save_select.options.append(str(new_save_number))
     delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
 
