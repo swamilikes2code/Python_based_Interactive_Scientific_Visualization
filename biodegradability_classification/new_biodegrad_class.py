@@ -88,7 +88,11 @@ width=750, height=500)
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
+                 </div>
+                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 CAUTION: Adjusting the percentages can impact the model's performance, leading to overfitting or underfitting if the splits are not well-balanced of the overall dataset.
                  </div>""", width=280), position="right"))
+
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
