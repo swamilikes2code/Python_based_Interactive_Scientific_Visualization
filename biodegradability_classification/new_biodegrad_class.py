@@ -18,6 +18,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
 from bokeh.models import Div
+from bokeh.util.warnings import BokehUserWarning, warnings
+
+warnings.simplefilter(action='ignore', category=BokehUserWarning)
 
 
 #CONTENTS/HEADERS throughout this code
@@ -46,13 +49,14 @@ train_status_message = Div(text='Not running', styles=not_updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
 temp_test_status_message = Div(text='Not running', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
+delete_status_message = Div(text='Changes not saved', styles = not_updated)
 
 # -------------------BUTTONS--------------------
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning")
 train_button = Button(label="Run ML algorithm", button_type="success")
 tune_button = Button(label = "Tune", button_type = "success")
-# display_save_button = Button(label = "Display save")
+delete_button = Button(label = "Delete", button_type = 'danger')
 test_button = Button(label = "Test", button_type = "success")
 predict_button = Button(label = 'Predict')
 
@@ -454,7 +458,6 @@ def split_data(train_percentage, val_percentage, test_percentage, columns):
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
 
 def train_validate_model():
-    # np.random.seed(123)
     np.random.seed(123)
 
     # train model
@@ -691,7 +694,8 @@ tune_button.on_click(load_tuned_config)
 # --------------- BOX PLOT AND SAVE ---------------
 
 # making select to choose save num to display/use
-display_save_select = Select(title = "Choose a save to test", options = [], margin=(5, 40, 5, 5))
+delete_multiselect = MultiSelect(title = "Choose saves to delete", options = [], margin=(5, 40, 5, 5))
+display_save_select = Select(title = "Choose a save to display", options = [], margin=(5, 40, 5, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
 new_save_number = 0
@@ -733,7 +737,7 @@ def save_model():
     new_saved_val_acc = val_accuracy[new_save_number]  # access before save num is incremented
 
     new_save_number += 1
-    display_save_select.options.append(str(new_save_number))
+    delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
 
     new_train_val_test_split = str(split_list[0]) + '/' + str(split_list[1]) + '/' + str(split_list[2])
@@ -775,6 +779,39 @@ def add_row():
 
 # # callback to display_save button
 # display_save_button.on_click(load_display_save)
+
+def delete_save():
+    saves_to_del = [int(i) for i in delete_multiselect.value]
+
+    if len(delete_multiselect.options) <= 1 or len(saves_to_del) == len(delete_multiselect.options):
+        delete_status_message.text = 'Error: must have at least one save'
+        delete_status_message.styles = not_updated
+        return
+
+    temp = [save for save in delete_multiselect.options if int(save) not in saves_to_del]
+    delete_multiselect.update(
+        options = temp.copy(),
+        value = []
+    )
+
+    for col in save_source.data:
+        save_source.data[col] = [val for index, val in enumerate(save_source.data[col]) if (index+1) not in saves_to_del]
+
+    delete_status_message.text = 'Deleted'
+    delete_status_message.styles = updated
+
+def load_delete_save():
+    delete_status_message.text = 'Deleting...'
+    delete_status_message.styles = loading
+    curdoc().add_next_tick_callback(delete_save)
+
+def del_multiselect_callback(attr, old, new):
+    delete_status_message.text = 'Changes not saved'
+    delete_status_message.styles = not_updated
+
+# callback to display_save button
+delete_button.on_click(load_delete_save)
+delete_multiselect.on_change('value', del_multiselect_callback)
 
 # --------------- TESTING -----------------
 def test_model():
@@ -907,10 +944,16 @@ hyperparam_layout = layout(
     [hp_select],
     [tune_button],
     [tune_status_message],
-    [large_height_spacer]
+    [height_spacer]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, height_spacer, hyperparam_layout), left_page_spacer, saved_data_table)
+delete_layout = layout(
+    [delete_multiselect],
+    [delete_button],
+    [delete_status_message]
+)
+
+tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
 
 # save_layout = row(column(display_save_select, display_save_button), saved_data_table)
 tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, display_save_select, test_button, temp_test_status_message))
