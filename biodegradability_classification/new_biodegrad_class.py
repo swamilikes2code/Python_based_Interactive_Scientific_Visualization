@@ -13,10 +13,12 @@ from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
+from bokeh.models import Div
+
 
 #CONTENTS/HEADERS throughout this code
 # message styles, accuracy lists, status messages, buttons
@@ -86,7 +88,11 @@ width=750, height=500)
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
+                 </div>
+                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 CAUTION: Adjusting the percentages can impact the model's performance, leading to overfitting or underfitting if the splits are not well-balanced of the overall dataset.
                  </div>""", width=280), position="right"))
+
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
@@ -111,10 +117,14 @@ tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  </div>""", width=280), position="right"))
 
 test_instr = Div(text="""
-                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 TEST INSTRUCTIONS GO HERE:
-                 </div>""",
-width=300, height=75)
+    <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+        To create your own SMILES String, go to 
+        <a href="http://pubchem.ncbi.nlm.nih.gov//edit3/index.html" target="_blank">
+            http://pubchem.ncbi.nlm.nih.gov//edit3/index.html
+        </a> 
+        (Additional instructions are located on 'Help' button)
+    </div>""",
+    width=300, height=100)
 
 predict_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -410,7 +420,7 @@ def run_ML():
     elif my_alg == "K-Nearest Neighbor":
         model = KNeighborsClassifier()
     else:
-        model = LinearSVC()
+        model = SVC()
     
     set_hyperparameter_widgets()
 
@@ -540,8 +550,8 @@ def print_vals():
         print("weights", model.weights)
     elif my_alg == 'Support Vector Classification':
         print("slider", hp_slider.value)
-        print("max iter", model.max_iter)
-        print("loss func", model.loss)
+        print("C", model.C)
+        print("kernel", model.kernel)
 
 def hp_slider_callback(attr, old, new):
     if hp_slider.disabled == True:
@@ -558,8 +568,7 @@ def hp_slider_callback(attr, old, new):
     elif my_alg == 'K-Nearest Neighbor':
         model.n_neighbors = new
     elif my_alg == 'Support Vector Classification':
-        model.max_iter = new
-        hyperparam_list[1] = ""
+        model.C = new
 
 def hp_select_callback(attr, old, new):
     global my_alg
@@ -568,8 +577,8 @@ def hp_select_callback(attr, old, new):
         model.splitter = new
     elif my_alg == 'K-Nearest Neighbor':
         model.weights = new
-    else:
-        hyperparam_list[1] = ""
+    elif my_alg == 'Support Vector Classification':
+        model.kernel = new
 
 def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
@@ -636,23 +645,27 @@ def set_hyperparameter_widgets():
         )
     elif my_alg == 'Support Vector Classification':
         #hyperparameters are 
-        # loss (loss, hinge vs. squared_hinge, select) 
-        # the max iterations to be run (max_iter, int slider)
-        # model = LinearSVC()
+        # kernel (linear, poly, rbf, sigmoid) 
+        # regularization parameter C (float slider)
+        # model = SVC()
 
         hp_slider.update(
-            title = "Maximum iterations", #default is 1000
+            title = "C, regularization parameter",
             disabled = False,
             show_value = True,
             start = 1,
-            end = 20,
-            value = 5,
+            end = 100,
+            value = 50,
             step = 1
         )
 
         hp_toggle.visible = False
 
-        hp_select.visible = False
+        hp_select.update(
+            title = "kernel",
+            value = "linear",
+            options = ["linear", "poly", "rbf", "sigmoid"]
+        )
 
 hp_slider.on_change('value', hp_slider_callback)
 hp_select.on_change('value', hp_select_callback)
