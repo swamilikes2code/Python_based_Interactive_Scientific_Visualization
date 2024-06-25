@@ -319,6 +319,9 @@ def save_config():
     #split_list isn't located here as the split values update in the list upon the change of the range slider
     #the collective save button is to make the design more cohesive
 
+    #split data when saved to withold the test set and always use the same train val sets
+    split_data(split_list[0],split_list[1],split_list[2],user_columns)
+
     save_config_message.text = 'Configuration saved'
     save_config_message.styles = updated
 
@@ -385,14 +388,15 @@ def run_ML():
     
     set_hyperparameter_widgets()
 
-    train_validate_model(split_list[0],split_list[1],split_list[2], user_columns)
+    train_validate_model()
 
     # Updating accuracy display
     accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
     <div><b>Your Data Split:</b> {split_list} </div><div><b>Your Selected columns:</b> {user_columns}<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
     </div>"""
 
-def train_validate_model(train_percentage, val_percentage, test_percentage, columns):
+def split_data(train_percentage, val_percentage, test_percentage, columns):
+    global X_train, X_val, X_test, y_train, y_val, y_test
 
     train_columns = []
     train_columns += columns
@@ -400,26 +404,26 @@ def train_validate_model(train_percentage, val_percentage, test_percentage, colu
         train_columns.remove("Fingerprint List")
         train_columns += [str(i) for i in range(167)]
 
-    np.random.seed(123)
+    X = df[train_columns]
+    y = df['Class']
 
-    for i in range(10):
-        X = df[train_columns]
-        y = df['Class']
+    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-train_percentage)/100)
+    test_split = test_percentage / (100-train_percentage)
+    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
 
-        # splitting
-        X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-train_percentage)/100)
-        test_split = test_percentage / (100-train_percentage)
-        X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
-        
-        # train model
-        model.fit(X_train, y_train)
-        
-        # calculating accuracy
-        y_val_pred = model.predict(X_val)
+def train_validate_model():
+    # np.random.seed(123)
 
-        val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 3))
+    # train model
+    model.fit(X_train, y_train)
+    
+    # calculating accuracy
+    y_val_pred = model.predict(X_val)
 
+    val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 3))
 
+    print(val_accuracy)
+    save_model()
 
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
@@ -467,12 +471,11 @@ def run_tuned_config():
     tune_status_message.styles = updated
     global model
 
-    train_validate_model(split_list[0],split_list[1],split_list[2], user_columns)
-
+    train_validate_model()
 
     # Updating accuracy display
     tuned_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Tuned Validation Accuracy:</b></div> 
+    <div><b>Tuned Validation Accuracy:</b> {val_accuracy[-1]}</div> 
     </div>"""
 
 # hyperparameter tuning widgets, default to decision tree
@@ -649,6 +652,7 @@ saved_data = dict(
     saved_columns = [],
     saved_algorithm = [],
     saved_hyperparams = [],
+    saved_val_acc = []
 )
 save_source = ColumnDataSource(saved_data)
 
@@ -659,6 +663,7 @@ saved_columns = [
     TableColumn(field="saved_columns", title="Saved col."),
     TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
     TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
+    TableColumn(field="saved_val_acc", title="Pred. accuracy")
 ]
 
 # Create a DataTable
@@ -672,7 +677,9 @@ def save_model():
     global new_saved_columns
     global new_saved_algorithm
     global new_saved_hyperparams
-    global saved_val_acc
+    global new_saved_val_acc
+
+    new_saved_val_acc = val_accuracy[new_save_number]  # access before save num is incremented
 
     new_save_number += 1
     display_save_select.options.append(str(new_save_number))
@@ -691,7 +698,6 @@ def save_model():
     else:
         new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
-    # new_saved_test_acc = combo_list[20:30]
 
     add_row()
 
@@ -703,20 +709,21 @@ def add_row():
         'saved_columns': [new_saved_columns],
         'saved_algorithm': [new_saved_algorithm],
         'saved_hyperparams': [new_saved_hyperparams],
+        'saved_val_acc' : [new_saved_val_acc]
     }
     save_source.stream(new_saved_data)
 
-def display_save():
-    global saved_accuracy, saved_test_acc
-    index = int(display_save_select.value) - 1
-    saved_accuracy = saved_test_acc[index]
+# def display_save():
+#     global saved_accuracy, saved_test_acc
+#     index = int(display_save_select.value) - 1
+#     saved_accuracy = saved_test_acc[index]
 
 
-def load_display_save():
-    curdoc().add_next_tick_callback(display_save)
+# def load_display_save():
+#     curdoc().add_next_tick_callback(display_save)
 
-# callback to display_save button
-display_save_button.on_click(load_display_save)
+# # callback to display_save button
+# display_save_button.on_click(load_display_save)
 
 # --------------- TESTING ---------------
 
@@ -810,19 +817,19 @@ data_config_layout = layout(
 interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
 tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer, interactive_graph))
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, accuracy_display, height_spacer))
-
 hyperparam_layout = layout(
     [tune_help],
     [hp_slider, hp_toggle],
     [hp_select],
     [tune_button],
     [tune_status_message],
-    [tuned_accuracy_display],
     [large_height_spacer]
 )
-save_layout = row(column(display_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, hyperparam_layout, save_layout))
+
+tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, height_spacer, hyperparam_layout), left_page_spacer, saved_data_table)
+
+# save_layout = row(column(display_save_select, display_save_button), saved_data_table)
+tab3_layout = row(left_page_spacer, column(top_page_spacer, hyperparam_layout, saved_data_table))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, test_instr, user_smiles_input, predict_select, predict_button, predict_status_message))
 
