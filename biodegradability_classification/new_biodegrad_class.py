@@ -132,7 +132,7 @@ width=300, height=75)
 # Load data from the csv file
 file_path = r'rdkit_table.csv'
 df = pd.read_csv(file_path, low_memory=False)
-df_display = df.iloc[:,:210]  #don't need to display the other 167 rows of fingerprint bits
+df_display = df.iloc[:,:220]  #don't need to display the other 167 rows of fingerprint bits
 # df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
 
 # Columns that should always be shown
