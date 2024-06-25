@@ -13,7 +13,7 @@ from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
@@ -408,7 +408,7 @@ def run_ML():
     elif my_alg == "K-Nearest Neighbor":
         model = KNeighborsClassifier()
     else:
-        model = LinearSVC()
+        model = SVC()
     
     set_hyperparameter_widgets()
 
@@ -538,8 +538,8 @@ def print_vals():
         print("weights", model.weights)
     elif my_alg == 'Support Vector Classification':
         print("slider", hp_slider.value)
-        print("max iter", model.max_iter)
-        print("loss func", model.loss)
+        print("C", model.C)
+        print("kernel", model.kernel)
 
 def hp_slider_callback(attr, old, new):
     if hp_slider.disabled == True:
@@ -556,8 +556,7 @@ def hp_slider_callback(attr, old, new):
     elif my_alg == 'K-Nearest Neighbor':
         model.n_neighbors = new
     elif my_alg == 'Support Vector Classification':
-        model.max_iter = new
-        hyperparam_list[1] = ""
+        model.C = new
 
 def hp_select_callback(attr, old, new):
     global my_alg
@@ -566,8 +565,8 @@ def hp_select_callback(attr, old, new):
         model.splitter = new
     elif my_alg == 'K-Nearest Neighbor':
         model.weights = new
-    else:
-        hyperparam_list[1] = ""
+    elif my_alg == 'Support Vector Classification':
+        model.kernel = new
 
 def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
@@ -634,23 +633,27 @@ def set_hyperparameter_widgets():
         )
     elif my_alg == 'Support Vector Classification':
         #hyperparameters are 
-        # loss (loss, hinge vs. squared_hinge, select) 
-        # the max iterations to be run (max_iter, int slider)
-        # model = LinearSVC()
+        # kernel (linear, poly, rbf, sigmoid) 
+        # regularization parameter C (float slider)
+        # model = SVC()
 
         hp_slider.update(
-            title = "Maximum iterations", #default is 1000
+            title = "C, regularization parameter",
             disabled = False,
             show_value = True,
             start = 1,
-            end = 20,
-            value = 5,
+            end = 100,
+            value = 50,
             step = 1
         )
 
         hp_toggle.visible = False
 
-        hp_select.visible = False
+        hp_select.update(
+            title = "kernel",
+            value = "linear",
+            options = ["linear", "poly", "rbf", "sigmoid"]
+        )
 
 hp_slider.on_change('value', hp_slider_callback)
 hp_select.on_change('value', hp_select_callback)
