@@ -13,10 +13,12 @@ from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
+from bokeh.models import Div
+
 
 #CONTENTS/HEADERS throughout this code
 # message styles, accuracy lists, status messages, buttons
@@ -86,7 +88,11 @@ width=750, height=500)
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
+                 </div>
+                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 CAUTION: Adjusting the percentages can impact the model's performance, leading to overfitting or underfitting if the splits are not well-balanced of the overall dataset.
                  </div>""", width=280), position="right"))
+
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
@@ -111,10 +117,14 @@ tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  </div>""", width=280), position="right"))
 
 test_instr = Div(text="""
-                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 TEST INSTRUCTIONS GO HERE:
-                 </div>""",
-width=300, height=75)
+    <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+        To create your own SMILES String, go to 
+        <a href="http://pubchem.ncbi.nlm.nih.gov//edit3/index.html" target="_blank">
+            http://pubchem.ncbi.nlm.nih.gov//edit3/index.html
+        </a> 
+        (Additional instructions are located on 'Help' button)
+    </div>""",
+    width=300, height=100)
 
 predict_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -130,10 +140,10 @@ width=300, height=75)
 # df_display > df_subset > df_dict are for displaying table
 
 # Load data from the csv file
-file_path = r'biodegrad.csv'
+file_path = r'rdkit_table.csv'
 df = pd.read_csv(file_path, low_memory=False)
-df_display = df.iloc[:,:22]  #don't need to display the other 167 rows of fingerprint bits
-df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
+df_display = df.iloc[:,:220]  #don't need to display the other 167 rows of fingerprint bits
+# df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
@@ -146,25 +156,39 @@ for col in mandatory_columns:
 # saved list to append to
 user_columns = []
 
-# Limit the dataframe to the first 10 rows
+# Limit the dataframe to the first 15 rows
 df_subset = df_display.head(15)
 
-df_dict = df_subset.to_dict("list")
+df_rounded = df_subset.round(3)
+
+df_dict = df_rounded.to_dict("list")
 cols = list(df_dict.keys())
 
 # Separate mandatory and optional columns
-optional_columns = [col for col in cols if col not in mandatory_columns]
+# optional_columns = [col for col in cols if col not in mandatory_columns]
+
+# Create 3 options for columns
+option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'NumHeteroatoms', 'Fingerprint List']
+option_two = ['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles', 'Fingerprint List']
+option_three = ['Fingerprint List']
+
 
 # Create column datasource
-data_tab_source = ColumnDataSource(data=df_subset)
+data_tab_source = ColumnDataSource(data=df_rounded)
 
 # Create figure
-data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height_policy = 'auto', autosize_mode = "none")
+data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in cols]
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 # checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
-data_multiselect = MultiSelect(options = optional_columns, value = optional_columns, size = 12)
+
+# menu = [("Item 1", "item_1"), ("Item 2", "item_2"), None, ("Item 3", "item_3")]
+
+data_select = Select(title="Data option:", options=["Fragments", "Molecular/Electronic", "Option 3"])
+data_select.js_on_change("value", CustomJS(code="""
+    console.log('select: value=' + this.value, this.toString())
+"""))
 
 # Update columns to display
 def update_cols(display_columns):
@@ -174,11 +198,15 @@ def update_cols(display_columns):
 
 def update_table(attr, old, new):
     # cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    cols_to_display = data_multiselect.value
+    if data_select.value == 'Fragments':
+        cols_to_display = option_one
+    elif data_select.value == 'Molecular/Electronic':
+        cols_to_display = option_two
+    elif data_select.value == 'Option 3':
+        cols_to_display = option_three
     update_cols(display_columns=cols_to_display)
     save_config_message.text = 'Configuration not saved'
     save_config_message.styles = not_updated
-
 
 # --------------- DATA SPLIT ---------------
 
@@ -300,7 +328,7 @@ update_data_exp(None, None, None)
 
 # table on change
 # checkbox_button_group.on_change('active', update_table)
-data_multiselect.on_change('value', update_table)
+data_select.on_change('value', update_table)
 
 # range slider on change
 tvt_slider.js_on_change('value', callback)
@@ -309,9 +337,14 @@ tvt_slider.on_change('value', update_values)
 # Save columns to saved list (split already saved)
 def save_config():
     # temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    temp_columns = data_multiselect.value
-    if len(temp_columns) == 0:
-        save_config_message.text = 'Error: must select at least one feature'
+    if data_select.value == 'Fragments':
+        temp_columns = option_one
+    elif data_select.value == 'Molecular/Electronic':
+        temp_columns = option_two
+    elif data_select.value == 'Option 3':
+        temp_columns = option_three
+    else:
+        save_config_message.text = 'Error: select an option before saving'
         save_config_message.styles = not_updated
         return
 
@@ -387,7 +420,7 @@ def run_ML():
     elif my_alg == "K-Nearest Neighbor":
         model = KNeighborsClassifier()
     else:
-        model = LinearSVC()
+        model = SVC()
     
     set_hyperparameter_widgets()
 
@@ -416,6 +449,7 @@ def split_data(train_percentage, val_percentage, test_percentage, columns):
 
 def train_validate_model():
     # np.random.seed(123)
+    np.random.seed(123)
 
     # train model
     model.fit(X_train, y_train)
@@ -516,8 +550,8 @@ def print_vals():
         print("weights", model.weights)
     elif my_alg == 'Support Vector Classification':
         print("slider", hp_slider.value)
-        print("max iter", model.max_iter)
-        print("loss func", model.loss)
+        print("C", model.C)
+        print("kernel", model.kernel)
 
 def hp_slider_callback(attr, old, new):
     if hp_slider.disabled == True:
@@ -534,8 +568,7 @@ def hp_slider_callback(attr, old, new):
     elif my_alg == 'K-Nearest Neighbor':
         model.n_neighbors = new
     elif my_alg == 'Support Vector Classification':
-        model.max_iter = new
-        hyperparam_list[1] = ""
+        model.C = new
 
 def hp_select_callback(attr, old, new):
     global my_alg
@@ -544,8 +577,8 @@ def hp_select_callback(attr, old, new):
         model.splitter = new
     elif my_alg == 'K-Nearest Neighbor':
         model.weights = new
-    else:
-        hyperparam_list[1] = ""
+    elif my_alg == 'Support Vector Classification':
+        model.kernel = new
 
 def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
@@ -612,23 +645,27 @@ def set_hyperparameter_widgets():
         )
     elif my_alg == 'Support Vector Classification':
         #hyperparameters are 
-        # loss (loss, hinge vs. squared_hinge, select) 
-        # the max iterations to be run (max_iter, int slider)
-        # model = LinearSVC()
+        # kernel (linear, poly, rbf, sigmoid) 
+        # regularization parameter C (float slider)
+        # model = SVC()
 
         hp_slider.update(
-            title = "Maximum iterations", #default is 1000
+            title = "C, regularization parameter",
             disabled = False,
             show_value = True,
             start = 1,
-            end = 20,
-            value = 5,
+            end = 100,
+            value = 50,
             step = 1
         )
 
         hp_toggle.visible = False
 
-        hp_select.visible = False
+        hp_select.update(
+            title = "kernel",
+            value = "linear",
+            options = ["linear", "poly", "rbf", "sigmoid"]
+        )
 
 hp_slider.on_change('value', hp_slider_callback)
 hp_select.on_change('value', hp_select_callback)
@@ -816,7 +853,7 @@ left_page_spacer = Spacer(width = 10)
 tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
 
 data_config_layout = layout(
-    [datatable_help, data_multiselect],
+    [datatable_help, data_select],
     [small_height_spacer],
     [splitter_help, column(tvt_slider, split_display)],
     [small_height_spacer],
@@ -843,9 +880,9 @@ tab4_layout = row(left_page_spacer, column(top_page_spacer, test_instr, user_smi
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
-                    TabPanel(child = tab2_layout, title = 'Train'),
-                    TabPanel(child = tab3_layout, title = 'Fine-Tune'),
-                    TabPanel(child = tab4_layout, title = 'Test')
+                    TabPanel(child = tab2_layout, title = 'Train and Validate'),
+                    TabPanel(child = tab3_layout, title = 'Test'),
+                    TabPanel(child = tab4_layout, title = 'Predict')
                 ])
 
 curdoc().add_root(tabs)
