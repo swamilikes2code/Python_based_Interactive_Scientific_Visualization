@@ -425,7 +425,6 @@ def train_validate_model():
 
     val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 3))
 
-    print(val_accuracy)
     save_model()
 
 def load_ML():
@@ -447,7 +446,9 @@ train_button.on_click(load_ML)
 ## decision tree - int/nan, string
 ## KNN - int, string
 ## SVC - int, ""
-hyperparam_list = [nan,"best"]
+
+# define to be default: decision tree
+hyperparam_list = [2, "random"]
 
 # create displays
 tuned_accuracy_display = Div(text = """
@@ -484,15 +485,15 @@ def run_tuned_config():
 # hyperparameter tuning widgets, default to decision tree
 hp_slider = Slider(
     title = "Max Depth of Tree",
-    start= 0,
+    start= 1,
     end = 15,
     value = 2,
     step = 1
 )
 hp_select = Select(
     title = "Splitter strategy",
-    value = "best",
-    options = ["best", "random"]
+    value = "random",
+    options = ["random", "best"]
 )
 hp_toggle = Checkbox(
     label = "None",
@@ -558,6 +559,7 @@ def hp_toggle_callback(attr, old, new):
             hyperparam_list[0] = hp_slider.value
 
 def set_hyperparameter_widgets():
+    global model
     global my_alg
     if my_alg == 'Decision Tree':
         #hyperparameters are 
@@ -566,8 +568,8 @@ def set_hyperparameter_widgets():
 
         hp_slider.update(
             title = "Max Depth of Tree",
-            disabled = True,
-            show_value = False,
+            disabled = False,
+            show_value = True,
             start= 1,
             end = 15,
             value = 2,
@@ -576,13 +578,16 @@ def set_hyperparameter_widgets():
         hp_toggle.update(
             label = "None",
             visible = True,
-            active = True
+            active = False
         )
         hp_select.update(
             title = "Splitter strategy",
-            value = "best",
-            options = ["best", "random"]
+            value = "random",
+            options = ["random", "best"]
         )
+
+        model.max_depth = hp_slider.value
+        model.splitter = hp_select.value
     elif my_alg == 'K-Nearest Neighbor':
         #hyperparameters are 
         # K (n_neighbors, int slider)
@@ -594,7 +599,7 @@ def set_hyperparameter_widgets():
             show_value = True,
             start = 1,
             end = 30,
-            value = 5,
+            value = 20,
             step = 2
         )
 
@@ -617,7 +622,7 @@ def set_hyperparameter_widgets():
             show_value = True,
             start = 1,
             end = 20,
-            value = 10,
+            value = 5,
             step = 1
         )
 
