@@ -17,6 +17,8 @@ from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import StandardScaler
+from bokeh.models import Div
+
 
 #CONTENTS/HEADERS throughout this code
 # message styles, accuracy lists, status messages, buttons
@@ -111,10 +113,14 @@ tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  </div>""", width=280), position="right"))
 
 test_instr = Div(text="""
-                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 TEST INSTRUCTIONS GO HERE:
-                 </div>""",
-width=300, height=75)
+    <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+        To create your own SMILES String, go to 
+        <a href="http://pubchem.ncbi.nlm.nih.gov//edit3/index.html" target="_blank">
+            http://pubchem.ncbi.nlm.nih.gov//edit3/index.html
+        </a> 
+        (Additional instructions are located on 'Help' button)
+    </div>""",
+    width=300, height=100)
 
 predict_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
