@@ -130,10 +130,10 @@ width=300, height=75)
 # df_display > df_subset > df_dict are for displaying table
 
 # Load data from the csv file
-file_path = r'biodegrad.csv'
+file_path = r'rdkit_table.csv'
 df = pd.read_csv(file_path, low_memory=False)
-df_display = df.iloc[:,:22]  #don't need to display the other 167 rows of fingerprint bits
-df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
+df_display = df.iloc[:,:210]  #don't need to display the other 167 rows of fingerprint bits
+# df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
@@ -146,25 +146,37 @@ for col in mandatory_columns:
 # saved list to append to
 user_columns = []
 
-# Limit the dataframe to the first 10 rows
+# Limit the dataframe to the first 15 rows
 df_subset = df_display.head(15)
 
 df_dict = df_subset.to_dict("list")
 cols = list(df_dict.keys())
 
 # Separate mandatory and optional columns
-optional_columns = [col for col in cols if col not in mandatory_columns]
+# optional_columns = [col for col in cols if col not in mandatory_columns]
+
+# Create 3 options for columns
+option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'Fingerprint List']
+option_two = ['NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'Fingerprint List']
+option_three = ['MolWt', 'NumHeteroatoms', 'SlogP_VSA1', 'NumHAcceptors', 'NumHDonors']
+
 
 # Create column datasource
 data_tab_source = ColumnDataSource(data=df_subset)
 
 # Create figure
-data_tab_columns = [TableColumn(field=col, title=col, width = 100) for col in cols]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=800, height_policy = 'auto', autosize_mode = "none")
+data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in cols]
+data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
 # Create widget excluding mandatory columns
 # checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
-data_multiselect = MultiSelect(options = optional_columns, value = optional_columns, size = 12)
+
+# menu = [("Item 1", "item_1"), ("Item 2", "item_2"), None, ("Item 3", "item_3")]
+
+data_select = Select(title="Data option:", value="Option 1", options=["Option 1", "Option 2", "Option 3"])
+data_select.js_on_change("value", CustomJS(code="""
+    console.log('select: value=' + this.value, this.toString())
+"""))
 
 # Update columns to display
 def update_cols(display_columns):
@@ -174,11 +186,15 @@ def update_cols(display_columns):
 
 def update_table(attr, old, new):
     # cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    cols_to_display = data_multiselect.value
+    if data_select.value == 'Option 1':
+        cols_to_display = option_one
+    elif data_select.value == 'Option 2':
+        cols_to_display = option_two
+    else:
+        cols_to_display = option_three
     update_cols(display_columns=cols_to_display)
     save_config_message.text = 'Configuration not saved'
     save_config_message.styles = not_updated
-
 
 # --------------- DATA SPLIT ---------------
 
@@ -300,7 +316,7 @@ update_data_exp(None, None, None)
 
 # table on change
 # checkbox_button_group.on_change('active', update_table)
-data_multiselect.on_change('value', update_table)
+data_select.on_change('value', update_table)
 
 # range slider on change
 tvt_slider.js_on_change('value', callback)
@@ -309,10 +325,15 @@ tvt_slider.on_change('value', update_values)
 # Save columns to saved list (split already saved)
 def save_config():
     # temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    temp_columns = data_multiselect.value
-    if len(temp_columns) == 0:
-        save_config_message.text = 'Error: must select at least one feature'
-        save_config_message.styles = not_updated
+    if data_select.value == 'Option 1':
+        temp_columns = option_one
+    elif data_select.value == 'Option 2':
+        temp_columns = option_two
+    else:
+        temp_columns = option_three
+    # if len(temp_columns) == 0:
+    #    save_config_message.text = 'Error: must select at least one feature'
+    #    save_config_message.styles = not_updated
         return
 
     global user_columns
@@ -816,7 +837,7 @@ left_page_spacer = Spacer(width = 10)
 tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
 
 data_config_layout = layout(
-    [datatable_help, data_multiselect],
+    [datatable_help, data_select],
     [small_height_spacer],
     [splitter_help, column(tvt_slider, split_display)],
     [small_height_spacer],
