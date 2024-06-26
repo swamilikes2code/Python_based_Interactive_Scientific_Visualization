@@ -68,28 +68,85 @@ data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primar
 
 # -----------------INSTRUCTIONS-----------------
 
-intro_instr = Div(text="""
-                  <div style='background-color: #DEF2F1; padding: 25px; font-family: Arial, sans-serif;'>
-                  <div>Start by opening the <b>Data</b> tab. This tab is used for preparing the biodegradability data for training. 
-                  In a dropdown menu, you will be given four options containing various <i>fingerprints</i> and <i>molecular features</i> 
-                  that will be used to train the model. You will also have the option to split the data into <i>training, validating,</i> 
-                  and <i>testing</i>. Once you are done preparing your data, save your choices, and continue on to the next tab.</div>
-                  <div>‎</div>
-                  <div>On the <b>Train and Validate</b> tab, you will first select the <i>Machine Learning algorithm</i> of your choice, 
-                  and run it. This will display the validation accuracy of this run in a datatable. Once you set and run your chosen algorithm, 
-                  you will be able to fine-tune its <i>hyperparameters</i>, and compare these runs' validation accuracies with your past saved 
-                  ones in the table. Once you have run a model at least once, you may continue to the next tab.</div>
-                  <div>‎</div>
-                  <div>The <b>Test</b> tab is where you will be able to complete your final test of the saved model of your choice. This will 
-                  display your testing accuracy, as well as both a <i>confusion matrix</i> and <i>tsne</i> plot, which visually display certain 
-                  performance aspects of your model. Finally, once testing your model, you can continue to the final tab.</div>
-                  <div>‎</div>
-                  <div>The <b>Predict</b> tab is where you will be able to test any of the saved models by inputting a SMILES string. 
-                  FINISH THIS WHEN TEST TAB IS READY.</div>
-                  <div>‎</div>
-                  <div>For more information about each of the <i>italicized</i> vocab words, see the above navigation menu.</div>
-                  </div>""",
-width=750, height=500)
+intro_instr = Div(
+    text="""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                margin: 0;
+                padding: 20px;
+                background-color: #f4f4f4;
+            }
+            .container {
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            h1 {
+                text-align: center;
+                color: #333;
+            }
+            h2 {
+                color: #444;
+                border-bottom: 2px solid #ddd;
+                padding-bottom: 5px;
+            }
+            p {
+                margin: 15px 0;
+            }
+            .section {
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #fafafa;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            .highlight {
+                background-color: #e7f3fe;
+                border-left: 5px solid #2196F3;
+                padding: 2px 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="section">
+                <h2>Data Tab</h2>
+                <p>Start by opening the <span class="highlight">Data Tab</span>. This tab is used for preparing the biodegradability data for training. In a dropdown menu, you will be given four options containing various <b>fingerprints</b> and <b>molecular features</b> that will be used to train the model. You will also have the option to split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>. Once you are done preparing your data, save your choices, and continue on to the next tab.</p>
+            </div>
+            <div class="section">
+                <h2>Train and Validate Tab</h2>
+                <p>On the <span class="highlight">Train and Validate Tab</span>, you will first select the <b>Machine Learning algorithm</b> of your choice, and run it. This will display the validation accuracy of this run in a datatable. Once you set and run your chosen algorithm, you will be able to fine-tune its <b>hyperparameters</b>, and compare these runs' validation accuracies with your past saved ones in the table. Once you have run a model at least once, you may continue to the next tab.</p>
+            </div>
+            <div class="section">
+                <h2>Test Tab</h2>
+                <p>The <span class="highlight">Test Tab</span> is where you will be able to complete your final test of the saved model of your choice. This will display your testing accuracy, as well as both a <b>confusion matrix</b> and <b>tsne plot</b>, which visually display certain performance aspects of your model. Finally, once testing your model, you can continue to the final tab.</p>
+            </div>
+            <div class="section">
+                <h2>Predict Tab</h2>
+                <p>The <span class="highlight">Predict Tab</span> is where you will be able to test any of the saved models by inputting a <b>SMILES string</b>. FINISH THIS WHEN TEST TAB IS READY.</p>
+            </div>
+            <div class="section">
+                <h2>Additional Information</h2>
+                <p>For more information about each of the <b>bolded</b> vocab words, see the above navigation menu.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """,
+    width=750,
+    height=500
+)
+
+show(layout([intro_instr]))
+
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
