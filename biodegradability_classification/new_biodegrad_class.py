@@ -3,22 +3,22 @@ import numpy as np
 from math import nan
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row, Spacer, layout
-from bokeh.models import ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
+from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
+from bokeh.palettes import Viridis256
 from bokeh.plotting import figure
-from bokeh.transform import factor_cmap
+from bokeh.transform import factor_cmap, transform
+from bokeh.util.warnings import BokehUserWarning, warnings
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
-from bokeh.models import Div
-from bokeh.util.warnings import BokehUserWarning, warnings
 
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
 
@@ -37,6 +37,7 @@ warnings.simplefilter(action='ignore', category=BokehUserWarning)
 not_updated = {'color': 'red', 'font-size': '14px'}
 loading = {'color': 'orange', 'font-size': '14px'}
 updated = {'color': 'green', 'font-size': '14px'}
+completed = {'color': 'black', 'font-size': '14px'}
 
 # ---------------ACCURACY LISTS-----------------
 # Create empty list - declare at the top to use everywhere
@@ -183,7 +184,8 @@ tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                <div>Select the save from the previous tab to test the model.</div>
+                <div>Select the save from the previous tab to test the model, and view the number of true/false postives/negatives
+                                                   in the <b>confusion matrix</b> below.</div>
                 <div>‎</div>     
                 <div>NOTE: This should be considered the <b>final</b> test of your model.</div>
                 <div>You are encouraged to keep exploring the module by continuing to the next tab, or
@@ -924,7 +926,74 @@ delete_button.on_click(load_delete_save)
 delete_multiselect.on_change('value', del_multiselect_callback)
 
 # --------------- TESTING -----------------
+true_pos = nan
+false_pos = nan
+false_neg = nan
+true_neg = nan
+
+
+scale = 4
+confus_d = {'T_range': ['Positive', 'Positive',
+                 'Negative', 'Negative'],
+    'Subject': ['Negative', 'Positive',
+                'Negative', 'Positive'],
+    'count': [true_pos, false_pos,
+            false_neg, true_neg],
+    'count_scaled': [true_pos / scale, false_pos / scale,
+            false_neg / scale, true_neg / scale],
+    'title': ['False Negative', 'True Positive', 'True Negative', 'False Positive'],
+    'color': ['#FF7F50', '#6495ED', '#6495ED', '#FF7F50']     
+           }
+
+confus_df = pd.DataFrame(data = confus_d)
+confus_source = ColumnDataSource(confus_df)
+bubble = figure(x_range = confus_df['T_range'].unique(), y_range = confus_df['Subject'].unique(), 
+                title = 'Confusion Matrix', width = 525, height = 500)
+
+# color_mapper = LinearColorMapper(palette = Viridis256, low = confus_df['count'].min(), high = confus_df['count'].max())
+# color_bar = ColorBar(color_mapper = color_mapper,
+#                     location = (0, 0),
+#                     ticker = BasicTicker())
+# bubble.add_layout(color_bar, 'right')
+bubble.scatter(x = 'T_range', y = 'Subject', size = 'count_scaled', color = 'color', source = confus_source)
+bubble.grid.visible = False
+bubble.xaxis.axis_label = 'Testing Data'
+bubble.yaxis.axis_label = 'Predicted Values'
+bubble.add_tools(HoverTool(tooltips = [('Type', '@title'), ('Count', '@count')]))
+
+cmatrix = figure(title = "Confusion Matrix", x_range = (-1,1), y_range = (-1,1))
+
+
+def update_cmatrix(attrname, old, new):
+    new_confus_d = {'T_range': ['Positive', 'Positive',
+                    'Negative', 'Negative'],
+    'Subject': ['Negative', 'Positive',
+                'Negative', 'Positive'],
+    'count': [new_false_neg, new_true_pos, 
+            new_true_neg, new_false_pos],
+    'count_scaled': [new_false_neg / scale, new_true_pos / scale,
+            new_true_neg / scale, new_false_pos / scale],
+    'title': ['False Negative', 'True Positive', 'True Negative', 'False Positive'],
+    'color': ['#FF7F50', '#6495ED', '#6495ED', '#FF7F50']    
+           }
+        
+    # Update the ColumnDataSource
+
+    confus_source.data = new_confus_d
+
+    # new_color_mapper = LinearColorMapper(palette = Viridis256, low = min(new_confus_d['count']), high = max(new_confus_d['count']))
+    
+    # color_bar.color_mapper = new_color_mapper
+
+    # bubble.scatter(fill_color = transform('count', new_color_mapper))
+
+
 def train_test_model():
+    global new_true_pos
+    global new_false_pos
+    global new_false_neg
+    global new_true_neg
+
     np.random.seed(123)
 
     save_num = int(test_save_select.value)
@@ -963,8 +1032,23 @@ def train_test_model():
 
     y_test_pred = model.predict(X_test)
 
+    confusion_values = confusion_matrix(y_test, y_test_pred)
+
+    new_true_pos = confusion_values[0][0]
+    new_false_pos = confusion_values[0][1]
+    new_false_neg = confusion_values[1][0]
+    new_true_neg = confusion_values[1][1]
+    # print(new_true_pos)
+    # print(new_false_pos)
+    # print(new_false_neg)
+    # print(new_true_neg)
+
+
+    test_accuracy.clear()
+
     test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 3))
 
+    update_cmatrix(None, None, None)
 
 def run_test():
     global my_alg, stage
@@ -974,9 +1058,9 @@ def run_test():
     train_test_model()
 
     # Updating accuracy display
-    temp_test_status_message.text = f"""{test_accuracy}</div> 
+    temp_test_status_message.text = f"""Testing accuracy for save #{test_save_select.value}: {test_accuracy}</div> 
     </div>"""
-    temp_test_status_message.styles = updated
+    temp_test_status_message.styles = completed
 
 def load_test():
     temp_test_status_message.text = "Testing..."
@@ -985,7 +1069,6 @@ def load_test():
     curdoc().add_next_tick_callback(run_test)
 
 test_button.on_click(load_test)
-
 
 # --------------- PREDICTING ---------------
 
@@ -1097,7 +1180,7 @@ delete_layout = layout(
 tab2_layout = row(left_page_spacer, column(top_page_spacer,  alg_select, row( train_button, train_help), train_status_message, height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, test_save_select, test_button, temp_test_status_message))
+tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, test_save_select, test_button, temp_test_status_message, bubble))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
