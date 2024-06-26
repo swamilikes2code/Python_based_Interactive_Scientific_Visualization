@@ -147,8 +147,6 @@ intro_instr = Div(
     height=500
 )
 
-show(layout([intro_instr]))
-
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
