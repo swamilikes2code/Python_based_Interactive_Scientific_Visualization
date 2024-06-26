@@ -8,7 +8,7 @@ import numpy as np
 output_file("histogram_class_split.html")
 
 # Load your data
-file_path = 'rdkit_test.csv'
+file_path = '../rdkit_test.csv'
 try:
     df = pd.read_csv(file_path)
 except FileNotFoundError:
