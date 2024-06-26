@@ -58,7 +58,7 @@ save_config_button = Button(label="Save Current Configuration", button_type="war
 train_button = Button(label="Run ML algorithm", button_type="success", width=150, height = 31)
 tune_button = Button(label="Tune", button_type="success", width=150, height = 31)
 delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
-test_button = Button(label = "Test", button_type = "success")
+test_button = Button(label = "Test", button_type = "success", width = 150, height = 31)
 predict_button = Button(label = 'Predict')
 
 #svg icons for buttons
@@ -584,7 +584,7 @@ hp_slider = Slider(
     width=200
 )
 hp_select = Select(
-    title = "Splitter strategy",
+    title = "Splitter strategy:",
     value = "random",
     options = ["random", "best"],
     width= 200
@@ -744,9 +744,9 @@ tune_button.on_click(load_tuned_config)
 # --------------- BOX PLOT AND SAVE ---------------
 
 # making select to choose save num to display/use
-delete_multiselect = MultiSelect(title = "Choose saves to delete", options = [], margin=(5, 40, 5, 5), width = 200)
-test_save_select = Select(title = "Choose a save to test", options = [], margin=(5, 40, 5, 5))
-predict_select = Select(title = 'Choose a save to predict with', options = [])
+delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 200)
+test_save_select = Select(title = "Choose a save to test:", options = [], margin=(5, 40, 5, 5), width = 200)
+predict_select = Select(title = 'Choose a save to predict with:', options = [])
 
 new_save_number = 0
 
@@ -1105,7 +1105,7 @@ delete_layout = layout(
 tab2_layout = row(left_page_spacer, top_page_spacer, column(alg_select, row( train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, test_save_select, test_button, temp_test_status_message, bubble))
+tab3_layout = row(left_page_spacer, top_page_spacer, column(test_save_select, row(test_button, test_help), temp_test_status_message, bubble))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
