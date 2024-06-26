@@ -3,14 +3,13 @@ import numpy as np
 from math import nan
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row, Spacer, layout
-from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, Div, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter
+from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
 from bokeh.palettes import Viridis256
-from bokeh.plotting import figure
+from bokeh.plotting import figure, show
 from bokeh.transform import factor_cmap, transform
-from bokeh.util.warnings import BokehUserWarning, warnings
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from sklearn.tree import DecisionTreeClassifier
@@ -19,6 +18,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
+from bokeh.util.warnings import BokehUserWarning, warnings
 
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
 
@@ -385,6 +385,7 @@ split_display = Div(text="""
 #     ("index", "$index")
 # ]
 
+
 # # Create a figure
 # data_exp = figure(title="Data Exploration: search for correlations between properties", width = 600, height = 320, x_axis_label='X', y_axis_label='Y', 
 #            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
@@ -392,6 +393,14 @@ split_display = Div(text="""
 
 # # Create an initial scatter plot
 # data_exp_scatter = data_exp.scatter(x='x', y='y', color='class_color', source=data_exp_source, legend_field='class_label')
+
+# Create a figure
+# data_exp = figure(title="Data Exploration: search for correlations between properties", width = 800, height = 520, x_axis_label='X', y_axis_label='Y', 
+#            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
+
+
+# Create an initial scatter plot
+# data_exp_scatter = data_exp.scatter(x='x', y='y', color='class_color', source=data_exp_source, legend_field='class_label', size = 2, alpha = 0.6)
 
 # # legend
 # data_exp.add_layout(data_exp.legend[0], 'right')
@@ -1145,6 +1154,7 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 height_spacer = Spacer(height = 30)
 small_height_spacer = Spacer(height = 15)
 large_height_spacer = Spacer(height = 45)
+ginormous_height_spacer = Spacer(height = 60)
 button_spacer = Spacer(height = 30, width = 54)
 top_page_spacer = Spacer(height = 10)
 left_page_spacer = Spacer(width = 10)
@@ -1159,8 +1169,13 @@ data_config_layout = layout(
     [small_height_spacer],
     [button_spacer, column(save_config_button, save_config_message)]
 )
+
 # interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
 tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer)) #interactive_graph
+
+# interactive_graph = column(row(data_exp_vis_button, datavis_help), data_exp, row(select_x, select_y)) #create data graph visualization 
+# tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer, interactive_graph))
+
 
 hyperparam_layout = layout(
     [hp_slider],
@@ -1168,7 +1183,7 @@ hyperparam_layout = layout(
     [hp_select],
     [tune_button, tune_help],
     [tune_status_message],
-    [height_spacer]
+    [ginormous_height_spacer]
 )
 
 delete_layout = layout(
@@ -1177,7 +1192,7 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer,  alg_select, row( train_button, train_help), train_status_message, height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
+tab2_layout = row(left_page_spacer, top_page_spacer, column(alg_select, row( train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, test_save_select, test_button, temp_test_status_message, bubble))

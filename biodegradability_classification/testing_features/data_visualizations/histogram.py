@@ -9,22 +9,7 @@ output_file("histogram_class_split.html")
 
 # Load your data
 file_path = '../rdkit_test.csv'
-try:
-    df = pd.read_csv(file_path)
-except FileNotFoundError:
-    print(f"File {file_path} not found.")
-    exit(1)
-except pd.errors.EmptyDataError:
-    print("No data in the file.")
-    exit(1)
-except pd.errors.ParserError:
-    print("Error parsing the file.")
-    exit(1)
-
-# Ensure the 'Class' column is binary and categorical
-if 'Class' not in df.columns:
-    print("'Class' column not found in the data.")
-    exit(1)
+df = pd.read_csv(file_path)
 
 df['Class'] = df['Class'].astype(str)  # Convert to string if it's not already
 
