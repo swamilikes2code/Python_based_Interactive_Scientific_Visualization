@@ -6,7 +6,7 @@ from bokeh.transform import linear_cmap
 from bokeh.palettes import Spectral6
 
 # Load data from CSV
-df = pd.read_csv('rdkit_test.csv')
+df = pd.read_csv('../rdkit_test.csv')
 
 # Extract features and labels
 features = df[['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles']].values
