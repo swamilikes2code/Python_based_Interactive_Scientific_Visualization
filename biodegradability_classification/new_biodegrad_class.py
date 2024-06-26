@@ -829,7 +829,7 @@ save_source = ColumnDataSource(saved_data)
 saved_columns = [
     TableColumn(field="save_number", title="#", width = 25),
     TableColumn(field="train_val_test_split", title="Train/Val/Test split", width = 260),
-    TableColumn(field="saved_data_choice", title="Saved col."),
+    TableColumn(field="saved_data_choice", title="Data"),
     TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
     TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
     TableColumn(field="saved_val_acc", title="Pred. accuracy")
@@ -1007,19 +1007,11 @@ def train_test_model():
     save_index = save_num-1
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
     temp_data_choice = save_source.data['saved_data_choice'][save_index]
+    temp_data_index = data_opts.index(temp_data_choice)
     temp_alg = save_source.data['saved_algorithm'][save_index]
     temp_hyperparams = eval(save_source.data['saved_hyperparams'][save_index])
 
-    if temp_data_choice == 'Molecular Properties':
-        temp_cols = cols1
-    elif temp_data_choice == 'Morgan Fingerprint':
-        temp_cols = cols2
-    elif temp_data_choice == 'ECFP2':
-        temp_cols = cols3
-    elif temp_data_choice == 'Path Fingerprint':
-        temp_cols = cols4
-    
-    split_data(temp_split[0], temp_split[1], temp_split[2],temp_cols)
+    split_data(temp_split[0], temp_split[1], temp_split[2],temp_data_index)
 
     if temp_alg == 'DT':
         model = model_list[0]
