@@ -54,8 +54,8 @@ delete_status_message = Div(text='Changes not saved', styles = not_updated)
 # -------------------BUTTONS--------------------
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning")
-train_button = Button(label="Run ML algorithm", button_type="success")
-tune_button = Button(label = "Tune", button_type = "success")
+train_button = Button(label="Run ML algorithm", button_type="success", width=150)
+tune_button = Button(label="Tune", button_type="success", width=150)
 delete_button = Button(label = "Delete", button_type = 'danger')
 test_button = Button(label = "Test", button_type = "success")
 predict_button = Button(label = 'Predict')
@@ -604,19 +604,21 @@ hp_slider = Slider(
     start= 1,
     end = 15,
     value = 2,
-    step = 1
+    step = 1,
+    width=200
 )
 hp_select = Select(
     title = "Splitter strategy",
     value = "random",
-    options = ["random", "best"]
+    options = ["random", "best"],
+    width= 200
 )
 hp_toggle = Checkbox(
     label = "None",
     visible = True,
     active = False
 )
-hp_toggle.margin = (24, 10, 5, 10)
+#hp_toggle.margin = (24, 10, 5, 10)
 
 # setting widget callbacks
 def print_vals():
@@ -1046,10 +1048,10 @@ interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_ex
 tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer, interactive_graph))
 
 hyperparam_layout = layout(
-    [tune_help],
-    [hp_slider, hp_toggle],
+    [hp_slider],
+    [hp_toggle],
     [hp_select],
-    [tune_button],
+    [tune_button, tune_help],
     [tune_status_message],
     [height_spacer]
 )
@@ -1060,7 +1062,7 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, train_help, alg_select, train_button, train_status_message, height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
+tab2_layout = row(left_page_spacer, column(top_page_spacer,  alg_select, row( train_button, train_help), train_status_message, height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, test_save_select, test_button, temp_test_status_message))
