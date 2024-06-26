@@ -123,7 +123,7 @@ intro_instr = Div(
             </div>
             <div class="section">
                 <h2>Train and Validate Tab</h2>
-                <p>On the <span class="highlight">Train and Validate Tab</span>, you will first select the <b>Machine Learning algorithm</b> of your choice, and run it. This will display the validation accuracy of this run in a datatable. Once you set and run your chosen algorithm, you will be able to fine-tune its <b>hyperparameters</b>, and compare these runs' validation accuracies with your past saved ones in the table. Once you have run a model at least once, you may continue to the next tab.</p>
+                <p>On the <span class="highlight">Train and Validate Tab</span>, you will first select the <b>machine learning algorithm</b> of your choice, and run it. This will display the validation accuracy of this run in a datatable. Once you set and run your chosen algorithm, you will be able to fine-tune its <b>hyperparameters</b>, and compare these runs' validation accuracies with your past saved ones in the table. Once you have run a model at least once, you may continue to the next tab.</p>
             </div>
             <div class="section">
                 <h2>Test Tab</h2>
@@ -131,7 +131,8 @@ intro_instr = Div(
             </div>
             <div class="section">
                 <h2>Predict Tab</h2>
-                <p>The <span class="highlight">Predict Tab</span> is where you will be able to test any of the saved models by inputting a <b>SMILES string</b>. FINISH THIS WHEN TEST TAB IS READY.</p>
+                <p>The <span class="highlight">Predict Tab</span> is where you will be able to test any of the saved models by inputting a <b>SMILES string</b>. </p>
+                <p>FINISH THIS WHEN TEST TAB IS READY.</p>
             </div>
             <div class="section">
                 <h2>Additional Information</h2>
