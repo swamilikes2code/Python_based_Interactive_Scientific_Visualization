@@ -383,7 +383,6 @@ split_display = Div(text="""
 #     ("index", "$index")
 # ]
 
-
 # # Create a figure
 # data_exp = figure(title="Data Exploration: search for correlations between properties", width = 600, height = 320, x_axis_label='X', y_axis_label='Y', 
 #            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
