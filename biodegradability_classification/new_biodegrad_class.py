@@ -147,7 +147,6 @@ intro_instr = Div(
     height=500
 )
 
-
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
@@ -155,7 +154,6 @@ splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  CAUTION: Adjusting the percentages can impact the model's performance, leading to overfitting or underfitting if the splits are not well-balanced of the overall dataset.
                  </div>""", width=280), position="right"))
-
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
@@ -218,18 +216,8 @@ all_df = [df1, df2, df3, df4]
 # just holding mandatory cols
 df = df1.iloc[:, :4]
 
-# file_path = r'rdkit_table.csv'
-# df = pd.read_csv(file_path, low_memory=False)
-# df_display = df.iloc[:,:220]  #don't need to display the other 167 rows of fingerprint bits
-# df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
-
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
-
-# # Ensure mandatory columns exist in the dataframe (if not, create dummy columns) (hopefully shouldn't have to apply)
-# for col in mandatory_columns:
-#     if col not in df_display.columns:
-#         df_display[col] = "N/A"
 
 # for storing data choice
 user_data = ''
@@ -259,41 +247,19 @@ cols4= [key for key in df4_dict.keys() if key not in mandatory_columns]
 
 all_cols = [cols1, cols2, cols3, cols4]
 
-# Separate mandatory and optional columns
-# optional_columns = [col for col in cols if col not in mandatory_columns]
-
-# # Create 3 options for columns
-# option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'NumHeteroatoms']
-# option_two = ['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles']
-# option_three = ['Fingerprint List']
-
-
-# Create column datasource, set default to first option
-data_tab_source = df1_tab_source
-
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
-data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
-
-# Create widget excluding mandatory columns
-# checkbox_button_group = CheckboxButtonGroup(labels=optional_columns, active=list(range(len(optional_columns))), orientation = 'vertical')
-
-# menu = [("Item 1", "item_1"), ("Item 2", "item_2"), None, ("Item 3", "item_3")]
+data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
 data_select = Select(title="Select Features:", options=data_opts)
-data_select.js_on_change("value", CustomJS(code="""
-    console.log('select: value=' + this.value, this.toString())
-"""))
 
 # Update columns to display
 def update_cols(display_columns, table_source):
-    # Always include mandatory columns
     all_columns = mandatory_columns + display_columns
     data_tab_table.source = table_source
     data_tab_table.columns = [TableColumn(field=col, title=col, width=150) for col in all_columns]
 
 def update_table(attr, old, new):
-    # cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
     if data_select.value == 'Molecular Properties':
         cols_to_display = cols1[:7]
         table_source = df1_tab_source
@@ -310,13 +276,16 @@ def update_table(attr, old, new):
     save_config_message.text = 'Configuration not saved'
     save_config_message.styles = not_updated
 
+# table on change
+data_select.on_change('value', update_table)
+
 # --------------- DATA SPLIT ---------------
 
 # saved split list to write to
 split_list = [50,25,25] #0-train, 1-val, 2-test
 
 # helper function to produce string
-def update_text(train_percentage, val_percentage, test_percentage):
+def update_split_text(train_percentage, val_percentage, test_percentage):
     split_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
     Training split: {train_percentage}% | Validation split: {val_percentage}% | Testing split: {test_percentage}%
     </div>"""
@@ -331,7 +300,7 @@ def update_values(attrname, old, new):
 
     save_config_message.text = 'Configuration not saved'
     save_config_message.styles = not_updated
-    update_text(train_percentage, val_percentage, test_percentage)
+    update_split_text(train_percentage, val_percentage, test_percentage)
     global split_list
     split_list = [train_percentage, val_percentage, test_percentage]
 
@@ -362,6 +331,48 @@ split_display = Div(text="""
                     <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
                     Training split: 50% | Validation split: 25% | Testing split: 25%
                     </div>""")
+
+# range slider on change
+tvt_slider.js_on_change('value', callback)
+tvt_slider.on_change('value', update_values)
+
+# --------------- SAVE DATA BUTTON ---------------
+
+# Save columns to saved list (split already saved)
+def save_config():
+    global user_data, user_index
+    user_data = data_select.value
+
+    if user_data not in data_opts:
+        save_config_message.text = 'Error: select an option before saving'
+        save_config_message.styles = not_updated
+        return
+    
+    user_index = data_opts.index(user_data)
+
+    #split_list isn't located here as the split values update in the list upon the change of the range slider
+    #the collective save button is to make the design more cohesive
+
+    #split data when saved to withold the test set and always use the same train val sets
+    split_data(split_list[0],split_list[1],split_list[2], user_index)
+
+    save_config_message.text = 'Configuration saved'
+    save_config_message.styles = updated
+
+def load_config():
+    save_config_message.text = "Loading config..."
+    save_config_message.styles = loading
+
+    train_status_message.text='Not running'
+    train_status_message.styles=not_updated
+
+    tune_status_message.text='Not running'
+    tune_status_message.styles=not_updated
+
+    curdoc().add_next_tick_callback(save_config)
+
+# Attach callback to the save button
+save_config_button.on_click(load_config)
 
 # --------------- INTERACTIVE DATA EXPLORATION --------------- 
 
@@ -433,65 +444,6 @@ split_display = Div(text="""
 
 # update_data_exp(None, None, None)
 
-
-# --------------- SAVE DATA BUTTON ---------------
-
-# table on change
-# checkbox_button_group.on_change('active', update_table)
-data_select.on_change('value', update_table)
-
-# range slider on change
-tvt_slider.js_on_change('value', callback)
-tvt_slider.on_change('value', update_values)
-
-# def set_columns():
-#     global user_columns, user_data
-#     if user_data == data_opts[0]:
-#         user_columns = cols1
-#     elif user_data == data_opts[1]:
-#         user_columns = cols2
-#     elif user_data == data_opts[2]:
-#         user_columns = cols3
-#     elif user_data == data_opts[3]:
-#         user_columns = cols4
-
-# Save columns to saved list (split already saved)
-def save_config():
-    # temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    global user_data, user_index #user_columns
-    user_data = data_select.value
-    user_index = data_opts.index(user_data)
-
-    if user_data not in data_opts:
-        save_config_message.text = 'Error: select an option before saving'
-        save_config_message.styles = not_updated
-        return
-
-    #split_list isn't located here as the split values update in the list upon the change of the range slider
-    #the collective save button is to make the design more cohesive
-
-    #split data when saved to withold the test set and always use the same train val sets
-    split_data(split_list[0],split_list[1],split_list[2], user_index)
-
-    save_config_message.text = 'Configuration saved'
-    save_config_message.styles = updated
-
-def load_config():
-    save_config_message.text = "Loading config..."
-    save_config_message.styles = loading
-
-    train_status_message.text='Not running'
-    train_status_message.styles=not_updated
-
-
-    tune_status_message.text='Not running'
-    tune_status_message.styles=not_updated
-
-    curdoc().add_next_tick_callback(save_config)
-
-# Attach callback to the save button
-save_config_button.on_click(load_config)
-
 # --------------- ALGORITHM SELECT AND RUN ---------------
 
 # algorithm name holder
@@ -513,10 +465,7 @@ def update_algorithm(attr, old, new):
 alg_select.on_change('value', update_algorithm)
 
 # creating widgets
-accuracy_display = Div(text="""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                       <div><b>Your Data Split:</b> N/A </div><div><b>Your Selected columns:</b> N/A</div><div><b>Validation Accuracy:</b> N/A</div><div><b>Test Accuracy:</b> N/A</div>
-                       </div>""", width=600)
-test_accuracy = []
+test_accuracy = 0.0
 
 
 def run_ML():
@@ -544,22 +493,11 @@ def run_ML():
 
     train_validate_model()
 
-    # Updating accuracy display
-    # accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    # <div><b>Your Data Split:</b> {split_list} </div><div><b>Your Selected columns:</b> {user_columns}<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
-    # </div>"""
-
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
 
     temp_df = all_df[data_index]
     temp_cols = all_cols[data_index]
-
-    # train_columns = []
-    # train_columns = temp_cols.copy()
-    # if 'Fingerprint List' in columns:
-    #     train_columns.remove("Fingerprint List")
-    #     train_columns += [str(i) for i in range(167)]
 
     X = temp_df[temp_cols]
     y = df['Class']
@@ -803,7 +741,6 @@ def load_tuned_config():
 # Can connect to the old funcs
 tune_button.on_click(load_tuned_config)
 
-
 # --------------- BOX PLOT AND SAVE ---------------
 
 # making select to choose save num to display/use
@@ -836,7 +773,6 @@ saved_columns = [
 
 # Create a DataTable
 saved_data_table = DataTable(source=save_source, columns=saved_columns, width=600, height=280, index_position=None)
-
 
 def save_model():
     global hyperparam_list
@@ -881,18 +817,6 @@ def add_row():
         'saved_val_acc' : [new_saved_val_acc]
     }
     save_source.stream(new_saved_data)
-
-# def display_save():
-#     global saved_accuracy, saved_test_acc
-#     index = int(test_save_select.value) - 1
-#     saved_accuracy = saved_test_acc[index]
-
-
-# def load_display_save():
-#     curdoc().add_next_tick_callback(display_save)
-
-# # callback to display_save button
-# display_save_button.on_click(load_display_save)
 
 def delete_save():
     saves_to_del = [int(i) for i in delete_multiselect.value]
@@ -969,18 +893,17 @@ bubble.add_tools(HoverTool(tooltips = [('Type', '@title'), ('Count', '@count')])
 
 cmatrix = figure(title = "Confusion Matrix", x_range = (-1,1), y_range = (-1,1))
 
-
 def update_cmatrix(attrname, old, new):
     new_confus_d = {'T_range': ['Positive', 'Positive',
                     'Negative', 'Negative'],
-    'Subject': ['Negative', 'Positive',
-                'Negative', 'Positive'],
-    'count': [new_false_neg, new_true_pos, 
-            new_true_neg, new_false_pos],
-    'count_scaled': [new_false_neg / scale, new_true_pos / scale,
-            new_true_neg / scale, new_false_pos / scale],
-    'title': ['False Negative', 'True Positive', 'True Negative', 'False Positive'],
-    'color': ['#FF7F50', '#6495ED', '#6495ED', '#FF7F50']    
+                    'Subject': ['Negative', 'Positive',
+                                'Negative', 'Positive'],
+                    'count': [new_false_neg, new_true_pos, 
+                            new_true_neg, new_false_pos],
+                    'count_scaled': [new_false_neg / scale, new_true_pos / scale,
+                            new_true_neg / scale, new_false_pos / scale],
+                    'title': ['False Negative', 'True Positive', 'True Negative', 'False Positive'],
+                    'color': ['#FF7F50', '#6495ED', '#6495ED', '#FF7F50']    
            }
         
     # Update the ColumnDataSource
@@ -991,8 +914,7 @@ def update_cmatrix(attrname, old, new):
     
     # color_bar.color_mapper = new_color_mapper
 
-    # bubble.scatter(fill_color = transform('count', new_color_mapper))
-
+    # bubble.scatter(fill_color = transform('count', new_color_mapper)
 
 def train_test_model():
     global new_true_pos
@@ -1041,10 +963,8 @@ def train_test_model():
     # print(new_false_neg)
     # print(new_true_neg)
 
-
-    test_accuracy.clear()
-
-    test_accuracy.append(round(accuracy_score(y_test, y_test_pred), 3))
+    global test_accuracy
+    test_accuracy=round(accuracy_score(y_test, y_test_pred), 3)
 
     update_cmatrix(None, None, None)
 
