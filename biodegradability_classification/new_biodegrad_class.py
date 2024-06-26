@@ -55,9 +55,9 @@ delete_status_message = Div(text='Changes not saved', styles = not_updated)
 # -------------------BUTTONS--------------------
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning")
-train_button = Button(label="Run ML algorithm", button_type="success", width=150)
-tune_button = Button(label="Tune", button_type="success", width=150)
-delete_button = Button(label = "Delete", button_type = 'danger')
+train_button = Button(label="Run ML algorithm", button_type="success", width=150, height = 31)
+tune_button = Button(label="Tune", button_type="success", width=150, height = 31)
+delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
 test_button = Button(label = "Test", button_type = "success")
 predict_button = Button(label = 'Predict')
 
@@ -382,7 +382,6 @@ split_display = Div(text="""
 #     ("name", "@names"),
 #     ("index", "$index")
 # ]
-
 
 # # Create a figure
 # data_exp = figure(title="Data Exploration: search for correlations between properties", width = 600, height = 320, x_axis_label='X', y_axis_label='Y', 
@@ -808,7 +807,7 @@ tune_button.on_click(load_tuned_config)
 # --------------- BOX PLOT AND SAVE ---------------
 
 # making select to choose save num to display/use
-delete_multiselect = MultiSelect(title = "Choose saves to delete", options = [], margin=(5, 40, 5, 5))
+delete_multiselect = MultiSelect(title = "Choose saves to delete", options = [], margin=(5, 40, 5, 5), width = 200)
 test_save_select = Select(title = "Choose a save to test", options = [], margin=(5, 40, 5, 5))
 predict_select = Select(title = 'Choose a save to predict with', options = [])
 
@@ -1146,8 +1145,9 @@ small_height_spacer = Spacer(height = 15)
 large_height_spacer = Spacer(height = 45)
 ginormous_height_spacer = Spacer(height = 60)
 button_spacer = Spacer(height = 30, width = 54)
-top_page_spacer = Spacer(height = 10)
-left_page_spacer = Spacer(width = 10)
+top_page_spacer = Spacer(height = 20)
+left_page_spacer = Spacer(width = 20)
+large_left_page_spacer = Spacer(width = 90)
 
 # creating widget layouts
 tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
@@ -1182,7 +1182,7 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, top_page_spacer, column(alg_select, row( train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, delete_layout), left_page_spacer, saved_data_table)
+tab2_layout = row(left_page_spacer, top_page_spacer, column(alg_select, row( train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 tab3_layout = row(left_page_spacer, column(top_page_spacer, test_help, test_save_select, test_button, temp_test_status_message, bubble))
