@@ -207,46 +207,71 @@ width=300, height=120)
 # df_display > df_subset > df_dict are for displaying table
 
 # Load data from the csv file
-file_path = r'rdkit_table.csv'
-df = pd.read_csv(file_path, low_memory=False)
-df_display = df.iloc[:,:220]  #don't need to display the other 167 rows of fingerprint bits
+df1 = pd.read_csv("./data/option_1.csv", low_memory=False)
+df2 = pd.read_csv("./data/option_2.csv", low_memory=False)
+df3 = pd.read_csv("./data/option_3.csv", low_memory=False)
+df4 = pd.read_csv("./data/option_4.csv", low_memory=False)
+
+all_df = [df1, df2, df3, df4]
+
+# just holding mandatory cols
+df = df1.iloc[:, :4]
+
+# file_path = r'rdkit_table.csv'
+# df = pd.read_csv(file_path, low_memory=False)
+# df_display = df.iloc[:,:220]  #don't need to display the other 167 rows of fingerprint bits
 # df = df.drop(columns=['Fingerprint List'])  #removing the display column, won't be useful in training
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
 
-# Ensure mandatory columns exist in the dataframe (if not, create dummy columns) (hopefully shouldn't have to apply)
-for col in mandatory_columns:
-    if col not in df_display.columns:
-        df_display[col] = "N/A"
+# # Ensure mandatory columns exist in the dataframe (if not, create dummy columns) (hopefully shouldn't have to apply)
+# for col in mandatory_columns:
+#     if col not in df_display.columns:
+#         df_display[col] = "N/A"
 
-# for storing data
+# for storing data choice
 user_data = ''
-user_columns = []
-data_opts = ["Fragments", "Molecular/Electronic", "Fingerprint List"]
+user_index = 0
+data_opts = ['Molecular Properties', 'Morgan Fingerprint', 'ECFP2', 'Path Fingerprint']
 
 # Limit the dataframe to the first 15 rows
-df_subset = df_display.head(15)
+df1_subset = df1.iloc[:15, :10].round(3)
+df2_subset = df2.iloc[:15, :10]
+df3_subset = df3.iloc[:15, :10]
+df4_subset = df4.iloc[:15, :10]
 
-df_rounded = df_subset.round(3)
+df1_tab_source = ColumnDataSource(df1_subset)
+df2_tab_source = ColumnDataSource(df2_subset)
+df3_tab_source = ColumnDataSource(df3_subset)
+df4_tab_source = ColumnDataSource(df4_subset)
 
-df_dict = df_rounded.to_dict("list")
-cols = list(df_dict.keys())
+df1_dict = df1.to_dict("list")
+df2_dict = df2.to_dict("list")
+df3_dict = df3.to_dict("list")
+df4_dict = df4.to_dict("list")
+
+cols1 = [key for key in df1_dict.keys() if key not in mandatory_columns]
+cols2 = [key for key in df2_dict.keys() if key not in mandatory_columns]
+cols3 = [key for key in df3_dict.keys() if key not in mandatory_columns]
+cols4= [key for key in df4_dict.keys() if key not in mandatory_columns]
+
+all_cols = [cols1, cols2, cols3, cols4]
 
 # Separate mandatory and optional columns
 # optional_columns = [col for col in cols if col not in mandatory_columns]
 
-# Create 3 options for columns
-option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'NumHeteroatoms']
-option_two = ['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles']
-option_three = ['Fingerprint List']
+# # Create 3 options for columns
+# option_one = ['fr_COO', 'fr_COO2', 'fr_SH', 'fr_Ar_NH', 'NumHeteroatoms']
+# option_two = ['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles']
+# option_three = ['Fingerprint List']
 
 
-# Create column datasource
-data_tab_source = ColumnDataSource(data=df_rounded)
+# Create column datasource, set default to first option
+data_tab_source = df1_tab_source
 
 # Create figure
-data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in cols]
+data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
 data_tab_table = DataTable(source=data_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
 # Create widget excluding mandatory columns
@@ -260,20 +285,27 @@ data_select.js_on_change("value", CustomJS(code="""
 """))
 
 # Update columns to display
-def update_cols(display_columns):
+def update_cols(display_columns, table_source):
     # Always include mandatory columns
     all_columns = mandatory_columns + display_columns
-    data_tab_table.columns = [col for col in data_tab_columns if col.title in all_columns]
+    data_tab_table.source = table_source
+    data_tab_table.columns = [TableColumn(field=col, title=col, width=150) for col in all_columns]
 
 def update_table(attr, old, new):
     # cols_to_display = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    if data_select.value == 'Fragments':
-        cols_to_display = option_one
-    elif data_select.value == 'Molecular/Electronic':
-        cols_to_display = option_two
-    elif data_select.value == 'Fingerprint List':
-        cols_to_display = option_three
-    update_cols(display_columns=cols_to_display)
+    if data_select.value == 'Molecular Properties':
+        cols_to_display = cols1[:7]
+        table_source = df1_tab_source
+    elif data_select.value == 'Morgan Fingerprint':
+        cols_to_display = cols2[:7]
+        table_source = df2_tab_source
+    elif data_select.value == 'ECFP2':
+        cols_to_display = cols3[:7]
+        table_source = df3_tab_source
+    elif data_select.value == 'Path Fingerprint':
+        cols_to_display = cols4[:7]
+        table_source = df4_tab_source
+    update_cols(display_columns=cols_to_display, table_source=table_source)
     save_config_message.text = 'Configuration not saved'
     save_config_message.styles = not_updated
 
@@ -332,65 +364,65 @@ split_display = Div(text="""
 
 # --------------- INTERACTIVE DATA EXPLORATION --------------- 
 
-# get columns
-data_exp_columns = df.columns.tolist()[:21]
+# # get columns
+# data_exp_columns = df.columns.tolist()[:21]
 
-#columns to exclude
-data_exp_columns = [col for col in data_exp_columns if col not in ["Class", "Smiles", "Substance Name", "Fingerprint"]]
+# #columns to exclude
+# data_exp_columns = [col for col in data_exp_columns if col not in ["Class", "Smiles", "Substance Name", "Fingerprint"]]
 
-#convert the class columns to a categorical column if it's not
-df['Class'] = df['Class'].astype('category')
+# #convert the class columns to a categorical column if it's not
+# df['Class'] = df['Class'].astype('category')
 
-# Create a ColumnDataSource
-data_exp_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names = []))
+# # Create a ColumnDataSource
+# data_exp_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names = []))
 
-# configure hovertool
-tooltips = [
-    ("name", "@names"),
-    ("index", "$index")
-]
+# # configure hovertool
+# tooltips = [
+#     ("name", "@names"),
+#     ("index", "$index")
+# ]
 
-# Create a figure
-data_exp = figure(title="Data Exploration: search for correlations between properties", width = 600, height = 320, x_axis_label='X', y_axis_label='Y', 
-           tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
+# # Create a figure
+# data_exp = figure(title="Data Exploration: search for correlations between properties", width = 600, height = 320, x_axis_label='X', y_axis_label='Y', 
+#            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
 
 
-# Create an initial scatter plot
-data_exp_scatter = data_exp.scatter(x='x', y='y', color='class_color', source=data_exp_source, legend_field='class_label')
+# # Create an initial scatter plot
+# data_exp_scatter = data_exp.scatter(x='x', y='y', color='class_color', source=data_exp_source, legend_field='class_label')
 
-# legend
-data_exp.add_layout(data_exp.legend[0], 'right')
+# # legend
+# data_exp.add_layout(data_exp.legend[0], 'right')
 
-# Create dropdown menus for X and Y axis
-select_x = Select(title="X Axis", value=data_exp_columns[0], options=data_exp_columns)
-select_y = Select(title="Y Axis", value=data_exp_columns[1], options=data_exp_columns)
+# # Create dropdown menus for X and Y axis
+# select_x = Select(title="X Axis", value=data_exp_columns[0], options=data_exp_columns)
+# select_y = Select(title="Y Axis", value=data_exp_columns[1], options=data_exp_columns)
 
-# Update the data based on the selections
-def update_data_exp(attrname, old, new):
-    x = select_x.value
-    y = select_y.value
-    new_vis_data = {
-        'x': df[x],
-        'y': df[y],
-        'names' : df['Substance Name'],
-        'class_color': ['#900C3F' if cls == df['Class'].cat.categories[0] else '#1DBD4D' for cls in df['Class']],
-        'class_label': ['Not readily biodegradable' if cls == df['Class'].cat.categories[0] else 'Readily biodegradable' for cls in df['Class']]
-    }
+# # Update the data based on the selections
+# def update_data_exp(attrname, old, new):
+#     x = select_x.value
+#     y = select_y.value
+#     new_vis_data = {
+#         'x': df[x],
+#         'y': df[y],
+#         'names' : df['Substance Name'],
+#         'class_color': ['#900C3F' if cls == df['Class'].cat.categories[0] else '#1DBD4D' for cls in df['Class']],
+#         'class_label': ['Not readily biodegradable' if cls == df['Class'].cat.categories[0] else 'Readily biodegradable' for cls in df['Class']]
+#     }
         
-    # Update the ColumnDataSource with a plain Python dict
-    data_exp_source.data = new_vis_data
+#     # Update the ColumnDataSource with a plain Python dict
+#     data_exp_source.data = new_vis_data
     
-    # Update existing scatter plot glyph if needed
-    data_exp_scatter.data_source.data = new_vis_data
+#     # Update existing scatter plot glyph if needed
+#     data_exp_scatter.data_source.data = new_vis_data
     
-    data_exp.xaxis.axis_label = x
-    data_exp.yaxis.axis_label = y
+#     data_exp.xaxis.axis_label = x
+#     data_exp.yaxis.axis_label = y
 
-# Attach the update_data function to the dropdowns
-select_x.on_change('value', update_data_exp)
-select_y.on_change('value', update_data_exp)
+# # Attach the update_data function to the dropdowns
+# select_x.on_change('value', update_data_exp)
+# select_y.on_change('value', update_data_exp)
 
-update_data_exp(None, None, None)
+# update_data_exp(None, None, None)
 
 
 # --------------- SAVE DATA BUTTON ---------------
@@ -403,30 +435,25 @@ data_select.on_change('value', update_table)
 tvt_slider.js_on_change('value', callback)
 tvt_slider.on_change('value', update_values)
 
-def set_columns():
-    global user_columns, user_data
-    if user_data == 'Fragments':
-        user_columns = option_one
-    elif user_data == 'Molecular/Electronic':
-        user_columns = option_two
-    elif user_data == 'Fingerprint List':
-        user_columns = option_three
+# def set_columns():
+#     global user_columns, user_data
+#     if user_data == data_opts[0]:
+#         user_columns = cols1
+#     elif user_data == data_opts[1]:
+#         user_columns = cols2
+#     elif user_data == data_opts[2]:
+#         user_columns = cols3
+#     elif user_data == data_opts[3]:
+#         user_columns = cols4
 
 # Save columns to saved list (split already saved)
 def save_config():
     # temp_columns = [checkbox_button_group.labels[i] for i in checkbox_button_group.active]
-    global user_data, user_columns
+    global user_data, user_index #user_columns
+    user_data = data_select.value
+    user_index = data_opts.index(user_data)
 
-    if data_select.value == 'Fragments':
-        user_data = 'Fragments'
-        user_columns = option_one
-    elif data_select.value == 'Molecular/Electronic':
-        user_data = 'Molecular/Electronic'
-        user_columns = option_two
-    elif data_select.value == 'Fingerprint List':
-        user_data = 'Fingerprint List'
-        user_columns = option_three
-    else:
+    if user_data not in data_opts:
         save_config_message.text = 'Error: select an option before saving'
         save_config_message.styles = not_updated
         return
@@ -435,7 +462,7 @@ def save_config():
     #the collective save button is to make the design more cohesive
 
     #split data when saved to withold the test set and always use the same train val sets
-    split_data(split_list[0],split_list[1],split_list[2],user_columns)
+    split_data(split_list[0],split_list[1],split_list[2], user_index)
 
     save_config_message.text = 'Configuration saved'
     save_config_message.styles = updated
@@ -509,20 +536,23 @@ def run_ML():
     train_validate_model()
 
     # Updating accuracy display
-    accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Your Data Split:</b> {split_list} </div><div><b>Your Selected columns:</b> {user_columns}<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
-    </div>"""
+    # accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+    # <div><b>Your Data Split:</b> {split_list} </div><div><b>Your Selected columns:</b> {user_columns}<div><b>Validation Accuracy:</b> {val_accuracy}</div><div><b>Test Accuracy:</b> {test_accuracy}</div>
+    # </div>"""
 
-def split_data(train_percentage, val_percentage, test_percentage, columns):
+def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
 
-    train_columns = []
-    train_columns += columns
-    if 'Fingerprint List' in columns:
-        train_columns.remove("Fingerprint List")
-        train_columns += [str(i) for i in range(167)]
+    temp_df = all_df[data_index]
+    temp_cols = all_cols[data_index]
 
-    X = df[train_columns]
+    # train_columns = []
+    # train_columns = temp_cols.copy()
+    # if 'Fingerprint List' in columns:
+    #     train_columns.remove("Fingerprint List")
+    #     train_columns += [str(i) for i in range(167)]
+
+    X = temp_df[temp_cols]
     y = df['Class']
 
     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-train_percentage)/100)
@@ -903,12 +933,14 @@ def train_test_model():
     temp_alg = save_source.data['saved_algorithm'][save_index]
     temp_hyperparams = eval(save_source.data['saved_hyperparams'][save_index])
 
-    if temp_data_choice == 'Fragments':
-        temp_cols = option_one
-    elif temp_data_choice == 'Molecular/Electronic':
-        temp_cols = option_two
-    elif temp_data_choice == 'Fingerprint List':
-        temp_cols = option_three
+    if temp_data_choice == 'Molecular Properties':
+        temp_cols = cols1
+    elif temp_data_choice == 'Morgan Fingerprint':
+        temp_cols = cols2
+    elif temp_data_choice == 'ECFP2':
+        temp_cols = cols3
+    elif temp_data_choice == 'Path Fingerprint':
+        temp_cols = cols4
     
     split_data(temp_split[0], temp_split[1], temp_split[2],temp_cols)
 
@@ -1006,23 +1038,23 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 
 # ---------------- VISIBILITY --------------
 
-# Data exploration plot
-datavis_help.visible = False
-data_exp.visible = False
-select_x.visible = False
-select_y.visible = False
+# # Data exploration plot
+# datavis_help.visible = False
+# data_exp.visible = False
+# select_x.visible = False
+# select_y.visible = False
 
-# Callback function to toggle visibility
-def toggle_data_exp_visibility():
-    datavis_help.visible = not datavis_help.visible
-    data_exp.visible = not data_exp.visible
-    select_x.visible = not select_x.visible
-    select_y.visible = not select_y.visible
-    data_exp_vis_button.label = "Show Data Exploration*" if not data_exp.visible else "Hide Data Exploration*"
-    data_exp_vis_button.icon = down_arrow if not data_exp.visible else up_arrow
+# # Callback function to toggle visibility
+# def toggle_data_exp_visibility():
+#     datavis_help.visible = not datavis_help.visible
+#     data_exp.visible = not data_exp.visible
+#     select_x.visible = not select_x.visible
+#     select_y.visible = not select_y.visible
+#     data_exp_vis_button.label = "Show Data Exploration*" if not data_exp.visible else "Hide Data Exploration*"
+#     data_exp_vis_button.icon = down_arrow if not data_exp.visible else up_arrow
 
-# Link the button to the callback
-data_exp_vis_button.on_click(toggle_data_exp_visibility)
+# # Link the button to the callback
+# data_exp_vis_button.on_click(toggle_data_exp_visibility)
 
 # --------------- LAYOUTS ---------------
 
@@ -1043,8 +1075,8 @@ data_config_layout = layout(
     [small_height_spacer],
     [button_spacer, column(save_config_button, save_config_message)]
 )
-interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer, interactive_graph))
+# interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer)) #interactive_graph
 
 hyperparam_layout = layout(
     [hp_slider],

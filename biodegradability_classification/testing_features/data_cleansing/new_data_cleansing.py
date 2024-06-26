@@ -40,7 +40,7 @@ option_1 = pd.concat([df, desc_df], axis = 1)
 # from 2016 rdkit ugm github
 def molecule_to_morgan(mol):
     a = np.zeros(2048)
-    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2),a)
+    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1),a)
     return a
 
 def molecule_to_ecfp(mol):
@@ -100,7 +100,7 @@ option_4 = pd.concat([df, pathfp_df], axis=1)
 # # print(df_cleaned.shape)
 
 # Save the cleaned DataFrame to a new CSV file
-option_1.to_csv("../../option_1.csv", index=False)
-option_2.to_csv("../../option_2.csv", index=False)
-option_3.to_csv("../../option_3.csv", index=False)
-option_4.to_csv("../../option_4.csv", index=False)
+option_1.to_csv("../../data/option_1.csv", index=False)
+option_2.to_csv("../../data/option_2.csv", index=False)
+option_3.to_csv("../../data/option_3.csv", index=False)
+option_4.to_csv("../../data/option_4.csv", index=False)
