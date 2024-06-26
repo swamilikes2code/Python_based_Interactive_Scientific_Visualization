@@ -32,6 +32,8 @@ molecs = df['Smiles'].apply(smiles_to_molecule)
 # generating descriptors (using all descriptors, can specify list to generate)
 desc = [Descriptors.CalcMolDescriptors(mol) for mol in molecs]
 desc_df = pd.DataFrame(desc)
+desc_df = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
+# print(desc_df.isnull().any().any())
 # print(desc_df)
 
 option_1 = pd.concat([df, desc_df], axis = 1)
