@@ -953,7 +953,7 @@ def add_row():
     }
     
 
-    new_formatted_val_html = html_val_template.format(f'{new_saved_val_acc*100}%')
+    new_formatted_val_html = html_val_template.format(f'{round((new_saved_val_acc*100), 1)}%')
 
     val_acc_display.text = new_formatted_val_html
 
@@ -1122,7 +1122,7 @@ def run_test():
     </div>"""
     temp_test_status_message.styles = completed
 
-    new_formatted_test_html = html_test_template.format(f'{test_accuracy*100}%')
+    new_formatted_test_html = html_test_template.format(f'{round((test_accuracy*100), 1)}%')
     test_acc_display.text = new_formatted_test_html
 
 def load_test():
