@@ -154,6 +154,9 @@ html_test_template = """
             border-bottom: 2px solid #ddd;
             padding-bottom: 5px;
         }}
+        h3 {{
+            color: #555;
+        }}
         p {{
             margin: 15px 0;
         }}
@@ -177,12 +180,30 @@ html_test_template = """
             <h2>Testing Accuracy:</h2>
             <p>{}</p>
         </div>
+        <div class="section">
+            <h3>True Positives:</h3>
+            <p>{}</p>
+        </div>
+        <div class="section">
+            <h3>False Positives:</h3>
+            <p>{}</p>
+        </div>
+        <div class="section">
+            <h3>False Negatives:</h3>
+            <p>{}</p>
+        </div>
+        <div class="section">
+            <h3>True Negatives:</h3>
+            <p>{}</p>
+        </div>
+        <div class="section">
+            <h3>Performance:</h3>
+            <p>Overall, your model was {} at identifying molecules that were readily biodegradable vs. molecules that were not readily biodegradable</p>
+        </div>
     </div>
 </body>
 </html>
 """
-
-
 
 # -----------------INSTRUCTIONS-----------------
 
@@ -267,7 +288,7 @@ intro_instr = Div(
 formatted_val_html = html_val_template.format('N/A')
 val_acc_display = Div(text=formatted_val_html)
 
-formatted_test_html = html_test_template.format('N/A')
+formatted_test_html = html_test_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 test_acc_display = Div(text=formatted_test_html)
 
 
@@ -1047,7 +1068,17 @@ def update_cmatrix(attrname, old, new):
                     'title': ['False Negative', 'True Positive', 'True Negative', 'False Positive'],
                     'color': ['#FF7F50', '#6495ED', '#6495ED', '#FF7F50']    
            }
-        
+    
+    if (new_true_pos/new_false_pos) > (new_true_neg/new_false_neg):
+        performance = 'better'
+    elif (new_true_pos/new_false_pos) < (new_true_neg/new_false_neg):
+        performance = 'worse'
+    else:
+        performance = 'as good'
+
+    new_formatted_test_html = html_test_template.format(f'{round((test_accuracy*100), 1)}%', new_true_pos, new_false_pos, new_false_neg, new_true_neg, performance)
+    test_acc_display.text = new_formatted_test_html
+
     # Update the ColumnDataSource
 
     confus_source.data = new_confus_d
@@ -1121,9 +1152,6 @@ def run_test():
     temp_test_status_message.text = f"""Testing accuracy for save #{test_save_select.value}: {test_accuracy}</div> 
     </div>"""
     temp_test_status_message.styles = completed
-
-    new_formatted_test_html = html_test_template.format(f'{round((test_accuracy*100), 1)}%')
-    test_acc_display.text = new_formatted_test_html
 
 def load_test():
     temp_test_status_message.text = "Testing..."
