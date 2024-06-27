@@ -63,6 +63,11 @@ def DLT():
     return render_template("DLT.html", bokeh_script_DLTModel=bokeh_script_DLTModel)
 
 
+@app.route("/biodegradability_classification", methods=["GET"])
+def biodegradability_classification():
+    bokeh_script_biodegradability_classification = server_document(url="https://srrweb.cc.lehigh.edu/biodegradability_classification")
+    return render_template("biodegradability_classification.html", bokeh_script_biodegradability_classification=bokeh_script_biodegradability_classification)
+
 # @app.route("/acknowledgements", methods=['GET'])
 # def acknowledgements():
 #     return render_template("acknowledgements.html")
