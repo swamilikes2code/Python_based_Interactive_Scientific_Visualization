@@ -338,31 +338,36 @@ nav li {
             font-size: 16px; /* Adjust the font size as desired */
         }
     </style>
-    <h1 class="head1">Reaction Kinetics</h1>
+    <h1 class="head1">Biodegradability Classification</h1>
     <div class="tab">
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Instructions')">Instructions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Introduction')" id="defaultOpen">Introduction</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Our Dataset')">Our Dataset</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Preparing Data')">Questions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Questions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Hyperparameters')">Questions</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
       </div>
   
       <div class="flexwrap1">
-      <div id="About" class="tabcontent">
-        <h3>About</h3>
-        <img src="{{url_for('static', filename='CSTR-rxn-sequence.jpg')}}" alt="Reaction Kinetics Graph and Example" class="center" style="float:right; height:450px; width:600px; border:5px solid black">
-        <p>This is a simple example of a sequential set of reactions where a reactant "A" first undergoes a reaction to form B, the desired product. However, B undergoes a further (undesired) reaction to form C. It's a classical prototype of complex reactions we see all the time in natural (biological processes) and engineered reaction systems (chemical refineries, pharmaceuticals, etc.). As engineers, we would like to optimize the system to maximize the concentration of the desired product B. This, however, depends on a number of factors such as: 
-            <ol> <li>How fast each reaction occurs for a unit concentration (determined by rate constant k for each reaction)</li> <li> How sensitive the rate of consumption of A or B is to their concentration (determined by the order of reaction, greater the order more sensitive the reaction is to the concentration of the reactants)</li><li> How long you let the reactions take place.</li> </ol> </p>
+      <div id="Introduction" class="tabcontent">
+        <h3>Welcome to Biodegradability Classification</h3>
+        <p>The goal of our module is to teach the user about the <b>biodegradability</b> of organic chemicals through 
+          <b>machine learning</b> and <b>data science</b> principles.</p>
+        
+        <p>Our module gives the user all of the options and tools needed to build a machine learning model, step-by-step. 
+          This includes selecting the data and type of <b>algorithm</b> to use, fine-tuning <b>hyperparameters</b>, evaluating 
+          the model's performance, and feeding the model new, unseen instances of organic chemicals, which the model will be able to 
+          predict and classify as <b>"readily biodegradable"</b> or <b>"not readily biodegradable."</b></p>
+
+        <p>By giving the user these tools, they will be able to see what chemical properties are highly correlated to biodegradability, 
+          and which machine learning and data science practices help improve this model's accuracy.</p>
        </div>
       </div>
       
       <div class="flexwrap1">
-      <div id="Instructions" class="tabcontent">
-        <h3>Instructions</h3>
-        <p>Note that 1 and 2 are natural properties of the reaction system (i.e. you do not have control over it) while 3 is a variable that the engineer sets.</p>
-        <p>Play around with the module below by varying rate constants and the order to see how the concentration of A, B, and C changes with time. 
-            <ul> <li> Can you come up with an explanation for what you see?  </li>
-            <li> When should you stop the reaction to maximize B if the rate constants and order were all 1.0? </li>
-            <li>How does this time change if the first reaction becomes faster or becomes more sensitive to concentration? </li>
-            <li>How does this time change if the second reaction becomes faster or becomes more sensitive to concentration?</li></ul></p>
+      <div id="Our Dataset" class="tabcontent">
+        <h3>About our dataset</h3>
+        <p> Sample Text Here</p>
       </div>
       </div>
   
