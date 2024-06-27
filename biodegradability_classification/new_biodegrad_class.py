@@ -1020,7 +1020,7 @@ confus_d = {'T_range': ['Positive', 'Positive',
 confus_df = pd.DataFrame(data = confus_d)
 confus_source = ColumnDataSource(confus_df)
 bubble = figure(x_range = confus_df['T_range'].unique(), y_range = confus_df['Subject'].unique(), 
-                title = 'Confusion Matrix', width = 525, height = 500)
+                title = 'Confusion Matrix', width = 525, height = 500, tools='', toolbar_location = None)
 
 # color_mapper = LinearColorMapper(palette = Viridis256, low = confus_df['count'].min(), high = confus_df['count'].max())
 # color_bar = ColorBar(color_mapper = color_mapper,
@@ -1029,7 +1029,7 @@ bubble = figure(x_range = confus_df['T_range'].unique(), y_range = confus_df['Su
 # bubble.add_layout(color_bar, 'right')
 bubble.scatter(x = 'T_range', y = 'Subject', size = 'count_scaled', color = 'color', source = confus_source)
 bubble.grid.visible = False
-bubble.xaxis.axis_label = 'Testing Data'
+bubble.xaxis.axis_label = 'Actual Values'
 bubble.yaxis.axis_label = 'Predicted Values'
 bubble.add_tools(HoverTool(tooltips = [('Type', '@title'), ('Count', '@count')]))
 
@@ -1252,7 +1252,7 @@ delete_layout = layout(
 tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)), column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message), column(top_page_spacer, bubble), column(top_page_spacer, test_acc_display))
+tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message), column(top_page_spacer, bubble), column(top_page_spacer, small_med_height_spacer, test_acc_display))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
