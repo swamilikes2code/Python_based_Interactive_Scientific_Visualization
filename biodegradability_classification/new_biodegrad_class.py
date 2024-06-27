@@ -931,7 +931,7 @@ def train_test_model():
     np.random.seed(123)
 
     save_num = int(test_save_select.value)
-    save_index = save_num-1
+    save_index = test_save_select.options.index(str(save_num))
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
     temp_data_choice = save_source.data['saved_data_choice'][save_index]
     temp_data_index = data_opts.index(temp_data_choice)
