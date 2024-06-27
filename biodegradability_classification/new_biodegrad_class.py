@@ -569,17 +569,28 @@ save_config_button.on_click(load_config)
 # update_data_exp(None, None, None)
 
 # --------------- ALGORITHM SELECT AND RUN ---------------
-
 # algorithm name holder
 my_alg = 'Decision Tree'
 
-# list of the models to use
-model_list = [DecisionTreeClassifier(), KNeighborsClassifier(), SVC()]
-
-model = model_list[0]
-
 # Create select button
 alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
+
+# define to be default: decision tree
+hyperparam_list = [2, "random"]
+
+def print_vals():
+    global my_alg, model, hyperparam_list
+    print("hp", hyperparam_list)
+    print("model", model)
+    if my_alg == 'Decision Tree':
+        print("depth", model.max_depth)
+        print("splitter", model.splitter)
+    elif my_alg == 'K-Nearest Neighbor':
+        print("n_neighbors", model.n_neighbors)
+        print("weights", model.weights)
+    elif my_alg == 'Support Vector Classification':
+        print("C", model.C)
+        print("kernel", model.kernel)
 
 # hyperparameter tuning widgets, default to decision tree
 hp_slider = Slider(
@@ -603,9 +614,10 @@ hp_toggle = Checkbox(
 )
 #hp_toggle.margin = (24, 10, 5, 10)
 
-def set_hyperparameter_widgets(attr, old, new):
+def set_hyperparameter_widgets():
     global model
     global my_alg
+    global hyperparam_list
     if my_alg == 'Decision Tree':
         #hyperparameters are 
         # splitter strategy (splitter, best vs. random, select)
@@ -681,6 +693,13 @@ def set_hyperparameter_widgets(attr, old, new):
         model.C = hp_slider.value
         model.kernel = hp_select.value
 
+
+# list of the models to use
+np.random.seed(123)
+model_list = [DecisionTreeClassifier(), KNeighborsClassifier(), SVC()]
+model = model_list[0]
+set_hyperparameter_widgets()
+
 def update_algorithm(attr, old, new):
     global my_alg, model
     my_alg = new
@@ -692,7 +711,8 @@ def update_algorithm(attr, old, new):
         model = model_list[1]
     else:
         model = model_list[2]
-
+    
+    set_hyperparameter_widgets()
     train_status_message.text = 'Not running'
     train_status_message.styles = not_updated
 
@@ -701,7 +721,7 @@ test_accuracy = 0.0
 
 # Attach callback to Select widget
 alg_select.on_change('value', update_algorithm)
-alg_select.on_change('value', set_hyperparameter_widgets)
+# alg_select.on_change('value', set_hyperparameter_widgets)
 
 
 def run_ML():
@@ -738,6 +758,7 @@ def train_validate_model():
     np.random.seed(123)
     global model
 
+
     # train model
     model.fit(X_train, y_train)
     
@@ -768,8 +789,6 @@ train_button.on_click(load_ML)
 ## KNN - int, string
 ## SVC - int, ""
 
-# define to be default: decision tree
-hyperparam_list = [2, "random"]
 
 # create displays
 tuned_accuracy_display = Div(text = """
@@ -804,22 +823,6 @@ def run_tuned_config():
     </div>"""
 
 # setting widget callbacks
-def print_vals():
-    global my_alg
-    if my_alg == 'Decision Tree':
-        print("slider", hp_slider.value)
-        print("switch", hp_toggle.active)
-        print("model", model.max_depth)
-        print("model splitter", model.splitter)
-    elif my_alg == 'K-Nearest Neighbor':
-        print("slider", hp_slider.value)
-        print("n_neighbors", model.n_neighbors)
-        print("weights", model.weights)
-    elif my_alg == 'Support Vector Classification':
-        print("slider", hp_slider.value)
-        print("C", model.C)
-        print("kernel", model.kernel)
-
 def hp_slider_callback(attr, old, new):
     if hp_slider.disabled == True:
         return
