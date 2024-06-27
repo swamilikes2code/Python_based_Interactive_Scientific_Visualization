@@ -455,17 +455,127 @@ model_list = [DecisionTreeClassifier(), KNeighborsClassifier(), SVC()]
 # Create select button
 alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
 
-def update_algorithm(attr, old, new):
+# hyperparameter tuning widgets, default to decision tree
+hp_slider = Slider(
+    title = "Max Depth of Tree",
+    start= 1,
+    end = 15,
+    value = 2,
+    step = 1,
+    width=200
+)
+hp_select = Select(
+    title = "Splitter strategy:",
+    value = "random",
+    options = ["random", "best"],
+    width= 200
+)
+hp_toggle = Checkbox(
+    label = "None",
+    visible = True,
+    active = False
+)
+#hp_toggle.margin = (24, 10, 5, 10)
+
+def set_hyperparameter_widgets(attr, old, new):
+    global model
     global my_alg
+    if my_alg == 'Decision Tree':
+        #hyperparameters are 
+        # splitter strategy (splitter, best vs. random, select)
+        # max_depth of tree (max_depth, int slider)
+
+        hp_slider.update(
+            title = "Max Depth of Tree",
+            disabled = False,
+            show_value = True,
+            start= 1,
+            end = 15,
+            value = 2,
+            step = 1
+        )
+        hp_toggle.update(
+            label = "None",
+            visible = True,
+            active = False
+        )
+        hp_select.update(
+            title = "Splitter strategy",
+            value = "random",
+            options = ["random", "best"]
+        )
+
+        model.max_depth = hp_slider.value
+        model.splitter = hp_select.value
+    elif my_alg == 'K-Nearest Neighbor':
+        #hyperparameters are 
+        # K (n_neighbors, int slider)
+        # weights (weights, uniform vs. distance, select)
+        
+        hp_slider.update(
+            title = "Number of neighbors",
+            disabled = False,
+            show_value = True,
+            start = 1,
+            end = 30,
+            value = 20,
+            step = 2
+        )
+        hp_toggle.visible = False
+        hp_select.update(
+            title = "Weights",
+            value = "uniform",
+            options = ["uniform", "distance"]
+        )
+
+        model.n_neighbors = hp_slider.value
+        model.weights = hp_select.value
+    elif my_alg == 'Support Vector Classification':
+        #hyperparameters are 
+        # kernel (linear, poly, rbf, sigmoid) 
+        # regularization parameter C (float slider)
+        # model = SVC()
+
+        hp_slider.update(
+            title = "C, regularization parameter",
+            disabled = False,
+            show_value = True,
+            start = 1,
+            end = 100,
+            value = 20,
+            step = 1
+        )
+        hp_toggle.visible = False
+        hp_select.update(
+            title = "kernel",
+            value = "linear",
+            options = ["linear", "poly", "rbf", "sigmoid"]
+        )
+
+        model.C = hp_slider.value
+        model.kernel = hp_select.value
+
+def update_algorithm(attr, old, new):
+    global my_alg, model
     my_alg = new
+
+    # Assigning model based on selected ML algorithm, using default hyperparameters
+    if my_alg == "Decision Tree":
+        model = model_list[0]
+    elif my_alg == "K-Nearest Neighbor":
+        model = model_list[1]
+    else:
+        model = model_list[2]
+
     train_status_message.text = 'Not running'
     train_status_message.styles = not_updated
 
-# Attach callback to Select widget
-alg_select.on_change('value', update_algorithm)
-
 # creating widgets
 test_accuracy = 0.0
+
+# Attach callback to Select widget
+alg_select.on_change('value', update_algorithm)
+alg_select.on_change('value', set_hyperparameter_widgets)
 
 
 def run_ML():
@@ -481,15 +591,7 @@ def run_ML():
     train_status_message.text = f'Algorithm: {my_alg}'
     train_status_message.styles = updated
 
-    # Assigning model based on selected ML algorithm, using default hyperparameters
-    if my_alg == "Decision Tree":
-        model = model_list[0]
-    elif my_alg == "K-Nearest Neighbor":
-        model = model_list[1]
-    else:
-        model = model_list[2]
-    
-    set_hyperparameter_widgets()
+    # set_hyperparameter_widgets()
 
     train_validate_model()
 
@@ -508,6 +610,7 @@ def split_data(train_percentage, val_percentage, test_percentage, data_index):
 
 def train_validate_model():
     np.random.seed(123)
+    global model
 
     # train model
     model.fit(X_train, y_train)
@@ -574,28 +677,6 @@ def run_tuned_config():
     <div><b>Tuned Validation Accuracy:</b> {val_accuracy[-1]}</div> 
     </div>"""
 
-# hyperparameter tuning widgets, default to decision tree
-hp_slider = Slider(
-    title = "Max Depth of Tree",
-    start= 1,
-    end = 15,
-    value = 2,
-    step = 1,
-    width=200
-)
-hp_select = Select(
-    title = "Splitter strategy:",
-    value = "random",
-    options = ["random", "best"],
-    width= 200
-)
-hp_toggle = Checkbox(
-    label = "None",
-    visible = True,
-    active = False
-)
-#hp_toggle.margin = (24, 10, 5, 10)
-
 # setting widget callbacks
 def print_vals():
     global my_alg
@@ -651,81 +732,6 @@ def hp_toggle_callback(attr, old, new):
             model.max_depth = hp_slider.value
             hyperparam_list[0] = hp_slider.value
 
-def set_hyperparameter_widgets():
-    global model
-    global my_alg
-    if my_alg == 'Decision Tree':
-        #hyperparameters are 
-        # splitter strategy (splitter, best vs. random, select)
-        # max_depth of tree (max_depth, int slider)
-
-        hp_slider.update(
-            title = "Max Depth of Tree",
-            disabled = False,
-            show_value = True,
-            start= 1,
-            end = 15,
-            value = 2,
-            step = 1
-        )
-        hp_toggle.update(
-            label = "None",
-            visible = True,
-            active = False
-        )
-        hp_select.update(
-            title = "Splitter strategy",
-            value = "random",
-            options = ["random", "best"]
-        )
-
-        model.max_depth = hp_slider.value
-        model.splitter = hp_select.value
-    elif my_alg == 'K-Nearest Neighbor':
-        #hyperparameters are 
-        # K (n_neighbors, int slider)
-        # weights (weights, uniform vs. distance, select)
-        
-        hp_slider.update(
-            title = "Number of neighbors",
-            disabled = False,
-            show_value = True,
-            start = 1,
-            end = 30,
-            value = 20,
-            step = 2
-        )
-
-        hp_toggle.visible = False
-
-        hp_select.update(
-            title = "Weights",
-            value = "uniform",
-            options = ["uniform", "distance"]
-        )
-    elif my_alg == 'Support Vector Classification':
-        #hyperparameters are 
-        # kernel (linear, poly, rbf, sigmoid) 
-        # regularization parameter C (float slider)
-        # model = SVC()
-
-        hp_slider.update(
-            title = "C, regularization parameter",
-            disabled = False,
-            show_value = True,
-            start = 1,
-            end = 100,
-            value = 50,
-            step = 1
-        )
-
-        hp_toggle.visible = False
-
-        hp_select.update(
-            title = "kernel",
-            value = "linear",
-            options = ["linear", "poly", "rbf", "sigmoid"]
-        )
 
 hp_slider.on_change('value', hp_slider_callback)
 hp_select.on_change('value', hp_select_callback)
