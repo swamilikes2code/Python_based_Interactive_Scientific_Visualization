@@ -67,6 +67,123 @@ down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="2
 
 data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primary", icon = down_arrow)
 
+# -----------------HTML TEMPLATES-----------------
+html_val_template = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }}
+        .container {{
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }}
+        h1 {{
+            text-align: center;
+            color: #333;
+        }}
+        h2 {{
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }}
+        p {{
+            margin: 15px 0;
+        }}
+        .section {{
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }}
+        .highlight {{
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+            padding: 2px 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h2>Latest Validation Accuracy:</h2>
+            <p>{}</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+html_test_template = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }}
+        .container {{
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }}
+        h1 {{
+            text-align: center;
+            color: #333;
+        }}
+        h2 {{
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }}
+        p {{
+            margin: 15px 0;
+        }}
+        .section {{
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }}
+        .highlight {{
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+            padding: 2px 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h2>Testing Accuracy:</h2>
+            <p>{}</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+
+
 # -----------------INSTRUCTIONS-----------------
 
 intro_instr = Div(
@@ -146,6 +263,13 @@ intro_instr = Div(
     width=750,
     height=500
 )
+
+formatted_val_html = html_val_template.format('N/A')
+val_acc_display = Div(text=formatted_val_html)
+
+formatted_test_html = html_test_template.format('N/A')
+test_acc_display = Div(text=formatted_test_html)
+
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
@@ -451,6 +575,8 @@ my_alg = 'Decision Tree'
 
 # list of the models to use
 model_list = [DecisionTreeClassifier(), KNeighborsClassifier(), SVC()]
+
+model = model_list[0]
 
 # Create select button
 alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
@@ -822,7 +948,14 @@ def add_row():
         'saved_hyperparams': [new_saved_hyperparams],
         'saved_val_acc' : [new_saved_val_acc]
     }
+    
+
+    new_formatted_val_html = html_val_template.format(f'{new_saved_val_acc*100}%')
+
+    val_acc_display.text = new_formatted_val_html
+
     save_source.stream(new_saved_data)
+    
 
 def delete_save():
     saves_to_del = [int(i) for i in delete_multiselect.value]
@@ -953,7 +1086,6 @@ def train_test_model():
         model.C = temp_hyperparams[0]
         model.kernel = temp_hyperparams[1]
 
-
     model.fit(X_train, y_train)
 
     y_test_pred = model.predict(X_test)
@@ -982,9 +1114,13 @@ def run_test():
     train_test_model()
 
     # Updating accuracy display
+
     temp_test_status_message.text = f"""Testing accuracy for save #{test_save_select.value}: {test_accuracy}</div> 
     </div>"""
     temp_test_status_message.styles = completed
+
+    new_formatted_test_html = html_test_template.format(f'{test_accuracy*100}%')
+    test_acc_display.text = new_formatted_test_html
 
 def load_test():
     temp_test_status_message.text = "Testing..."
@@ -1108,10 +1244,10 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, top_page_spacer, column(alg_select, row( train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)))
+tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)), val_acc_display)
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, top_page_spacer, column(test_save_select, row(test_button, test_help), temp_test_status_message, bubble))
+tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message, bubble), test_acc_display)
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
