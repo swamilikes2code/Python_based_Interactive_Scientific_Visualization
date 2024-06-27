@@ -589,6 +589,43 @@ save_config_button.on_click(load_config)
 
 # update_data_exp(None, None, None)
 
+sizes = np.linspace(.1, 1.0, 15)
+train_scores = []
+val_scores = []
+learning_curve_source = ColumnDataSource()
+
+def set_lc_source():
+    global learning_curve_source
+    learning_curve_source.data=dict(
+        train_size=sizes,
+        train_score=train_scores,
+        val_score=val_scores
+    )
+set_lc_source()
+
+learning_curve = figure(
+    title='Learning Curve with Custom Split', 
+    x_axis_label='Training Size (Fraction)', 
+    y_axis_label='Accuracy',
+    tools='pan, wheel_zoom, box_zoom, reset',
+    x_range=(0, 1),
+    y_range=(0, 1)  # Set y-axis range from 0 to 1
+)
+
+curve1 = learning_curve.line('train_size', 'train_score', source=learning_curve_source, line_width=2, legend_label='Training Score', color='blue')
+curve2 = learning_curve.scatter('train_size', 'train_score', source=learning_curve_source, size=8, color='blue')
+
+curve3 = learning_curve.line('train_size', 'val_score', source=learning_curve_source, line_width=2, legend_label='Validation Score', color='orange')
+curve4 = learning_curve.scatter('train_size', 'val_score', source=learning_curve_source, size=8, color='orange')
+
+learning_curve_hover = HoverTool(tooltips = [
+    ("Training Size", "@train_size"),
+    ("Training Score", "@train_score"),
+    ("Val Score", "@val_score")
+])
+learning_curve.add_tools(learning_curve_hover)
+learning_curve.legend.location = 'bottom_right'
+
 # --------------- ALGORITHM SELECT AND RUN ---------------
 # algorithm name holder
 my_alg = 'Decision Tree'
@@ -778,16 +815,26 @@ def split_data(train_percentage, val_percentage, test_percentage, data_index):
 def train_validate_model():
     np.random.seed(123)
     global model
+    global train_scores, val_scores
+    train_scores.clear()
+    val_scores.clear()
 
+    for size in sizes:
+        X_train_subset = X_train.sample(frac=size, random_state=42)
+        y_train_subset = y_train.loc[X_train_subset.index]
 
-    # train model
-    model.fit(X_train, y_train)
-    
-    # calculating accuracy
-    y_val_pred = model.predict(X_val)
+        # train model
+        model.fit(X_train_subset, y_train_subset)
 
-    val_accuracy.append(round(accuracy_score(y_val, y_val_pred), 3))
+        train_score = accuracy_score(y_train_subset, model.predict(X_train_subset)) # Evaluate on training and test sets
+        val_score = accuracy_score(y_val, model.predict(X_val))
+        
+        train_scores.append(train_score) #add the scores to the arrays 
+        val_scores.append(val_score)
 
+    val_accuracy.append(round(val_scores[-1], 3))
+
+    set_learning_curve()
     save_model()
 
 def load_ML():
@@ -802,6 +849,12 @@ def load_ML():
 # Attach callback to the run button
 train_button.on_click(load_ML)
 
+def set_learning_curve():
+    set_lc_source()
+    curve1.data_source = learning_curve_source
+    curve2.data_source = learning_curve_source
+    curve3.data_source = learning_curve_source
+    curve4.data_source = learning_curve_source
 
 # --------------- HYPERPARAMETER TUNING + BUTTON ---------------
 
@@ -897,7 +950,7 @@ def load_tuned_config():
 # Can connect to the old funcs
 tune_button.on_click(load_tuned_config)
 
-# --------------- BOX PLOT AND SAVE ---------------
+# --------------- SAVE ---------------
 
 # making select to choose save num to display/use
 delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 200)
@@ -1277,7 +1330,7 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)), column(top_page_spacer, val_acc_display))
+tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)), learning_curve, column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message), column(top_page_spacer, bubble), column(top_page_spacer, small_med_height_spacer, test_acc_display))
