@@ -54,7 +54,7 @@ delete_status_message = Div(text='Changes not saved', styles = not_updated)
 
 # -------------------BUTTONS--------------------
 
-save_config_button = Button(label="Save Current Configuration", button_type="warning")
+save_config_button = Button(label="Save Current Configuration", button_type="warning", width = 250)
 train_button = Button(label="Run ML algorithm", button_type="success", width=150, height = 31)
 tune_button = Button(label="Tune", button_type="success", width=150, height = 31)
 delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
@@ -375,7 +375,7 @@ all_cols = [cols1, cols2, cols3, cols4]
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
 data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
-data_select = Select(title="Select Features:", options=data_opts)
+data_select = Select(title="Select Features:", options=data_opts, width = 195)
 
 # Update columns to display
 def update_cols(display_columns, table_source):
@@ -411,7 +411,7 @@ split_list = [50,25,25] #0-train, 1-val, 2-test
 # helper function to produce string
 def update_split_text(train_percentage, val_percentage, test_percentage):
     split_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    Training split: {train_percentage}% | Validation split: {val_percentage}% | Testing split: {test_percentage}%
+    Train: {train_percentage}% || Validate: {val_percentage}% || Test: {test_percentage}%
     </div>"""
 
 # function to update model and accuracy
@@ -449,12 +449,12 @@ callback = CustomJS(args = dict(),
             )
 
 # creating widgets
-tvt_slider = RangeSlider(value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False)
+tvt_slider = RangeSlider(title= 'Split Data', value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False, width = 195)
 tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 split_display = Div(text="""
                     <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-                    Training split: 50% | Validation split: 25% | Testing split: 25%
-                    </div>""")
+                    Train: 50% || Validate: 25% || Test: 25%
+                    </div>""", width = 250)
 
 # range slider on change
 tvt_slider.js_on_change('value', callback)
@@ -1202,8 +1202,10 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 
 # --------------- LAYOUTS ---------------
 
-height_spacer = Spacer(height = 30)
-small_height_spacer = Spacer(height = 15)
+tiny_height_spacer = Spacer(height = 15)
+small_height_spacer = Spacer(height = 16)
+small_med_height_spacer = Spacer(height = 23)
+med_height_spacer = Spacer(height = 30)
 large_height_spacer = Spacer(height = 45)
 ginormous_height_spacer = Spacer(height = 60)
 button_spacer = Spacer(height = 30, width = 54)
@@ -1215,18 +1217,18 @@ large_left_page_spacer = Spacer(width = 90)
 tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
 
 data_config_layout = layout(
-    [datatable_help, data_select],
-    [small_height_spacer],
-    [splitter_help, column(tvt_slider, split_display)],
-    [small_height_spacer],
-    [button_spacer, column(save_config_button, save_config_message)]
+    [data_select, column(small_height_spacer, datatable_help)],
+    [tiny_height_spacer],
+    [column(row(tvt_slider, column(small_med_height_spacer, splitter_help)), split_display)],
+    [tiny_height_spacer],
+    [column(save_config_button, save_config_message)]
 )
 
 # interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer)) #interactive_graph
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_config_layout, data_tab_table), tiny_height_spacer)) #interactive_graph
 
 # interactive_graph = column(row(data_exp_vis_button, datavis_help), data_exp, row(select_x, select_y)) #create data graph visualization 
-# tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), small_height_spacer, interactive_graph))
+# tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), tiny_height_spacer, interactive_graph))
 
 
 hyperparam_layout = layout(
@@ -1244,10 +1246,10 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)), val_acc_display)
+tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)), column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message, bubble), test_acc_display)
+tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message), column(top_page_spacer, bubble), column(top_page_spacer, test_acc_display))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
