@@ -343,7 +343,7 @@ nav li {
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Introduction')" id="defaultOpen">Introduction</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Our Dataset')">Our Dataset</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Preparing Data')">Preparing Data</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Questions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Algorithms</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Hyperparameters')">Questions</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
       </div>
@@ -447,6 +447,32 @@ nav li {
             we will be using <b>Classification.</b></p>
             </div>
           </div>
+
+      <div class="flexwrap1">
+        <div id="Algorithms" class="tabcontent">
+          <h3>Our Algorithms</h3>
+            <p>For this assessment, you will have the choice between 3 <b>Machine Learning algorithms</b>, 
+              each of which has its own strengths and weaknesses:</p>
+            <ul>
+              <li><b>Decision Tree (DT):</b> Flowchart like structure, narrows down choices given a large sample.</li>
+              <ul>
+                <li><b>Pros:</b> Simple, handles numerical & categorical data</li>
+                <li><b>Cons:</b> Small changes can largely impact data</li>
+                </ul>
+              <li><b>K-Nearest Neighbor (KNN):</b> Compares input to rest of data, determining which data 
+                the input is most similar to.</li>
+              <ul>
+                <li><b>Pros:</b> Non-parametric, versatile </li>
+                <li><b>Cons:</b> Memory intensive, exhibits <b>curse of dimensionality</b></li>
+                </ul>
+              <li><b>Support Vector Classification (SVC):</b> Separates classes using a line.</li>
+              <ul>
+                <li><b>Pros:</b> Handles large datasets, memory efficient</li>
+                <li><b>Cons:</b> Computationally expensive, sensitive to noisy data</li>
+                </ul>
+              </ul>
+              </div>
+            </div>
   <script>
     function openTab(evt, tabName) {
       var i, tabcontent, tablinks;
