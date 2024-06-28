@@ -22,10 +22,32 @@
     width: 25%;
     }
 
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 900px) {
+  .column_4 {
+    width: 50%;
+  }
+} 
+
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column_4 {
+    width: 100%;
+  }
+}
+
 .column_3 {
     float: left;
     width: 33.33%;
     }
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column_3 {
+    width: 100%;
+  }
+}
 
 .row:after {
     content: "";
