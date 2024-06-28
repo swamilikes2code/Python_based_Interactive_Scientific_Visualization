@@ -17,6 +17,17 @@
     position: relative;
 }
 
+.column {
+    float: left;
+    width: 50%;
+    }
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+    }
+
 header {
     background: #262626;
     height: 5.86vw;
@@ -367,51 +378,63 @@ nav li {
       <div class="flexwrap1">
       <div id="Our Dataset" class="tabcontent">
         <h3>About our dataset</h3>
-        <p><b>Class:</b></p>
-        <p>This is the value we are training the model to find. It is a binary representation of biodegradability, where...</p>
-        <p>
-          <ul>
-          <li><b>Ready biodegradability</b> (> 60% biodegradation within 28 days) = (<b>1</b>)</li>
-          <li><b>Non-ready biodegradability</b> (< 60% biodegradation within 28 days)  = (<b>0</b>)</li>
-        </ul></p>
 
-        <p><b>SMILES String:</b></p>
-        <p>
-          <ul>
-          <li><b>SMILES String:</b> A code representation of the organic chemical's formula/structure.</li>
-        </ul></p>
+        <div class="row">
+          <div class="column">
+            <h3>Class:</h3>
+            <p>This is the value we are training the model to find. It is a binary representation of biodegradability, where...</p>
+            <p>
+              <ul>
+              <li><b>Ready biodegradability</b> (> 60% biodegradation within 28 days) = (<b>1</b>)</li>
+              <li><b>Non-ready biodegradability</b> (< 60% biodegradation within 28 days)  = (<b>0</b>)</li>
+            </ul></p>
+          </div>
 
-        <p><b>Fingerprints:</b></p>
-        <p>
-          <ul>
-          <li><b>Fingerprint:</b> A binary representation of the molecule's substructures.</li>
-          <li>For training their model, the user will have the choice between three fingerprints:</li>
-          <ul>
-            <li><b>Morgan Fingerprint</b></li>
-            <li><b>ECFP2</b></li>
-            <li><b>Path Fingerprint</b></li>
-          </ul>
-        </ul></p>
+          <div class="column">
+            <h3>SMILES String:</h3>
+            <p>
+              <ul>
+              <li><b>SMILES String:</b> A code representation of the organic chemical's formula/structure.</li>
+            </ul></p>
+          </div>
 
-        <p><b>Features:</b></p>
-        <p>
-          <ul>
-          <li><b>Features:</b> A list of over 200 molecular/electronic properties, including...</li>
-          <li>For training their model, the user will have the choice between three fingerprints:</li>
-          <ul>
-            <li>molecular weight</li>
-            <li>number of valence electrons</li>
-            <li>number of aromatic rings</li>
-            <li>H Donor vs. Acceptor</li>
-            <li>etc.</li>
-          </ul>
-        </ul></p>
+          <div class="column">
+            <h3>Fingerprints:</h3>
+            <p>
+              <ul>
+              <li><b>Fingerprint:</b> A binary representation of the molecule's substructures.</li>
+              <li>For training their model, the user will have the choice between three fingerprints:</li>
+              <ul>
+                <li><b>Morgan Fingerprint</b></li>
+                <li><b>ECFP2</b></li>
+                <li><b>Path Fingerprint</b></li>
+              </ul>
+            </ul></p>
+          </div>
 
+          <div class="column">
+            <h3>Features:</h3>
+            <p>
+              <ul>
+              <li><b>Features:</b> A list of over 200 molecular/electronic properties, including...</li>
+              <li>For training their model, the user will have the choice between three fingerprints:</li>
+              <ul>
+                <li>molecular weight</li>
+                <li>number of valence electrons</li>
+                <li>number of aromatic rings</li>
+                <li>H Donor vs. Acceptor</li>
+                <li>etc.</li>
+              </ul>
+            </ul></p>
+          </div>
+        </div>
+
+        <div class="row">
         <p><b>NOTE:</b> The data table shows only a preview of 15 of the chemicals in the dataset. In reality, 
           the dataset contains over 6000 chemicals. For more information about where the the dataset came from, visit 
           https://pubs.acs.org/doi/full/10.1021/acs.est.2c01764?casa_token=0tiijjgXmCgAAAAA%3A8KfqOPS7ASRDqKUDSQpEFw4r5iX8rABFY2JU21CzluPIHT37AprYFbIxjoKlPOLQ_7e7-0w2-6IziVFruQ
           </p>
-
+        </div>
       </div>
       </div>
   
