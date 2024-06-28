@@ -344,7 +344,7 @@ nav li {
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Our Dataset')">Our Dataset</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Preparing Data')">Preparing Data</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Algorithms</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Hyperparameters')">Questions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Hyperparameters')">Hyperparameters</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
       </div>
   
@@ -454,7 +454,7 @@ nav li {
             <p>For this assessment, you will have the choice between 3 <b>Machine Learning algorithms</b>, 
               each of which has its own strengths and weaknesses:</p>
             <ul>
-              <li><b>Decision Tree (DT):</b> Flowchart like structure, narrows down choices given a large sample.</li>
+              <li><b>Decision Tree (DT):</b> Flowchart-like structure, narrows down choices given a large sample.</li>
               <ul>
                 <li><b>Pros:</b> Simple, handles numerical & categorical data</li>
                 <li><b>Cons:</b> Small changes can largely impact data</li>
@@ -471,6 +471,72 @@ nav li {
                 <li><b>Cons:</b> Computationally expensive, sensitive to noisy data</li>
                 </ul>
               </ul>
+              </div>
+            </div>
+
+      <div class="flexwrap1">
+        <div id="Hyperparameters" class="tabcontent">
+          <h3>Hyperparameter Tuning</h3>
+            <p><b>Hyperparameter tuning</b> is the process of finding the best set of hyperparameters for a machine learning 
+              algorithm by selecting the optimal values to improve the model's performance. However, be careful of <b>overfitting</b>. 
+              This occurs when the model essentially "memorizes" its training data, resulting in higher accuracy values for training data, 
+              but lower accuracy for new data. Depending on your chosen ML algorithm, you will be able to tune the following hyperparameters:</p>
+            <p>For Decision Tree (DT):</p>
+            <ul>
+              <li><b>Max depth of tree</b></li>
+              <ul>
+                <li>How far the tree is allowed to go</li>
+                <li>Higher depths can fit data better, but can also <b>overfit</b> data</li>
+                </ul>
+              <li><b>Splitter strategy:</b></li>
+              <ul>
+                <li>Best</li>
+                <ul>
+                  <li>Chooses best split at each node</li>
+                  </ul>
+                <li>Random</li>
+                <ul>
+                  <li>Chooses best random split at each node</li>
+                  </ul>
+                </ul>
+              </ul>
+            <p>For K-Nearest Neighbor (KNN):</p>
+            <ul>
+              <li><b>Number of neighbors</b></li>
+              <ul>
+                <li>How many neighbors near a point will be used to classify that point</li>
+                <li>Fewer neighbors can fit data better, but k=1 will <b>overfit</b> data</li>
+                </ul>
+              <li><b>Weights</b></li>
+              <ul>
+                <li>Uniform</li>
+                <ul>
+                  <li>All nearby points are weighted equally</li>
+                  </ul>
+                </ul>
+                <li>Distance</li>
+                <ul>
+                  <li>Closer neighbors are weighted more than further ones</li>
+                  </ul>
+                </ul>
+              </ul>  
+            <p>For Support Vector Classification (SVC):</p>
+            <ul>
+              <li><b>Regularization Parameter</b></li>
+              <ul>
+                <li>How smooth the decision boundary will be</li>
+                <li>Higher values can fit data better, but can also <b>overfit</b> data</li>
+                </ul>
+              <li>In general, SVCs are the most resistant to <b>overfitting</b></li>
+              </ul>  
+              </div>
+            </div>
+
+      <div class="flexwrap1">
+        <div id="Questions" class="tabcontent">
+          <h3>Questions?</h3>
+            <p>Leave any <b>questions</b> or <b>comments</b> you have on our module in 
+              the <b>Google Form</b> below.</p>
               </div>
             </div>
   <script>
