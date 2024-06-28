@@ -17,9 +17,14 @@
     position: relative;
 }
 
-.column {
+.column_4 {
     float: left;
-    width: 50%;
+    width: 25%;
+    }
+
+.column_3 {
+    float: left;
+    width: 33.33%;
     }
 
 .row:after {
@@ -380,7 +385,7 @@ nav li {
         <h3>About our dataset</h3>
 
         <div class="row">
-          <div class="column">
+          <div class="column_4">
             <h3>Class:</h3>
             <p>This is the value we are training the model to find. It is a binary representation of biodegradability, where...</p>
             <p>
@@ -390,7 +395,7 @@ nav li {
             </ul></p>
           </div>
 
-          <div class="column">
+          <div class="column_4">
             <h3>SMILES String:</h3>
             <p>
               <ul>
@@ -398,7 +403,7 @@ nav li {
             </ul></p>
           </div>
 
-          <div class="column">
+          <div class="column_4">
             <h3>Fingerprints:</h3>
             <p>
               <ul>
@@ -412,7 +417,7 @@ nav li {
             </ul></p>
           </div>
 
-          <div class="column">
+          <div class="column_4">
             <h3>Features:</h3>
             <p>
               <ul>
