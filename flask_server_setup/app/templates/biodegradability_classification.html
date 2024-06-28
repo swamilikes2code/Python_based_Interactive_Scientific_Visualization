@@ -437,7 +437,7 @@ nav li {
         <div class="row">
         <p><b>NOTE:</b> The data table shows only a preview of 15 of the chemicals in the dataset. In reality, 
           the dataset contains over 6000 chemicals. For more information about where the the dataset came from, visit 
-          https://pubs.acs.org/doi/full/10.1021/acs.est.2c01764?casa_token=0tiijjgXmCgAAAAA%3A8KfqOPS7ASRDqKUDSQpEFw4r5iX8rABFY2JU21CzluPIHT37AprYFbIxjoKlPOLQ_7e7-0w2-6IziVFruQ
+          <a href="url">https://pubs.acs.org/doi/full/10.1021/acs.est.2c01764?casa_token=0tiijjgXmCgAAAAA%3A8KfqOPS7ASRDqKUDSQpEFw4r5iX8rABFY2JU21CzluPIHT37AprYFbIxjoKlPOLQ_7e7-0w2-6IziVFruQ</a>
           </p>
         </div>
       </div>
@@ -446,39 +446,53 @@ nav li {
       <div class="flexwrap1">
       <div id="Preparing Data" class="tabcontent">
         <h3>Preparing Data</h3>
+        <div class="row">
           <p>Before training can begin, several decisions must be made in terms of preparing data, 
             and choosing the type of algorithm:</p>
-          <p><b>Selecting/Dropping Data:</b></p>
-          <p>Choosing which properties will or won't be used to train the model is an important step 
-            in <b>data preparation.</b></p>
-          <p>While one might assume that using more properties would lead to better accuracy, 
-            this is not necessarily the case. This is referred to as the <b>curse of dimensionality</b>, 
-            where including too much data can worsen the decision-making of Machine Learning algorithms.</p>
-          <p>The user should keep this in mind when choosing whether to use <b>features</b> or one of the 
-            <b>fingerprints</b> to train their model.</p>
-          <p><b>Splitting Data:</b></p>
-          <p>The next stage, <b>splitting data</b> can be broken down into three steps:</p>
-          <ul>
-            <li><b>Training:</b> Helps the model learn patterns and relationships within the data.</li>
-            <li><b>Validation:</b> Tunes the model's parameters and selects the best mode, generalizing the data well.</li>
-            <li><b>Testing:</b> Evaluates the final model's performance on entirely unseen data.</li>
-            </ul>
-          <p><b>Classification vs. Regression:</b></p>
-          <p>Classification and Regression are both supervised learning algorithms (learning from datasets to predict outcomes), 
-            however, there is a difference:</p>
-          <ul>
-            <li><b>Classification:</b> Determined by predefined classes (color, size, etc.)</li>
-            <li><b>Regression:</b> Determined by numerical data (prices, temperature, etc.)
-            </li>
-            </ul>
-          <p>Because our module is focused on the binary property of ready biodegradability, 
-            we will be using <b>Classification.</b></p>
-            </div>
+        </div>
+        
+        <div class="row">
+          <div class="column_3">
+            <h3>Selecting/Dropping Data:</h3>
+            <p>Choosing which properties will or won't be used to train the model is an important step 
+              in <b>data preparation.</b></p>
+            <p>While one might assume that using more properties would lead to better accuracy, 
+              this is not necessarily the case. This is referred to as the <b>curse of dimensionality</b>, 
+              where including too much data can worsen the decision-making of Machine Learning algorithms.</p>
+            <p>The user should keep this in mind when choosing whether to use <b>features</b> or one of the 
+              <b>fingerprints</b> to train their model.</p>
           </div>
 
+          <div class="column_3">
+            <h3>Splitting Data:</h3>
+            <p>The next stage, <b>splitting data</b> can be broken down into three steps:</p>
+            <ul>
+              <li><b>Training:</b> Helps the model learn patterns and relationships within the data.</li>
+              <li><b>Validation:</b> Tunes the model's parameters and selects the best mode, generalizing the data well.</li>
+              <li><b>Testing:</b> Evaluates the final model's performance on entirely unseen data.</li>
+              </ul>
+          </div>
+
+          <div class="column_3">
+            <h3>Classification vs. Regression:</h3>
+            <p>Classification and Regression are both supervised learning algorithms (learning from datasets to predict outcomes), 
+              however, there is a difference:</p>
+            <ul>
+              <li><b>Classification:</b> Determined by predefined classes (color, size, etc.)</li>
+              <li><b>Regression:</b> Determined by numerical data (prices, temperature, etc.)
+              </li>
+              </ul>
+            <p>Because our module is focused on the binary property of ready biodegradability, 
+              we will be using <b>Classification.</b></p>
+          </div>
+        </div>
+      </div>
+      </div>
+
       <div class="flexwrap1">
-        <div id="Algorithms" class="tabcontent">
-          <h3>Our Algorithms</h3>
+      <div id="Algorithms" class="tabcontent">
+        <h3>Our Algorithms</h3>
+
             <p>For this assessment, you will have the choice between 3 <b>Machine Learning algorithms</b>, 
               each of which has its own strengths and weaknesses:</p>
             <ul>
@@ -499,8 +513,8 @@ nav li {
                 <li><b>Cons:</b> Computationally expensive, sensitive to noisy data</li>
                 </ul>
               </ul>
-              </div>
-            </div>
+      </div>
+      </div>
 
       <div class="flexwrap1">
         <div id="Hyperparameters" class="tabcontent">
