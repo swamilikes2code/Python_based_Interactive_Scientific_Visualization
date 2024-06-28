@@ -342,7 +342,7 @@ nav li {
     <div class="tab">
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Introduction')" id="defaultOpen">Introduction</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Our Dataset')">Our Dataset</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Preparing Data')">Questions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Preparing Data')">Preparing Data</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Questions</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Hyperparameters')">Questions</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
@@ -416,19 +416,35 @@ nav li {
       </div>
   
       <div class="flexwrap1">
-      <div id="Questions" class="tabcontent">
-        <h3>Supplemental Questions</h3>
-          <p><ol>
-            <li>Where do the maxes occur relative to each other? Why is this the case? </li>
-            <li>What values of each parameter will result in B reaching its highest possible value? At what time will it reach this value? </li>
-            <li>What is the maximum value of C? For what values of parameters will C reach this value the soonest?</li>
-            <li>Which parameter would have the greatest effects on the concentration of B? Why?</li>
-            <ul> <li>For a hypothetical reaction: k_AB = 8, k_BC = 0.02, Order_AB = 1, Order_BC = 5:</li>
-            <li>For a hypothetical reaction: k_AB = 8, k_BC = 2, Order_AB = 1, Order_BC = 1:</li></ul>
-            <li>How quickly could you maximize B? Is it better to maximize B early or late in the reaction? Why?</li>
-            <li>Approximately, where would you expect to find the maximums for a hypothetical reaction: k_AB = 4, k_BC = 2, Order_AB = 1, Order_ BC = 1?</li>
-            <li>The process for producing B requires that B is collected after 4 seconds have passed. What values of k and order would give you a maximum for B at t=4 seconds?</li>
-        </ol></p>
+      <div id="Preparing Data" class="tabcontent">
+        <h3>Preparing Data</h3>
+          <p>Before training can begin, several decisions must be made in terms of preparing data, 
+            and choosing the type of algorithm:</p>
+          <p><b>Selecting/Dropping Data:</b></p>
+          <p>Choosing which properties will or won't be used to train the model is an important step 
+            in <b>data preparation.</b></p>
+          <p>While one might assume that using more properties would lead to better accuracy, 
+            this is not necessarily the case. This is referred to as the <b>curse of dimensionality</b>, 
+            where including too much data can worsen the decision-making of Machine Learning algorithms.</p>
+          <p>The user should keep this in mind when choosing whether to use <b>features</b> or one of the 
+            <b>fingerprints</b> to train their model.</p>
+          <p><b>Splitting Data:</b></p>
+          <p>The next stage, <b>splitting data</b> can be broken down into three steps:</p>
+          <ul>
+            <li><b>Training:</b> Helps the model learn patterns and relationships within the data.</li>
+            <li><b>Validation:</b> Tunes the model's parameters and selects the best mode, generalizing the data well.</li>
+            <li><b>Testing:</b> Evaluates the final model's performance on entirely unseen data.</li>
+            </ul>
+          <p><b>Classification vs. Regression:</b></p>
+          <p>Classification and Regression are both supervised learning algorithms (learning from datasets to predict outcomes), 
+            however, there is a difference:</p>
+          <ul>
+            <li><b>Classification:</b> Determined by predefined classes (color, size, etc.)</li>
+            <li><b>Regression:</b> Determined by numerical data (prices, temperature, etc.)
+            </li>
+            </ul>
+          <p>Because our module is focused on the binary property of ready biodegradability, 
+            we will be using <b>Classification.</b></p>
             </div>
           </div>
   <script>
