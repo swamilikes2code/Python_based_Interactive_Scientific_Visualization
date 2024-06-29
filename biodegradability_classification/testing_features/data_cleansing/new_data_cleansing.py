@@ -27,16 +27,17 @@ def smiles_to_molecule(smiles): #function that converts Smiles to RDKit molecule
 # Apply the conversion function to the SMILES column
 RDLogger.DisableLog('rdApp.*') #ignoring hydrogen warning
 molecs = df['Smiles'].apply(smiles_to_molecule)
+print(df.shape)
 # print(df)
 
 # generating descriptors (using all descriptors, can specify list to generate)
 desc = [Descriptors.CalcMolDescriptors(mol) for mol in molecs]
 desc_df = pd.DataFrame(desc)
-desc_df = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
+option_1 = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
 # print(desc_df.isnull().any().any())
 # print(desc_df)
 
-option_1 = pd.concat([df, desc_df], axis = 1)
+df = pd.concat([df, desc_df], axis = 1)
 # print(df)
 
 # from 2016 rdkit ugm github
@@ -72,16 +73,23 @@ pathfp_vec = [molecule_to_pathfp(mol) for mol in molecs]
 # MACCSfp_df = pd.DataFrame(MACCSfp_array)
 
 mfp_array = np.stack(mfp_vec, axis=0)
-mfp_df = pd.DataFrame(mfp_array)
-option_2 = pd.concat([df, mfp_df], axis=1)
+option_2 = pd.DataFrame(mfp_array)
+option_2 = option_2.astype('int8')
+df = pd.concat([df, option_2], axis=1)
 
 ECFP_array = np.stack(ECFP_vec, axis=0)
-ECFP_df = pd.DataFrame(ECFP_array)
-option_3 = pd.concat([df, ECFP_df], axis=1)
+option_3 = pd.DataFrame(ECFP_array)
+option_3 = option_3.astype('int8')
+df = pd.concat([df, option_3], axis=1)
 
 pathfp_array = np.stack(pathfp_vec, axis=0)
-pathfp_df = pd.DataFrame(pathfp_array)
-option_4 = pd.concat([df, pathfp_df], axis=1)
+option_4 = pd.DataFrame(pathfp_array)
+option_4 = option_4.astype('int8')
+df = pd.concat([df, option_4], axis=1)
+
+print(option_1.shape)
+print(option_2.shape)
+print(df.shape)
 
 # # df_new holds each bit in separate column to be read by the model later
 # df = pd.concat([df, pd.DataFrame(fp_array)], axis = 1)
@@ -102,7 +110,9 @@ option_4 = pd.concat([df, pathfp_df], axis=1)
 # # print(df_cleaned.shape)
 
 # Save the cleaned DataFrame to a new CSV file
-option_1.to_csv("../../data/option_1.csv", index=False)
-option_2.to_csv("../../data/option_2.csv", index=False)
-option_3.to_csv("../../data/option_3.csv", index=False)
-option_4.to_csv("../../data/option_4.csv", index=False)
+# df.to_csv("../../data/all.csv", index=False)
+# df.to_csv("../../data/mandatory.csv", index=False)
+# option_1.to_csv("../../data/option_1.csv", index=False)
+# option_2.to_csv("../../data/option_2.csv", index=False)
+# option_3.to_csv("../../data/option_3.csv", index=False)
+# option_4.to_csv("../../data/option_4.csv", index=False)
