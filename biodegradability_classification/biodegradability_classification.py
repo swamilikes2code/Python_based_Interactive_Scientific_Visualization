@@ -609,7 +609,8 @@ learning_curve = figure(
     y_axis_label='Accuracy',
     tools='pan, wheel_zoom, box_zoom, reset',
     x_range=(0, 1),
-    y_range=(0, 1)  # Set y-axis range from 0 to 1
+    y_range=(0, 1),  # Set y-axis range from 0 to 1
+    height=500
 )
 
 curve1 = learning_curve.line('train_size', 'train_score', source=learning_curve_source, line_width=2, legend_label='Training Score', color='blue')
@@ -1330,7 +1331,7 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, row(delete_layout, large_left_page_spacer, saved_data_table)), learning_curve, column(top_page_spacer, val_acc_display))
+tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message), column(top_page_spacer, bubble), column(top_page_spacer, small_med_height_spacer, test_acc_display))
