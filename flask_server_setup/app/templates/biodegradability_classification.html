@@ -611,12 +611,6 @@ nav li {
           </div>
         </div>
         </div>
-      /* start of my edits */
-
-
-
-
-
         <div id="Overfitting" class="tabcontent">
           <h3>Generalize Don't Memorize</h3>
           <div class="row">
@@ -634,45 +628,30 @@ nav li {
           <div class="row">
             <div class="column_3">
               <h3>Underfitting model</h3>
-              <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:600px; height: 400px; float: none">
-              <p>High koss and low accuracy. This model fails to recognize the general trends in the data and is two vague with the linear decision boundary
-              <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:600px; height: 400px; float: none">
+              <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <p>This model exhibits high loss and low accuracy, failing to capture the data's general trends due to its overly simplistic linear decision boundary. With an accuracy of 58.8%, its performance in predicting biodegradability is only marginally better than random chance</p>
             </div>
   
             <div class="column_3">
               <h3>Optimal model</h3>
-              <p>The next stage, <b>splitting data</b> can be broken down into three steps:</p>
-              <ul>
-                <li><b>Training:</b> Helps the model learn patterns and relationships within the data.</li>
-                <li><b>Validation:</b> Tunes the model's parameters and selects the best mode, generalizing the data well.</li>
-                <li><b>Testing:</b> Evaluates the final model's performance on entirely unseen data.</li>
-                </ul>
+              <img src="{{url_for('static', filename='Optimal_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Optimal_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <p>This model has low loss and high accuracy. It effectively captures the primary macro trends in the data. The learning curve shows consistent improvement on the validation set as the performance on the training set decreases, indicating strong generalization with a final accuracy of 72.8%.</p>
             </div>
   
             <div class="column_3">
               <h3>Overfitting model</h3>
-              <p>Classification and Regression are both supervised learning algorithms (learning from datasets to predict outcomes), 
-                however, there is a difference:</p>
-              <ul>
-                <li><b>Classification:</b> Determined by predefined classes (color, size, etc.)</li>
-                <li><b>Regression:</b> Determined by numerical data (prices, temperature, etc.)
-                </li>
-                </ul>
-              <p>Because our module is focused on the binary property of ready biodegradability, 
-                we will be using <b>Classification.</b></p>
+              <img src="{{url_for('static', filename='Overfitting_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <p>This model possess low loss but low accuracy. It massively overfits the training data with 100% accuracy while the validation accuracy is much lower at 70.1%. Another indication of overfitting is if the training performance increases while the testing performance decreases.</p>
             </div>
           </div>
         </div>
         </div>
 
 
-
-        /* end of my edits */
-
-
-
-
-
+      
       <div class="flexwrap1">
         <div id="Questions" class="tabcontent">
           <h3>Questions?</h3>
