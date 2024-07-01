@@ -589,7 +589,7 @@ save_config_button.on_click(load_config)
 
 # update_data_exp(None, None, None)
 
-sizes = np.linspace(.1, 1.0, 15)
+sizes = np.linspace(.01, 1.0, 15)
 train_scores = []
 val_scores = []
 learning_curve_source = ColumnDataSource()
@@ -814,13 +814,16 @@ def split_data(train_percentage, val_percentage, test_percentage, data_index):
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
 
 def train_validate_model():
-    np.random.seed(123)
     global model
     global train_scores, val_scores
     train_scores.clear()
     val_scores.clear()
 
+    train_scores.append(0)
+    val_scores.append(0)
+
     for size in sizes:
+        np.random.seed(123)
         X_train_subset = X_train.sample(frac=size, random_state=42)
         y_train_subset = y_train.loc[X_train_subset.index]
 
