@@ -145,6 +145,22 @@ html_test_template = """
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
+        .column_4 {{
+            float: left;
+            width: 25%;
+        }}
+
+        .column_2 {{
+            float: left;
+            width: 50%;
+        }}
+
+        .row:after {{
+            content: "";
+            display: table;
+            clear: both;
+        }}
+
         h1 {{
             text-align: center;
             color: #333;
@@ -180,26 +196,58 @@ html_test_template = """
             <h2>Testing Accuracy:</h2>
             <p>{}</p>
         </div>
-        <div class="section">
-            <h3>True Positives:</h3>
-            <p>{}</p>
+
+        <div class="row">
+            <h2>Counts:</h2>
+            <div class="column_4">
+                <h3>True Positives:</h3>
+                <p>{}</p>
+            </div>
+            <div class="column_4">
+                <h3>False Positives:</h3>
+                <p>{}</p>
+            </div>
+            <div class="column_4">
+                <h3>False Negatives:</h3>
+                <p>{}</p>
+            </div>
+            <div class="column_4">
+                <h3>True Negatives:</h3>
+                <p>{}</p>
+            </div>
         </div>
-        <div class="section">
-            <h3>False Positives:</h3>
-            <p>{}</p>
+
+        <div class-"row">
+            <h2>Percentages:</h2>
+            <div class="column_2">
+                <h3>Precision for Ready Biodegradability:</h3>
+                <p>{}</p>
+            </div>
+            <div class="column_2">
+                <h3>Precision for Non-ready Biodegradability:</h3>
+                <p>{}</p>
+            </div>
         </div>
-        <div class="section">
-            <h3>False Negatives:</h3>
-            <p>{}</p>
+
+        <div class="row">
+            <h2>Performance:</h2>
+            <p>On average, your model was {} at classifying ready biodegradabiliy, and {} at classifying non-ready biodegradability,
+            resulting in an overall {} performance.</p>
         </div>
-        <div class="section">
-            <h3>True Negatives:</h3>
-            <p>{}</p>
+
+        <div class="row">
+            <h2>NOTE:</h2>
+            <p>The accuracy values on this tab were found as follows:</p>
+            <p><b>Precision for Ready Biodegradability:</b> true positives/(true postives + false positives)--> This represents percentage of predicted positives
+              that were true (actual) positives.</p>
+            <p><b>Precision for Non-ready Biodegradability:</b> true negatives/(true negatives + false negatives)--> This represents percentage of predicted negatives
+              that were true (actual) negatives.</p>
+            <p><b>Testing accuracy:</b> This represents the average of the two precision values.</p>
+            <p>We consider 'POOR' performance as an accuracy value of less than 50%, 'FAIR' as an accuracy value between 50% and 75%, and 'EXCELLENT' as
+            an accuracy value greater than 75%.</p>
+
         </div>
-        <div class="section">
-            <h3>Performance:</h3>
-            <p>Overall, your model was {} at identifying molecules that were readily biodegradable vs. molecules that were not readily biodegradable</p>
-        </div>
+        
     </div>
 </body>
 </html>
@@ -288,7 +336,7 @@ intro_instr = Div(
 formatted_val_html = html_val_template.format('N/A')
 val_acc_display = Div(text=formatted_val_html)
 
-formatted_test_html = html_test_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
+formatted_test_html = html_test_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 test_acc_display = Div(text=formatted_test_html)
 
 
@@ -1123,14 +1171,32 @@ def update_cmatrix(attrname, old, new):
                     'color': ['#FF7F50', '#6495ED', '#6495ED', '#FF7F50']    
            }
     
-    if (new_true_pos/new_false_pos) > (new_true_neg/new_false_neg):
-        performance = 'better'
-    elif (new_true_pos/new_false_pos) < (new_true_neg/new_false_neg):
-        performance = 'worse'
-    else:
-        performance = 'as good'
+    precision_1 = new_true_pos/(new_true_pos + new_false_pos)
 
-    new_formatted_test_html = html_test_template.format(f'{round((test_accuracy*100), 1)}%', new_true_pos, new_false_pos, new_false_neg, new_true_neg, performance)
+    precision_2 = new_true_neg/(new_true_neg + new_false_neg)
+
+    if precision_1 <= 0.50:
+        performance_1 = 'POOR'
+    elif precision_1 > 0.50 and precision_1 < 0.75:
+        performance_1 = 'FAIR'
+    else:
+        performance_1 = 'EXCELLENT'
+
+    if precision_2 <= 0.50:
+        performance_2 = 'POOR'
+    elif precision_2 > 0.50 and precision_2 < 0.75:
+        performance_2 = 'FAIR'
+    else:
+        performance_2 = 'EXCELLENT'
+    
+    if test_accuracy <= 0.50:
+        performance_3 = 'POOR'
+    elif test_accuracy > 0.50 and test_accuracy < 0.75:
+        performance_3 = 'FAIR'
+    else:
+        performance_3 = 'EXCELLENT'
+
+    new_formatted_test_html = html_test_template.format(f'{round((test_accuracy*100), 1)}%', new_true_pos, new_false_pos, new_false_neg, new_true_neg, f'{round((precision_1*100), 1)}%', f'{round((precision_2*100), 1)}%', performance_1, performance_2, performance_3)
     test_acc_display.text = new_formatted_test_html
 
     # Update the ColumnDataSource
