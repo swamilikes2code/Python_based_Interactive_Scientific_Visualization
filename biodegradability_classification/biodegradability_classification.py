@@ -475,7 +475,7 @@ data_select.on_change('value', update_table)
 # --------------- DATA SPLIT ---------------
 
 # saved split list to write to
-split_list = [50,25,25] #0-train, 1-val, 2-test
+split_list = [60,20,20] #0-train, 1-val, 2-test
 
 # helper function to produce string
 def update_split_text(train_percentage, val_percentage, test_percentage):
@@ -843,9 +843,7 @@ def run_ML():
     stage = 'Train'
     train_status_message.text = f'Algorithm: {my_alg}'
     train_status_message.styles = updated
-
     # set_hyperparameter_widgets()
-
     train_validate_model()
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
@@ -853,6 +851,8 @@ def split_data(train_percentage, val_percentage, test_percentage, data_index):
 
     temp_df = all_df[data_index]
     temp_cols = all_cols[data_index]
+    #print(temp_df)
+    
 
     X = temp_df[temp_cols]
     y = df['Class']
@@ -867,9 +867,14 @@ def train_validate_model():
     train_scores.clear()
     val_scores.clear()
 
+    sizes = np.linspace(.01, 1.0, 15)
     train_scores.append(0)
     val_scores.append(0)
-
+    if my_alg == "K-Nearest Neighbor":
+        if split_list[0] <= 15 or split_list[1] <= 15:
+             sizes = np.linspace(.075, 1.0, 13)
+        elif split_list[0] <= 20 or split_list[1] <= 20:
+             sizes = np.linspace(.05, 1.0, 14)
     for size in sizes:
         np.random.seed(123)
         X_train_subset = X_train.sample(frac=size, random_state=42)
