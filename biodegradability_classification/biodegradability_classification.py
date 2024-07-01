@@ -474,7 +474,7 @@ data_select.on_change('value', update_table)
 # --------------- DATA SPLIT ---------------
 
 # saved split list to write to
-split_list = [60,20,20] #0-train, 1-val, 2-test
+split_list = [50, 25, 25] #0-train, 1-val, 2-test
 
 # helper function to produce string
 def update_split_text(train_percentage, val_percentage, test_percentage):
@@ -870,12 +870,13 @@ def train_validate_model():
     train_scores.append(0)
     val_scores.append(0)
     if my_alg == "K-Nearest Neighbor":
-        if split_list[0] <= 15 or split_list[1] <= 15 or split_list[2] <= 15:
-             sizes = np.linspace(.075, 1.0, 13)
-        elif split_list[0] <= 20 or split_list[1] <= 20 or split_list[2] <= 20:
-             sizes = np.linspace(.05, 1.0, 14)
-
-
+        if X_train.shape[0]*.01 < model.n_neighbors:
+            sizes = np.linspace(.025, 1.0, 15)
+        if X_train.shape[0]*.025 < model.n_neighbors:
+            sizes = np.linspace(.05, 1.0, 15)
+        if X_train.shape[0]*.05 < model.n_neighbors:
+            sizes = np.linspace(.075, 1.0, 15)
+ 
     for size in sizes:
         np.random.seed(123)
         X_train_subset = X_train.sample(frac=size, random_state=42)
