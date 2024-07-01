@@ -375,6 +375,7 @@ nav li {
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Preparing Data')">Preparing Data</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Algorithms</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Hyperparameters')">Hyperparameters</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Overfitting')">Overfitting</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
       </div>
   
@@ -610,6 +611,67 @@ nav li {
           </div>
         </div>
         </div>
+      /* start of my edits */
+
+
+
+
+
+        <div id="Overfitting" class="tabcontent">
+          <h3>Generalize Don't Memorize</h3>
+          <div class="row">
+            <p>Underfitting occurs when a model fails to learn enough from the data, resulting in poor 
+              performance on both training and unseen data. Overfitting happens when a model learns the 
+              training data too well leading to excellent training performance but poor generalization to 
+              new data. To prevent under or overfitting, data scientists should split datasets into 
+              training (60-80%), validation (10-20%), and testing (10-20%) sets and choose appropriate 
+              hyperparameters for the respective algorithm. Learning curves, which show performance 
+              changes as more data is introduced, can help identify under or overfitting. Below are 
+              examples of models that are either underfitting, overfitting or are optimal and their 
+              respective learning curves.</p>
+          </div>
+          
+          <div class="row">
+            <div class="column_3">
+              <h3>Underfitting model</h3>
+              <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:600px; height: 400px; float: none">
+              <p>High koss and low accuracy. This model fails to recognize the general trends in the data and is two vague with the linear decision boundary
+              <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:600px; height: 400px; float: none">
+            </div>
+  
+            <div class="column_3">
+              <h3>Optimal model</h3>
+              <p>The next stage, <b>splitting data</b> can be broken down into three steps:</p>
+              <ul>
+                <li><b>Training:</b> Helps the model learn patterns and relationships within the data.</li>
+                <li><b>Validation:</b> Tunes the model's parameters and selects the best mode, generalizing the data well.</li>
+                <li><b>Testing:</b> Evaluates the final model's performance on entirely unseen data.</li>
+                </ul>
+            </div>
+  
+            <div class="column_3">
+              <h3>Overfitting model</h3>
+              <p>Classification and Regression are both supervised learning algorithms (learning from datasets to predict outcomes), 
+                however, there is a difference:</p>
+              <ul>
+                <li><b>Classification:</b> Determined by predefined classes (color, size, etc.)</li>
+                <li><b>Regression:</b> Determined by numerical data (prices, temperature, etc.)
+                </li>
+                </ul>
+              <p>Because our module is focused on the binary property of ready biodegradability, 
+                we will be using <b>Classification.</b></p>
+            </div>
+          </div>
+        </div>
+        </div>
+
+
+
+        /* end of my edits */
+
+
+
+
 
       <div class="flexwrap1">
         <div id="Questions" class="tabcontent">
