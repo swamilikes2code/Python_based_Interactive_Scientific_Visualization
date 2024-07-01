@@ -871,10 +871,12 @@ def train_validate_model():
     train_scores.append(0)
     val_scores.append(0)
     if my_alg == "K-Nearest Neighbor":
-        if split_list[0] <= 15 or split_list[1] <= 15:
+        if split_list[0] <= 15 or split_list[1] <= 15 or split_list[2] <= 15:
              sizes = np.linspace(.075, 1.0, 13)
-        elif split_list[0] <= 20 or split_list[1] <= 20:
+        elif split_list[0] <= 20 or split_list[1] <= 20 or split_list[2] <= 20:
              sizes = np.linspace(.05, 1.0, 14)
+
+
     for size in sizes:
         np.random.seed(123)
         X_train_subset = X_train.sample(frac=size, random_state=42)
