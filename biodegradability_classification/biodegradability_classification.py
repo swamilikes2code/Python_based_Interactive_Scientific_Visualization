@@ -237,13 +237,12 @@ html_test_template = """
 
         <div class="row">
             <h2>NOTE:</h2>
-            <p>The accuracy values on this tab were found as follows:</p>
             <p><b>Precision for Ready Biodegradability:</b> true positives/(true postives + false positives)--> This represents percentage of predicted positives
               that were true (actual) positives.</p>
             <p><b>Precision for Non-ready Biodegradability:</b> true negatives/(true negatives + false negatives)--> This represents percentage of predicted negatives
               that were true (actual) negatives.</p>
             <p><b>Testing accuracy:</b> This represents the average of the two precision values.</p>
-            <p>We consider 'POOR' performance as an accuracy value of less than 50%, 'FAIR' as an accuracy value between 50% and 75%, and 'EXCELLENT' as
+            <p>*We consider 'POOR' performance as an accuracy value of less than 50%, 'FAIR' as an accuracy value between 50% and 75%, and 'EXCELLENT' as
             an accuracy value greater than 75%.</p>
 
         </div>
@@ -1044,7 +1043,7 @@ def save_model():
     global new_saved_hyperparams
     global new_saved_val_acc
 
-    new_saved_val_acc = val_accuracy[new_save_number]  # access before save num is incremented
+    new_saved_val_acc = val_accuracy[new_save_number] # access before save num is incremented
 
     new_save_number += 1
     test_save_select.options.append(str(new_save_number))
@@ -1212,11 +1211,40 @@ def update_cmatrix(attrname, old, new):
 
     # bubble.scatter(fill_color = transform('count', new_color_mapper)
 
+# --------------- NEW DATA TABLE ----------------
+
+
+indices = []
+tested_names = []
+tested_smiles = []
+predicted = []
+actual = []
+tfpn = []
+
+test_cols = ['Index', 'Substance Name', 'Smiles', 'Predicted Class', 'Actual Class', 'Prediction Type']
+test_tab_columns = [TableColumn(field=col, title=col, width=140) for col in test_cols]
+
+test_table_data = {'Index': indices,
+            'Substance Name': tested_names,
+            'Smiles': tested_smiles, 
+            'Predicted Class': predicted,
+            'Actual Class': actual,
+            'Prediction Type': tfpn}
+new_source = ColumnDataSource(data=test_table_data)
+new_table = DataTable(source=new_source, columns=test_tab_columns, width = 750, height_policy = 'auto', autosize_mode = "none")
+
 def train_test_model():
     global new_true_pos
     global new_false_pos
     global new_false_neg
     global new_true_neg
+
+    global tested_names
+    global tested_smiles
+    global indices
+    global predicted
+    global actual
+    global tfpn
 
     np.random.seed(123)
 
@@ -1247,6 +1275,42 @@ def train_test_model():
 
     y_test_pred = model.predict(X_test)
 
+    # ---------------------- THIS PART IS NEW ----------------------------
+    indices = list((y_train.index[0:15])[0:15])
+    predicted = list((y_test_pred[0:15]))
+    actual = list(y_train[0:15])
+
+    tested_names.clear()
+    for index in indices:
+        tested_names.append(df1_dict['Substance Name'][index])
+    
+    tested_smiles.clear()
+    for index in indices:
+        tested_smiles.append(df1_dict['Smiles'][index])
+
+
+    tfpn.clear()
+    for i in range(15):
+        if predicted[i] == actual[i] and actual[i] == 1:
+            tfpn.append('True Positive')
+        elif predicted[i] == actual[i] and actual[i] == 0:
+            tfpn.append('True Negative')
+        elif predicted[i] == 1:
+            tfpn.append('False Positive')
+        else:
+            tfpn.append('False Negative')
+
+    new_test_table_data = {'Index': indices,
+                'Substance Name': tested_names,
+                'Smiles': tested_smiles, 
+                'Predicted Class': predicted,
+                'Actual Class': actual,
+                'Prediction Type': tfpn}
+
+    new_source.data=new_test_table_data
+
+    # ----------------------------------------------
+
     confusion_values = confusion_matrix(y_test, y_test_pred)
 
     new_true_pos = confusion_values[0][0]
@@ -1272,8 +1336,7 @@ def run_test():
 
     # Updating accuracy display
 
-    temp_test_status_message.text = f"""Testing accuracy for save #{test_save_select.value}: {test_accuracy}</div> 
-    </div>"""
+    temp_test_status_message.text = "Testing complete"
     temp_test_status_message.styles = completed
 
 def load_test():
@@ -1283,6 +1346,10 @@ def load_test():
     curdoc().add_next_tick_callback(run_test)
 
 test_button.on_click(load_test)
+
+
+
+
 
 # --------------- PREDICTING ---------------
 
@@ -1403,7 +1470,12 @@ delete_layout = layout(
 tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(train_button, train_help), train_status_message, ginormous_height_spacer, hyperparam_layout, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-tab3_layout = row(left_page_spacer, column(top_page_spacer, test_save_select, row(test_button, test_help), temp_test_status_message), column(top_page_spacer, bubble), column(top_page_spacer, small_med_height_spacer, test_acc_display))
+
+test_button_layout = layout(
+    [column(test_save_select, row(test_button, test_help), temp_test_status_message)]
+)
+
+tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(test_button_layout, bubble, new_table), column(small_med_height_spacer, test_acc_display))))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
