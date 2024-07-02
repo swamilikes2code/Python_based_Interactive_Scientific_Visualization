@@ -142,7 +142,7 @@ html_test_template = """
     <style>
         body {{
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            line-height: 1.0;
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
@@ -176,13 +176,14 @@ html_test_template = """
         h2 {{
             color: #444;
             border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
+            padding-bottom: 1px;
         }}
         h3 {{
             color: #555;
         }}
         p {{
-            margin: 15px 0;
+            margin: 5px 0;
+            max-width: 575px;
         }}
         .section {{
             margin-bottom: 20px;
