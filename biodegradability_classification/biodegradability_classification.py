@@ -1,6 +1,11 @@
 import pandas as pd
 import numpy as np
+import io
+from io import BytesIO
+import openpyxl
+import base64
 from math import nan
+from bokeh.events import ButtonClick
 from bokeh.io import curdoc, show
 from bokeh.layouts import column, row, Spacer, layout
 from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter
@@ -66,6 +71,9 @@ up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"
 down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" /></svg>''')
 
 data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primary", icon = down_arrow)
+
+export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
+export_csv = Button(label="Download Full Table to CSV (.csv)", width=200, height=31)
 
 # -----------------HTML TEMPLATES-----------------
 html_val_template = """
@@ -231,22 +239,21 @@ html_test_template = """
 
         <div class="row">
             <h2>Performance:</h2>
-            <p>On average, your model was {} at classifying ready biodegradabiliy, and {} at classifying non-ready biodegradability,
-            resulting in an overall {} performance.</p>
+            <p>On average, your model was {}* at classifying ready biodegradabiliy, and {}* at classifying non-ready biodegradability,
+            resulting in an overall {}* performance.</p>
         </div>
 
         <div class="row">
             <h2>NOTE:</h2>
-            <p><b>Precision for Ready Biodegradability:</b> true positives/(true postives + false positives)--> This represents percentage of predicted positives
+            <p><b>Precision for Ready Biodegradability:</b> true positives/(true postives + false positives)--> Percentage of predicted positives
               that were true (actual) positives.</p>
-            <p><b>Precision for Non-ready Biodegradability:</b> true negatives/(true negatives + false negatives)--> This represents percentage of predicted negatives
+            <p><b>Precision for Non-ready Biodegradability:</b> true negatives/(true negatives + false negatives)--> Percentage of predicted negatives
               that were true (actual) negatives.</p>
-            <p><b>Testing accuracy:</b> This represents the average of the two precision values.</p>
-            <p>*We consider 'POOR' performance as an accuracy value of less than 50%, 'FAIR' as an accuracy value between 50% and 75%, and 'EXCELLENT' as
-            an accuracy value greater than 75%.</p>
-
+            <p><b>Testing accuracy:</b> Average of the two precision values.</p>
+            <p>*'POOR' performance--> accuracy value of less than 50%</p> 
+            <p>*'FAIR' performance--> accuracy value between 50% and 75%</p> 
+            <p>*'EXCELLENT' performance--> accuracy value greater than 75%</p>
         </div>
-        
     </div>
 </body>
 </html>
@@ -1055,6 +1062,8 @@ def save_model():
 
     new_save_number += 1
     test_save_select.options.append(str(new_save_number))
+    temp_test_status_message.text = 'Not running'
+    temp_test_status_message.styles = not_updated
     delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
 
@@ -1153,7 +1162,7 @@ confus_d = {'T_range': ['Positive', 'Positive',
 confus_df = pd.DataFrame(data = confus_d)
 confus_source = ColumnDataSource(confus_df)
 bubble = figure(x_range = confus_df['T_range'].unique(), y_range = confus_df['Subject'].unique(), 
-                title = 'Confusion Matrix', width = 525, height = 500, tools='', toolbar_location = None)
+                title = 'Confusion Matrix', width = 325, height = 300, tools='', toolbar_location = None)
 
 # color_mapper = LinearColorMapper(palette = Viridis256, low = confus_df['count'].min(), high = confus_df['count'].max())
 # color_bar = ColorBar(color_mapper = color_mapper,
@@ -1221,7 +1230,6 @@ def update_cmatrix(attrname, old, new):
 
 # --------------- NEW DATA TABLE ----------------
 
-
 indices = []
 tested_names = []
 tested_smiles = []
@@ -1230,7 +1238,7 @@ actual = []
 tfpn = []
 
 test_cols = ['Index', 'Substance Name', 'Smiles', 'Predicted Class', 'Actual Class', 'Prediction Type']
-test_tab_columns = [TableColumn(field=col, title=col, width=140) for col in test_cols]
+test_tab_columns = [TableColumn(field=col, title=col, width=110) for col in test_cols]
 
 test_table_data = {'Index': indices,
             'Substance Name': tested_names,
@@ -1239,8 +1247,11 @@ test_table_data = {'Index': indices,
             'Actual Class': actual,
             'Prediction Type': tfpn}
 new_source = ColumnDataSource(data=test_table_data)
-new_table = DataTable(source=new_source, columns=test_tab_columns, width = 750, height_policy = 'auto', autosize_mode = "none")
+abridg_source = ColumnDataSource(data=test_table_data)
+new_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height_policy = 'auto', autosize_mode = "none", index_position=None)
 
+
+# Testing model, and updating confusion matrix and table
 def train_test_model():
     global new_true_pos
     global new_false_pos
@@ -1283,10 +1294,12 @@ def train_test_model():
 
     y_test_pred = model.predict(X_test)
 
-    # ---------------------- THIS PART IS NEW ----------------------------
-    indices = list((y_train.index[0:15])[0:15])
-    predicted = list((y_test_pred[0:15]))
-    actual = list(y_train[0:15])
+    indices = list(X_test.index)
+    predicted = list(y_test_pred)
+
+    actual.clear()
+    for index in indices:
+            actual.append(df1_dict['Class'][index])
 
     tested_names.clear()
     for index in indices:
@@ -1298,7 +1311,7 @@ def train_test_model():
 
 
     tfpn.clear()
-    for i in range(15):
+    for i in range(len(predicted)):
         if predicted[i] == actual[i] and actual[i] == 1:
             tfpn.append('True Positive')
         elif predicted[i] == actual[i] and actual[i] == 0:
@@ -1308,16 +1321,29 @@ def train_test_model():
         else:
             tfpn.append('False Negative')
 
-    new_test_table_data = {'Index': indices,
+    # print(len(indices))
+    # print(len(predicted))
+    # print(len(actual))
+    # print(len(tested_names))
+    # print(len(tested_smiles))
+    # print(len(tfpn))
+
+    full_test_table_data = {'Index': indices,
                 'Substance Name': tested_names,
                 'Smiles': tested_smiles, 
                 'Predicted Class': predicted,
                 'Actual Class': actual,
                 'Prediction Type': tfpn}
+    
+    abridg_test_table_data = {'Index': indices[:15],
+                'Substance Name': tested_names[:15],
+                'Smiles': tested_smiles[:15], 
+                'Predicted Class': predicted[:15],
+                'Actual Class': actual[:15],
+                'Prediction Type': tfpn[:15]}
 
-    new_source.data=new_test_table_data
-
-    # ----------------------------------------------
+    new_source.data=full_test_table_data
+    abridg_source.data=abridg_test_table_data
 
     confusion_values = confusion_matrix(y_test, y_test_pred)
 
@@ -1355,8 +1381,112 @@ def load_test():
 
 test_button.on_click(load_test)
 
+# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) ---------------------------
+def download_xlsx():
+    # Convert source into df
+    tested_df = pd.DataFrame(new_source.data)
+
+    # Create an Excel buffer
+    excel_buffer = BytesIO()
+    
+    # Write the DataFrame to the buffer using ExcelWriter
+    with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+        tested_df.to_excel(writer, index=False, sheet_name='Sheet1')
+    
+    # Get the binary data from the buffer
+    excel_data = excel_buffer.getvalue()
+    
+    # Encode the binary data to base64
+    b64_excel_data = base64.b64encode(excel_data).decode()
+    
+    # Define the filename
+    filename = "tested_data.xlsx"
+
+    js_download_excel = f"""
+    var filename = "{filename}";
+    var filetext = atob("{b64_excel_data}");
+
+    var buffer = new Uint8Array(filetext.length);
+    for (var i = 0; i < filetext.length; i++) {{
+        buffer[i] = filetext.charCodeAt(i);
+    }}
+    
+    var blob = new Blob([buffer], {{"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}});
+    
+    // Create a link element
+    var link = document.createElement("a");
+    
+    // Set the href to the Blob URL
+    link.href = URL.createObjectURL(blob);
+    
+    // Set the download attribute
+    link.download = filename;
+    
+    // Append the link to the body
+    document.body.appendChild(link);
+    
+    // Click the link to trigger the download
+    link.click();
+    
+    // Remove the link from the document
+    document.body.removeChild(link);
+    """
+    # Create a CustomJS object with the JavaScript code
+    xlsx_custom_js = CustomJS(args=dict(), code=js_download_excel)
+    
+    # Attach the CustomJS to the button click event
+    export_excel.js_on_click(xlsx_custom_js)
+
+export_excel.on_click(download_xlsx)
 
 
+def download_csv():
+    # Convert source into df
+    tested_df = pd.DataFrame(new_source.data)
+
+    # Create a CSV buffer
+    csv_buffer = io.StringIO()
+    
+    # Write the DataFrame to the buffer
+    tested_df.to_csv(csv_buffer, index=False)
+    
+    # Get the CSV data as a string
+    csv_data = csv_buffer.getvalue()
+    
+    # Define the filename
+    filename = "tested_data.csv"
+
+    js_download = f"""
+    var filename = "{filename}";
+    var filetext = `{csv_data}`;
+    
+    var blob = new Blob([filetext], {{"type": "text/csv;charset=utf-8;"}});
+    
+    // Create a link element
+    var link = document.createElement("a");
+    
+    // Set the href to the Blob URL
+    link.href = URL.createObjectURL(blob);
+    
+    // Set the download attribute
+    link.download = filename;
+    
+    // Append the link to the body
+    document.body.appendChild(link);
+    
+    // Click the link to trigger the download
+    link.click();
+    
+    // Remove the link from the document
+    document.body.removeChild(link);
+    """
+    # Create a CustomJS object with the JavaScript code
+    csv_custom_js = CustomJS(args=dict(), code=js_download)
+    
+    # Attach the CustomJS to the button click event
+    export_csv.js_on_click(csv_custom_js)
+
+export_csv.on_click(download_csv)
 
 
 # --------------- PREDICTING ---------------
@@ -1480,10 +1610,10 @@ tab2_layout = row(left_page_spacer, column(top_page_spacer, alg_select, row(trai
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 
 test_button_layout = layout(
-    [column(test_save_select, row(test_button, test_help), temp_test_status_message)]
+    [column(test_save_select, row(test_button, test_help), temp_test_status_message, ginormous_height_spacer, export_excel, export_csv)]
 )
 
-tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(test_button_layout, bubble, new_table), column(small_med_height_spacer, test_acc_display))))
+tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
 
