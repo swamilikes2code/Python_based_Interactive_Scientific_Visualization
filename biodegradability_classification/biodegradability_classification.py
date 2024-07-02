@@ -17,6 +17,7 @@ from bokeh.plotting import figure, show
 from bokeh.transform import factor_cmap, transform
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
+from rdkit.Chem import MACCSkeys, MolFromSmiles, DataStructs, Descriptors, AllChem
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
@@ -1493,9 +1494,10 @@ export_csv.on_click(download_csv)
 # --------------- PREDICTING ---------------
 
 user_smiles_input = TextInput(title = 'Enter a SMILES string:')
+
 # test in dataset C=C(C)C(=O)O
 
-# def predict_biodegrad():
+def predict_biodegrad():
 #     temp_tvt_list = new_train_val_test_split.split("/")
 #     temp_train = int(temp_tvt_list[0])
 #     temp_val = int(temp_tvt_list[1])
@@ -1503,9 +1505,57 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 #     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
 
 #     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
+    user_molec = Chem.MolFromSmiles(user_smiles_input.value)
 
-#     user_molec = Chem.MolFromSmiles(user_smiles_input.value)
+    if user_molec == None:
+        predict_status_message.text = 'Error: invalid Smiles string'
+        predict_status_message.styles = not_updated
+        return
 
+    # ---------------Attempt at getting predict tab working--------------------
+    # generating descriptors (using all descriptors, can specify list to generate)
+    # def molecule_to_descriptors(mol):
+    #    desc = Descriptors.CalcMolDescriptors(mol)
+    #    desc_df = pd.DataFrame(desc)
+    #    a = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
+    #    return a
+
+    # from 2016 rdkit ugm github
+    #def molecule_to_morgan(mol):
+    #    a = np.zeros(2048)
+    #    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1), a)
+    #    return a
+
+    #def molecule_to_ecfp(mol):
+    #    a = np.zeros(2048)
+    #    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2), a)
+    #    return a
+
+    #def molecule_to_pathfp(mol):
+    #    a = np.zeros(2048)
+    #    DataStructs.ConvertToNumpyArray(Chem.RDKFingerprint(mol, maxPath=2), a)
+    #    return a
+    
+    #if data_tab_table.source == df1_tab_source:
+    #    X_pred = molecule_to_descriptors(user_molec)
+
+    #elif data_tab_table.source == df2_tab_source:
+    #    a = molecule_to_morgan(user_molec)
+    #    print(df2_tab_source)
+    #    mfp_array = np.stack(a, axis=0)
+    #    option_2 = pd.DataFrame(mfp_array)
+    #    option_2 = option_2.astype('int8')
+    #    print(option_2)
+    #    X_pred = option_2
+        
+    #elif data_tab_table.source == df3_tab_source:
+    #    X_pred = molecule_to_ecfp(user_molec)
+    #else:
+    #    X_pred = molecule_to_pathfp(user_molec)
+        
+
+    #y_pred = model.predict(X_pred)
+    #print(y_pred)
 #     user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
 
 #     user_df = pd.DataFrame(user_fp)
@@ -1528,16 +1578,17 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 #     #     predict_status_message.text = 'Molecule is readily biodegradable (class 1)'
 #     # else:
 #     #     predict_status_message.text = 'error'
+    predict_status_message.text = 'Complete'
+    predict_status_message.styles = updated
+    return
 
-#     return
+def load_predict():
+     predict_status_message.text = 'Predicting...'
+     predict_status_message.styles = loading
+     curdoc().add_next_tick_callback(predict_biodegrad)
 
-# def load_predict():
-#     predict_status_message.text = 'Predicting...'
-#     predict_status_message.styles = loading
-#     curdoc().add_next_tick_callback(predict_biodegrad)
-
-# # callback for predict button
-# predict_button.on_click(load_predict)
+ # callback for predict button
+predict_button.on_click(load_predict)
 
 
 # ---------------- VISIBILITY --------------
