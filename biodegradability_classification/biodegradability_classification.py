@@ -3,6 +3,7 @@ import numpy as np
 import io
 from io import BytesIO
 import openpyxl
+import random
 import base64
 from math import nan
 from bokeh.events import ButtonClick
@@ -15,6 +16,7 @@ from bokeh.models.ui import SVGIcon
 from bokeh.palettes import Viridis256
 from bokeh.plotting import figure, show
 from bokeh.transform import factor_cmap, transform
+import pubchempy
 from rdkit import Chem, RDLogger
 from rdkit.Chem import MACCSkeys
 from rdkit.Chem import MACCSkeys, MolFromSmiles, DataStructs, Descriptors, AllChem
@@ -65,7 +67,7 @@ train_button = Button(label="Run ML algorithm", button_type="success", width=150
 tune_button = Button(label="Tune", button_type="success", width=150, height = 31)
 delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
 test_button = Button(label = "Test", button_type = "success", width = 150, height = 31)
-predict_button = Button(label = 'Predict')
+predict_button = Button(label = 'Predict', button_type = "success", width = 150, height = 31)
 
 #svg icons for buttons
 up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>''')
@@ -261,6 +263,67 @@ html_test_template = """
 </html>
 """
 
+html_predict_template = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }}
+        .container {{
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }}
+        h1 {{
+            text-align: center;
+            color: #333;
+        }}
+        h2 {{
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }}
+        p {{
+            margin: 15px 0;
+        }}
+        .section {{
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }}
+        .highlight {{
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+            padding: 2px 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h2>Substance Name:</h2>
+            <p>{}</p>
+            <h2>Smiles String:</h2>
+            <p>{}</p>
+            <h2>Predicted Class</h2>
+            <p>{}</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
 # -----------------INSTRUCTIONS-----------------
 
 intro_instr = Div(
@@ -346,6 +409,9 @@ val_acc_display = Div(text=formatted_val_html)
 
 formatted_test_html = html_test_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 test_acc_display = Div(text=formatted_test_html)
+
+formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A')
+predict_display = Div(text=formatted_predict_html)
 
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
@@ -1493,6 +1559,11 @@ export_csv.on_click(download_csv)
 
 # --------------- PREDICTING ---------------
 
+
+random_smiles = random.choices(df1_dict['Smiles'], k=3)
+
+smiles_select = Select(title="Select Smiles String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=200)
+
 user_smiles_input = TextInput(title = 'Enter a SMILES string:')
 
 # test in dataset C=C(C)C(=O)O
@@ -1505,81 +1576,70 @@ def predict_biodegrad():
 #     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
 
 #     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
-    user_molec = Chem.MolFromSmiles(user_smiles_input.value)
 
-    if user_molec == None:
-        predict_status_message.text = 'Error: invalid Smiles string'
-        predict_status_message.styles = not_updated
-        return
+    if smiles_select.value != "Custom":
+        user_smiles = smiles_select.value
+        user_molec = Chem.MolFromSmiles(user_smiles)
+    else:
+        user_smiles = user_smiles_input.value
+        user_molec = Chem.MolFromSmiles(user_smiles)
 
-    # ---------------Attempt at getting predict tab working--------------------
-    # generating descriptors (using all descriptors, can specify list to generate)
-    # def molecule_to_descriptors(mol):
-    #    desc = Descriptors.CalcMolDescriptors(mol)
-    #    desc_df = pd.DataFrame(desc)
-    #    a = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
-    #    return a
+        if user_molec == None:
+            predict_status_message.text = 'Error: invalid Smiles string'
+            predict_status_message.styles = not_updated
+            return
+        
+    user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
+
+    user_name = user_compound[0].iupac_name
+
+    def molecule_to_descriptors(mol):
+        desc = Descriptors.CalcMolDescriptors(mol)
+        desc_df = pd.DataFrame([desc])
+        X_pred = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
+        y_pred = model.predict(X_pred)
+        return y_pred
 
     # from 2016 rdkit ugm github
-    #def molecule_to_morgan(mol):
-    #    a = np.zeros(2048)
-    #    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1), a)
-    #    return a
+    def molecule_to_morgan(mol):
+        a = np.zeros(2048)
+        DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1), a)
+        X_pred = pd.DataFrame([a])
+        y_pred = model.predict(X_pred)
+        return y_pred
 
-    #def molecule_to_ecfp(mol):
-    #    a = np.zeros(2048)
-    #    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2), a)
-    #    return a
+    def molecule_to_ecfp(mol):
+        a = np.zeros(2048)
+        DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2), a)
+        X_pred = pd.DataFrame([a])
+        y_pred = model.predict(X_pred)
+        return y_pred
 
-    #def molecule_to_pathfp(mol):
-    #    a = np.zeros(2048)
-    #    DataStructs.ConvertToNumpyArray(Chem.RDKFingerprint(mol, maxPath=2), a)
-    #    return a
+    def molecule_to_pathfp(mol):
+        a = np.zeros(2048)
+        DataStructs.ConvertToNumpyArray(Chem.RDKFingerprint(mol, maxPath=2), a)
+        X_pred = pd.DataFrame([a])
+        y_pred = model.predict(X_pred)
+        return y_pred
     
-    #if data_tab_table.source == df1_tab_source:
-    #    X_pred = molecule_to_descriptors(user_molec)
+    if data_tab_table.source == df1_tab_source:
+        y_pred = molecule_to_descriptors(user_molec)
 
-    #elif data_tab_table.source == df2_tab_source:
-    #    a = molecule_to_morgan(user_molec)
-    #    print(df2_tab_source)
-    #    mfp_array = np.stack(a, axis=0)
-    #    option_2 = pd.DataFrame(mfp_array)
-    #    option_2 = option_2.astype('int8')
-    #    print(option_2)
-    #    X_pred = option_2
-        
-    #elif data_tab_table.source == df3_tab_source:
-    #    X_pred = molecule_to_ecfp(user_molec)
-    #else:
-    #    X_pred = molecule_to_pathfp(user_molec)
+    elif data_tab_table.source == df2_tab_source:
+        y_pred = molecule_to_morgan(user_molec)
+
+    elif data_tab_table.source == df3_tab_source:
+        y_pred = molecule_to_ecfp(user_molec)
+    else:
+        y_pred = molecule_to_pathfp(user_molec)
         
 
-    #y_pred = model.predict(X_pred)
-    #print(y_pred)
-#     user_fp = np.array(MACCSkeys.GenMACCSKeys(user_molec))
-
-#     user_df = pd.DataFrame(user_fp)
-
-#     user_df = user_df.transpose() #each bit has its own column
-
-#     # --------------TAB WORKS UP UNTIL HERE-----------------------
-#     # The model is not receiving the actual saved columns it needs, except for fingerprint. 
-#     # For example, has 167 features, but is expecting 185 features as input (there are 18 columns, excluding fingerprint)
-#     # If I get to it I'll try to fix this this weekend
-
-#     user_biodegrad = model.predict(user_df)
-
-#     print(user_biodegrad)
-
-#     predict_status_message.styles = updated
-#     # if user_biodegrad == 0:
-#     #     predict_status_message.text = 'Molecule is not readily biodegradable (class 0)'
-#     # elif user_biodegrad == 1:
-#     #     predict_status_message.text = 'Molecule is readily biodegradable (class 1)'
-#     # else:
-#     #     predict_status_message.text = 'error'
     predict_status_message.text = 'Complete'
     predict_status_message.styles = updated
+
+    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred)
+    predict_display.text = new_formatted_predict_html
+
     return
 
 def load_predict():
@@ -1610,6 +1670,22 @@ predict_button.on_click(load_predict)
 
 # # Link the button to the callback
 # data_exp_vis_button.on_click(toggle_data_exp_visibility)
+
+# Custom Smiles String input
+
+user_smiles_input.visible = False
+predict_instr.visible = False
+
+def toggle_smiles_input_vis(attr, old, new):
+    if smiles_select.value == 'Custom':
+        user_smiles_input.visible = True
+        predict_instr.visible = True
+    else:
+        user_smiles_input.visible = False
+        predict_instr.visible = False
+
+smiles_select.on_change('value', toggle_smiles_input_vis)
+
 
 # --------------- LAYOUTS ---------------
 
@@ -1667,7 +1743,7 @@ test_button_layout = layout(
 
 tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
 
-tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_instr, user_smiles_input, predict_button, predict_status_message))
+tab4_layout = row(left_page_spacer, column(top_page_spacer, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message, predict_display))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
