@@ -67,7 +67,7 @@ train_button = Button(label="Run ML algorithm", button_type="success", width=150
 tune_button = Button(label="Tune", button_type="success", width=150, height = 31)
 delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
 test_button = Button(label = "Test", button_type = "success", width = 150, height = 31)
-predict_button = Button(label = 'Predict', button_type = "success", width = 150, height = 31)
+predict_button = Button(label = 'Predict', button_type = "success", width = 200, height = 31)
 
 #svg icons for buttons
 up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>''')
@@ -318,6 +318,8 @@ html_predict_template = """
             <p>{}</p>
             <h2>Predicted Class</h2>
             <p>{}</p>
+            <h2>Actual Class</h2>
+            <p>{}</p>
         </div>
     </div>
 </body>
@@ -410,7 +412,7 @@ val_acc_display = Div(text=formatted_val_html)
 formatted_test_html = html_test_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 test_acc_display = Div(text=formatted_test_html)
 
-formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A')
+formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A')
 predict_display = Div(text=formatted_predict_html)
 
 
@@ -457,13 +459,13 @@ test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                 </div>""", width=280), position="right"))
 
 predict_instr = Div(text="""
-                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                    To create your own SMILES String, go to 
+                 <div style='background-color: #DEF2F1; padding: 1px; font-family: Arial, sans-serif;'>
+                    To create a SMILES String, visit
                     <a href="http://pubchem.ncbi.nlm.nih.gov//edit3/index.html" target="_blank">
-                    http://pubchem.ncbi.nlm.nih.gov//edit3/index.html </a>
-                    (Additional instructions are located on 'Help' button)
+                    pubchem.ncbi.nlm.nih.gov//edit3/index.html </a>
+                    (Instructions on 'Help' button)
                  </div>""",
-width=300, height=120)
+width=160, height=60)
 
 
 # --------------- DATA SELECTION ---------------
@@ -1047,6 +1049,8 @@ def hp_slider_callback(attr, old, new):
         model.n_neighbors = new
     elif my_alg == 'Support Vector Classification':
         model.C = new
+    tune_status_message.text = "Not running"
+    tune_status_message.styles = not_updated
 
 def hp_select_callback(attr, old, new):
     global my_alg
@@ -1057,6 +1061,8 @@ def hp_select_callback(attr, old, new):
         model.weights = new
     elif my_alg == 'Support Vector Classification':
         model.kernel = new
+    tune_status_message.text = "Not running"
+    tune_status_message.styles = not_updated
 
 def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
@@ -1089,6 +1095,13 @@ tune_button.on_click(load_tuned_config)
 # making select to choose save num to display/use
 delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 200)
 test_save_select = Select(title = "Choose a save to test:", options = [], margin=(5, 40, 5, 5), width = 200)
+
+def update_test_message(attr, old, new):
+    temp_test_status_message.text = "Not running"
+    temp_test_status_message.styles = not_updated
+
+test_save_select.on_change('value', update_test_message)
+
 predict_select = Select(title = 'Choose a save to predict with:', options = [])
 
 new_save_number = 0
@@ -1439,7 +1452,7 @@ def run_test():
     # Updating accuracy display
 
     temp_test_status_message.text = "Testing complete"
-    temp_test_status_message.styles = completed
+    temp_test_status_message.styles = updated
 
 def load_test():
     temp_test_status_message.text = "Testing..."
@@ -1564,7 +1577,7 @@ random_smiles = random.choices(df1_dict['Smiles'], k=3)
 
 smiles_select = Select(title="Select Smiles String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=200)
 
-user_smiles_input = TextInput(title = 'Enter a SMILES string:')
+user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=200)
 
 # test in dataset C=C(C)C(=O)O
 
@@ -1634,10 +1647,16 @@ def predict_biodegrad():
         y_pred = molecule_to_pathfp(user_molec)
         
 
+    if user_smiles in df1_dict['Smiles']:
+        known_index = df1_dict['Smiles'].index(user_smiles)
+        actual_class = df1_dict['Class'][known_index]
+    else:
+        actual_class = 'Unknown'
+
     predict_status_message.text = 'Complete'
     predict_status_message.styles = updated
 
-    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred)
+    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred, actual_class)
     predict_display.text = new_formatted_predict_html
 
     return
@@ -1649,6 +1668,12 @@ def load_predict():
 
  # callback for predict button
 predict_button.on_click(load_predict)
+
+def update_predict_status(attr, old, new):
+    predict_status_message.text = 'Not running'
+    predict_status_message.styles = not_updated
+
+smiles_select.on_change('value', update_predict_status)
 
 
 # ---------------- VISIBILITY --------------
@@ -1743,7 +1768,7 @@ test_button_layout = layout(
 
 tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
 
-tab4_layout = row(left_page_spacer, column(top_page_spacer, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message, predict_display))
+tab4_layout = row(left_page_spacer, column(top_page_spacer, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message), column(top_page_spacer, predict_display))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
