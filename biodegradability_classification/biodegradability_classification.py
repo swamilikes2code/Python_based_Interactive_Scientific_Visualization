@@ -879,8 +879,11 @@ def set_hyperparameter_widgets():
 
 # list of the models to use
 np.random.seed(123)
-model_list = [DecisionTreeClassifier(), KNeighborsClassifier(), SVC()]
-model = model_list[0]
+# model_list = [DecisionTreeClassifier(), KNeighborsClassifier(), SVC()]
+# model = model_list[0]
+model_list = []
+model = DecisionTreeClassifier()
+# model_list.append(model)  #temp solution, trying to store all trained models to access for testing later
 set_hyperparameter_widgets()
 
 def update_algorithm(attr, old, new):
@@ -889,12 +892,14 @@ def update_algorithm(attr, old, new):
 
     # Assigning model based on selected ML algorithm, using default hyperparameters
     if my_alg == "Decision Tree":
-        model = model_list[0]
+        # model = model_list[0]
+        model = DecisionTreeClassifier()
     elif my_alg == "K-Nearest Neighbor":
-        model = model_list[1]
+        # model = model_list[1]
+        model = KNeighborsClassifier()
     else:
-        model = model_list[2]
-    
+        # model = model_list[2]
+        model = SVC()
     set_hyperparameter_widgets()
     train_status_message.text = 'Not running'
     train_status_message.styles = not_updated
@@ -921,6 +926,7 @@ def run_ML():
     train_status_message.styles = updated
     # set_hyperparameter_widgets()
     train_validate_model()
+    model_list.append(model)
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
@@ -1348,6 +1354,7 @@ def train_test_model():
 
     np.random.seed(123)
 
+    global save_index
     save_num = int(test_save_select.value)
     save_index = test_save_select.options.index(str(save_num))
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
@@ -1358,16 +1365,18 @@ def train_test_model():
 
     split_data(temp_split[0], temp_split[1], temp_split[2],temp_data_index)
 
+    global model
+    model = model_list[save_index]
     if temp_alg == 'DT':
-        model = model_list[0]
+        # model = model_list[0]
         model.max_depth = temp_hyperparams[0]
         model.splitter = temp_hyperparams[1]
     elif temp_alg == 'KNN':
-        model = model_list[1]
+        # model = model_list[1]
         model.n_neighbors = temp_hyperparams[0]
         model.weights = temp_hyperparams[1]
     elif temp_alg == 'SVC':
-        model = model_list[2]
+        # model = model_list[2]
         model.C = temp_hyperparams[0]
         model.kernel = temp_hyperparams[1]
 
@@ -1582,6 +1591,7 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=200)
 # test in dataset C=C(C)C(=O)O
 
 def predict_biodegrad():
+    global model, save_index
 #     temp_tvt_list = new_train_val_test_split.split("/")
 #     temp_train = int(temp_tvt_list[0])
 #     temp_val = int(temp_tvt_list[1])
@@ -1635,15 +1645,15 @@ def predict_biodegrad():
         y_pred = model.predict(X_pred)
         return y_pred
     
-    if data_tab_table.source == df1_tab_source:
+    if save_source.data['saved_data_choice'][save_index] == data_opts[0]:
         y_pred = molecule_to_descriptors(user_molec)
 
-    elif data_tab_table.source == df2_tab_source:
+    elif save_source.data['saved_data_choice'][save_index] == data_opts[1]:
         y_pred = molecule_to_morgan(user_molec)
 
-    elif data_tab_table.source == df3_tab_source:
+    elif save_source.data['saved_data_choice'][save_index] == data_opts[2]:
         y_pred = molecule_to_ecfp(user_molec)
-    else:
+    elif save_source.data['saved_data_choice'][save_index] == data_opts[3]:
         y_pred = molecule_to_pathfp(user_molec)
         
 
