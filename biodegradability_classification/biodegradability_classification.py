@@ -1211,6 +1211,10 @@ def delete_save():
         options = temp.copy(),
         value = None
     )
+    predict_select.update(
+        options = temp.copy(),
+        value = None
+    )
 
     for col in save_source.data:
         save_source.data[col] = [val for index, val in enumerate(save_source.data[col]) if (index+1) not in saves_to_del]
@@ -1353,7 +1357,6 @@ def train_test_model():
 
     np.random.seed(123)
 
-    global save_index
     save_num = int(test_save_select.value)
     save_index = test_save_select.options.index(str(save_num))
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
@@ -1589,8 +1592,37 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=200)
 
 # test in dataset C=C(C)C(=O)O
 
+def molecule_to_descriptors(mol):
+    desc = Descriptors.CalcMolDescriptors(mol)
+    desc_df = pd.DataFrame([desc])
+    X_pred = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
+    y_pred = model.predict(X_pred)
+    return y_pred
+
+# from 2016 rdkit ugm github
+def molecule_to_morgan(mol):
+    a = np.zeros(2048)
+    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1), a)
+    X_pred = pd.DataFrame([a])
+    y_pred = model.predict(X_pred)
+    return y_pred
+
+def molecule_to_ecfp(mol):
+    a = np.zeros(2048)
+    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2), a)
+    X_pred = pd.DataFrame([a])
+    y_pred = model.predict(X_pred)
+    return y_pred
+
+def molecule_to_pathfp(mol):
+    a = np.zeros(2048)
+    DataStructs.ConvertToNumpyArray(Chem.RDKFingerprint(mol, maxPath=2), a)
+    X_pred = pd.DataFrame([a])
+    y_pred = model.predict(X_pred)
+    return y_pred
+
 def predict_biodegrad():
-    global model, save_index
+    global model
 #     temp_tvt_list = new_train_val_test_split.split("/")
 #     temp_train = int(temp_tvt_list[0])
 #     temp_val = int(temp_tvt_list[1])
@@ -1598,6 +1630,9 @@ def predict_biodegrad():
 #     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
 
 #     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
+    save_num = int(predict_select.value)
+    save_index = predict_select.options.index(str(save_num))
+    model = model_list[save_index]
 
     if smiles_select.value != "Custom":
         user_smiles = smiles_select.value
@@ -1615,41 +1650,10 @@ def predict_biodegrad():
 
     user_name = user_compound[0].iupac_name
 
-    def molecule_to_descriptors(mol):
-        desc = Descriptors.CalcMolDescriptors(mol)
-        desc_df = pd.DataFrame([desc])
-        X_pred = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
-        y_pred = model.predict(X_pred)
-        return y_pred
-
-    # from 2016 rdkit ugm github
-    def molecule_to_morgan(mol):
-        a = np.zeros(2048)
-        DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1), a)
-        X_pred = pd.DataFrame([a])
-        y_pred = model.predict(X_pred)
-        return y_pred
-
-    def molecule_to_ecfp(mol):
-        a = np.zeros(2048)
-        DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2), a)
-        X_pred = pd.DataFrame([a])
-        y_pred = model.predict(X_pred)
-        return y_pred
-
-    def molecule_to_pathfp(mol):
-        a = np.zeros(2048)
-        DataStructs.ConvertToNumpyArray(Chem.RDKFingerprint(mol, maxPath=2), a)
-        X_pred = pd.DataFrame([a])
-        y_pred = model.predict(X_pred)
-        return y_pred
-    
     if save_source.data['saved_data_choice'][save_index] == data_opts[0]:
         y_pred = molecule_to_descriptors(user_molec)
-
     elif save_source.data['saved_data_choice'][save_index] == data_opts[1]:
         y_pred = molecule_to_morgan(user_molec)
-
     elif save_source.data['saved_data_choice'][save_index] == data_opts[2]:
         y_pred = molecule_to_ecfp(user_molec)
     elif save_source.data['saved_data_choice'][save_index] == data_opts[3]:
@@ -1682,6 +1686,7 @@ def update_predict_status(attr, old, new):
     predict_status_message.text = 'Not running'
     predict_status_message.styles = not_updated
 
+predict_select.on_change('value', update_predict_status)
 smiles_select.on_change('value', update_predict_status)
 
 
@@ -1777,7 +1782,7 @@ test_button_layout = layout(
 
 tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
 
-tab4_layout = row(left_page_spacer, column(top_page_spacer, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message), column(top_page_spacer, predict_display))
+tab4_layout = row(left_page_spacer, column(top_page_spacer, predict_select, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message), column(top_page_spacer, predict_display))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                     TabPanel(child = tab1_layout, title = 'Data'),
