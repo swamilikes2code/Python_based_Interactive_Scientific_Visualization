@@ -209,37 +209,42 @@ html_test_template = """
             <p>{}</p>
         </div>
 
-        <div class="row">
-            <h2>Counts:</h2>
-            <div class="column_4">
-                <h3>True Positives:</h3>
-                <p>{}</p>
-            </div>
-            <div class="column_4">
-                <h3>False Positives:</h3>
-                <p>{}</p>
-            </div>
-            <div class="column_4">
-                <h3>False Negatives:</h3>
-                <p>{}</p>
-            </div>
-            <div class="column_4">
-                <h3>True Negatives:</h3>
-                <p>{}</p>
+        <div class="section">
+            <div class="row">
+                <h2>Counts:</h2>
+                <div class="column_4">
+                    <h3>True Positives:</h3>
+                    <p>{}</p>
+                </div>
+                <div class="column_4">
+                    <h3>False Positives:</h3>
+                    <p>{}</p>
+                </div>
+                <div class="column_4">
+                    <h3>False Negatives:</h3>
+                    <p>{}</p>
+                </div>
+                <div class="column_4">
+                    <h3>True Negatives:</h3>
+                    <p>{}</p>
+                </div>
             </div>
         </div>
 
-        <div class-"row">
-            <h2>Percentages:</h2>
-            <div class="column_2">
-                <h3>Precision for Ready Biodegradability:</h3>
-                <p>{}</p>
-            </div>
-            <div class="column_2">
-                <h3>Precision for Non-ready Biodegradability:</h3>
-                <p>{}</p>
+        <div class="section">
+            <div class="row">
+                <h2>Precisions:</h2>
+                <div class="column_2">
+                    <h3>Ready Biodegradability:</h3>
+                    <p>{}</p>
+                </div>
+                <div class="column_2">
+                    <h3>Non-ready Biodegradability:</h3>
+                    <p>{}</p>
+                </div>
             </div>
         </div>
+
 
         <div class="row">
             <h2>Performance:</h2>
