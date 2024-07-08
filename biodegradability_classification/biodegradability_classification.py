@@ -888,7 +888,6 @@ np.random.seed(123)
 # model = model_list[0]
 model_list = []
 model = DecisionTreeClassifier()
-# model_list.append(model)  #temp solution, trying to store all trained models to access for testing later
 set_hyperparameter_widgets()
 
 def update_algorithm(attr, old, new):
@@ -931,7 +930,6 @@ def run_ML():
     train_status_message.styles = updated
     # set_hyperparameter_widgets()
     train_validate_model()
-    model_list.append(model)
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
@@ -983,6 +981,7 @@ def train_validate_model():
 
     set_learning_curve()
     save_model()
+    model_list.append(model)
 
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
