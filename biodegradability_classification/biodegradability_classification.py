@@ -243,8 +243,8 @@ html_test_template = """
 
         <div class="row">
             <h2>Performance:</h2>
-            <p>On average, your model was {}* at classifying ready biodegradabiliy, and {}* at classifying non-ready biodegradability,
-            resulting in an overall {}* performance.</p>
+            <p>On average, your model was <b>{}</b> at classifying ready biodegradabiliy, and <b>{}</b> at classifying non-ready biodegradability,
+            resulting in an overall <b>{}</b> performance.</p>
         </div>
 
         <div class="row">
@@ -254,9 +254,9 @@ html_test_template = """
             <p><b>Precision for Non-ready Biodegradability:</b> true negatives/(true negatives + false negatives)--> Percentage of predicted negatives
               that were true (actual) negatives.</p>
             <p><b>Testing accuracy:</b> Average of the two precision values.</p>
-            <p>*'POOR' performance--> accuracy value of less than 50%</p> 
-            <p>*'FAIR' performance--> accuracy value between 50% and 75%</p> 
-            <p>*'EXCELLENT' performance--> accuracy value greater than 75%</p>
+            <p><b>INEFFECTIVE</b> performance: accuracy score < 70%</p> 
+            <p><b>EFFECTIVE</b> performance: accuracy value > 70%</p> 
+            <p>The industry standard for accuracy scores is between 70%-90%.</p>
         </div>
     </div>
 </body>
@@ -926,6 +926,7 @@ def run_ML():
     train_status_message.styles = updated
     # set_hyperparameter_widgets()
     train_validate_model()
+    model_list.append(model)
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
@@ -977,7 +978,6 @@ def train_validate_model():
 
     set_learning_curve()
     save_model()
-    model_list.append(model)
 
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
@@ -1281,26 +1281,20 @@ def update_cmatrix(attrname, old, new):
 
     precision_2 = new_true_neg/(new_true_neg + new_false_neg)
 
-    if precision_1 <= 0.50:
-        performance_1 = 'POOR'
-    elif precision_1 > 0.50 and precision_1 < 0.75:
-        performance_1 = 'FAIR'
+    if precision_1 <= 0.70:
+        performance_1 = 'INEFFECTIVE'
     else:
-        performance_1 = 'EXCELLENT'
+        performance_1 = 'EFFECTIVE'
 
-    if precision_2 <= 0.50:
-        performance_2 = 'POOR'
-    elif precision_2 > 0.50 and precision_2 < 0.75:
-        performance_2 = 'FAIR'
+    if precision_2 <= 0.70:
+        performance_2 = 'INEFFECTIVE'
     else:
-        performance_2 = 'EXCELLENT'
+        performance_2 = 'EFFECTIVE'
     
-    if test_accuracy <= 0.50:
-        performance_3 = 'POOR'
-    elif test_accuracy > 0.50 and test_accuracy < 0.75:
-        performance_3 = 'FAIR'
+    if test_accuracy <= 0.70:
+        performance_3 = 'INEFFECTIVE'
     else:
-        performance_3 = 'EXCELLENT'
+        performance_3 = 'EFFECTIVE'
 
     new_formatted_test_html = html_test_template.format(f'{round((test_accuracy*100), 1)}%', new_true_pos, new_false_pos, new_false_neg, new_true_neg, f'{round((precision_1*100), 1)}%', f'{round((precision_2*100), 1)}%', performance_1, performance_2, performance_3)
     test_acc_display.text = new_formatted_test_html
