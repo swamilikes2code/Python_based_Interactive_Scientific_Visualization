@@ -585,6 +585,9 @@ dataset_size = len(df1)
 
 all_df = [df1, df2, df3, df4]
 
+# just holding mandatory cols
+df = df1.iloc[:, :4]
+
 read_csv_stop = datetime.now()                                          # ----------- TIMER CODE
 elapsed_time = read_csv_stop - read_csv_start                           # ----------- TIMER CODE
 print(f"Reading in data: {elapsed_time.total_seconds():.2f} seconds") #lines 565 - 578 take 1.7-2.5 seconds
@@ -1050,7 +1053,7 @@ def split_data(train_percentage, val_percentage, test_percentage, data_index):
     
 
     X = temp_df[temp_cols]
-    y = mandatory_columns['Class']
+    y = df['Class']
 
     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-train_percentage)/100)
     test_split = test_percentage / (100-train_percentage)
