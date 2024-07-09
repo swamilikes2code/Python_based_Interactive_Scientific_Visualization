@@ -549,6 +549,7 @@ df1 = pd.read_csv("./data/option_1.csv", low_memory=False)
 df2 = pd.read_csv("./data/option_2.csv", low_memory=False)
 df3 = pd.read_csv("./data/option_3.csv", low_memory=False)
 df4 = pd.read_csv("./data/option_4.csv", low_memory=False)
+dataset_size = len(df1)
 
 all_df = [df1, df2, df3, df4]
 
@@ -1304,7 +1305,19 @@ true_pos = nan
 false_pos = nan
 false_neg = nan
 true_neg = nan
+def determine_scale():
+    # Calculate the number of instances in each split
+    save_num = int(test_save_select.value)
+    save_index = test_save_select.options.index(str(save_num))
+    temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
 
+    test_size = dataset_size * (temp_split[2]/100)
+    base_scale = 4
+    scale = base_scale * (test_size / 1000)
+    # Ensure the scale is at least 1 to avoid too small circles
+    scale = max(scale, 1)
+    print(scale)
+    return scale
 
 scale = 4
 confus_d = {'T_range': ['Positive', 'Positive',
@@ -1338,6 +1351,7 @@ bubble.add_tools(HoverTool(tooltips = [('Type', '@title'), ('Count', '@count')])
 cmatrix = figure(title = "Confusion Matrix", x_range = (-1,1), y_range = (-1,1))
 
 def update_cmatrix(attrname, old, new):
+    scale = determine_scale()
     new_confus_d = {'T_range': ['Positive', 'Positive',
                     'Negative', 'Negative'],
                     'Subject': ['Negative', 'Positive',
