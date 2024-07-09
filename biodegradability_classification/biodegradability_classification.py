@@ -380,7 +380,7 @@ html_warning_template = """
 <body>
     <div class="container">
         <div class="section">
-            <h2><i>WARNING: Incomplete Step(s):</i></h2>
+            <h2><i>Incomplete Step(s):</i></h2>
             <h2>{}</h2>
             <p>Please {} before continuing</p>
         </div>
@@ -410,6 +410,7 @@ intro_instr = Div(
                 background-color: #ffffff;
                 padding: 20px;
                 border-radius: 8px;
+                border: 1px solid #ddd;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
             h1 {
@@ -478,14 +479,14 @@ formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A'
 predict_display = Div(text=formatted_predict_html)
 
 step_two_warning_html = html_warning_template.format('1) Preparing Data', 'return to the <b>Data</b> tab and <b>Save Current Configuration</b>')
-step_two_warning = Div(text=step_two_warning_html)
+step_two_warning = Div(text=step_two_warning_html, width=200, height=200)
 
 step_three_warning_html = html_warning_template.format('2) Train', '<b>Run</b> current <b>ML Algorithm</b>')
-step_three_warning = Div(text=step_three_warning_html)
+step_three_warning = Div(text=step_three_warning_html, width=200, height=200)
 
 steps_four_five_warning_html = html_warning_template.format('2) Train', 'return to <b>Train and Validate</b> and <b>Run</b> at least one <b>ML Algorithm</b>')
-step_four_warning = Div(text=steps_four_five_warning_html)
-step_five_warning = Div(text=steps_four_five_warning_html)
+step_four_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
+step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
@@ -1759,7 +1760,7 @@ predict_select.on_change('value', update_predict_status)
 smiles_select.on_change('value', update_predict_status)
 
 
-# ---------------- VISIBILITY AND LAYOUTS--------------
+# ---------------- VISIBILITY --------------
 
 # # Data exploration plot
 # datavis_help.visible = False
@@ -1794,6 +1795,17 @@ def toggle_smiles_input_vis(attr, old, new):
 
 smiles_select.on_change('value', toggle_smiles_input_vis)
 
+
+# Visiblility of warning messages vs. status messages
+
+warning_spacer_1 = Spacer(height = 80)
+warning_spacer_2 = Spacer(height = 80)
+warning_spacer_3 = Spacer(height = 80)
+
+warning_spacer_1.visible = True
+warning_spacer_2.visible = True
+warning_spacer_3.visible = True
+
 train_status_message.visible = True
 step_two_warning.visible = False
 tune_status_message.visible = True
@@ -1809,9 +1821,24 @@ def toggle_step_two_warn():
     if save_config_message.styles != not_updated:
         train_status_message.visible = True
         step_two_warning.visible = False
+        warning_spacer_1.visible = True
+        tune_status_message.visible = True
+        step_three_warning.visible = False
+        warning_spacer_2.visible = True
+        temp_test_status_message.text = 'Not running'
+        temp_test_status_message.styles = not_updated
+        temp_test_status_message.visible  = True
+        step_four_warning.visible = False
+        warning_spacer_3.visible = True
+        predict_status_message.text = 'Not running'
+        predict_status_message.styles = not_updated
+        predict_status_message.visible = True
+        step_five_warning.visible = False
+
     else:
         train_status_message.visible = False
         step_two_warning.visible = True
+        warning_spacer_1.visible = False
 
 train_button.on_click(toggle_step_two_warn)
 save_config_button.on_click(toggle_step_two_warn)
@@ -1820,9 +1847,11 @@ def toggle_step_three_warn():
     if train_status_message.styles != not_updated:
         step_three_warning.visible = False
         tune_status_message.visible = True
+        warning_spacer_2.visible = True
     else:
         step_three_warning.visible = True
         tune_status_message.visible = False
+        warning_spacer_2.visible = False
 
 tune_button.on_click(toggle_step_three_warn)
 train_button.on_click(toggle_step_three_warn)
@@ -1833,20 +1862,28 @@ def toggle_step_four_warn():
     if saves_exist:
         step_four_warning.visible = False
         temp_test_status_message.visible = True
+        warning_spacer_3.visible = True
 
     elif save_source.data['saved_data_choice'] != []:
         saves_exist = True
         step_four_warning.visible = False
         temp_test_status_message.visible = True
+        warning_spacer_3.visible = True
     else:
         step_four_warning.visible = True
         temp_test_status_message.visible = False
+        warning_spacer_3.visible = False
 
 test_button.on_click(toggle_step_four_warn)
-train_button.on_click(toggle_step_four_warn)
 
 def toggle_step_five_warn():
-    if save_source.data['saved_data_choice'] != []:
+    global saves_exist
+    if saves_exist:
+        step_five_warning.visible = False
+        predict_status_message.visible = True
+
+    elif save_source.data['saved_data_choice'] != []:
+        saves_exist = True
         step_five_warning.visible = False
         predict_status_message.visible = True
     else:
@@ -1854,7 +1891,7 @@ def toggle_step_five_warn():
         predict_status_message.visible = False
 
 predict_button.on_click(toggle_step_five_warn)
-train_button.on_click(toggle_step_five_warn)
+
 
 # --------------- LAYOUTS ---------------
 
@@ -1893,8 +1930,7 @@ hyperparam_layout = layout(
     [hp_toggle],
     [hp_select],
     [tune_button, tune_help],
-    [tune_status_message],
-    [ginormous_height_spacer]
+    [tune_status_message]
 )
 
 delete_layout = layout(
@@ -1903,13 +1939,15 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button, train_help), train_status_message, step_two_warning, ginormous_height_spacer, hyperparam_layout, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
+
+
+tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button, train_help), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 
 
 test_button_layout = layout(
-    [column(step_four, test_save_select, row(test_button, test_help), temp_test_status_message, step_four_warning, ginormous_height_spacer, export_excel, export_csv)]
+    [column(step_four, test_save_select, row(test_button, test_help), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
 )
 
 tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
