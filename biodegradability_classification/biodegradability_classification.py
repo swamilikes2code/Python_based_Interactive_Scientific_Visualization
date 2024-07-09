@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import io
 from io import BytesIO
 import os
 import openpyxl
@@ -20,9 +19,10 @@ from rdkit.Chem import DataStructs, Descriptors, AllChem
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.preprocessing import StandardScaler
+from sklearn.exceptions import ConvergenceWarning
 from bokeh.util.warnings import BokehUserWarning, warnings
 from datetime import datetime
 import dask.dataframe as dd
@@ -30,6 +30,7 @@ import dask.dataframe as dd
 #entire code timer
 start_time = datetime.now()
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
+warnings.simplefilter(action='ignore', category=ConvergenceWarning)
 
 
 #CONTENTS/HEADERS throughout this code
@@ -887,7 +888,7 @@ learning_curve.legend.location = 'bottom_right'
 my_alg = 'Decision Tree'
 
 # Create select button
-alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
+alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"])
 
 # define to be default: decision tree
 hyperparam_list = [2, "random"]
@@ -902,9 +903,9 @@ def print_vals():
     elif my_alg == 'K-Nearest Neighbor':
         print("n_neighbors", model.n_neighbors)
         print("weights", model.weights)
-    elif my_alg == 'Support Vector Classification':
+    elif my_alg == 'Logistic Regression':
         print("C", model.C)
-        print("kernel", model.kernel)
+        print("solver", model.solver)
 
 # hyperparameter tuning widgets, default to decision tree
 hp_slider = Slider(
@@ -982,9 +983,9 @@ def set_hyperparameter_widgets():
 
         model.n_neighbors = hp_slider.value
         model.weights = hp_select.value
-    elif my_alg == 'Support Vector Classification':
+    elif my_alg == 'Logistic Regression':
         #hyperparameters are 
-        # kernel (linear, poly, rbf, sigmoid) 
+        # solver (lbfgs, liblinear, newton-cg, newton-cholesky, sag, saga) 
         # regularization parameter C (float slider)
         # model = SVC()
 
@@ -999,13 +1000,13 @@ def set_hyperparameter_widgets():
         )
         hp_toggle.visible = False
         hp_select.update(
-            title = "kernel",
-            value = "linear",
-            options = ["linear", "poly", "rbf", "sigmoid"]
+            title = "solver",
+            value = "liblinear",
+            options = ['lbfgs', 'liblinear', 'newton-cholesky', 'sag', 'saga']  #'newton-cg' took a long time to run
         )
 
         model.C = hp_slider.value
-        model.kernel = hp_select.value
+        model.solver = hp_select.value
 
 
 # list of the models to use
@@ -1029,7 +1030,7 @@ def update_algorithm(attr, old, new):
         model = KNeighborsClassifier()
     else:
         # model = model_list[2]
-        model = SVC()
+        model = LogisticRegression()
     set_hyperparameter_widgets()
     train_status_message.text = 'Not running'
     train_status_message.styles = not_updated
@@ -1183,7 +1184,7 @@ def hp_slider_callback(attr, old, new):
         model.max_depth = new
     elif my_alg == 'K-Nearest Neighbor':
         model.n_neighbors = new
-    elif my_alg == 'Support Vector Classification':
+    elif my_alg == 'Logistic Regression':
         model.C = new
     tune_status_message.text = "Not running"
     tune_status_message.styles = not_updated
@@ -1195,8 +1196,8 @@ def hp_select_callback(attr, old, new):
         model.splitter = new
     elif my_alg == 'K-Nearest Neighbor':
         model.weights = new
-    elif my_alg == 'Support Vector Classification':
-        model.kernel = new
+    elif my_alg == 'Logistic Regression':
+        model.solver = new
     tune_status_message.text = "Not running"
     tune_status_message.styles = not_updated
 
@@ -1292,8 +1293,8 @@ def save_model():
         new_saved_algorithm = 'DT'
     elif my_alg == 'K-Nearest Neighbor':
         new_saved_algorithm = 'KNN'
-    elif my_alg == 'Support Vector Classification':
-        new_saved_algorithm = 'SVC'
+    elif my_alg == 'Logistic Regression':
+        new_saved_algorithm = 'LR'
     else:
         new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
@@ -1522,10 +1523,10 @@ def train_test_model():
         # model = model_list[1]
         model.n_neighbors = temp_hyperparams[0]
         model.weights = temp_hyperparams[1]
-    elif temp_alg == 'SVC':
+    elif temp_alg == 'LR':
         # model = model_list[2]
         model.C = temp_hyperparams[0]
-        model.kernel = temp_hyperparams[1]
+        model.solver = temp_hyperparams[1]
 
     model.fit(X_train, y_train)
 
