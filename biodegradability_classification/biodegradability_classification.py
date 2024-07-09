@@ -1306,15 +1306,17 @@ true_pos = nan
 false_pos = nan
 false_neg = nan
 true_neg = nan
+
+twenty_five_percent = dataset_size * 0.25
 def determine_scale():
     # Calculate the number of instances in each split
     save_num = int(test_save_select.value)
     save_index = test_save_select.options.index(str(save_num))
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
-
+    
     test_size = dataset_size * (temp_split[2]/100)
     base_scale = 4
-    scale = base_scale * (test_size / 1000)
+    scale = base_scale * (test_size / twenty_five_percent)
     # Ensure the scale is at least 1 to avoid too small circles
     scale = max(scale, 1)
     print(scale)
