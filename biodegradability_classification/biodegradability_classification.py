@@ -28,7 +28,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from bokeh.util.warnings import BokehUserWarning, warnings
+from datetime import datetime
+import dask.dataframe as dd
 
+#entire code timer
+start_time = datetime.now()
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
 
 
@@ -380,7 +384,7 @@ html_warning_template = """
 <body>
     <div class="container">
         <div class="section">
-            <h2><i>WARNING: Incomplete Step(s):</i></h2>
+            <h2><i>Incomplete Step(s):</i></h2>
             <h2>{}</h2>
             <p>Please {} before continuing</p>
         </div>
@@ -410,6 +414,7 @@ intro_instr = Div(
                 background-color: #ffffff;
                 padding: 20px;
                 border-radius: 8px;
+                border: 1px solid #ddd;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
             h1 {
@@ -421,6 +426,18 @@ intro_instr = Div(
                 border-bottom: 2px solid #ddd;
                 padding-bottom: 5px;
             }
+
+            .column_5 {
+                float: left;
+                width: 20%;
+            }
+
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
             p {
                 margin: 15px 0;
             }
@@ -439,33 +456,50 @@ intro_instr = Div(
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="section">
-                <h2>Data Tab</h2>
-                <p>Start by opening the <span class="highlight">Data Tab</span>. This tab is used for preparing the biodegradability data for training. In a dropdown menu, you will be given four options containing various <b>fingerprints</b> and <b>molecular features</b> that will be used to train the model. You will also have the option to split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>. Once you are done preparing your data, save your choices, and continue on to the next tab.</p>
+            <div class="column_5">
+                <div class="section">
+                    <h2>1) PREPARE DATA:</h2>
+                    <h3>Prepare the biodegradability data for training.</h3>
+                    <p>On the <b>Data</b> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>, avoiding <b>underfitting</b> or <b>overfitting</b>.</p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Train and Validate Tab</h2>
-                <p>On the <span class="highlight">Train and Validate Tab</span>, you will first select the <b>machine learning algorithm</b> of your choice, and run it. This will display the validation accuracy of this run in a datatable. Once you set and run your chosen algorithm, you will be able to fine-tune its <b>hyperparameters</b>, and compare these runs' validation accuracies with your past saved ones in the table. Once you have run a model at least once, you may continue to the next tab.</p>
+
+            <div class="column_5">
+                <div class="section">
+                    <h2>2) TRAIN:</h2>
+                    <h3>Train a machine learning model on your prepared data.</h3>
+                    <p>On the <b>Train and Validate</b> tab, select the <b>machine learning algorithm</b> of your choice, and run it, displaying the run's <b>validation accuracy</b> in both a datatable, and a <b>Learning Curve</b>.</p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Test Tab</h2>
-                <p>The <span class="highlight">Test Tab</span> is where you will be able to complete your final test of the saved model of your choice. This will display your testing accuracy, as well as both a <b>confusion matrix</b> and <b>tsne plot</b>, which visually display certain performance aspects of your model. Finally, once testing your model, you can continue to the final tab.</p>
+            
+            <div class="column_5">
+                <div class="section">
+                    <h2>3) VALIDATE</h2>
+                    <h3>Fine-tune the hyperparameters of your model.</h3>
+                    <p>On the <b>Train and Validate</b> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by looking at the Learning Curves. </p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Predict Tab</h2>
-                <p>The <span class="highlight">Predict Tab</span> is where you will be able to test any of the saved models by inputting a <b>SMILES string</b>. You can view the IUPAC name of your chosen molecule, and its predicted class. </p>
+
+            <div class="column_5">
+                <div class="section">
+                    <h2>4) TEST</h2>
+                    <h3>Perform a final test of your model's performance.</h3>
+                    <p>On the <b>Test</b> tab, complete your final test of the saved model of your choice, displaying its testing accuracy, as well as a <b>confusion matrix</b>, which visually displays certain performance aspects of your model.</p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Additional Information</h2>
-                <p>For more information about each of the <b>bolded</b> vocab words, see the above navigation menu.</p>
+
+            <div class="column_5">
+                <div class="section">
+                    <h2>5) PREDICT</h2>
+                    <h3>Input a Smiles string and predict its class using your model.</h3>
+                    <p>On the <b>Predict</b> tab, test any of the saved models by inputting a <b>Smiles string</b>, displaying the IUPAC name of your chosen molecule, its predicted class, and if the molecule appears in the dataset, its actual class.</p>
+                </div>
             </div>
-        </div>
     </body>
     </html>
     """,
-    width=750,
-    height=500
+    width=1000,
+    height=1000
 )
 
 formatted_val_html = html_val_template.format('N/A')
@@ -478,27 +512,24 @@ formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A'
 predict_display = Div(text=formatted_predict_html)
 
 step_two_warning_html = html_warning_template.format('1) Preparing Data', 'return to the <b>Data</b> tab and <b>Save Current Configuration</b>')
-step_two_warning = Div(text=step_two_warning_html)
+step_two_warning = Div(text=step_two_warning_html, width=200, height=200)
 
 step_three_warning_html = html_warning_template.format('2) Train', '<b>Run</b> current <b>ML Algorithm</b>')
-step_three_warning = Div(text=step_three_warning_html)
+step_three_warning = Div(text=step_three_warning_html, width=200, height=200)
 
 steps_four_five_warning_html = html_warning_template.format('2) Train', 'return to <b>Train and Validate</b> and <b>Run</b> at least one <b>ML Algorithm</b>')
-step_four_warning = Div(text=steps_four_five_warning_html)
-step_five_warning = Div(text=steps_four_five_warning_html)
+step_four_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
+step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
-                 </div>
-                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 CAUTION: Adjusting the percentages can impact the model's performance, leading to overfitting or underfitting if the splits are not well-balanced of the overall dataset.
-                 </div>""", width=280), position="right"))
+                 <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
+                 <div>For more info, see <i>Preparing Data</i> in the above menu.</div>""", width=280), position="right"))
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 <div>Select which group of <b>features</b> you wish to train the model with.</div>
-                                                        <div>You can also select the <b>molecular fingerprint</b>, if any.</div>
+                 <div>Select whether to use <b>features</b> or a <b>molecular fingerprint</b> to train model.</div>
+                                                        <div>For more info, see <i>Our Dataset</i> and <i>Fingerprints</i> in the above menu.</div>
                  </div>""", width=280), position="right"))
 
 datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
@@ -508,25 +539,22 @@ datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                  Select one of the following <b>Machine Learning algorithms</b>, and click <b>run</b>. This will display its initial 
-                                                    <b>validation accuracy</b> in the table on the right.
+                  <div>Select one of the following <b>Machine Learning algorithms</b>.</div> 
+                                                    <div>For more info, see <i>Algorithms</i> in the above menu.</div>
                   </div>""", width=280), position="right"))
 
 tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy, 
-                                                   and click <b>tune</b>. This will also add the run's validation accuracy to the data table.
+                 <div>Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy.
+                                                   Use the <b>Learning Curve</b> to prevent <b>Overfitting.</b></div>
+                                                   <div>For more info, see <i>Hyperparameters</i> and <i>Overfitting</i> in the above menu.</div>
                  </div>""", width=280), position="right"))
 
 test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                <div>Select the save from the previous tab to test the model, and view the number of true/false postives/negatives
-                                                   in the <b>confusion matrix</b> below.</div>
+                <div>Select the save from the previous tab to test the model, and view its <b>confusion matrix</b> below.</div>
                 <div>‎</div>     
-                <div>NOTE: This should be considered the <b>final</b> test of your model.</div>
-                <div>You are encouraged to keep exploring the module by continuing to the next tab, or
-                starting again from the <b>data</b> tab.</div>
-                <div>However, this is NOT intended for validation.</div>
+                <div>NOTE: This should be considered the <b>final</b> test of your model, and is NOT intended for additional validation.</div>
                 </div>""", width=280), position="right"))
 
 predict_instr = Div(text="""
@@ -544,16 +572,34 @@ width=160, height=60)
 # df is original csv, holds fingerprint list and 167 cols of fingerprint bits
 # df_display > df_subset > df_dict are for displaying table
 
-# Load data from the csv file
-df1 = pd.read_csv("./data/option_1.csv", low_memory=False)
-df2 = pd.read_csv("./data/option_2.csv", low_memory=False)
-df3 = pd.read_csv("./data/option_3.csv", low_memory=False)
-df4 = pd.read_csv("./data/option_4.csv", low_memory=False)
 
-all_df = [df1, df2, df3, df4]
+total_data_section_timer_start = datetime.now()                         # ----------- TIMER CODE
 
-# just holding mandatory cols
-df = df1.iloc[:, :4]
+
+
+
+read_csv_start = datetime.now()                                         # ----------- TIMER CODE
+####################################################################################################
+#df1 = dd.read_csv("./data/option_1.csv").compute()  # potentially faster alternative
+#df2 = dd.read_csv("./data/option_2.csv").compute()  # potentially faster alternative
+#df3 = dd.read_csv("./data/option_3.csv").compute()
+#df4 = dd.read_csv("./data/option_4.csv").compute()  
+
+# Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
+df1 = pd.read_csv("./data/option_1.csv", low_memory=False) # ------------------------------------- #
+df2 = pd.read_csv("./data/option_2.csv", low_memory=False) # ------------------------------------- #
+df3 = pd.read_csv("./data/option_3.csv", low_memory=False) # ------------------------------------- #
+df4 = pd.read_csv("./data/option_4.csv", low_memory=False) # ------------------------------------- #
+dataset_size = len(df1)                              # ---- This section takes 1.5-2.5 to run ---- #
+                                                     # ---- This section takes 1.5-2.5 to run ---- #
+all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
+                                                     # ---- This section takes 1.5-2.5 to run ---- #
+# just holding mandatory cols                        # ---- This section takes 1.5-2.5 to run ---- #
+df = df1.iloc[:, :4]                                 # ---- This section takes 1.5-2.5 to run ---- #
+####################################################################################################
+read_csv_stop = datetime.now()                                          # ----------- TIMER CODE
+elapsed_time = read_csv_stop - read_csv_start                           # ----------- TIMER CODE
+print(f"Reading in data: {elapsed_time.total_seconds():.2f} seconds") #lines 565 - 578 take 1.7-2.5 seconds
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
@@ -574,10 +620,24 @@ df2_tab_source = ColumnDataSource(df2_subset)
 df3_tab_source = ColumnDataSource(df3_subset)
 df4_tab_source = ColumnDataSource(df4_subset)
 
-df1_dict = df1.to_dict("list")
-df2_dict = df2.to_dict("list")
-df3_dict = df3.to_dict("list")
-df4_dict = df4.to_dict("list")
+to_dictionary_time_start = datetime.now()                                   # ----------- TIMER CODE
+####################################################################################################
+
+def to_dict(df): 
+    return {col: df[col].tolist() for col in df.columns} # sped up to 1 second execution
+
+df1_dict = to_dict(df1)
+df2_dict = to_dict(df2)
+df3_dict = to_dict(df3)
+df4_dict = to_dict(df4)
+#df1_dict = df1.to_dict("list")                      # ---- This section takes 5.0-10.0 to run ---- #
+#df2_dict = df2.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+#df3_dict = df3.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+#df4_dict = df4.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+####################################################################################################
+to_dictionary_time_end = datetime.now()                                     # ----------- TIMER CODE
+elapsed_time = to_dictionary_time_end - to_dictionary_time_start            # ----------- TIMER CODE
+print(f"Data to dictionary time: {elapsed_time.total_seconds():.2f} seconds") #606 - 615 takes 5-10 seconds
 
 cols1 = [key for key in df1_dict.keys() if key not in mandatory_columns]
 cols2 = [key for key in df2_dict.keys() if key not in mandatory_columns]
@@ -591,6 +651,11 @@ data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (man
 data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
 data_select = Select(title="Select Features:", options=data_opts, width = 195)
+
+data_initialization_end = datetime.now()                                    # ----------- TIMER CODE
+elapsed_time = data_initialization_end - total_data_section_timer_start     # ----------- TIMER CODE
+print(f"Entire Data Section Runtime: {elapsed_time.total_seconds():.2f} seconds")       # ----------- TIMER CODE
+
 
 # Update columns to display
 def update_cols(display_columns, table_source):
@@ -1305,6 +1370,20 @@ false_pos = nan
 false_neg = nan
 true_neg = nan
 
+twenty_five_percent = dataset_size * 0.25
+def determine_scale():
+    # Calculate the number of instances in each split
+    save_num = int(test_save_select.value)
+    save_index = test_save_select.options.index(str(save_num))
+    temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
+    
+    test_size = dataset_size * (temp_split[2]/100)
+    base_scale = 4
+    scale = base_scale * (test_size / twenty_five_percent)
+    # Ensure the scale is at least 1 to avoid too small circles
+    scale = max(scale, 1)
+    print(scale)
+    return scale
 
 scale = 4
 confus_d = {'T_range': ['Positive', 'Positive',
@@ -1338,6 +1417,7 @@ bubble.add_tools(HoverTool(tooltips = [('Type', '@title'), ('Count', '@count')])
 cmatrix = figure(title = "Confusion Matrix", x_range = (-1,1), y_range = (-1,1))
 
 def update_cmatrix(attrname, old, new):
+    scale = determine_scale()
     new_confus_d = {'T_range': ['Positive', 'Positive',
                     'Negative', 'Negative'],
                     'Subject': ['Negative', 'Positive',
@@ -1421,6 +1501,11 @@ def train_test_model():
 
     np.random.seed(123)
 
+
+    if test_save_select.value == '':
+        temp_test_status_message.text = 'Error: please select a Save'
+        temp_test_status_message.styles = not_updated
+        return
     save_num = int(test_save_select.value)
     save_index = test_save_select.options.index(str(save_num))
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
@@ -1517,6 +1602,9 @@ def train_test_model():
 
     update_cmatrix(None, None, None)
 
+    temp_test_status_message.text = "Testing complete"
+    temp_test_status_message.styles = updated
+
 def run_test():
     global my_alg, stage
     stage = 'Test'
@@ -1525,9 +1613,6 @@ def run_test():
     train_test_model()
 
     # Updating accuracy display
-
-    temp_test_status_message.text = "Testing complete"
-    temp_test_status_message.styles = updated
 
 def load_test():
     temp_test_status_message.text = "Testing..."
@@ -1660,6 +1745,10 @@ def predict_biodegrad():
 #     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
 
 #     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
+    if predict_select.value == '':
+        predict_status_message.text = 'Error: please select a Save'
+        predict_status_message.styles = not_updated
+        return
     save_num = int(predict_select.value)
     save_index = predict_select.options.index(str(save_num))
     model = model_list[save_index]
@@ -1720,7 +1809,7 @@ predict_select.on_change('value', update_predict_status)
 smiles_select.on_change('value', update_predict_status)
 
 
-# ---------------- VISIBILITY AND LAYOUTS--------------
+# ---------------- VISIBILITY --------------
 
 # # Data exploration plot
 # datavis_help.visible = False
@@ -1755,6 +1844,17 @@ def toggle_smiles_input_vis(attr, old, new):
 
 smiles_select.on_change('value', toggle_smiles_input_vis)
 
+
+# Visiblility of warning messages vs. status messages
+
+warning_spacer_1 = Spacer(height = 80)
+warning_spacer_2 = Spacer(height = 80)
+warning_spacer_3 = Spacer(height = 80)
+
+warning_spacer_1.visible = True
+warning_spacer_2.visible = True
+warning_spacer_3.visible = True
+
 train_status_message.visible = True
 step_two_warning.visible = False
 tune_status_message.visible = True
@@ -1770,9 +1870,24 @@ def toggle_step_two_warn():
     if save_config_message.styles != not_updated:
         train_status_message.visible = True
         step_two_warning.visible = False
+        warning_spacer_1.visible = True
+        tune_status_message.visible = True
+        step_three_warning.visible = False
+        warning_spacer_2.visible = True
+        temp_test_status_message.text = 'Not running'
+        temp_test_status_message.styles = not_updated
+        temp_test_status_message.visible  = True
+        step_four_warning.visible = False
+        warning_spacer_3.visible = True
+        predict_status_message.text = 'Not running'
+        predict_status_message.styles = not_updated
+        predict_status_message.visible = True
+        step_five_warning.visible = False
+
     else:
         train_status_message.visible = False
         step_two_warning.visible = True
+        warning_spacer_1.visible = False
 
 train_button.on_click(toggle_step_two_warn)
 save_config_button.on_click(toggle_step_two_warn)
@@ -1781,9 +1896,11 @@ def toggle_step_three_warn():
     if train_status_message.styles != not_updated:
         step_three_warning.visible = False
         tune_status_message.visible = True
+        warning_spacer_2.visible = True
     else:
         step_three_warning.visible = True
         tune_status_message.visible = False
+        warning_spacer_2.visible = False
 
 tune_button.on_click(toggle_step_three_warn)
 train_button.on_click(toggle_step_three_warn)
@@ -1794,20 +1911,28 @@ def toggle_step_four_warn():
     if saves_exist:
         step_four_warning.visible = False
         temp_test_status_message.visible = True
+        warning_spacer_3.visible = True
 
     elif save_source.data['saved_data_choice'] != []:
         saves_exist = True
         step_four_warning.visible = False
         temp_test_status_message.visible = True
+        warning_spacer_3.visible = True
     else:
         step_four_warning.visible = True
         temp_test_status_message.visible = False
+        warning_spacer_3.visible = False
 
 test_button.on_click(toggle_step_four_warn)
-train_button.on_click(toggle_step_four_warn)
 
 def toggle_step_five_warn():
-    if save_source.data['saved_data_choice'] != []:
+    global saves_exist
+    if saves_exist:
+        step_five_warning.visible = False
+        predict_status_message.visible = True
+
+    elif save_source.data['saved_data_choice'] != []:
+        saves_exist = True
         step_five_warning.visible = False
         predict_status_message.visible = True
     else:
@@ -1815,7 +1940,7 @@ def toggle_step_five_warn():
         predict_status_message.visible = False
 
 predict_button.on_click(toggle_step_five_warn)
-train_button.on_click(toggle_step_five_warn)
+
 
 # --------------- LAYOUTS ---------------
 
@@ -1854,8 +1979,7 @@ hyperparam_layout = layout(
     [hp_toggle],
     [hp_select],
     [tune_button, tune_help],
-    [tune_status_message],
-    [ginormous_height_spacer]
+    [tune_status_message]
 )
 
 delete_layout = layout(
@@ -1864,13 +1988,15 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button, train_help), train_status_message, step_two_warning, ginormous_height_spacer, hyperparam_layout, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
+
+
+tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button, train_help), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 
 
 test_button_layout = layout(
-    [column(step_four, test_save_select, row(test_button, test_help), temp_test_status_message, step_four_warning, ginormous_height_spacer, export_excel, export_csv)]
+    [column(step_four, test_save_select, row(test_button, test_help), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
 )
 
 tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
@@ -1885,3 +2011,7 @@ tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                 ])
 
 curdoc().add_root(tabs)
+
+end_time = datetime.now()
+elapsed_time = end_time - start_time
+print(f"Entire File Runtime: {elapsed_time.total_seconds():.2f} seconds")
