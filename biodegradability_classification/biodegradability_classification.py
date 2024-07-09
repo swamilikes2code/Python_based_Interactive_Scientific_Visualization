@@ -1538,47 +1538,71 @@ def load_test():
 test_button.on_click(load_test)
 
 # --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) ---------------------------
-def download_xlsx():
+js_xlsx = CustomJS(args=dict(), code='')
+def helper():
+    global b64_excel_data
     # Convert source into df
-    tested_df = pd.DataFrame(new_source.data)
+    tested_df = new_source.to_df()
+    # print(tested_df.info)
     # print(tested_df)
 
     # Create an Excel buffer
     excel_buffer = BytesIO()
     
     # Write the DataFrame to the buffer using ExcelWriter
-    with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
-        tested_df.to_excel(writer, index=False, sheet_name='Sheet1')
+    with pd.ExcelWriter(excel_buffer) as writer:
+        tested_df.to_excel(writer, index=False)
     
     # Get the binary data from the buffer
     excel_data = excel_buffer.getvalue()
     
     # Encode the binary data to base64
-    b64_excel_data = base64.b64encode(excel_data)
-    return b64_excel_data
+    b64_excel_data = base64.b64encode(excel_data).decode('UTF-8')
+    print(type(b64_excel_data))
 
-# js_download_excel = """
-#     var filename = filename;
-#     var filetext = atob(b64_excel_data);
+helper()
 
-#     var buffer = new Uint8Array(filetext.length);
-#     for (var i = 0; i < filetext.length; i++) {{
-#         buffer[i] = filetext.charCodeAt(i);
-#     }}
-#     console.log(buffer)
-    
-#     var blob = new Blob([buffer], {"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-#     var link = document.createElement("a");
-#     link.href = URL.createObjectURL(blob);
-#     link.download = filename;
-#     link.target = '_blank';
-#     link.style.visibility = 'hidden'
-#     link.dispatchEvent(new MouseEvent('click'))
-# """
+def download_xlsx():
+    helper()
+    js_xlsx = CustomJS(args=dict(b64_excel_data=b64_excel_data), code="""
+        console.log('hi');
+        var filename = 'data_result.xlsx';
+        var filetext = atob(b64_excel_data.toString());
+        console.log(typeof b64_excel_data);
+
+        var buffer = new Uint8Array(filetext.length);
+        for (var i = 0; i < filetext.length; i++) {
+            buffer[i] = filetext.charCodeAt(i);
+        }
+        
+        var blob = new Blob([buffer], {"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.target = '_blank';
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        // link.dispatchEvent(new MouseEvent('click'))
+    """)
+    # temp = PreText(text='')
+    # temp.js_on_change('text',js_xlsx)
+    # print(temp.text)
+    # temp.text=''
+    # temp.text='x'
+    # print(temp.text)
+    export_excel.js_on_click(js_xlsx)
+
+
+export_excel.on_click(download_xlsx)
+# export_excel.js_on_click(js_xlsx)
+
 # Create a CustomJS object with the JavaScript code
-xlsx_custom_js = CustomJS(args=dict(data=download_xlsx()), code=open(os.path.join(os.path.dirname(__file__),"xlsx_download.js")).read())
+# b64 = export_excel.on_click(download_xlsx)
+# export_excel.js_on_click(js_xlsx)
 
-export_excel.js_on_click(xlsx_custom_js)
+# export_excel.js_on_click(xlsx_custom_js)
 
 
 #from the bokeh export csv demo
