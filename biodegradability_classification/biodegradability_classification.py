@@ -29,6 +29,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from bokeh.util.warnings import BokehUserWarning, warnings
 from datetime import datetime
+import dask.dataframe as dd
 
 #entire code timer
 start_time = datetime.now()
@@ -579,6 +580,11 @@ total_data_section_timer_start = datetime.now()                         # ------
 
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
 ####################################################################################################
+#df1 = dd.read_csv("./data/option_1.csv").compute()  # potentially faster alternative
+#df2 = dd.read_csv("./data/option_2.csv").compute()  # potentially faster alternative
+#df3 = dd.read_csv("./data/option_3.csv").compute()
+#df4 = dd.read_csv("./data/option_4.csv").compute()  
+
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
 df1 = pd.read_csv("./data/option_1.csv", low_memory=False) # ------------------------------------- #
 df2 = pd.read_csv("./data/option_2.csv", low_memory=False) # ------------------------------------- #
@@ -616,10 +622,18 @@ df4_tab_source = ColumnDataSource(df4_subset)
 
 to_dictionary_time_start = datetime.now()                                   # ----------- TIMER CODE
 ####################################################################################################
-df1_dict = df1.to_dict("list")                      # ---- This section takes 5.0-10.0 to run ---- #
-df2_dict = df2.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-df3_dict = df3.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-df4_dict = df4.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+
+def to_dict(df): 
+    return {col: df[col].tolist() for col in df.columns} # sped up to 1 second execution
+
+df1_dict = to_dict(df1)
+df2_dict = to_dict(df2)
+df3_dict = to_dict(df3)
+df4_dict = to_dict(df4)
+#df1_dict = df1.to_dict("list")                      # ---- This section takes 5.0-10.0 to run ---- #
+#df2_dict = df2.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+#df3_dict = df3.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+#df4_dict = df4.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
 ####################################################################################################
 to_dictionary_time_end = datetime.now()                                     # ----------- TIMER CODE
 elapsed_time = to_dictionary_time_end - to_dictionary_time_start            # ----------- TIMER CODE
