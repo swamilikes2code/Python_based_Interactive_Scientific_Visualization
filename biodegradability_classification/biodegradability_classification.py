@@ -1539,9 +1539,9 @@ test_button.on_click(load_test)
 
 # --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) ---------------------------
 def download_xlsx():
-    global filename, b64_excel_data
     # Convert source into df
     tested_df = pd.DataFrame(new_source.data)
+    # print(tested_df)
 
     # Create an Excel buffer
     excel_buffer = BytesIO()
@@ -1554,98 +1554,35 @@ def download_xlsx():
     excel_data = excel_buffer.getvalue()
     
     # Encode the binary data to base64
-    b64_excel_data = base64.b64encode(excel_data).decode()
-    
-    # Define the filename
-    filename = "tested_data.xlsx"
+    b64_excel_data = base64.b64encode(excel_data)
+    return b64_excel_data
 
-download_xlsx()
+# js_download_excel = """
+#     var filename = filename;
+#     var filetext = atob(b64_excel_data);
 
-js_download_excel = f"""
-    var filename = "{filename}";
-    var filetext = atob("{b64_excel_data}");
-
-    var buffer = new Uint8Array(filetext.length);
-    for (var i = 0; i < filetext.length; i++) {{
-        buffer[i] = filetext.charCodeAt(i);
-    }}
+#     var buffer = new Uint8Array(filetext.length);
+#     for (var i = 0; i < filetext.length; i++) {{
+#         buffer[i] = filetext.charCodeAt(i);
+#     }}
+#     console.log(buffer)
     
-    var blob = new Blob([buffer], {{"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}});
-    
-    // Create a link element
-    var link = document.createElement("a");
-    
-    // Set the href to the Blob URL
-    link.href = URL.createObjectURL(blob);
-    
-    // Set the download attribute
-    link.download = filename;
-    
-    // Append the link to the body
-    document.body.appendChild(link);
-    
-    // Click the link to trigger the download
-    link.click();
-    
-    // Remove the link from the document
-    document.body.removeChild(link);
-"""
+#     var blob = new Blob([buffer], {"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+#     var link = document.createElement("a");
+#     link.href = URL.createObjectURL(blob);
+#     link.download = filename;
+#     link.target = '_blank';
+#     link.style.visibility = 'hidden'
+#     link.dispatchEvent(new MouseEvent('click'))
+# """
 # Create a CustomJS object with the JavaScript code
-xlsx_custom_js = CustomJS(args=dict(), code=js_download_excel)
+xlsx_custom_js = CustomJS(args=dict(data=download_xlsx()), code=open(os.path.join(os.path.dirname(__file__),"xlsx_download.js")).read())
 
-export_excel.on_click(download_xlsx)
 export_excel.js_on_click(xlsx_custom_js)
 
 
-# def download_csv():
-#     # Convert source into df
-#     tested_df = pd.DataFrame(new_source.data)
-
-#     # Create a CSV buffer
-#     csv_buffer = io.StringIO()
-    
-#     # Write the DataFrame to the buffer
-#     tested_df.to_csv(csv_buffer, index=False)
-    
-#     # Get the CSV data as a string
-#     csv_data = csv_buffer.getvalue()
-    
-#     # Define the filename
-#     filename = "tested_data.csv"
-
-#     js_download = f"""
-#     var filename = "{filename}";
-#     var filetext = `{csv_data}`;
-    
-#     var blob = new Blob([filetext], {{"type": "text/csv;charset=utf-8;"}});
-    
-#     // Create a link element
-#     var link = document.createElement("a");
-    
-#     // Set the href to the Blob URL
-#     link.href = URL.createObjectURL(blob);
-    
-#     // Set the download attribute
-#     link.download = filename;
-    
-#     // Append the link to the body
-#     document.body.appendChild(link);
-    
-#     // Click the link to trigger the download
-#     link.click();
-    
-#     // Remove the link from the document
-#     document.body.removeChild(link);
-#     """
-#     # Create a CustomJS object with the JavaScript code
-#     csv_custom_js = CustomJS(args=dict(), code=js_download)
-    
-#     # Attach the CustomJS to the button click event
-#     export_csv.js_on_click(csv_custom_js)
-
-
 #from the bokeh export csv demo
-export_csv.js_on_click(CustomJS(args=dict(source=new_source), code=open(os.path.join(os.path.dirname(__file__),"download.js")).read()))
+export_csv.js_on_click(CustomJS(args=dict(source=new_source), code=open(os.path.join(os.path.dirname(__file__),"csv_download.js")).read()))
 
 # export_csv.on_click(download_csv)
 
