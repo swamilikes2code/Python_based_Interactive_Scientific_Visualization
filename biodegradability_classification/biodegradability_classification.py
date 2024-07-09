@@ -28,7 +28,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from bokeh.util.warnings import BokehUserWarning, warnings
+from datetime import datetime
 
+#entire code timer
+start_time = datetime.now()
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
 
 
@@ -545,6 +548,11 @@ width=160, height=60)
 # df is original csv, holds fingerprint list and 167 cols of fingerprint bits
 # df_display > df_subset > df_dict are for displaying table
 
+
+total_data_section_timer_start = datetime.now()                         # ----------- TIMER CODE
+
+read_csv_start = datetime.now()                                         # ----------- TIMER CODE
+
 # Load data from the csv file
 df1 = pd.read_csv("./data/option_1.csv", low_memory=False)
 df2 = pd.read_csv("./data/option_2.csv", low_memory=False)
@@ -554,8 +562,9 @@ dataset_size = len(df1)
 
 all_df = [df1, df2, df3, df4]
 
-# just holding mandatory cols
-df = df1.iloc[:, :4]
+read_csv_stop = datetime.now()                                          # ----------- TIMER CODE
+elapsed_time = read_csv_stop - read_csv_start                           # ----------- TIMER CODE
+print(f"Reading in data: {elapsed_time.total_seconds():.2f} seconds") #lines 565 - 578 take 1.7-2.5 seconds
 
 # Columns that should always be shown
 mandatory_columns = ['Substance Name', 'Smiles', 'Class']
@@ -576,10 +585,16 @@ df2_tab_source = ColumnDataSource(df2_subset)
 df3_tab_source = ColumnDataSource(df3_subset)
 df4_tab_source = ColumnDataSource(df4_subset)
 
-df1_dict = df1.to_dict("list")
-df2_dict = df2.to_dict("list")
-df3_dict = df3.to_dict("list")
-df4_dict = df4.to_dict("list")
+to_dictionary_time_start = datetime.now()                                   # ----------- TIMER CODE
+####################################################################################################
+df1_dict = df1.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
+df2_dict = df2.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
+df3_dict = df3.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
+df4_dict = df4.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
+####################################################################################################
+to_dictionary_time_end = datetime.now()                                     # ----------- TIMER CODE
+elapsed_time = to_dictionary_time_end - to_dictionary_time_start            # ----------- TIMER CODE
+print(f"Data to dictionary time: {elapsed_time.total_seconds():.2f} seconds") #606 - 615 takes 5.5-7.5 seconds
 
 cols1 = [key for key in df1_dict.keys() if key not in mandatory_columns]
 cols2 = [key for key in df2_dict.keys() if key not in mandatory_columns]
@@ -593,6 +608,11 @@ data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (man
 data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
 data_select = Select(title="Select Features:", options=data_opts, width = 195)
+
+data_initialization_end = datetime.now()                                    # ----------- TIMER CODE
+elapsed_time = data_initialization_end - total_data_section_timer_start     # ----------- TIMER CODE
+print(f"Entire Data Section Runtime: {elapsed_time.total_seconds():.2f} seconds")       # ----------- TIMER CODE
+
 
 # Update columns to display
 def update_cols(display_columns, table_source):
@@ -1007,7 +1027,7 @@ def split_data(train_percentage, val_percentage, test_percentage, data_index):
     
 
     X = temp_df[temp_cols]
-    y = df['Class']
+    y = mandatory_columns['Class']
 
     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-train_percentage)/100)
     test_split = test_percentage / (100-train_percentage)
@@ -1978,3 +1998,7 @@ tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
                 ])
 
 curdoc().add_root(tabs)
+
+end_time = datetime.now()
+elapsed_time = end_time - start_time
+print(f"Entire File Runtime: {elapsed_time.total_seconds():.2f} seconds")
