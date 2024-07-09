@@ -422,6 +422,18 @@ intro_instr = Div(
                 border-bottom: 2px solid #ddd;
                 padding-bottom: 5px;
             }
+
+            .column_5 {
+                float: left;
+                width: 20%;
+            }
+
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
             p {
                 margin: 15px 0;
             }
@@ -440,33 +452,50 @@ intro_instr = Div(
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="section">
-                <h2>Data Tab</h2>
-                <p>Start by opening the <span class="highlight">Data Tab</span>. This tab is used for preparing the biodegradability data for training. In a dropdown menu, you will be given four options containing various <b>fingerprints</b> and <b>molecular features</b> that will be used to train the model. You will also have the option to split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>. Once you are done preparing your data, save your choices, and continue on to the next tab.</p>
+            <div class="column_5">
+                <div class="section">
+                    <h2>1) PREPARE DATA:</h2>
+                    <h3>Prepare the biodegradability data for training.</h3>
+                    <p>On the <b>Data</b> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>, avoiding <b>underfitting</b> or <b>overfitting</b>.</p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Train and Validate Tab</h2>
-                <p>On the <span class="highlight">Train and Validate Tab</span>, you will first select the <b>machine learning algorithm</b> of your choice, and run it. This will display the validation accuracy of this run in a datatable. Once you set and run your chosen algorithm, you will be able to fine-tune its <b>hyperparameters</b>, and compare these runs' validation accuracies with your past saved ones in the table. Once you have run a model at least once, you may continue to the next tab.</p>
+
+            <div class="column_5">
+                <div class="section">
+                    <h2>2) TRAIN:</h2>
+                    <h3>Train a machine learning model on your prepared data.</h3>
+                    <p>On the <b>Train and Validate</b> tab, select the <b>machine learning algorithm</b> of your choice, and run it, displaying the run's <b>validation accuracy</b> in both a datatable, and a <b>Learning Curve</b>.</p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Test Tab</h2>
-                <p>The <span class="highlight">Test Tab</span> is where you will be able to complete your final test of the saved model of your choice. This will display your testing accuracy, as well as both a <b>confusion matrix</b> and <b>tsne plot</b>, which visually display certain performance aspects of your model. Finally, once testing your model, you can continue to the final tab.</p>
+            
+            <div class="column_5">
+                <div class="section">
+                    <h2>3) VALIDATE</h2>
+                    <h3>Fine-tune the hyperparameters of your model.</h3>
+                    <p>On the <b>Train and Validate</b> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by looking at the Learning Curves. </p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Predict Tab</h2>
-                <p>The <span class="highlight">Predict Tab</span> is where you will be able to test any of the saved models by inputting a <b>SMILES string</b>. You can view the IUPAC name of your chosen molecule, and its predicted class. </p>
+
+            <div class="column_5">
+                <div class="section">
+                    <h2>4) TEST</h2>
+                    <h3>Perform a final test of your model's performance.</h3>
+                    <p>On the <b>Test</b> tab, complete your final test of the saved model of your choice, displaying its testing accuracy, as well as a <b>confusion matrix</b>, which visually displays certain performance aspects of your model.</p>
+                </div>
             </div>
-            <div class="section">
-                <h2>Additional Information</h2>
-                <p>For more information about each of the <b>bolded</b> vocab words, see the above navigation menu.</p>
+
+            <div class="column_5">
+                <div class="section">
+                    <h2>5) PREDICT</h2>
+                    <h3>Input a Smiles string and predict its class using your model.</h3>
+                    <p>On the <b>Predict</b> tab, test any of the saved models by inputting a <b>Smiles string</b>, displaying the IUPAC name of your chosen molecule, its predicted class, and if the molecule appears in the dataset, its actual class.</p>
+                </div>
             </div>
-        </div>
     </body>
     </html>
     """,
-    width=750,
-    height=500
+    width=1000,
+    height=1000
 )
 
 formatted_val_html = html_val_template.format('N/A')
@@ -490,16 +519,13 @@ step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.
-                 </div>
-                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 CAUTION: Adjusting the percentages can impact the model's performance, leading to overfitting or underfitting if the splits are not well-balanced of the overall dataset.
-                 </div>""", width=280), position="right"))
+                 <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
+                 <div>For more info, see <i>Preparing Data</i> in the above menu.</div>""", width=280), position="right"))
 
 datatable_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 <div>Select which group of <b>features</b> you wish to train the model with.</div>
-                                                        <div>You can also select the <b>molecular fingerprint</b>, if any.</div>
+                 <div>Select whether to use <b>features</b> or a <b>molecular fingerprint</b> to train model.</div>
+                                                        <div>For more info, see <i>Our Dataset</i> and <i>Fingerprints</i> in the above menu.</div>
                  </div>""", width=280), position="right"))
 
 datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
@@ -509,25 +535,22 @@ datavis_help = HelpButton(tooltip=Tooltip(content=Div(text="""
 
 train_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                  Select one of the following <b>Machine Learning algorithms</b>, and click <b>run</b>. This will display its initial 
-                                                    <b>validation accuracy</b> in the table on the right.
+                  <div>Select one of the following <b>Machine Learning algorithms</b>.</div> 
+                                                    <div>For more info, see <i>Algorithms</i> in the above menu.</div>
                   </div>""", width=280), position="right"))
 
 tune_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                 Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy, 
-                                                   and click <b>tune</b>. This will also add the run's validation accuracy to the data table.
+                 <div>Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy.
+                                                   Use the <b>Learning Curve</b> to prevent <b>Overfitting.</b></div>
+                                                   <div>For more info, see <i>Hyperparameters</i> and <i>Overfitting</i> in the above menu.</div>
                  </div>""", width=280), position="right"))
 
 test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                <div>Select the save from the previous tab to test the model, and view the number of true/false postives/negatives
-                                                   in the <b>confusion matrix</b> below.</div>
+                <div>Select the save from the previous tab to test the model, and view its <b>confusion matrix</b> below.</div>
                 <div>‎</div>     
-                <div>NOTE: This should be considered the <b>final</b> test of your model.</div>
-                <div>You are encouraged to keep exploring the module by continuing to the next tab, or
-                starting again from the <b>data</b> tab.</div>
-                <div>However, this is NOT intended for validation.</div>
+                <div>NOTE: This should be considered the <b>final</b> test of your model, and is NOT intended for additional validation.</div>
                 </div>""", width=280), position="right"))
 
 predict_instr = Div(text="""
