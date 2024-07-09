@@ -1461,6 +1461,11 @@ def train_test_model():
 
     np.random.seed(123)
 
+
+    if test_save_select.value == '':
+        temp_test_status_message.text = 'Error: please select a Save'
+        temp_test_status_message.styles = not_updated
+        return
     save_num = int(test_save_select.value)
     save_index = test_save_select.options.index(str(save_num))
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
@@ -1557,6 +1562,9 @@ def train_test_model():
 
     update_cmatrix(None, None, None)
 
+    temp_test_status_message.text = "Testing complete"
+    temp_test_status_message.styles = updated
+
 def run_test():
     global my_alg, stage
     stage = 'Test'
@@ -1565,9 +1573,6 @@ def run_test():
     train_test_model()
 
     # Updating accuracy display
-
-    temp_test_status_message.text = "Testing complete"
-    temp_test_status_message.styles = updated
 
 def load_test():
     temp_test_status_message.text = "Testing..."
@@ -1739,6 +1744,10 @@ def predict_biodegrad():
 #     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
 
 #     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
+    if predict_select.value == '':
+        predict_status_message.text = 'Error: please select a Save'
+        predict_status_message.styles = not_updated
+        return
     save_num = int(predict_select.value)
     save_index = predict_select.options.index(str(save_num))
     model = model_list[save_index]
