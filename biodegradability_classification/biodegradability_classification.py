@@ -579,17 +579,17 @@ total_data_section_timer_start = datetime.now()                         # ------
 
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
 ####################################################################################################
-# Load data from the csv file                        # ---- This section takes 5.5-7.5 to run ---- #
+# Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
 df1 = pd.read_csv("./data/option_1.csv", low_memory=False) # ------------------------------------- #
 df2 = pd.read_csv("./data/option_2.csv", low_memory=False) # ------------------------------------- #
 df3 = pd.read_csv("./data/option_3.csv", low_memory=False) # ------------------------------------- #
 df4 = pd.read_csv("./data/option_4.csv", low_memory=False) # ------------------------------------- #
-dataset_size = len(df1)                              # ---- This section takes 5.5-7.5 to run ---- #
-                                                     # ---- This section takes 5.5-7.5 to run ---- #
-all_df = [df1, df2, df3, df4]                        # ---- This section takes 5.5-7.5 to run ---- #
-                                                     # ---- This section takes 5.5-7.5 to run ---- #
-# just holding mandatory cols                        # ---- This section takes 5.5-7.5 to run ---- #
-df = df1.iloc[:, :4]                                 # ---- This section takes 5.5-7.5 to run ---- #
+dataset_size = len(df1)                              # ---- This section takes 1.5-2.5 to run ---- #
+                                                     # ---- This section takes 1.5-2.5 to run ---- #
+all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
+                                                     # ---- This section takes 1.5-2.5 to run ---- #
+# just holding mandatory cols                        # ---- This section takes 1.5-2.5 to run ---- #
+df = df1.iloc[:, :4]                                 # ---- This section takes 1.5-2.5 to run ---- #
 ####################################################################################################
 read_csv_stop = datetime.now()                                          # ----------- TIMER CODE
 elapsed_time = read_csv_stop - read_csv_start                           # ----------- TIMER CODE
@@ -616,14 +616,14 @@ df4_tab_source = ColumnDataSource(df4_subset)
 
 to_dictionary_time_start = datetime.now()                                   # ----------- TIMER CODE
 ####################################################################################################
-df1_dict = df1.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
-df2_dict = df2.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
-df3_dict = df3.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
-df4_dict = df4.to_dict("list")                       # ---- This section takes 5.5-7.5 to run ---- #
+df1_dict = df1.to_dict("list")                      # ---- This section takes 5.0-10.0 to run ---- #
+df2_dict = df2.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+df3_dict = df3.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
+df4_dict = df4.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
 ####################################################################################################
 to_dictionary_time_end = datetime.now()                                     # ----------- TIMER CODE
 elapsed_time = to_dictionary_time_end - to_dictionary_time_start            # ----------- TIMER CODE
-print(f"Data to dictionary time: {elapsed_time.total_seconds():.2f} seconds") #606 - 615 takes 5.5-7.5 seconds
+print(f"Data to dictionary time: {elapsed_time.total_seconds():.2f} seconds") #606 - 615 takes 5-10 seconds
 
 cols1 = [key for key in df1_dict.keys() if key not in mandatory_columns]
 cols2 = [key for key in df2_dict.keys() if key not in mandatory_columns]
