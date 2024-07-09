@@ -7,20 +7,16 @@ import openpyxl
 import random
 import base64
 from math import nan
-from bokeh.events import ButtonClick
-from bokeh.io import curdoc, show
+from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer, layout
-from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter
+from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, Button, RangeSlider, Select, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
-from bokeh.palettes import Viridis256
-from bokeh.plotting import figure, show
-from bokeh.transform import factor_cmap, transform
+from bokeh.plotting import figure
 import pubchempy
 from rdkit import Chem, RDLogger
-from rdkit.Chem import MACCSkeys
-from rdkit.Chem import MACCSkeys, MolFromSmiles, DataStructs, Descriptors, AllChem
+from rdkit.Chem import DataStructs, Descriptors, AllChem
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
@@ -1382,7 +1378,7 @@ def determine_scale():
     scale = base_scale * (test_size / twenty_five_percent)
     # Ensure the scale is at least 1 to avoid too small circles
     scale = max(scale, 1)
-    print(scale)
+    # print(scale)
     return scale
 
 scale = 4
@@ -1643,7 +1639,7 @@ def helper():
     
     # Encode the binary data to base64
     b64_excel_data = base64.b64encode(excel_data).decode('UTF-8')
-    print(type(b64_excel_data))
+    # print(type(b64_excel_data))
 
 helper()
 
