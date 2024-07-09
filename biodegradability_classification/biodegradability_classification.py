@@ -1619,7 +1619,6 @@ def load_test():
 test_button.on_click(load_test)
 
 # --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) ---------------------------
-js_xlsx = CustomJS(args=dict(), code='')
 def helper():
     global b64_excel_data
     # Convert source into df
@@ -1631,8 +1630,8 @@ def helper():
     excel_buffer = BytesIO()
     
     # Write the DataFrame to the buffer using ExcelWriter
-    with pd.ExcelWriter(excel_buffer) as writer:
-        tested_df.to_excel(writer, index=False)
+    # with pd.ExcelWriter(excel_buffer, 'openpyxl') as writer:
+    tested_df.to_excel(excel_buffer, index=False)
     
     # Get the binary data from the buffer
     excel_data = excel_buffer.getvalue()
