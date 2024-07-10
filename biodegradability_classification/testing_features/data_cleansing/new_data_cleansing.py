@@ -9,6 +9,7 @@ df_og = pd.read_csv("./original_dataset_all.csv")
 
 # only keep three identifying cols
 df = df_og.loc[:, ['Substance Name', 'Smiles', 'Class']]
+df.rename(columns={'Smiles':'SMILES'}, inplace=True)
 # print(df)
 
 # dropping data from the non-biodegradable class to balance the data
@@ -21,7 +22,7 @@ mandatory = df.copy()
 # print(df)
 
 # making molecules
-def smiles_to_molecule(smiles): #function that converts Smiles to RDKit molecule object
+def smiles_to_molecule(smiles): #function that converts SMILES to RDKit molecule object
     try:
         molecule = Chem.MolFromSmiles(smiles)
         return molecule
@@ -30,7 +31,7 @@ def smiles_to_molecule(smiles): #function that converts Smiles to RDKit molecule
 
 # Apply the conversion function to the SMILES column
 RDLogger.DisableLog('rdApp.*') #ignoring hydrogen warning
-molecs = df['Smiles'].apply(smiles_to_molecule)
+molecs = df['SMILES'].apply(smiles_to_molecule)
 # print(df.shape)
 # print(df)
 
