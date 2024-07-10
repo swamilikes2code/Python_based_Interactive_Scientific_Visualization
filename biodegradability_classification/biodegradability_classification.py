@@ -391,113 +391,131 @@ html_warning_template = """
 """
 
 # -----------------INSTRUCTIONS-----------------
+intro_instr_template = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }}
+        .container {{
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }}
+        h1 {{
+            text-align: center;
+            color: #333;
+        }}
+        h2 {{
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }}
 
-intro_instr = Div(
-    text="""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                line-height: 1.6;
-                margin: 0;
-                padding: 20px;
-                background-color: #f4f4f4;
-            }
-            .container {
-                background-color: #ffffff;
-                padding: 20px;
-                border-radius: 8px;
-                border: 1px solid #ddd;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            }
-            h1 {
-                text-align: center;
-                color: #333;
-            }
-            h2 {
-                color: #444;
-                border-bottom: 2px solid #ddd;
-                padding-bottom: 5px;
-            }
+        .row {{
+            display: flex;
+        }}
 
-            .column_5 {
-                float: left;
-                width: 20%;
-            }
+        .column_5 {{
+            flex: 1;
+            padding: 5px;
+        }}
 
-            .row:after {
-                content: "";
-                display: table;
-                clear: both;
-            }
+        p {{
+            margin: 15px 0;
+        }}
+        .section {{
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }}
 
-            p {
-                margin: 15px 0;
-            }
-            .section {
-                margin-bottom: 20px;
-                padding: 10px;
-                background-color: #fafafa;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-            }
-            .highlight {
-                background-color: #e7f3fe;
-                border-left: 5px solid #2196F3;
-                padding: 2px 5px;
-            }
-        </style>
-    </head>
-    <body>
-            <div class="column_5">
-                <div class="section">
+        .highlight {{
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+            padding: 2px 5px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="section">
+        <div class="row">
+            <div style="background-color: {bg_color_1}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                <div class="column_5">
                     <h2>1) PREPARE DATA</h2>
                     <h3>Prepare the biodegradability data for training.</h3>
-                    <p>On the <b>Data</b> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>, avoiding <b>underfitting</b> or <b>overfitting</b>.</p>
+                    <p>On the <span class="highlight"><b>Data</b></span> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>, avoiding <b>underfitting</b> or <b>overfitting</b>.</p>
                 </div>
             </div>
 
-            <div class="column_5">
-                <div class="section">
+            <div style="background-color: {bg_color_2}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                <div class="column_5">
                     <h2>2) TRAIN</h2>
                     <h3>Train a machine learning model on your prepared data.</h3>
-                    <p>On the <b>Train and Validate</b> tab, select the <b>machine learning algorithm</b> of your choice, and run it, displaying the run's <b>validation accuracy</b> in both a datatable, and a <b>Learning Curve</b>.</p>
+                    <p>On the <span class="highlight"><b>Train and Validate</b></span> tab, select the <b>machine learning algorithm</b> of your choice, and run it, displaying the run's <b>validation accuracy</b> in both a datatable, and a <b>Learning Curve</b>.</p>
+                </div>
+            </div>
+
+            <div style="background-color: {bg_color_3}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">    
+                <div class="column_5">
+                    <h2>3) VALIDATE</h2>
+                    <h3>Fine-tune the hyperparameters of your model.</h3>
+                    <p>On the <span class="highlight"><b>Train and Validate</b></span> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by looking at the Learning Curves. </p>
                 </div>
             </div>
             
-            <div class="column_5">
-                <div class="section">
-                    <h2>3) VALIDATE</h2>
-                    <h3>Fine-tune the hyperparameters of your model.</h3>
-                    <p>On the <b>Train and Validate</b> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by looking at the Learning Curves. </p>
-                </div>
-            </div>
-
-            <div class="column_5">
-                <div class="section">
+            
+            <div style="background-color: {bg_color_4}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                <div class="column_5">
                     <h2>4) TEST</h2>
                     <h3>Perform a final test of your model's performance.</h3>
-                    <p>On the <b>Test</b> tab, complete your final test of the saved model of your choice, displaying its testing accuracy, and a <b>confusion matrix</b>. It is recommended to use your run with the highest validation accuracy here.</p>
+                    <p>On the <span class="highlight"><b>Test</b></span> tab complete your final test of the saved model of your choice, displaying its testing accuracy, and a <b>confusion matrix</b>. It is recommended to use your run with the highest validation accuracy here.</p>
                 </div>
             </div>
 
-            <div class="column_5">
-                <div class="section">
+            
+            <div style="background-color: {bg_color_5}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                <div class="column_5">
                     <h2>5) PREDICT</h2>
                     <h3>Input a Smiles string and predict its class using your model.</h3>
-                    <p>On the <b>Predict</b> tab, test any of the saved models by inputting a <b>Smiles string</b>, displaying the IUPAC name of your chosen molecule, its predicted class, and if the molecule appears in the dataset, its actual class.</p>
+                    <p>On the <span class="highlight"><b>Predict</b></span> tab, test any of the saved models by inputting a <b>Smiles string</b>, displaying the IUPAC name of your chosen molecule, its predicted class, and if the molecule appears in the dataset, its actual class.</p>
                 </div>
             </div>
-    </body>
-    </html>
-    """,
-    width=1000,
-    height=1000
+        </div>
+    </div>
+
+    <div class="section"> 
+        <div style="background-color: {bg_color_6}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+            <div class="row">    
+                <h3>{text}</h3>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+"""
+
+formatted_instr_html = intro_instr_template.format(
+    bg_color_1='#fafafa', 
+    bg_color_2='#fafafa', 
+    bg_color_3='#fafafa', 
+    bg_color_4='#fafafa', 
+    bg_color_5='#fafafa',
+    bg_color_6='#fafafa',
+    text='Explore the module to create your own Machine Learning Model.'
 )
+
+intro_instr = Div(text=formatted_instr_html, width=1000, height=1000)
 
 formatted_val_html = html_val_template.format('N/A')
 val_acc_display = Div(text=formatted_val_html)
@@ -509,14 +527,14 @@ formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A'
 predict_display = Div(text=formatted_predict_html)
 
 step_two_warning_html = html_warning_template.format('1) Preparing Data', 'return to the <b>Data</b> tab and <b>Save Current Configuration</b>')
-step_two_warning = Div(text=step_two_warning_html, width=200, height=200)
+step_two_warning = Div(text=step_two_warning_html, width=200, height=200, visible=False)
 
 step_three_warning_html = html_warning_template.format('2) Train', '<b>Run</b> current <b>ML Algorithm</b>')
-step_three_warning = Div(text=step_three_warning_html, width=200, height=200)
+step_three_warning = Div(text=step_three_warning_html, width=200, height=200, visible=False)
 
 steps_four_five_warning_html = html_warning_template.format('2) Train', 'return to <b>Train and Validate</b> and <b>Run</b> at least one <b>ML Algorithm</b>')
-step_four_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
-step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
+step_four_warning = Div(text=steps_four_five_warning_html, width=200, height=200, visible=False)
+step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200, visible=False)
 
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
@@ -562,6 +580,55 @@ predict_instr = Div(text="""
                     (Instructions on 'Help' button)
                  </div>""",
 width=160, height=60)
+
+# ---------------- UPDATE INSTRUCTIONS COLORS -------------------
+def update_color():
+    bg_1 = '#fafafa'
+    bg_2 = '#fafafa'
+    bg_3 = '#fafafa'
+    bg_4 = '#fafafa'
+    bg_5 = '#fafafa'
+    bg_6 = '#fafafa'
+    t = 'Continue exploring the module.'
+
+
+    if save_config_message.styles == updated:
+        bg_1='#9fdbad'
+    if train_status_message.styles == updated:
+        bg_2='#9fdbad'
+    if tune_status_message.styles == updated:
+        bg_3='#9fdbad'
+    if temp_test_status_message.styles == updated:
+        bg_4='#9fdbad'
+    if predict_status_message.styles == updated:
+        bg_5='#9fdbad' 
+
+    if step_two_warning.visible == True:
+        bg_1='#ff7f7f'
+
+    if step_three_warning.visible == True or step_four_warning.visible == True or step_five_warning.visible == True:
+        bg_2='#ff7f7f'
+
+    if bg_1 == bg_2 == bg_3 == bg_4 == bg_5 == '#9fdbad':
+        t = 'Congratulations, you have completed the module!'
+        bg_6='#9fdbad' 
+
+    if bg_1 == '#ff7f7f' or bg_2 == '#ff7f7f':
+        t = 'Warning: You have incomplete step(s).'
+        bg_6='#ff7f7f'
+
+
+    new_formatted_instr_html = intro_instr_template.format(
+        bg_color_1=bg_1, 
+        bg_color_2=bg_2, 
+        bg_color_3=bg_3, 
+        bg_color_4=bg_4, 
+        bg_color_5=bg_5,
+        text = t,
+        bg_color_6=bg_6
+    )
+    
+    intro_instr.text = new_formatted_instr_html
 
 # --------------- DATA SELECTION ---------------
 
@@ -701,6 +768,9 @@ def update_values(attrname, old, new):
 
     save_config_message.text = 'Configuration not saved'
     save_config_message.styles = not_updated
+
+    update_color()
+
     update_split_text(train_percentage, val_percentage, test_percentage)
     global split_list
     split_list = [train_percentage, val_percentage, test_percentage]
@@ -737,6 +807,7 @@ split_display = Div(text="""
 tvt_slider.js_on_change('value', callback)
 tvt_slider.on_change('value', update_values)
 
+
 # --------------- SAVE DATA BUTTON ---------------
 
 # Save columns to saved list (split already saved)
@@ -759,6 +830,8 @@ def save_config():
 
     save_config_message.text = 'Configuration saved'
     save_config_message.styles = updated
+
+    update_color()
 
 def load_config():
     save_config_message.text = "Loading config..."
@@ -1035,6 +1108,8 @@ def update_algorithm(attr, old, new):
     train_status_message.text = 'Not running'
     train_status_message.styles = not_updated
 
+    update_color()
+
 # creating widgets
 test_accuracy = 0.0
 
@@ -1055,6 +1130,9 @@ def run_ML():
     stage = 'Train'
     train_status_message.text = f'Algorithm: {my_alg}'
     train_status_message.styles = updated
+
+    update_color()
+
     # set_hyperparameter_widgets()
     train_validate_model()
 
@@ -1160,6 +1238,9 @@ def run_tuned_config():
     stage = 'Tune'
     tune_status_message.text = f'Algorithm: {my_alg}'
     tune_status_message.styles = updated
+
+    update_color()
+
     global model
 
     train_validate_model()
@@ -1168,6 +1249,7 @@ def run_tuned_config():
     tuned_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
     <div><b>Tuned Validation Accuracy:</b> {val_accuracy[-1]}</div> 
     </div>"""
+
 
 # setting widget callbacks
 def hp_slider_callback(attr, old, new):
@@ -1189,6 +1271,8 @@ def hp_slider_callback(attr, old, new):
     tune_status_message.text = "Not running"
     tune_status_message.styles = not_updated
 
+    update_color()
+
 def hp_select_callback(attr, old, new):
     global my_alg
     hyperparam_list[1] = new
@@ -1200,6 +1284,8 @@ def hp_select_callback(attr, old, new):
         model.solver = new
     tune_status_message.text = "Not running"
     tune_status_message.styles = not_updated
+
+    update_color()
 
 def hp_toggle_callback(attr, old, new):
     if my_alg == 'Decision Tree':
@@ -1236,6 +1322,8 @@ test_save_select = Select(title = "Choose a save to test:", options = [], margin
 def update_test_message(attr, old, new):
     temp_test_status_message.text = "Not running"
     temp_test_status_message.styles = not_updated
+
+    update_color()
 
 test_save_select.on_change('value', update_test_message)
 
@@ -1294,9 +1382,9 @@ def save_model():
 
     for i in test_save_select.options:
         current_index = test_save_select.options.index(str(i))
-        test_save_select.options[current_index] = test_save_select.options[current_index].replace('* (best val. accuracy)', '')
-        # delete_multiselect.options[current_index] = delete_multiselect.options[current_index].replace('* (best val. accuracy)', '')
-        predict_select.options[current_index] = predict_select.options[current_index].replace('* (best val. accuracy)', '')
+        test_save_select.options[current_index] = test_save_select.options[current_index].replace('* (highest val. accuracy)', '')
+        # delete_multiselect.options[current_index] = delete_multiselect.options[current_index].replace('* (highest val. accuracy)', '')
+        predict_select.options[current_index] = predict_select.options[current_index].replace('* (highest val. accuracy)', '')
 
 
         if val_accuracy[current_index] > high_score[2]:
@@ -1305,13 +1393,15 @@ def save_model():
             high_score.append(current_index)
             high_score.append(val_accuracy[int(test_save_select.options[current_index])-1])
 
-    test_save_select.options[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
-    # delete_multiselect.options[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
-    predict_select.options[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
+    test_save_select.options[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
+    # delete_multiselect.options[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
+    predict_select.options[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
 
 
     temp_test_status_message.text = 'Not running'
     temp_test_status_message.styles = not_updated
+
+    update_color()
 
     new_train_val_test_split = str(split_list[0]) + '/' + str(split_list[1]) + '/' + str(split_list[2])
 
@@ -1370,7 +1460,7 @@ def delete_save():
     opt = temp.copy()
     for i in opt:
         current_index = opt.index(str(i))
-        opt[current_index] = opt[current_index].replace('* (best val. accuracy)', '')
+        opt[current_index] = opt[current_index].replace('* (highest val. accuracy)', '')
 
         if val_accuracy[current_index] > high_score[2]:
             high_score.clear()
@@ -1378,7 +1468,7 @@ def delete_save():
             high_score.append(current_index)
             high_score.append(val_accuracy[int(opt[current_index])-1])
 
-    opt[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
+    opt[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
 
 
     test_save_select.update(
@@ -1396,6 +1486,8 @@ def delete_save():
 
     delete_status_message.text = 'Deleted'
     delete_status_message.styles = updated
+
+    update_color()
 
 def load_delete_save():
     delete_status_message.text = 'Deleting...'
@@ -1423,6 +1515,7 @@ def determine_scale():
     if test_save_select.value == '':
         temp_test_status_message.text = 'Error: please select a Save'
         temp_test_status_message.styles = not_updated
+        update_color()
         return
         
     save_index = test_save_select.options.index(test_save_select.value)
@@ -1656,6 +1749,7 @@ def train_test_model():
 
     temp_test_status_message.text = "Testing complete"
     temp_test_status_message.styles = updated
+    update_color()
 
 def run_test():
     global my_alg, stage
@@ -1838,6 +1932,8 @@ def predict_biodegrad():
     predict_status_message.text = 'Complete'
     predict_status_message.styles = updated
 
+    update_color()
+
     new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred, actual_class)
     predict_display.text = new_formatted_predict_html
 
@@ -1854,6 +1950,7 @@ predict_button.on_click(load_predict)
 def update_predict_status(attr, old, new):
     predict_status_message.text = 'Not running'
     predict_status_message.styles = not_updated
+    update_color()
 
 predict_select.on_change('value', update_predict_status)
 smiles_select.on_change('value', update_predict_status)
@@ -1906,15 +2003,9 @@ warning_spacer_2.visible = True
 warning_spacer_3.visible = True
 
 train_status_message.visible = True
-step_two_warning.visible = False
 tune_status_message.visible = True
-step_three_warning.visible = False
-
-
 temp_test_status_message.visible = True
-step_four_warning.visible = False
 predict_status_message.visible = True
-step_five_warning.visible = False
 
 def toggle_step_two_warn():
     if save_config_message.styles != not_updated:
@@ -1939,6 +2030,8 @@ def toggle_step_two_warn():
         step_two_warning.visible = True
         warning_spacer_1.visible = False
 
+    update_color()
+
 train_button.on_click(toggle_step_two_warn)
 save_config_button.on_click(toggle_step_two_warn)
 
@@ -1951,6 +2044,8 @@ def toggle_step_three_warn():
         step_three_warning.visible = True
         tune_status_message.visible = False
         warning_spacer_2.visible = False
+
+    update_color()
 
 tune_button.on_click(toggle_step_three_warn)
 train_button.on_click(toggle_step_three_warn)
@@ -1973,6 +2068,8 @@ def toggle_step_four_warn():
         temp_test_status_message.visible = False
         warning_spacer_3.visible = False
 
+    update_color()
+
 test_button.on_click(toggle_step_four_warn)
 
 def toggle_step_five_warn():
@@ -1988,6 +2085,8 @@ def toggle_step_five_warn():
     else:
         step_five_warning.visible = True
         predict_status_message.visible = False
+
+    update_color()
 
 predict_button.on_click(toggle_step_five_warn)
 
@@ -2053,7 +2152,7 @@ tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_
 
 tab4_layout = row(left_page_spacer, column(top_page_spacer, step_five, predict_select, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message, step_five_warning), column(top_page_spacer, predict_display))
 
-tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
+tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Steps'),
                     TabPanel(child = tab1_layout, title = 'Data'),
                     TabPanel(child = tab2_layout, title = 'Train and Validate'),
                     TabPanel(child = tab3_layout, title = 'Test'),
