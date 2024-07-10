@@ -1294,9 +1294,9 @@ def save_model():
 
     for i in test_save_select.options:
         current_index = test_save_select.options.index(str(i))
-        test_save_select.options[current_index] = test_save_select.options[current_index].replace(' (best validation accuracy)', '')
-        # delete_multiselect.options[current_index] = delete_multiselect.options[current_index].replace(' (best validation accuracy)', '')
-        predict_select.options[current_index] = predict_select.options[current_index].replace(' (best validation accuracy)', '')
+        test_save_select.options[current_index] = test_save_select.options[current_index].replace('* (best val. accuracy)', '')
+        # delete_multiselect.options[current_index] = delete_multiselect.options[current_index].replace('* (best val. accuracy)', '')
+        predict_select.options[current_index] = predict_select.options[current_index].replace('* (best val. accuracy)', '')
 
 
         if val_accuracy[current_index] > high_score[2]:
@@ -1305,9 +1305,9 @@ def save_model():
             high_score.append(current_index)
             high_score.append(val_accuracy[int(test_save_select.options[current_index])-1])
 
-    test_save_select.options[high_score[1]] = str(high_score[0]) + ' (best validation accuracy)'
-    # delete_multiselect.options[high_score[1]] = str(high_score[0]) + ' (best validation accuracy)'
-    predict_select.options[high_score[1]] = str(high_score[0]) + ' (best validation accuracy)'
+    test_save_select.options[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
+    # delete_multiselect.options[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
+    predict_select.options[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
 
 
     temp_test_status_message.text = 'Not running'
@@ -1361,12 +1361,33 @@ def delete_save():
         options = temp.copy(),
         value = []
     )
+
+    global high_score
+    global old_high_score
+    old_high_score = [-1, -1, 0]
+    high_score = old_high_score[:]
+
+    opt = temp.copy()
+    for i in opt:
+        current_index = opt.index(str(i))
+        opt[current_index] = opt[current_index].replace('* (best val. accuracy)', '')
+
+        if val_accuracy[current_index] > high_score[2]:
+            high_score.clear()
+            high_score.append(int(opt[current_index]))
+            high_score.append(current_index)
+            high_score.append(val_accuracy[int(opt[current_index])-1])
+
+    opt[high_score[1]] = str(high_score[0]) + '* (best val. accuracy)'
+
+
     test_save_select.update(
-        options = temp.copy(),
+        options = opt.copy(),
         value = None
     )
+
     predict_select.update(
-        options = temp.copy(),
+        options = opt.copy(),
         value = None
     )
 
