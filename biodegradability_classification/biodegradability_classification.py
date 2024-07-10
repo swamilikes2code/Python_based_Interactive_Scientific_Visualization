@@ -518,6 +518,7 @@ steps_four_five_warning_html = html_warning_template.format('2) Train', 'return 
 step_four_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
 step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200)
 
+'''
 splitter_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
@@ -553,7 +554,7 @@ test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                 <div>‎</div>     
                 <div>NOTE: This should be considered the <b>final</b> test of your model, and is NOT intended for additional validation.</div>
                 </div>""", width=280), position="right"))
-
+'''
 predict_instr = Div(text="""
                  <div style='background-color: #DEF2F1; padding: 1px; font-family: Arial, sans-serif;'>
                     To create a SMILES String, visit
@@ -2009,9 +2010,9 @@ large_left_page_spacer = Spacer(width = 90)
 tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
 
 data_config_layout = layout(
-    [data_select, column(small_height_spacer, datatable_help)],
+    [data_select, column(small_height_spacer)],
     [tiny_height_spacer],
-    [column(row(tvt_slider, column(small_med_height_spacer, splitter_help)), split_display)],
+    [column(row(tvt_slider, column(small_med_height_spacer)), split_display)],
     [tiny_height_spacer],
     [column(save_config_button, save_config_message)]
 )
@@ -2028,7 +2029,7 @@ hyperparam_layout = layout(
     [hp_slider],
     [hp_toggle],
     [hp_select],
-    [tune_button, tune_help],
+    [tune_button],
     [tune_status_message]
 )
 
@@ -2040,13 +2041,13 @@ delete_layout = layout(
 
 
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button, train_help), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
+tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 # save_layout = row(column(test_save_select, display_save_button), saved_data_table)
 
 
 test_button_layout = layout(
-    [column(step_four, test_save_select, row(test_button, test_help), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
+    [column(step_four, test_save_select, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
 )
 
 tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
