@@ -818,7 +818,7 @@ learning_curve.legend.location = 'bottom_right'
 my_alg = 'Decision Tree'
 
 # Create select button
-alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"])
+alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"], width=230)
 
 # define to be default: decision tree
 hyperparam_list = [2, "random"]
