@@ -458,7 +458,7 @@ intro_instr = Div(
     <body>
             <div class="column_5">
                 <div class="section">
-                    <h2>1) PREPARE DATA:</h2>
+                    <h2>1) PREPARE DATA</h2>
                     <h3>Prepare the biodegradability data for training.</h3>
                     <p>On the <b>Data</b> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>, avoiding <b>underfitting</b> or <b>overfitting</b>.</p>
                 </div>
@@ -466,7 +466,7 @@ intro_instr = Div(
 
             <div class="column_5">
                 <div class="section">
-                    <h2>2) TRAIN:</h2>
+                    <h2>2) TRAIN</h2>
                     <h3>Train a machine learning model on your prepared data.</h3>
                     <p>On the <b>Train and Validate</b> tab, select the <b>machine learning algorithm</b> of your choice, and run it, displaying the run's <b>validation accuracy</b> in both a datatable, and a <b>Learning Curve</b>.</p>
                 </div>
@@ -484,7 +484,7 @@ intro_instr = Div(
                 <div class="section">
                     <h2>4) TEST</h2>
                     <h3>Perform a final test of your model's performance.</h3>
-                    <p>On the <b>Test</b> tab, complete your final test of the saved model of your choice, displaying its testing accuracy, as well as a <b>confusion matrix</b>, which visually displays certain performance aspects of your model.</p>
+                    <p>On the <b>Test</b> tab, complete your final test of the saved model of your choice, displaying its testing accuracy, and a <b>confusion matrix</b>. It is recommended to use your run with the highest validation accuracy here.</p>
                 </div>
             </div>
 
@@ -1267,6 +1267,9 @@ saved_columns = [
     TableColumn(field="saved_val_acc", title="Pred. accuracy")
 ]
 
+high_score = [-1, -1, 0]
+old_high_score = [-1, -1, 0]
+
 # Create a DataTable
 saved_data_table = DataTable(source=save_source, columns=saved_columns, width=600, height=280, index_position=None)
 
@@ -1282,11 +1285,36 @@ def save_model():
     new_saved_val_acc = val_accuracy[new_save_number] # access before save num is incremented
 
     new_save_number += 1
+
     test_save_select.options.append(str(new_save_number))
-    temp_test_status_message.text = 'Not running'
-    temp_test_status_message.styles = not_updated
     delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
+
+    global high_score
+    global old_high_score
+
+    high_score = old_high_score[:]
+
+    for i in test_save_select.options:
+        current_index = test_save_select.options.index(str(i))
+        test_save_select.options[current_index] = test_save_select.options[current_index].replace(' (best validation accuracy)', '')
+        # delete_multiselect.options[current_index] = delete_multiselect.options[current_index].replace(' (best validation accuracy)', '')
+        predict_select.options[current_index] = predict_select.options[current_index].replace(' (best validation accuracy)', '')
+
+
+        if val_accuracy[current_index] > high_score[2]:
+            high_score.clear()
+            high_score.append(int(test_save_select.options[current_index]))
+            high_score.append(current_index)
+            high_score.append(val_accuracy[int(test_save_select.options[current_index])-1])
+
+    test_save_select.options[high_score[1]] = str(high_score[0]) + ' (best validation accuracy)'
+    # delete_multiselect.options[high_score[1]] = str(high_score[0]) + ' (best validation accuracy)'
+    predict_select.options[high_score[1]] = str(high_score[0]) + ' (best validation accuracy)'
+
+
+    temp_test_status_message.text = 'Not running'
+    temp_test_status_message.styles = not_updated
 
     new_train_val_test_split = str(split_list[0]) + '/' + str(split_list[1]) + '/' + str(split_list[2])
 
@@ -1304,6 +1332,8 @@ def save_model():
 
     add_row()
 
+
+
 # Add new row to datatable every time a plot is saved
 def add_row():
     new_saved_data = {
@@ -1314,7 +1344,6 @@ def add_row():
         'saved_hyperparams': [new_saved_hyperparams],
         'saved_val_acc' : [new_saved_val_acc]
     }
-    
 
     new_formatted_val_html = html_val_template.format(f'{round((new_saved_val_acc*100), 1)}%')
 
@@ -1322,7 +1351,6 @@ def add_row():
 
     save_source.stream(new_saved_data)
     
-
 def delete_save():
     saves_to_del = [int(i) for i in delete_multiselect.value]
 
@@ -1370,11 +1398,16 @@ false_pos = nan
 false_neg = nan
 true_neg = nan
 
+
 twenty_five_percent = dataset_size * 0.25
 def determine_scale():
     # Calculate the number of instances in each split
-    save_num = int(test_save_select.value)
-    save_index = test_save_select.options.index(str(save_num))
+    if test_save_select.value == '':
+        temp_test_status_message.text = 'Error: please select a Save'
+        temp_test_status_message.styles = not_updated
+        return
+        
+    save_index = test_save_select.options.index(test_save_select.value)
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
     
     test_size = dataset_size * (temp_split[2]/100)
@@ -1506,8 +1539,9 @@ def train_test_model():
         temp_test_status_message.text = 'Error: please select a Save'
         temp_test_status_message.styles = not_updated
         return
-    save_num = int(test_save_select.value)
-    save_index = test_save_select.options.index(str(save_num))
+        
+    save_index = test_save_select.options.index(test_save_select.value)
+    
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
     temp_data_choice = save_source.data['saved_data_choice'][save_index]
     temp_data_index = data_opts.index(temp_data_choice)
@@ -1788,8 +1822,7 @@ def predict_biodegrad():
         predict_status_message.text = 'Error: please select a Save'
         predict_status_message.styles = not_updated
         return
-    save_num = int(predict_select.value)
-    save_index = predict_select.options.index(str(save_num))
+    save_index = predict_select.options.index(predict_select.value)
     model = model_list[save_index]
 
     if smiles_select.value != "Custom":
