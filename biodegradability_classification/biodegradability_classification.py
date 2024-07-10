@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from io import BytesIO
 import os
-import openpyxl
 import random
 import base64
 from math import nan
@@ -18,14 +17,12 @@ from rdkit import Chem, RDLogger
 from rdkit.Chem import DataStructs, Descriptors, AllChem
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.exceptions import ConvergenceWarning
 from bokeh.util.warnings import BokehUserWarning, warnings
 from datetime import datetime
-import dask.dataframe as dd
 
 #entire code timer
 start_time = datetime.now()
@@ -42,7 +39,7 @@ warnings.simplefilter(action='ignore', category=ConvergenceWarning)
 # testing
 # visibility, layouts
 
-# ---------------MESSAGE STYLES-----------------
+# ---------------MESSAGE STYLES----------------- #
 
 header = {'color': 'black', 'font-size': '18px'}
 not_updated = {'color': 'red', 'font-size': '14px'}
@@ -50,11 +47,11 @@ loading = {'color': 'orange', 'font-size': '14px'}
 updated = {'color': 'green', 'font-size': '14px'}
 completed = {'color': 'black', 'font-size': '14px'}
 
-# ---------------ACCURACY LISTS-----------------
+# ---------------ACCURACY LISTS----------------- #
 # Create empty list - declare at the top to use everywhere
 val_accuracy = []
 
-# ---------------STATUS MESSAGES-----------------
+# ---------------STATUS MESSAGES----------------- #
 
 step_one = Div(text='<b>1) PREPARE DATA</b>', styles=header)
 step_two = Div(text='<b>2) TRAIN</b>', styles=header)
@@ -69,7 +66,7 @@ temp_test_status_message = Div(text='Not running', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
 delete_status_message = Div(text='Changes not saved', styles = not_updated)
 
-# -------------------BUTTONS--------------------
+# -------------------BUTTONS-------------------- #
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning", width = 250)
 train_button = Button(label="Run ML algorithm", button_type="success", width=150, height = 31)
@@ -87,7 +84,7 @@ data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primar
 export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
 export_csv = Button(label="Download Full Table to CSV (.csv)", width=200, height=31)
 
-# -----------------HTML TEMPLATES-----------------
+# -----------------HTML TEMPLATES----------------- #
 html_val_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -563,30 +560,22 @@ predict_instr = Div(text="""
                  </div>""",
 width=160, height=60)
 
-# --------------- DATA SELECTION ---------------
-
-#for ref:
+#######################################################
+# --------------- DATA SELECTION CODE --------------- #
+#######################################################
+# for reference:
 # df is original csv, holds fingerprint list and 167 cols of fingerprint bits
 # df_display > df_subset > df_dict are for displaying table
 
-
 total_data_section_timer_start = datetime.now()                         # ----------- TIMER CODE
-
-
-
 
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
 ####################################################################################################
-#df1 = dd.read_csv("./data/option_1.csv").compute()  # potentially faster alternative
-#df2 = dd.read_csv("./data/option_2.csv").compute()  # potentially faster alternative
-#df3 = dd.read_csv("./data/option_3.csv").compute()
-#df4 = dd.read_csv("./data/option_4.csv").compute()  
-
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
-df1 = pd.read_csv("./data/option_1.csv", low_memory=False) # ------------------------------------- #
-df2 = pd.read_csv("./data/option_2.csv", low_memory=False) # ------------------------------------- #
-df3 = pd.read_csv("./data/option_3.csv", low_memory=False) # ------------------------------------- #
-df4 = pd.read_csv("./data/option_4.csv", low_memory=False) # ------------------------------------- #
+df1 = pd.read_csv("./data/option_1.csv", low_memory=False, na_filter=False) # -------------------- #
+df2 = pd.read_csv("./data/option_2.csv", low_memory=False, na_filter=False) # -------------------- #
+df3 = pd.read_csv("./data/option_3.csv", low_memory=False, na_filter=False) # -------------------- #
+df4 = pd.read_csv("./data/option_4.csv", low_memory=False, na_filter=False) # -------------------- #
 dataset_size = len(df1)                              # ---- This section takes 1.5-2.5 to run ---- #
                                                      # ---- This section takes 1.5-2.5 to run ---- #
 all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
@@ -680,7 +669,9 @@ def update_table(attr, old, new):
 # table on change
 data_select.on_change('value', update_table)
 
-# --------------- DATA SPLIT ---------------
+###################################################
+# --------------- DATA SPLIT CODE --------------- #
+###################################################
 
 # saved split list to write to
 split_list = [50, 25, 25] #0-train, 1-val, 2-test
@@ -737,7 +728,9 @@ split_display = Div(text="""
 tvt_slider.js_on_change('value', callback)
 tvt_slider.on_change('value', update_values)
 
-# --------------- SAVE DATA BUTTON ---------------
+#########################################################
+# --------------- SAVE DATA BUTTON CODE --------------- #
+#########################################################
 
 # Save columns to saved list (split already saved)
 def save_config():
@@ -775,75 +768,9 @@ def load_config():
 # Attach callback to the save button
 save_config_button.on_click(load_config)
 
-# --------------- INTERACTIVE DATA EXPLORATION --------------- 
-
-# # get columns
-# data_exp_columns = df.columns.tolist()[:21]
-
-# #columns to exclude
-# data_exp_columns = [col for col in data_exp_columns if col not in ["Class", "Smiles", "Substance Name", "Fingerprint"]]
-
-# #convert the class columns to a categorical column if it's not
-# df['Class'] = df['Class'].astype('category')
-
-# # Create a ColumnDataSource
-# data_exp_source = ColumnDataSource(data=dict(x=[], y=[], class_color=[], names = []))
-
-# # configure hovertool
-# tooltips = [
-#     ("name", "@names"),
-#     ("index", "$index")
-# ]
-
-# # Create a figure
-# data_exp = figure(title="Data Exploration: search for correlations between properties", width = 600, height = 320, x_axis_label='X', y_axis_label='Y', 
-#            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
-
-
-# # Create an initial scatter plot
-# data_exp_scatter = data_exp.scatter(x='x', y='y', color='class_color', source=data_exp_source, legend_field='class_label')
-
-# Create a figure
-# data_exp = figure(title="Data Exploration: search for correlations between properties", width = 800, height = 520, x_axis_label='X', y_axis_label='Y', 
-#            tools="pan,wheel_zoom,box_zoom,reset,save", tooltips = tooltips)
-
-
-# Create an initial scatter plot
-# data_exp_scatter = data_exp.scatter(x='x', y='y', color='class_color', source=data_exp_source, legend_field='class_label', size = 2, alpha = 0.6)
-
-# # legend
-# data_exp.add_layout(data_exp.legend[0], 'right')
-
-# # Create dropdown menus for X and Y axis
-# select_x = Select(title="X Axis", value=data_exp_columns[0], options=data_exp_columns)
-# select_y = Select(title="Y Axis", value=data_exp_columns[1], options=data_exp_columns)
-
-# # Update the data based on the selections
-# def update_data_exp(attrname, old, new):
-#     x = select_x.value
-#     y = select_y.value
-#     new_vis_data = {
-#         'x': df[x],
-#         'y': df[y],
-#         'names' : df['Substance Name'],
-#         'class_color': ['#900C3F' if cls == df['Class'].cat.categories[0] else '#1DBD4D' for cls in df['Class']],
-#         'class_label': ['Not readily biodegradable' if cls == df['Class'].cat.categories[0] else 'Readily biodegradable' for cls in df['Class']]
-#     }
-        
-#     # Update the ColumnDataSource with a plain Python dict
-#     data_exp_source.data = new_vis_data
-    
-#     # Update existing scatter plot glyph if needed
-#     data_exp_scatter.data_source.data = new_vis_data
-    
-#     data_exp.xaxis.axis_label = x
-#     data_exp.yaxis.axis_label = y
-
-# # Attach the update_data function to the dropdowns
-# select_x.on_change('value', update_data_exp)
-# select_y.on_change('value', update_data_exp)
-
-# update_data_exp(None, None, None)
+######################################################
+# --------------- Learning Curve Code ---------------# 
+######################################################
 
 sizes = np.linspace(.01, 1.0, 15)
 train_scores = []
@@ -883,7 +810,10 @@ learning_curve_hover = HoverTool(tooltips = [
 learning_curve.add_tools(learning_curve_hover)
 learning_curve.legend.location = 'bottom_right'
 
-# --------------- ALGORITHM SELECT AND RUN ---------------
+############################################################
+# --------------- ALGORITHM SELECT AND RUN --------------- #
+############################################################
+
 # algorithm name holder
 my_alg = 'Decision Tree'
 
@@ -1129,7 +1059,9 @@ def set_learning_curve():
     curve3.data_source = learning_curve_source
     curve4.data_source = learning_curve_source
 
-# --------------- HYPERPARAMETER TUNING + BUTTON ---------------
+##################################################################
+# --------------- HYPERPARAMETER TUNING + BUTTON --------------- #
+##################################################################
 
 # a list of an int an string
 ## decision tree - int/nan, string
@@ -1227,7 +1159,10 @@ def load_tuned_config():
 # Can connect to the old funcs
 tune_button.on_click(load_tuned_config)
 
-# --------------- SAVE ---------------
+
+########################################
+# --------------- SAVE --------------- #
+########################################
 
 # making select to choose save num to display/use
 delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 200)
@@ -1410,7 +1345,10 @@ def del_multiselect_callback(attr, old, new):
 delete_button.on_click(load_delete_save)
 delete_multiselect.on_change('value', del_multiselect_callback)
 
-# --------------- TESTING -----------------
+#############################################
+# --------------- TESTING ----------------- #
+#############################################
+
 true_pos = nan
 false_pos = nan
 false_neg = nan
@@ -1513,7 +1451,9 @@ def update_cmatrix(attrname, old, new):
 
     # bubble.scatter(fill_color = transform('count', new_color_mapper)
 
-# --------------- NEW DATA TABLE ----------------
+###################################################
+# --------------- NEW DATA TABLE ---------------- #
+###################################################
 
 indices = []
 tested_names = []
@@ -1551,7 +1491,6 @@ def train_test_model():
     global tfpn
 
     np.random.seed(123)
-
 
     if test_save_select.value == '':
         temp_test_status_message.text = 'Error: please select a Save'
@@ -1614,12 +1553,8 @@ def train_test_model():
         else:
             tfpn.append('False Negative')
 
-    # print(len(indices))
-    # print(len(predicted))
-    # print(len(actual))
-    # print(len(tested_names))
-    # print(len(tested_smiles))
-    # print(len(tfpn))
+    # Old testing print statements
+    # print(len(indices)) # print(len(predicted)) # print(len(actual)) # print(len(tested_names)) # print(len(tested_smiles)) # print(len(tfpn))
 
     full_test_table_data = {'Index': indices,
                 'Substance Name': tested_names,
@@ -1644,10 +1579,7 @@ def train_test_model():
     new_false_pos = confusion_values[0][1]
     new_false_neg = confusion_values[1][0]
     new_true_neg = confusion_values[1][1]
-    # print(new_true_pos)
-    # print(new_false_pos)
-    # print(new_false_neg)
-    # print(new_true_neg)
+    # print(new_true_pos) # print(new_false_pos) # print(new_false_neg) # print(new_true_neg)
 
     global test_accuracy
     test_accuracy=round(accuracy_score(y_test, y_test_pred), 3)
@@ -1674,7 +1606,7 @@ def load_test():
 
 test_button.on_click(load_test)
 
-# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) ---------------------------
+# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) --------------------------- #
 def helper():
     global b64_excel_data
     # Convert source into df
@@ -1746,9 +1678,9 @@ export_csv.js_on_click(CustomJS(args=dict(source=new_source), code=open(os.path.
 
 # export_csv.on_click(download_csv)
 
-
-# --------------- PREDICTING ---------------
-
+##############################################
+# --------------- PREDICTING --------------- #
+##############################################
 
 random_smiles = random.choices(df1_dict['Smiles'], k=3)
 
@@ -2016,12 +1948,7 @@ data_config_layout = layout(
     [column(save_config_button, save_config_message)]
 )
 
-# interactive_graph = column(data_exp_vis_button, row(datavis_help, column(data_exp, row(select_x, select_y)))) #create data graph visualization 
 tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer)) #interactive_graph
-
-# interactive_graph = column(row(data_exp_vis_button, datavis_help), data_exp, row(select_x, select_y)) #create data graph visualization 
-# tab1_layout = row(left_page_spacer, column(top_page_spacer, row(data_tab_table, data_config_layout), tiny_height_spacer, interactive_graph))
-
 
 hyperparam_layout = layout(
     [step_three],
@@ -2038,12 +1965,7 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-
-
 tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button, train_help), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
-
-# save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-
 
 test_button_layout = layout(
     [column(step_four, test_save_select, row(test_button, test_help), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
@@ -2062,6 +1984,6 @@ tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Instructions'),
 
 curdoc().add_root(tabs)
 
-end_time = datetime.now()
-elapsed_time = end_time - start_time
-print(f"Entire File Runtime: {elapsed_time.total_seconds():.2f} seconds")
+end_time = datetime.now()                                                 # --------- timer code
+elapsed_time = end_time - start_time                                      # --------- timer code
+print(f"Entire File Runtime: {elapsed_time.total_seconds():.2f} seconds") # --------- timer code
