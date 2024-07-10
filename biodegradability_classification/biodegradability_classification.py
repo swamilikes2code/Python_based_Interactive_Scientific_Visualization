@@ -1949,7 +1949,7 @@ data_config_layout = layout(
     [column(save_config_button, save_config_message)]
 )
 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer)) #interactive_graph
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer))
 
 hyperparam_layout = layout(
     [step_three],

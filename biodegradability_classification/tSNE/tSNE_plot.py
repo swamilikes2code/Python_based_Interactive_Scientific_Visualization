@@ -6,10 +6,10 @@ from bokeh.transform import linear_cmap
 from bokeh.palettes import Spectral6
 
 # Load data from CSV
-df = pd.read_csv('../../data/')
+df = pd.read_csv('./option_4.csv')
 
 # Extract features and labels
-features = df[['MolWt', 'NumValenceElectrons', 'NumRadicalElectrons', 'MaxEStateIndex', 'MinEStateIndex', 'NumAromaticCarbocycles']].values
+features = df.iloc[:, 3:].values
 labels = df['Class'].tolist()
 
 # Perform tSNE dimensionality reduction
@@ -17,7 +17,7 @@ tsne = TSNE(n_components=2, random_state=42)
 tsne_result = tsne.fit_transform(features)
 
 # Create Bokeh plot
-output_file('tSNE_plot.html')
+output_file('option_4_PathFP_tSNE.html')
 
 # Convert data for Bokeh plotting
 source = ColumnDataSource(data=dict(
@@ -30,7 +30,7 @@ source = ColumnDataSource(data=dict(
 color_mapper = linear_cmap(field_name='label', palette=Spectral6, low=min(labels), high=max(labels))
 
 # Create the figure
-p = figure(title='tSNE Visualization', tools='pan, wheel_zoom, reset', tooltips=[('Label', '@label')])
+p = figure(title='Path FP tSNE plot', tools='pan, wheel_zoom, reset', tooltips=[('Label', '@label')])
 
 # Plot data points
 p.scatter('x', 'y', size=5, source=source, legend_field='label', fill_color=color_mapper, line_color=None, alpha=0.6)
