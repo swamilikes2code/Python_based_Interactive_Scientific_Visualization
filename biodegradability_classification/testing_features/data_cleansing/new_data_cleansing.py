@@ -13,6 +13,7 @@ df = df_og.loc[:, ['Substance Name', 'Smiles', 'Class']]
 
 # dropping data from the non-biodegradable class to balance the data
 df = df.drop(df[df['Class'] == 0].sample(frac = .46).index)
+df['Substance Name'] = df['Substance Name'].fillna("\'N/A\'")
 df.reset_index(drop=True, inplace=True)
 df['Substance Name'] = [str(sub) for sub in df['Substance Name']]
 
@@ -119,7 +120,7 @@ print(df.shape)
 # Save the cleaned DataFrame to a new CSV file
 # df.to_csv("../../data/all.csv", index=False)
 # df.to_csv("../../data/mandatory.csv", index=False)
-# option_1.to_csv("../../data/option_1.csv", index=False)
-# option_2.to_csv("../../data/option_2.csv", index=False)
-# option_3.to_csv("../../data/option_3.csv", index=False)
-# option_4.to_csv("../../data/option_4.csv", index=False)
+option_1.to_csv("../../data/option_1.csv", index=False)
+option_2.to_csv("../../data/option_2.csv", index=False)
+option_3.to_csv("../../data/option_3.csv", index=False)
+option_4.to_csv("../../data/option_4.csv", index=False)
