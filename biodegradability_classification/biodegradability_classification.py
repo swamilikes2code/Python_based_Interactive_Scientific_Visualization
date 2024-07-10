@@ -402,6 +402,7 @@ intro_instr_template = """
             padding: 20px;
             background-color: #f4f4f4;
         }}
+
         .container {{
             background-color: #ffffff;
             padding: 20px;
@@ -409,18 +410,27 @@ intro_instr_template = """
             border: 1px solid #ddd;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
+
         h1 {{
-            text-align: center;
             color: #333;
+            text-align: center;
         }}
+
         h2 {{
             color: #444;
             border-bottom: 2px solid #ddd;
             padding-bottom: 5px;
         }}
 
+        h3 {{
+            color: #555;
+            padding-bottom: 5px;
+        }}
+
         .row {{
             display: flex;
+            text-align: center;
+            padding-bottom: 10px
         }}
 
         .column_5 {{
@@ -431,9 +441,8 @@ intro_instr_template = """
         p {{
             margin: 15px 0;
         }}
+        
         .section {{
-            padding: 5px;
-            border: 1px solid #ddd;
             border-radius: 5px;
         }}
 
@@ -441,6 +450,18 @@ intro_instr_template = """
             background-color: #e7f3fe;
             border-left: 5px solid #2196F3;
             padding: 2px 5px;
+            text-align: center;
+        }}
+
+        .full-width {{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }}
+
+        .center-text {{
+            text-align: center;
         }}
     </style>
 </head>
@@ -491,13 +512,13 @@ intro_instr_template = """
         </div>
     </div>
 
-    <div class="section"> 
-        <div style="background-color: {bg_color_6}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
-            <div class="row">    
-                <h3>{text}</h3>
+    <div class="section full-width"> 
+    <div style="background-color: {bg_color_6}; padding: 5px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+        <div class="center-text">    
+            <h3>{text}</h3>
             </div>
-        </div>
     </div>
+</div>
 </body>
 </html>
 """
@@ -608,7 +629,7 @@ def update_color():
         bg_2='#ff7f7f'
 
     if bg_1 == bg_2 == bg_3 == bg_4 == bg_5 == '#9fdbad':
-        t = 'Congratulations, you have completed the module!'
+        t = 'Congratulations, you have completed the module! Feel free to continue exploring.'
         bg_6='#9fdbad' 
 
     if bg_1 == '#ff7f7f' or bg_2 == '#ff7f7f':
@@ -1865,7 +1886,7 @@ def predict_biodegrad():
 
     update_color()
 
-    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred, actual_class)
+    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred[0], actual_class)
     predict_display.text = new_formatted_predict_html
 
     return
