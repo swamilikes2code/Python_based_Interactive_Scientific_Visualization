@@ -1,32 +1,28 @@
 import pandas as pd
 import numpy as np
-import io
 from io import BytesIO
 import os
 import openpyxl
 import random
 import base64
 from math import nan
-from bokeh.events import ButtonClick
-from bokeh.io import curdoc, show
+from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer, layout
-from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, CheckboxButtonGroup, Button, RangeSlider, Select, Whisker, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter
+from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, Button, RangeSlider, Select, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
-from bokeh.palettes import Viridis256
-from bokeh.plotting import figure, show
-from bokeh.transform import factor_cmap, transform
+from bokeh.plotting import figure
 import pubchempy
 from rdkit import Chem, RDLogger
-from rdkit.Chem import MACCSkeys
-from rdkit.Chem import MACCSkeys, MolFromSmiles, DataStructs, Descriptors, AllChem
+from rdkit.Chem import DataStructs, Descriptors, AllChem
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.preprocessing import StandardScaler
+from sklearn.exceptions import ConvergenceWarning
 from bokeh.util.warnings import BokehUserWarning, warnings
 from datetime import datetime
 import dask.dataframe as dd
@@ -34,6 +30,7 @@ import dask.dataframe as dd
 #entire code timer
 start_time = datetime.now()
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
+warnings.simplefilter(action='ignore', category=ConvergenceWarning)
 
 
 #CONTENTS/HEADERS throughout this code
@@ -891,7 +888,7 @@ learning_curve.legend.location = 'bottom_right'
 my_alg = 'Decision Tree'
 
 # Create select button
-alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Support Vector Classification"])
+alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"])
 
 # define to be default: decision tree
 hyperparam_list = [2, "random"]
@@ -906,9 +903,9 @@ def print_vals():
     elif my_alg == 'K-Nearest Neighbor':
         print("n_neighbors", model.n_neighbors)
         print("weights", model.weights)
-    elif my_alg == 'Support Vector Classification':
+    elif my_alg == 'Logistic Regression':
         print("C", model.C)
-        print("kernel", model.kernel)
+        print("solver", model.solver)
 
 # hyperparameter tuning widgets, default to decision tree
 hp_slider = Slider(
@@ -986,9 +983,9 @@ def set_hyperparameter_widgets():
 
         model.n_neighbors = hp_slider.value
         model.weights = hp_select.value
-    elif my_alg == 'Support Vector Classification':
+    elif my_alg == 'Logistic Regression':
         #hyperparameters are 
-        # kernel (linear, poly, rbf, sigmoid) 
+        # solver (lbfgs, liblinear, newton-cg, newton-cholesky, sag, saga) 
         # regularization parameter C (float slider)
         # model = SVC()
 
@@ -1003,13 +1000,13 @@ def set_hyperparameter_widgets():
         )
         hp_toggle.visible = False
         hp_select.update(
-            title = "kernel",
-            value = "linear",
-            options = ["linear", "poly", "rbf", "sigmoid"]
+            title = "solver",
+            value = "liblinear",
+            options = ['lbfgs', 'liblinear', 'newton-cholesky', 'sag', 'saga']  #'newton-cg' took a long time to run
         )
 
         model.C = hp_slider.value
-        model.kernel = hp_select.value
+        model.solver = hp_select.value
 
 
 # list of the models to use
@@ -1033,7 +1030,7 @@ def update_algorithm(attr, old, new):
         model = KNeighborsClassifier()
     else:
         # model = model_list[2]
-        model = SVC()
+        model = LogisticRegression()
     set_hyperparameter_widgets()
     train_status_message.text = 'Not running'
     train_status_message.styles = not_updated
@@ -1187,7 +1184,7 @@ def hp_slider_callback(attr, old, new):
         model.max_depth = new
     elif my_alg == 'K-Nearest Neighbor':
         model.n_neighbors = new
-    elif my_alg == 'Support Vector Classification':
+    elif my_alg == 'Logistic Regression':
         model.C = new
     tune_status_message.text = "Not running"
     tune_status_message.styles = not_updated
@@ -1199,8 +1196,8 @@ def hp_select_callback(attr, old, new):
         model.splitter = new
     elif my_alg == 'K-Nearest Neighbor':
         model.weights = new
-    elif my_alg == 'Support Vector Classification':
-        model.kernel = new
+    elif my_alg == 'Logistic Regression':
+        model.solver = new
     tune_status_message.text = "Not running"
     tune_status_message.styles = not_updated
 
@@ -1324,8 +1321,8 @@ def save_model():
         new_saved_algorithm = 'DT'
     elif my_alg == 'K-Nearest Neighbor':
         new_saved_algorithm = 'KNN'
-    elif my_alg == 'Support Vector Classification':
-        new_saved_algorithm = 'SVC'
+    elif my_alg == 'Logistic Regression':
+        new_saved_algorithm = 'LR'
     else:
         new_saved_algorithm = my_alg
     new_saved_hyperparams = str(hyperparam_list) # convert back to list for usage when loading a saved profile
@@ -1415,7 +1412,7 @@ def determine_scale():
     scale = base_scale * (test_size / twenty_five_percent)
     # Ensure the scale is at least 1 to avoid too small circles
     scale = max(scale, 1)
-    print(scale)
+    # print(scale)
     return scale
 
 scale = 4
@@ -1560,10 +1557,10 @@ def train_test_model():
         # model = model_list[1]
         model.n_neighbors = temp_hyperparams[0]
         model.weights = temp_hyperparams[1]
-    elif temp_alg == 'SVC':
+    elif temp_alg == 'LR':
         # model = model_list[2]
         model.C = temp_hyperparams[0]
-        model.kernel = temp_hyperparams[1]
+        model.solver = temp_hyperparams[1]
 
     model.fit(X_train, y_train)
 
@@ -1657,114 +1654,74 @@ def load_test():
 test_button.on_click(load_test)
 
 # --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) ---------------------------
-def download_xlsx():
-    global filename, b64_excel_data
+def helper():
+    global b64_excel_data
     # Convert source into df
-    tested_df = pd.DataFrame(new_source.data)
+    tested_df = new_source.to_df()
+    # print(tested_df.info)
+    # print(tested_df)
 
     # Create an Excel buffer
     excel_buffer = BytesIO()
     
     # Write the DataFrame to the buffer using ExcelWriter
-    with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
-        tested_df.to_excel(writer, index=False, sheet_name='Sheet1')
+    # with pd.ExcelWriter(excel_buffer, 'openpyxl') as writer:
+    tested_df.to_excel(excel_buffer, index=False)
     
     # Get the binary data from the buffer
     excel_data = excel_buffer.getvalue()
     
     # Encode the binary data to base64
-    b64_excel_data = base64.b64encode(excel_data).decode()
-    
-    # Define the filename
-    filename = "tested_data.xlsx"
+    b64_excel_data = base64.b64encode(excel_data).decode('UTF-8')
+    # print(type(b64_excel_data))
 
-download_xlsx()
+helper()
 
-js_download_excel = f"""
-    var filename = "{filename}";
-    var filetext = atob("{b64_excel_data}");
+def download_xlsx():
+    helper()
+    js_xlsx = CustomJS(args=dict(b64_excel_data=b64_excel_data), code="""
+        console.log('hi');
+        var filename = 'data_result.xlsx';
+        var filetext = atob(b64_excel_data.toString());
+        console.log(typeof b64_excel_data);
 
-    var buffer = new Uint8Array(filetext.length);
-    for (var i = 0; i < filetext.length; i++) {{
-        buffer[i] = filetext.charCodeAt(i);
-    }}
-    
-    var blob = new Blob([buffer], {{"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}});
-    
-    // Create a link element
-    var link = document.createElement("a");
-    
-    // Set the href to the Blob URL
-    link.href = URL.createObjectURL(blob);
-    
-    // Set the download attribute
-    link.download = filename;
-    
-    // Append the link to the body
-    document.body.appendChild(link);
-    
-    // Click the link to trigger the download
-    link.click();
-    
-    // Remove the link from the document
-    document.body.removeChild(link);
-"""
-# Create a CustomJS object with the JavaScript code
-xlsx_custom_js = CustomJS(args=dict(), code=js_download_excel)
+        var buffer = new Uint8Array(filetext.length);
+        for (var i = 0; i < filetext.length; i++) {
+            buffer[i] = filetext.charCodeAt(i);
+        }
+        
+        var blob = new Blob([buffer], {"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.target = '_blank';
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        // link.dispatchEvent(new MouseEvent('click'))
+    """)
+    # temp = PreText(text='')
+    # temp.js_on_change('text',js_xlsx)
+    # print(temp.text)
+    # temp.text=''
+    # temp.text='x'
+    # print(temp.text)
+    export_excel.js_on_click(js_xlsx)
+
 
 export_excel.on_click(download_xlsx)
-export_excel.js_on_click(xlsx_custom_js)
+# export_excel.js_on_click(js_xlsx)
 
+# Create a CustomJS object with the JavaScript code
+# b64 = export_excel.on_click(download_xlsx)
+# export_excel.js_on_click(js_xlsx)
 
-# def download_csv():
-#     # Convert source into df
-#     tested_df = pd.DataFrame(new_source.data)
-
-#     # Create a CSV buffer
-#     csv_buffer = io.StringIO()
-    
-#     # Write the DataFrame to the buffer
-#     tested_df.to_csv(csv_buffer, index=False)
-    
-#     # Get the CSV data as a string
-#     csv_data = csv_buffer.getvalue()
-    
-#     # Define the filename
-#     filename = "tested_data.csv"
-
-#     js_download = f"""
-#     var filename = "{filename}";
-#     var filetext = `{csv_data}`;
-    
-#     var blob = new Blob([filetext], {{"type": "text/csv;charset=utf-8;"}});
-    
-#     // Create a link element
-#     var link = document.createElement("a");
-    
-#     // Set the href to the Blob URL
-#     link.href = URL.createObjectURL(blob);
-    
-#     // Set the download attribute
-#     link.download = filename;
-    
-#     // Append the link to the body
-#     document.body.appendChild(link);
-    
-#     // Click the link to trigger the download
-#     link.click();
-    
-#     // Remove the link from the document
-#     document.body.removeChild(link);
-#     """
-#     # Create a CustomJS object with the JavaScript code
-#     csv_custom_js = CustomJS(args=dict(), code=js_download)
-    
-#     # Attach the CustomJS to the button click event
-#     export_csv.js_on_click(csv_custom_js)
+# export_excel.js_on_click(xlsx_custom_js)
 
 
 #from the bokeh export csv demo
-export_csv.js_on_click(CustomJS(args=dict(source=new_source), code=open(os.path.join(os.path.dirname(__file__),"download.js")).read()))
+export_csv.js_on_click(CustomJS(args=dict(source=new_source), code=open(os.path.join(os.path.dirname(__file__),"csv_download.js")).read()))
 
 # export_csv.on_click(download_csv)
 
