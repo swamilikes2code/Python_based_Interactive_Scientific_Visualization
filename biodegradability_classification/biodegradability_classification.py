@@ -577,16 +577,16 @@ total_data_section_timer_start = datetime.now()                         # ------
 
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
 ####################################################################################################
-#df1 = dd.read_csv("./data/option_1.csv").compute()  # potentially faster alternative
-#df2 = dd.read_csv("./data/option_2.csv").compute()  # potentially faster alternative
-#df3 = dd.read_csv("./data/option_3.csv").compute()
-#df4 = dd.read_csv("./data/option_4.csv").compute()  
+df1 = dd.read_csv("./data/option_1.csv").compute()  # potentially faster alternative
+df2 = dd.read_csv("./data/option_2.csv").compute()  # potentially faster alternative
+df3 = dd.read_csv("./data/option_3.csv").compute()
+df4 = dd.read_csv("./data/option_4.csv").compute()  
 
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
-df1 = pd.read_csv("./data/option_1.csv", low_memory=False) # ------------------------------------- #
-df2 = pd.read_csv("./data/option_2.csv", low_memory=False) # ------------------------------------- #
-df3 = pd.read_csv("./data/option_3.csv", low_memory=False) # ------------------------------------- #
-df4 = pd.read_csv("./data/option_4.csv", low_memory=False) # ------------------------------------- #
+#df1 = pd.read_csv("./data/option_1.csv", low_memory=False) # ------------------------------------- #
+#df2 = pd.read_csv("./data/option_2.csv", low_memory=False) # ------------------------------------- #
+#df3 = pd.read_csv("./data/option_3.csv", low_memory=False) # ------------------------------------- #
+#df4 = pd.read_csv("./data/option_4.csv", low_memory=False) # ------------------------------------- #
 dataset_size = len(df1)                              # ---- This section takes 1.5-2.5 to run ---- #
                                                      # ---- This section takes 1.5-2.5 to run ---- #
 all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
