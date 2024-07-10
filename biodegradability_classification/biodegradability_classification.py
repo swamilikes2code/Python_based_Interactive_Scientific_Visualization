@@ -25,7 +25,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.exceptions import ConvergenceWarning
 from bokeh.util.warnings import BokehUserWarning, warnings
 from datetime import datetime
-import dask.dataframe as dd
+# import dask.dataframe as dd
 
 #entire code timer
 start_time = datetime.now()
@@ -888,7 +888,7 @@ learning_curve.legend.location = 'bottom_right'
 my_alg = 'Decision Tree'
 
 # Create select button
-alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"])
+alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"], width=230)
 
 # define to be default: decision tree
 hyperparam_list = [2, "random"]
