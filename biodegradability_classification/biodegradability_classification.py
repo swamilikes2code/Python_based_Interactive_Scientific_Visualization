@@ -325,7 +325,7 @@ html_predict_template = """
         <div class="section">
             <h2>Substance Name:</h2>
             <p>{}</p>
-            <h2>Smiles String:</h2>
+            <h2>SMILES String:</h2>
             <p>{}</p>
             <h2>Predicted Class</h2>
             <p>{}</p>
@@ -484,8 +484,8 @@ intro_instr_template = """
             <div style="background-color: {bg_color_5}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
                 <div class="column_5">
                     <h2>5) PREDICT</h2>
-                    <h3>Input a Smiles string and predict its class using your model.</h3>
-                    <p>On the <span class="highlight"><b>Predict</b></span> tab, test any of the saved models by inputting a <b>Smiles string</b>, displaying the IUPAC name of your chosen molecule, its predicted class, and if the molecule appears in the dataset, its actual class.</p>
+                    <h3>Input a SMILES string and predict its class using your model.</h3>
+                    <p>On the <span class="highlight"><b>Predict</b></span> tab, test any of the saved models by inputting a <b>SMILES string</b>, displaying the IUPAC name of your chosen molecule, its predicted class, and if the molecule appears in the dataset, its actual class.</p>
                 </div>
             </div>
         </div>
@@ -655,7 +655,7 @@ elapsed_time = read_csv_stop - read_csv_start                           # ------
 print(f"Reading in data: {elapsed_time.total_seconds():.2f} seconds") #lines 565 - 578 take 1.7-2.5 seconds
 
 # Columns that should always be shown
-mandatory_columns = ['Substance Name', 'Smiles', 'Class']
+mandatory_columns = ['Substance Name', 'SMILES', 'Class']
 
 # for storing data choice
 user_data = ''
@@ -1554,12 +1554,12 @@ predicted = []
 actual = []
 tfpn = []
 
-test_cols = ['Index', 'Substance Name', 'Smiles', 'Predicted Class', 'Actual Class', 'Prediction Type']
+test_cols = ['Index', 'Substance Name', 'SMILES', 'Predicted Class', 'Actual Class', 'Prediction Type']
 test_tab_columns = [TableColumn(field=col, title=col, width=110) for col in test_cols]
 
 test_table_data = {'Index': indices,
             'Substance Name': tested_names,
-            'Smiles': tested_smiles, 
+            'SMILES': tested_smiles, 
             'Predicted Class': predicted,
             'Actual Class': actual,
             'Prediction Type': tfpn}
@@ -1631,7 +1631,7 @@ def train_test_model():
     
     tested_smiles.clear()
     for index in indices:
-        tested_smiles.append(df1_dict['Smiles'][index])
+        tested_smiles.append(df1_dict['SMILES'][index])
 
 
     tfpn.clear()
@@ -1650,14 +1650,14 @@ def train_test_model():
 
     full_test_table_data = {'Index': indices,
                 'Substance Name': tested_names,
-                'Smiles': tested_smiles, 
+                'SMILES': tested_smiles, 
                 'Predicted Class': predicted,
                 'Actual Class': actual,
                 'Prediction Type': tfpn}
     
     abridg_test_table_data = {'Index': indices[:15],
                 'Substance Name': tested_names[:15],
-                'Smiles': tested_smiles[:15], 
+                'SMILES': tested_smiles[:15], 
                 'Predicted Class': predicted[:15],
                 'Actual Class': actual[:15],
                 'Prediction Type': tfpn[:15]}
@@ -1775,9 +1775,9 @@ export_csv.js_on_click(CustomJS(args=dict(source=new_source), code=open(os.path.
 # --------------- PREDICTING --------------- #
 ##############################################
 
-random_smiles = random.choices(df1_dict['Smiles'], k=3)
+random_smiles = random.choices(df1_dict['SMILES'], k=3)
 
-smiles_select = Select(title="Select Smiles String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=200)
+smiles_select = Select(title="Select SMILES String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=200)
 
 user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=200)
 
@@ -1836,7 +1836,7 @@ def predict_biodegrad():
         user_molec = Chem.MolFromSmiles(user_smiles)
 
         if user_molec == None:
-            predict_status_message.text = 'Error: invalid Smiles string'
+            predict_status_message.text = 'Error: invalid SMILES string'
             predict_status_message.styles = not_updated
             return
         
@@ -1854,8 +1854,8 @@ def predict_biodegrad():
         y_pred = molecule_to_pathfp(user_molec)
         
 
-    if user_smiles in df1_dict['Smiles']:
-        known_index = df1_dict['Smiles'].index(user_smiles)
+    if user_smiles in df1_dict['SMILES']:
+        known_index = df1_dict['SMILES'].index(user_smiles)
         actual_class = df1_dict['Class'][known_index]
     else:
         actual_class = 'Unknown'
@@ -1907,7 +1907,7 @@ smiles_select.on_change('value', update_predict_status)
 # # Link the button to the callback
 # data_exp_vis_button.on_click(toggle_data_exp_visibility)
 
-# Custom Smiles String input
+# Custom SMILES String input
 
 user_smiles_input.visible = False
 predict_instr.visible = False
