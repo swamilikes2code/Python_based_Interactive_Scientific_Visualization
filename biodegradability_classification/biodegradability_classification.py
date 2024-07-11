@@ -680,8 +680,8 @@ total_data_section_timer_start = datetime.now()                         # ------
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
 
 # toggle whether you are testing here or running from server
-master = True
-# master = False
+# master = True
+master = False
 
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
@@ -1301,6 +1301,10 @@ def train_validate_model():
     set_learning_curve()
     save_model()
     model_list.append(model)
+    test_save_select.value = test_save_select.options[-1]
+    predict_select.value = predict_select.options[-1]
+    # print(test_save_select.value)
+    # print(predict_select.value)
 
 def load_ML():
     train_status_message.text = f'Running {my_alg}...'
@@ -1484,10 +1488,8 @@ def save_model():
     new_save_number += 1
 
     test_save_select.options.append(str(new_save_number))
-    test_save_select.value = test_save_select.options[-1]
     delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
-    predict_select.value = predict_select.options[-1]
 
     global high_score
     global old_high_score
