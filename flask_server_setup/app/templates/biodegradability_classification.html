@@ -519,7 +519,7 @@ nav li {
               <li><b>Pros:</b> Simple, handles numerical & categorical data</li>
               <li><b>Cons:</b> Small changes can largely impact data</li>
               </ul>
-            <img src="{{url_for('static', filename='tree_one.png')}}" alt="Data Picture" class="center" style="width:25%; height: 25%; float: none">
+            <img src="{{url_for('static', filename='tree_one.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
           </div>
 
           <div class="column_3">
@@ -629,25 +629,25 @@ nav li {
           <div class="row">
             <div class="column_3">
               <h3>Underfitting model</h3>
-              <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <br>
-              <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <p>This model exhibits high loss and low accuracy, failing to capture the data's general trends due to its overly simplistic linear decision boundary. With an accuracy of 58.8%, its performance in predicting biodegradability is only marginally better than random chance like flipping a coin. </p>
             </div>
   
             <div class="column_3">
               <h3>Optimal model</h3>
-              <img src="{{url_for('static', filename='Optimal_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Optimal_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <br>
-              <img src="{{url_for('static', filename='Optimal_LC.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Optimal_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <p>This model has low loss and high accuracy. It effectively captures the primary macro trends in the data. The learning curve shows consistent improvement on the validation set as the performance on the training set decreases, indicating strong generalization with a final accuracy of 72.8%.</p>
             </div>
   
             <div class="column_3">
               <h3>Overfitting model</h3>
-              <img src="{{url_for('static', filename='Overfitting_graph.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Overfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <br>
-              <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:400px; height: 250px; float: none">
+              <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <p>This model possess low loss but low accuracy. It massively overfits the training data with 100% accuracy while the validation accuracy is much lower at 70.1%. Another indication of overfitting is if the training performance increases while the testing performance decreases.</p>
             </div>
           </div>
