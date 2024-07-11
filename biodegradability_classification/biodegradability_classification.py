@@ -468,7 +468,7 @@ intro_instr_template = """
 <body>
     <div class="section">
         <div class="row">
-            <div style="background-color: {bg_color_1}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="background-color: {bg_color_1}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
                 <div class="column_5">
                     <h2>1) PREPARE DATA</h2>
                     <h3>Prepare the biodegradability data for training.</h3>
@@ -476,7 +476,14 @@ intro_instr_template = """
                 </div>
             </div>
 
-            <div style="background-color: {bg_color_2}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="background-color: #ffffff;">
+                <div class="column_5">
+                    <p>‎</p>
+                </div>
+            </div>
+
+
+            <div style="background-color: {bg_color_2}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
                 <div class="column_5">
                     <h2>2) TRAIN</h2>
                     <h3>Train a machine learning model on your prepared data.</h3>
@@ -484,16 +491,27 @@ intro_instr_template = """
                 </div>
             </div>
 
-            <div style="background-color: {bg_color_3}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">    
+            <div style="background-color: #ffffff;">
+                <div class="column_5">
+                    <p>‎</p>
+                </div>
+            </div>
+
+            <div style="background-color: {bg_color_3}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">    
                 <div class="column_5">
                     <h2>3) VALIDATE</h2>
                     <h3>Fine-tune the hyperparameters of your model.</h3>
                     <p>On the <span class="highlight"><b>Train and Validate</b></span> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by looking at the Learning Curves. </p>
                 </div>
             </div>
+
+            <div style="background-color: #ffffff;">
+                <div class="column_5">
+                    <p>‎</p>
+                </div>
+            </div>
             
-            
-            <div style="background-color: {bg_color_4}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="background-color: {bg_color_4}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
                 <div class="column_5">
                     <h2>4) TEST</h2>
                     <h3>Perform a final test of your model's performance.</h3>
@@ -501,8 +519,13 @@ intro_instr_template = """
                 </div>
             </div>
 
+            <div style="background-color: #ffffff;">
+                <div class="column_5">
+                    <p>‎</p>
+                </div>
+            </div>
             
-            <div style="background-color: {bg_color_5}; padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="background-color: {bg_color_5}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
                 <div class="column_5">
                     <h2>5) PREDICT</h2>
                     <h3>Input a SMILES string and predict its class using your model.</h3>
@@ -513,7 +536,7 @@ intro_instr_template = """
     </div>
 
     <div class="section full-width"> 
-    <div style="background-color: {bg_color_6}; padding: 5px; border: 1px solid #ddd; border-radius: 5px; width: 100%;">
+    <div style="background-color: {bg_color_6}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 100%;">
         <div class="center-text">    
             <h3>{text}</h3>
             </div>
