@@ -5,6 +5,7 @@ import os
 import random
 import base64
 from math import nan
+
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer, layout
 from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, Button, RangeSlider, Select, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
@@ -12,14 +13,16 @@ from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
 from bokeh.plotting import figure
+from bokeh.transform import dodge
 import pubchempy
 from rdkit import Chem, RDLogger
 from rdkit.Chem import DataStructs, Descriptors, AllChem
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+
 from sklearn.exceptions import ConvergenceWarning
 from bokeh.util.warnings import BokehUserWarning, warnings
 from datetime import datetime
@@ -30,16 +33,7 @@ warnings.simplefilter(action='ignore', category=BokehUserWarning)
 warnings.simplefilter(action='ignore', category=ConvergenceWarning)
 
 
-#CONTENTS/HEADERS throughout this code
-# message styles, accuracy lists, status messages, buttons
-# instructions
-# data selection, data split, interactive data exploration, save data button
-# algorithm select and run
-# hyperparameter tuning + button, box plot and save
-# testing
-# visibility, layouts
-
-# ---------------MESSAGE STYLES----------------- #
+# --------------- MESSAGE STYLES --------------- #
 
 header = {'color': 'black', 'font-size': '18px'}
 not_updated = {'color': 'red', 'font-size': '14px'}
@@ -47,11 +41,11 @@ loading = {'color': 'orange', 'font-size': '14px'}
 updated = {'color': 'green', 'font-size': '14px'}
 completed = {'color': 'black', 'font-size': '14px'}
 
-# ---------------ACCURACY LISTS----------------- #
-# Create empty list - declare at the top to use everywhere
+# --------------- ACCURACY LISTS --------------- #
+# declare at the top to use everywhere
 val_accuracy = []
 
-# ---------------STATUS MESSAGES----------------- #
+# --------------- STATUS MESSAGES --------------- #
 
 step_one = Div(text='<b>1) PREPARE DATA</b>', styles=header)
 step_two = Div(text='<b>2) TRAIN</b>', styles=header)
@@ -66,7 +60,7 @@ temp_test_status_message = Div(text='Not running', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
 delete_status_message = Div(text='Changes not saved', styles = not_updated)
 
-# -------------------BUTTONS-------------------- #
+# --------------- BUTTONS --------------- #
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning", width = 250)
 train_button = Button(label="Run ML algorithm", button_type="success", width=150, height = 31)
@@ -79,12 +73,13 @@ predict_button = Button(label = 'Predict', button_type = "success", width = 200,
 up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>''')
 down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" /></svg>''')
 
-data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primary", icon = down_arrow)
+# still calling it data exploration for now instead of "Show Histogram" as it's less descriptive
+hist_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
 export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
 export_csv = Button(label="Download Full Table to CSV (.csv)", width=200, height=31)
 
-# -----------------HTML TEMPLATES----------------- #
+# --------------- HTML TEMPLATES --------------- #
 html_val_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -387,7 +382,7 @@ html_warning_template = """
 </html>
 """
 
-# -----------------INSTRUCTIONS-----------------
+# --------------- INSTRUCTIONS --------------- #
 intro_instr_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -623,7 +618,7 @@ predict_instr = Div(text="""
                  </div>""",
 width=160, height=60)
 
-# ---------------- UPDATE INSTRUCTIONS COLORS -------------------
+# --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
     bg_1 = '#fafafa'
     bg_2 = '#fafafa'
@@ -672,7 +667,9 @@ def update_color():
     
     intro_instr.text = new_formatted_instr_html
 
-# --------------- DATA SELECTION ---------------
+###########################################################
+# --------------- DATA LOAD AND SELECTION --------------- #
+###########################################################
 
 #for ref:
 # df is original csv, holds fingerprint list and 167 cols of fingerprint bits
@@ -884,9 +881,132 @@ def load_config():
 # Attach callback to the save button
 save_config_button.on_click(load_config)
 
-######################################################
-# --------------- Learning Curve Code ---------------# 
-######################################################
+#############################################
+# --------------- HISTOGRAM --------------- #
+#############################################
+
+# Split data based on the class - int == works!! tested in histogram.py
+class_0 = df1[df1['Class'] == 0]
+class_1 = df1[df1['Class'] == 1]
+
+# Default histogram column
+default_hist_column = 'Class'
+
+# Define the bins
+bins = np.linspace(df1[default_hist_column].min(), df1[default_hist_column].max(), 20)
+
+# Calculate histogram for each class
+hist_0, edges_0 = np.histogram(class_0[default_hist_column], bins=bins)
+hist_1, edges_1 = np.histogram(class_1[default_hist_column], bins=bins)
+
+# Prepare data for plotting
+
+# Calculate the center positions of each bin
+hist_centers = (edges_0[:-1] + edges_0[1:]) / 2
+hist_width = .3*(hist_centers[1]-hist_centers[0])
+dodge_val = .625*hist_width
+
+# Create a new ColumnDataSource
+source = ColumnDataSource(data=dict(
+    hist_centers=hist_centers,
+    top_class_0=hist_0,
+    top_class_1=hist_1
+))
+
+# Create the figure
+histogram = figure(title=f"Histogram of {default_hist_column} with Class Color Coding",
+           x_axis_label=default_hist_column, y_axis_label='Frequency',
+           tools="save",
+           width=800, height=400)
+
+# Add class 0 bars
+bars_class_0 = histogram.vbar(x=dodge('hist_centers', -0.15, range=histogram.x_range), top='top_class_0', width=0.3*(hist_centers[1] - hist_centers[0]),
+                      color='blue', alpha=0.6, legend_label='Class 0', source=source)
+
+# Add class 1 bars
+bars_class_1 = histogram.vbar(x=dodge('hist_centers', 0.15, range=histogram.x_range), top='top_class_1', width=0.3*(hist_centers[1] - hist_centers[0]),
+                      color='red', alpha=0.6, legend_label='Class 1', source=source)
+
+# Add hover tool for interaction
+hover = HoverTool()
+hover.tooltips = [("Range", "@hist_centers"),
+                  ("Class 0 Frequency", "@top_class_0"),
+                  ("Class 1 Frequency", "@top_class_1")]
+histogram.add_tools(hover)
+
+# Style the plot
+histogram.legend.click_policy = "hide"
+histogram.legend.location = "top_right"
+histogram.xgrid.grid_line_color = None
+histogram.ygrid.grid_line_color = "gray"
+histogram.ygrid.grid_line_dash = [6, 4]
+
+# Create a Select widget for choosing histogram column
+hist_options = ['Class',
+                'MolWt',
+                'NumValenceElectrons',
+                'NumRadicalElectrons',
+                'HeavyAtomCount',
+                'NHOHCount',
+                'NOCount',
+                'NumAliphaticCarbocycles',
+                'NumAliphaticHeterocycles',
+                'NumAliphaticRings',
+                'NumAromaticCarbocycles',
+                'NumAromaticHeterocycles',
+                'NumAromaticRings',
+                'NumHAcceptors',
+                'NumHDonors',
+                'NumHeteroatoms',
+                'NumRotatableBonds',
+                'NumSaturatedCarbocycles',
+                'NumSaturatedHeterocycles',
+                'NumSaturatedRings',
+                'RingCount',
+                ]
+hist_x_select = Select(title="X Axis:", value=default_hist_column, options=hist_options)
+
+# Callback function for Select widget
+def update_hist(attrname, old, new):
+    selected_column = hist_x_select.value
+
+    bins = np.linspace(df1[selected_column].min(), df1[selected_column].max(), 20)
+
+    # Update histogram data based on selected column
+    hist_0, edges_0 = np.histogram(class_0[selected_column], bins=bins)
+    hist_1, edges_1 = np.histogram(class_1[selected_column], bins=bins)
+
+    hist_centers = (edges_0[:-1] + edges_0[1:]) / 2
+    hist_width = .3*(hist_centers[1]-hist_centers[0])
+    dodge_val = .625*hist_width
+
+    source.data = dict(
+        hist_centers=hist_centers,
+        top_class_0=hist_0,
+        top_class_1=hist_1
+    )
+    bars_class_0.data_source.data['top'] = hist_0
+    bars_class_1.data_source.data['top'] = hist_1
+
+    bars_class_0.glyph.update(
+        x=dodge('hist_centers', -dodge_val, range=histogram.x_range),
+        width=hist_width
+    )
+    bars_class_1.glyph.update(
+        x=dodge('hist_centers', dodge_val, range=histogram.x_range),
+        width=hist_width
+    )
+
+    histogram.title.text = f"Histogram of {selected_column} with Class Color Coding"
+    histogram.xaxis.axis_label = selected_column
+
+# Attach callback to Select widget
+hist_x_select.on_change('value', update_hist)
+
+
+##################################################
+# --------------- LEARNING CURVE --------------- # 
+##################################################
 
 sizes = np.linspace(.01, 1.0, 15)
 train_scores = []
@@ -1088,7 +1208,6 @@ test_accuracy = 0.0
 
 # Attach callback to Select widget
 alg_select.on_change('value', update_algorithm)
-# alg_select.on_change('value', set_hyperparameter_widgets)
 
 
 def run_ML():
@@ -1106,16 +1225,13 @@ def run_ML():
 
     update_color()
 
-    # set_hyperparameter_widgets()
     train_validate_model()
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
 
     temp_df = all_df[data_index]
-    temp_cols = all_cols[data_index]
-    #print(temp_df)
-    
+    temp_cols = all_cols[data_index]    
 
     X = temp_df[temp_cols]
     y = df['Class']
@@ -1183,12 +1299,6 @@ def set_learning_curve():
 ##################################################################
 # --------------- HYPERPARAMETER TUNING + BUTTON --------------- #
 ##################################################################
-
-# a list of an int an string
-## decision tree - int/nan, string
-## KNN - int, string
-## SVC - int, ""
-
 
 # create displays
 tuned_accuracy_display = Div(text = """
@@ -1285,7 +1395,6 @@ def load_tuned_config():
     
     curdoc().add_next_tick_callback(run_tuned_config)
 
-# Can connect to the old funcs
 tune_button.on_click(load_tuned_config)
 
 
@@ -1397,8 +1506,6 @@ def save_model():
 
     add_row()
 
-
-
 # Add new row to datatable every time a plot is saved
 def add_row():
     new_saved_data = {
@@ -1481,7 +1588,7 @@ delete_button.on_click(load_delete_save)
 delete_multiselect.on_change('value', del_multiselect_callback)
 
 #############################################
-# --------------- TESTING ----------------- #
+# --------------- TESTING --------------- #
 #############################################
 
 true_pos = nan
@@ -1588,7 +1695,7 @@ def update_cmatrix(attrname, old, new):
     # bubble.scatter(fill_color = transform('count', new_color_mapper)
 
 ###################################################
-# --------------- NEW DATA TABLE ---------------- #
+# --------------- NEW DATA TABLE --------------- #
 ###################################################
 
 indices = []
@@ -1726,24 +1833,22 @@ def train_test_model():
     temp_test_status_message.styles = updated
     update_color()
 
-def run_test():
-    global my_alg, stage
-    stage = 'Test'
-    global model
+# def run_test():
+#     global my_alg, stage
+#     stage = 'Test'
+#     global model
 
-    train_test_model()
-
-    # Updating accuracy display
+#     train_test_model()
 
 def load_test():
     temp_test_status_message.text = "Testing..."
     temp_test_status_message.styles = loading
     
-    curdoc().add_next_tick_callback(run_test)
+    curdoc().add_next_tick_callback(train_test_model)
 
 test_button.on_click(load_test)
 
-# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) --------------------------- #
+# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) --------------- #
 def helper():
     global b64_excel_data
     # Convert source into df
@@ -1904,7 +2009,7 @@ def predict_biodegrad():
     else:
         actual_class = 'Unknown'
 
-    predict_status_message.text = 'Complete'
+    predict_status_message.text = 'Prediction complete'
     predict_status_message.styles = updated
 
     update_color()
@@ -1933,26 +2038,20 @@ smiles_select.on_change('value', update_predict_status)
 
 # ---------------- VISIBILITY --------------
 
-# # Data exploration plot
-# datavis_help.visible = False
-# data_exp.visible = False
-# select_x.visible = False
-# select_y.visible = False
+# Histogram
+histogram.visible = False
+hist_x_select.visible = False
 
-# # Callback function to toggle visibility
-# def toggle_data_exp_visibility():
-#     datavis_help.visible = not datavis_help.visible
-#     data_exp.visible = not data_exp.visible
-#     select_x.visible = not select_x.visible
-#     select_y.visible = not select_y.visible
-#     data_exp_vis_button.label = "Show Data Exploration*" if not data_exp.visible else "Hide Data Exploration*"
-#     data_exp_vis_button.icon = down_arrow if not data_exp.visible else up_arrow
+def toggle_hist_visibility():
+    histogram.visible = not histogram.visible
+    hist_x_select.visible = not hist_x_select.visible
+    hist_visibility_button.label = "Show Data Exploration*" if not histogram.visible else "Hide Data Exploration*"
+    hist_visibility_button.icon = down_arrow if not histogram.visible else up_arrow
 
-# # Link the button to the callback
-# data_exp_vis_button.on_click(toggle_data_exp_visibility)
+hist_visibility_button.on_click(toggle_hist_visibility)
+
 
 # Custom SMILES String input
-
 user_smiles_input.visible = False
 predict_instr.visible = False
 
@@ -2066,7 +2165,7 @@ def toggle_step_five_warn():
 predict_button.on_click(toggle_step_five_warn)
 
 
-# --------------- LAYOUTS ---------------
+# --------------- LAYOUTS --------------- 
 
 tiny_height_spacer = Spacer(height = 15)
 small_height_spacer = Spacer(height = 16)
@@ -2090,7 +2189,7 @@ data_config_layout = layout(
     [column(save_config_button, save_config_message)]
 )
 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer))
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer, hist_visibility_button, hist_x_select, histogram))
 
 hyperparam_layout = layout(
     [step_three],
@@ -2108,9 +2207,6 @@ delete_layout = layout(
 )
 
 tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
-
-# save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-
 
 test_button_layout = layout(
     [column(step_four, test_save_select, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
