@@ -756,7 +756,7 @@ all_cols = [cols1, cols2, cols3, cols4]
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
 data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
-data_select = Select(title="Select Features:", options=data_opts, width = 200)
+data_select = Select(title="Select Features:", value = 'Molecular Properties', options=data_opts, width = 200)
 
 data_initialization_end = datetime.now()                                    # ----------- TIMER CODE
 elapsed_time = data_initialization_end - total_data_section_timer_start     # ----------- TIMER CODE
@@ -1484,8 +1484,10 @@ def save_model():
     new_save_number += 1
 
     test_save_select.options.append(str(new_save_number))
+    test_save_select.value = test_save_select.options[-1]
     delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
+    predict_select.value = predict_select.options[-1]
 
     global high_score
     global old_high_score
