@@ -896,7 +896,7 @@ class_0 = df1[df1['Class'] == 0]
 class_1 = df1[df1['Class'] == 1]
 
 # Default histogram column
-default_hist_column = 'Class'
+default_hist_column = 'MolWt'
 
 # Define the bins
 bins = np.linspace(df1[default_hist_column].min(), df1[default_hist_column].max(), 20)
@@ -926,11 +926,11 @@ histogram = figure(title=f"Histogram of {default_hist_column} with Class Color C
            width=800, height=400)
 
 # Add class 0 bars
-bars_class_0 = histogram.vbar(x=dodge('hist_centers', -0.15, range=histogram.x_range), top='top_class_0', width=0.3*(hist_centers[1] - hist_centers[0]),
+bars_class_0 = histogram.vbar(x=dodge('hist_centers', -dodge_val, range=histogram.x_range), top='top_class_0', width=0.3*(hist_centers[1] - hist_centers[0]),
                       color='blue', alpha=0.6, legend_label='Class 0', source=source)
 
 # Add class 1 bars
-bars_class_1 = histogram.vbar(x=dodge('hist_centers', 0.15, range=histogram.x_range), top='top_class_1', width=0.3*(hist_centers[1] - hist_centers[0]),
+bars_class_1 = histogram.vbar(x=dodge('hist_centers', dodge_val, range=histogram.x_range), top='top_class_1', width=0.3*(hist_centers[1] - hist_centers[0]),
                       color='red', alpha=0.6, legend_label='Class 1', source=source)
 
 # Add hover tool for interaction
@@ -994,6 +994,17 @@ def update_hist(attrname, old, new):
     bars_class_0.data_source.data['top'] = hist_0
     bars_class_1.data_source.data['top'] = hist_1
 
+    # if selected_column == 'Class':
+    #     bars_class_0.glyph.update(
+    #         x = 0, width = .9
+    #     )
+    #     bars_class_1.glyph.update(
+    #         x = 1, width = .9
+    #     )
+    #     histogram.x_range = (-.5, 1.5)
+    #     histogram.xaxis.ticker = [0, 1]
+
+    # else:
     bars_class_0.glyph.update(
         x=dodge('hist_centers', -dodge_val, range=histogram.x_range),
         width=hist_width
@@ -1002,6 +1013,7 @@ def update_hist(attrname, old, new):
         x=dodge('hist_centers', dodge_val, range=histogram.x_range),
         width=hist_width
     )
+    # histogram.x_range = None
 
     histogram.title.text = f"Histogram of {selected_column} with Class Color Coding"
     histogram.xaxis.axis_label = selected_column
