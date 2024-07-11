@@ -684,12 +684,24 @@ def update_color():
 total_data_section_timer_start = datetime.now()                         # ----------- TIMER CODE
 
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
+
+# toggle whether you are testing here or running from server
+# master = True
+master = False
+
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
-df1 = pd.read_csv("./biodegradability_classification/data/option_1.csv", low_memory=False, na_filter=False) # -------------------- #
-df2 = pd.read_csv("./biodegradability_classification/data/option_2.csv", low_memory=False, na_filter=False) # -------------------- #
-df3 = pd.read_csv("./biodegradability_classification/data/option_3.csv", low_memory=False, na_filter=False) # -------------------- #
-df4 = pd.read_csv("./biodegradability_classification/data/option_4.csv", low_memory=False, na_filter=False) # -------------------- #
+if master:
+    df1 = pd.read_csv("biodegradability_classification/data/option_1.csv", low_memory=False, na_filter=False) # -------------------- #
+    df2 = pd.read_csv("biodegradability_classification/data/option_2.csv", low_memory=False, na_filter=False) # -------------------- #
+    df3 = pd.read_csv("biodegradability_classification/data/option_3.csv", low_memory=False, na_filter=False) # -------------------- #
+    df4 = pd.read_csv("biodegradability_classification/data/option_4.csv", low_memory=False, na_filter=False) # -------------------- #
+else:
+    df1 = pd.read_csv("./data/option_1.csv", low_memory=False, na_filter=False) # -------------------- #
+    df2 = pd.read_csv("./data/option_2.csv", low_memory=False, na_filter=False) # -------------------- #
+    df3 = pd.read_csv("./data/option_3.csv", low_memory=False, na_filter=False) # -------------------- #
+    df4 = pd.read_csv("./data/option_4.csv", low_memory=False, na_filter=False) # -------------------- #
+
 dataset_size = len(df1)                              # ---- This section takes 1.5-2.5 to run ---- #
                                                      # ---- This section takes 1.5-2.5 to run ---- #
 all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
