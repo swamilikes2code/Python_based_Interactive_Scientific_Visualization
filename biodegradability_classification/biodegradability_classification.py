@@ -318,7 +318,7 @@ html_predict_template = """
 <body>
     <div class="container">
         <div class="section">
-            <h2>IUPAC Name:</h2>
+            <h2>Substance Name:</h2>
             <p>{}</p>
             <h2>SMILES String:</h2>
             <p>{}</p>
@@ -2006,10 +2006,13 @@ def predict_biodegrad():
             predict_status_message.text = 'Error: invalid SMILES string'
             predict_status_message.styles = not_updated
             return
-        
-    user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
 
-    user_name = user_compound[0].iupac_name
+    if user_smiles in df1_dict['SMILES']:
+        known_index = df1_dict['SMILES'].index(user_smiles)
+        user_name = df1_dict['Substance Name'][known_index].lower()
+    else:
+        user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
+        user_name = user_compound[0].iupac_name
 
     if save_source.data['saved_data_choice'][save_index] == data_opts[0]:
         y_pred = molecule_to_descriptors(user_molec)
