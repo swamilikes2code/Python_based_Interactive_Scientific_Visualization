@@ -105,7 +105,7 @@ def update_plot(attrname, old, new):
         width=width
     )
 
-    histogram.title = f"Histogram of {selected_column} with Class Color Coding"
+    histogram.title.text = f"Histogram of {selected_column} with Class Color Coding"
     histogram.xaxis.axis_label = selected_column
 
 # Attach callback to Select widget
