@@ -96,9 +96,6 @@ html_val_template = """
         }}
         .container {{
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
         h1 {{
             text-align: center;
@@ -153,9 +150,6 @@ html_test_template = """
         }}
         .container {{
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
         .column_4 {{
             float: left;
@@ -285,9 +279,6 @@ html_predict_template = """
         }}
         .container {{
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
         h1 {{
             text-align: center;
@@ -435,6 +426,7 @@ intro_instr_template = """
 
         p {{
             margin: 15px 0;
+            text-align: left;
         }}
         
         .section {{
@@ -467,7 +459,8 @@ intro_instr_template = """
                 <div class="column_5">
                     <h2>1) PREPARE DATA</h2>
                     <h3>Prepare the biodegradability data for training.</h3>
-                    <p>On the <span class="highlight"><b>Data</b></span> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>, avoiding <b>underfitting</b> or <b>overfitting</b>.</p>
+                    <p>On the <span class="highlight"><b>Data</b></span> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>.</p> 
+                    <p>You can also view a <b>Data Exploration Histogram</b>, showing the distribution of certain molecular features across the dataset.</p>
                 </div>
             </div>
 
@@ -510,7 +503,8 @@ intro_instr_template = """
                 <div class="column_5">
                     <h2>4) TEST</h2>
                     <h3>Perform a final test of your model's performance.</h3>
-                    <p>On the <span class="highlight"><b>Test</b></span> tab complete your final test of the saved model of your choice, displaying its testing accuracy, and a <b>confusion matrix</b>. It is recommended to use your run with the highest validation accuracy here.</p>
+                    <p>On the <span class="highlight"><b>Test</b></span> tab complete your final test of the saved model of your choice, displaying its testing accuracy, and a <b>confusion matrix</b>.</p> 
+                    <p>It is recommended to use your run with the highest validation accuracy here.</p>
                 </div>
             </div>
 
@@ -750,7 +744,7 @@ all_cols = [cols1, cols2, cols3, cols4]
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
 data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
 
-data_select = Select(title="Select Features:", options=data_opts, width = 195)
+data_select = Select(title="Select Features:", options=data_opts, width = 200)
 
 data_initialization_end = datetime.now()                                    # ----------- TIMER CODE
 elapsed_time = data_initialization_end - total_data_section_timer_start     # ----------- TIMER CODE
@@ -1032,10 +1026,11 @@ learning_curve = figure(
     title='Learning Curve with Custom Split', 
     x_axis_label='Training Size (Fraction)', 
     y_axis_label='Accuracy',
-    tools='pan, wheel_zoom, box_zoom, reset',
+    tools='wheel_zoom, box_zoom, reset',
     x_range=(0, 1),
     y_range=(0, 1),  # Set y-axis range from 0 to 1
-    height=500
+    width=500,
+    height=400
 )
 
 curve1 = learning_curve.line('train_size', 'train_score', source=learning_curve_source, line_width=2, legend_label='Training Score', color='blue')
@@ -1060,7 +1055,7 @@ learning_curve.legend.location = 'bottom_right'
 my_alg = 'Decision Tree'
 
 # Create select button
-alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"], width=230)
+alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"], width=200)
 
 # define to be default: decision tree
 hyperparam_list = [2, "random"]
@@ -2215,7 +2210,7 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
+tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 test_button_layout = layout(
     [column(step_four, test_save_select, asterisk, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
