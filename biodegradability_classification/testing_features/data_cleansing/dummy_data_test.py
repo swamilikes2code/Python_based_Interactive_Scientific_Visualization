@@ -33,9 +33,10 @@ def smiles_to_name(smiles): #function that converts SMILES to IUPAC name
     
 df['Substance Name'] = df.apply(lambda row: smiles_to_name(row['SMILES']) if pd.isna(row['Substance Name']) else row['Substance Name'], axis=1)
 
-# for i in df['Substance Name'].index:
- #   if df['Substance Name'][i] == "\'N/A\'":
- #       df.loc[i, 'Substance Name'] = df.loc[i, 'Substance Name'].replace("\'N/A\'", smiles_to_name(df.loc[i, 'SMILES']))
+print(df['Substance Name'])
+print('-------------------------------------------------------')
+
+df.drop(df[df['Substance Name'] == "\'N/A\'"].index, inplace = True)
 
 df.reset_index(drop=True, inplace=True)
 df['Substance Name'] = [str(sub) for sub in df['Substance Name']]

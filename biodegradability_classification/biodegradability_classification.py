@@ -318,7 +318,7 @@ html_predict_template = """
 <body>
     <div class="container">
         <div class="section">
-            <h2>Substance Name:</h2>
+            <h2>IUPAC Name:</h2>
             <p>{}</p>
             <h2>SMILES String:</h2>
             <p>{}</p>
@@ -617,6 +617,12 @@ predict_instr = Div(text="""
                     (Instructions on 'Help' button)
                  </div>""",
 width=160, height=60)
+
+asterisk = Div(text="""
+                 <div style='background-color: #ffffff;'>
+                    *Highest validation accuracy
+                 </div>""",
+width=160, height=20)
 
 # --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
@@ -1404,7 +1410,7 @@ tune_button.on_click(load_tuned_config)
 
 # making select to choose save num to display/use
 delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 200)
-test_save_select = Select(title = "Choose a save to test:", options = [], margin=(5, 40, 5, 5), width = 200)
+test_save_select = Select(title = "Choose a save to test:", options = [], margin=(5, 40, 5, 5), width = 200, height = 40)
 
 def update_test_message(attr, old, new):
     temp_test_status_message.text = "Not running"
@@ -1414,7 +1420,7 @@ def update_test_message(attr, old, new):
 
 test_save_select.on_change('value', update_test_message)
 
-predict_select = Select(title = 'Choose a save to predict with:', options = [])
+predict_select = Select(title = 'Choose a save to predict with:', options = [], width = 200, height = 40)
 
 new_save_number = 0
 
@@ -1469,9 +1475,9 @@ def save_model():
 
     for i in test_save_select.options:
         current_index = test_save_select.options.index(str(i))
-        test_save_select.options[current_index] = test_save_select.options[current_index].replace('* (highest val. accuracy)', '')
-        # delete_multiselect.options[current_index] = delete_multiselect.options[current_index].replace('* (highest val. accuracy)', '')
-        predict_select.options[current_index] = predict_select.options[current_index].replace('* (highest val. accuracy)', '')
+        test_save_select.options[current_index] = test_save_select.options[current_index].replace('*', '')
+        # delete_multiselect.options[current_index] = delete_multiselect.options[current_index].replace('*', '')
+        predict_select.options[current_index] = predict_select.options[current_index].replace('*', '')
 
 
         if val_accuracy[current_index] > high_score[2]:
@@ -1480,9 +1486,9 @@ def save_model():
             high_score.append(current_index)
             high_score.append(val_accuracy[int(test_save_select.options[current_index])-1])
 
-    test_save_select.options[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
-    # delete_multiselect.options[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
-    predict_select.options[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
+    test_save_select.options[high_score[1]] = str(high_score[0]) + '*'
+    # delete_multiselect.options[high_score[1]] = str(high_score[0]) + '*'
+    predict_select.options[high_score[1]] = str(high_score[0]) + '*'
 
 
     temp_test_status_message.text = 'Not running'
@@ -1545,7 +1551,7 @@ def delete_save():
     opt = temp.copy()
     for i in opt:
         current_index = opt.index(str(i))
-        opt[current_index] = opt[current_index].replace('* (highest val. accuracy)', '')
+        opt[current_index] = opt[current_index].replace('*', '')
 
         if val_accuracy[current_index] > high_score[2]:
             high_score.clear()
@@ -1553,7 +1559,7 @@ def delete_save():
             high_score.append(current_index)
             high_score.append(val_accuracy[int(opt[current_index])-1])
 
-    opt[high_score[1]] = str(high_score[0]) + '* (highest val. accuracy)'
+    opt[high_score[1]] = str(high_score[0]) + '*'
 
 
     test_save_select.update(
@@ -2209,12 +2215,12 @@ delete_layout = layout(
 tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 test_button_layout = layout(
-    [column(step_four, test_save_select, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
+    [column(step_four, test_save_select, asterisk, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
 )
 
 tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
 
-tab4_layout = row(left_page_spacer, column(top_page_spacer, step_five, predict_select, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message, step_five_warning), column(top_page_spacer, predict_display))
+tab4_layout = row(left_page_spacer, column(top_page_spacer, step_five, predict_select, asterisk, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message, step_five_warning), column(top_page_spacer, predict_display))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Steps'),
                     TabPanel(child = tab1_layout, title = 'Data'),
