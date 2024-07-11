@@ -5,6 +5,7 @@ import os
 import random
 import base64
 from math import nan
+
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer, layout
 from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, Button, RangeSlider, Select, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
@@ -16,11 +17,12 @@ from bokeh.transform import dodge
 import pubchempy
 from rdkit import Chem, RDLogger
 from rdkit.Chem import DataStructs, Descriptors, AllChem
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+
 from sklearn.exceptions import ConvergenceWarning
 from bokeh.util.warnings import BokehUserWarning, warnings
 from datetime import datetime
@@ -31,16 +33,7 @@ warnings.simplefilter(action='ignore', category=BokehUserWarning)
 warnings.simplefilter(action='ignore', category=ConvergenceWarning)
 
 
-#CONTENTS/HEADERS throughout this code
-# message styles, accuracy lists, status messages, buttons
-# instructions
-# data selection, data split, interactive data exploration, save data button
-# algorithm select and run
-# hyperparameter tuning + button, box plot and save
-# testing
-# visibility, layouts
-
-# ---------------MESSAGE STYLES----------------- #
+# --------------- MESSAGE STYLES --------------- #
 
 header = {'color': 'black', 'font-size': '18px'}
 not_updated = {'color': 'red', 'font-size': '14px'}
@@ -48,11 +41,11 @@ loading = {'color': 'orange', 'font-size': '14px'}
 updated = {'color': 'green', 'font-size': '14px'}
 completed = {'color': 'black', 'font-size': '14px'}
 
-# ---------------ACCURACY LISTS----------------- #
-# Create empty list - declare at the top to use everywhere
+# --------------- ACCURACY LISTS --------------- #
+# declare at the top to use everywhere
 val_accuracy = []
 
-# ---------------STATUS MESSAGES----------------- #
+# --------------- STATUS MESSAGES --------------- #
 
 step_one = Div(text='<b>1) PREPARE DATA</b>', styles=header)
 step_two = Div(text='<b>2) TRAIN</b>', styles=header)
@@ -67,7 +60,7 @@ temp_test_status_message = Div(text='Not running', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
 delete_status_message = Div(text='Changes not saved', styles = not_updated)
 
-# -------------------BUTTONS-------------------- #
+# --------------- BUTTONS --------------- #
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning", width = 250)
 train_button = Button(label="Run ML algorithm", button_type="success", width=150, height = 31)
@@ -85,7 +78,7 @@ data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primar
 export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
 export_csv = Button(label="Download Full Table to CSV (.csv)", width=200, height=31)
 
-# -----------------HTML TEMPLATES----------------- #
+# --------------- HTML TEMPLATES --------------- #
 html_val_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -388,7 +381,7 @@ html_warning_template = """
 </html>
 """
 
-# -----------------INSTRUCTIONS-----------------
+# --------------- INSTRUCTIONS --------------- #
 intro_instr_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -624,7 +617,7 @@ predict_instr = Div(text="""
                  </div>""",
 width=160, height=60)
 
-# ---------------- UPDATE INSTRUCTIONS COLORS -------------------
+# --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
     bg_1 = '#fafafa'
     bg_2 = '#fafafa'
@@ -673,7 +666,9 @@ def update_color():
     
     intro_instr.text = new_formatted_instr_html
 
-# --------------- DATA SELECTION ---------------
+###########################################################
+# --------------- DATA LOAD AND SELECTION --------------- #
+###########################################################
 
 #for ref:
 # df is original csv, holds fingerprint list and 167 cols of fingerprint bits
@@ -889,12 +884,9 @@ save_config_button.on_click(load_config)
 # --------------- HISTOGRAM --------------- #
 #############################################
 
-# Split data based on the class
+# Split data based on the class - int == works!! tested in histogram.py
 class_0 = df1[df1['Class'] == 0]
 class_1 = df1[df1['Class'] == 1]
-
-# print(class_0.shape)
-# print(class_1.shape)
 
 # Default histogram column
 default_hist_column = 'Class'
@@ -949,7 +941,6 @@ histogram.ygrid.grid_line_color = "gray"
 histogram.ygrid.grid_line_dash = [6, 4]
 
 # Create a Select widget for choosing histogram column
-# hist_options = df1.columns[2:16].tolist() # CHANGE THIS LINE FOR THE OPTIONS. 
 hist_options = ['Class',
                 'MolWt',
                 'NumValenceElectrons',
@@ -1012,9 +1003,9 @@ def update_hist(attrname, old, new):
 hist_x_select.on_change('value', update_hist)
 
 
-######################################################
-# --------------- LEARNING CURVE ---------------# 
-######################################################
+##################################################
+# --------------- LEARNING CURVE --------------- # 
+##################################################
 
 sizes = np.linspace(.01, 1.0, 15)
 train_scores = []
@@ -1216,7 +1207,6 @@ test_accuracy = 0.0
 
 # Attach callback to Select widget
 alg_select.on_change('value', update_algorithm)
-# alg_select.on_change('value', set_hyperparameter_widgets)
 
 
 def run_ML():
@@ -1234,16 +1224,13 @@ def run_ML():
 
     update_color()
 
-    # set_hyperparameter_widgets()
     train_validate_model()
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
 
     temp_df = all_df[data_index]
-    temp_cols = all_cols[data_index]
-    #print(temp_df)
-    
+    temp_cols = all_cols[data_index]    
 
     X = temp_df[temp_cols]
     y = df['Class']
@@ -1311,12 +1298,6 @@ def set_learning_curve():
 ##################################################################
 # --------------- HYPERPARAMETER TUNING + BUTTON --------------- #
 ##################################################################
-
-# a list of an int an string
-## decision tree - int/nan, string
-## KNN - int, string
-## SVC - int, ""
-
 
 # create displays
 tuned_accuracy_display = Div(text = """
@@ -1413,7 +1394,6 @@ def load_tuned_config():
     
     curdoc().add_next_tick_callback(run_tuned_config)
 
-# Can connect to the old funcs
 tune_button.on_click(load_tuned_config)
 
 
@@ -1525,8 +1505,6 @@ def save_model():
 
     add_row()
 
-
-
 # Add new row to datatable every time a plot is saved
 def add_row():
     new_saved_data = {
@@ -1609,7 +1587,7 @@ delete_button.on_click(load_delete_save)
 delete_multiselect.on_change('value', del_multiselect_callback)
 
 #############################################
-# --------------- TESTING ----------------- #
+# --------------- TESTING --------------- #
 #############################################
 
 true_pos = nan
@@ -1716,7 +1694,7 @@ def update_cmatrix(attrname, old, new):
     # bubble.scatter(fill_color = transform('count', new_color_mapper)
 
 ###################################################
-# --------------- NEW DATA TABLE ---------------- #
+# --------------- NEW DATA TABLE --------------- #
 ###################################################
 
 indices = []
@@ -1854,24 +1832,22 @@ def train_test_model():
     temp_test_status_message.styles = updated
     update_color()
 
-def run_test():
-    global my_alg, stage
-    stage = 'Test'
-    global model
+# def run_test():
+#     global my_alg, stage
+#     stage = 'Test'
+#     global model
 
-    train_test_model()
-
-    # Updating accuracy display
+#     train_test_model()
 
 def load_test():
     temp_test_status_message.text = "Testing..."
     temp_test_status_message.styles = loading
     
-    curdoc().add_next_tick_callback(run_test)
+    curdoc().add_next_tick_callback(train_test_model)
 
 test_button.on_click(load_test)
 
-# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) --------------------------- #
+# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) --------------- #
 def helper():
     global b64_excel_data
     # Convert source into df
@@ -2032,7 +2008,7 @@ def predict_biodegrad():
     else:
         actual_class = 'Unknown'
 
-    predict_status_message.text = 'Complete'
+    predict_status_message.text = 'Prediction complete'
     predict_status_message.styles = updated
 
     update_color()
@@ -2194,7 +2170,7 @@ def toggle_step_five_warn():
 predict_button.on_click(toggle_step_five_warn)
 
 
-# --------------- LAYOUTS ---------------
+# --------------- LAYOUTS --------------- 
 
 tiny_height_spacer = Spacer(height = 15)
 small_height_spacer = Spacer(height = 16)
@@ -2236,9 +2212,6 @@ delete_layout = layout(
 )
 
 tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
-
-# save_layout = row(column(test_save_select, display_save_button), saved_data_table)
-
 
 test_button_layout = layout(
     [column(step_four, test_save_select, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]

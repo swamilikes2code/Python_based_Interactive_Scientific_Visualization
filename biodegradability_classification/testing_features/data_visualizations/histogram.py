@@ -15,6 +15,7 @@ df = pd.read_csv(file_path)
 class_0 = df[df['Class'] == 0]
 class_1 = df[df['Class'] == 1]
 
+# print(df.shape)
 # print(class_0.shape)
 # print(class_1.shape)
 
