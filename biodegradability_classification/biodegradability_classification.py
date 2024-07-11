@@ -73,7 +73,8 @@ predict_button = Button(label = 'Predict', button_type = "success", width = 200,
 up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>''')
 down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" /></svg>''')
 
-data_exp_vis_button = Button(label="Show Data Exploration*", button_type="primary", icon = down_arrow)
+# still calling it data exploration for now instead of "Show Histogram" as it's less descriptive
+hist_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
 export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
 export_csv = Button(label="Download Full Table to CSV (.csv)", width=200, height=31)
@@ -2037,26 +2038,20 @@ smiles_select.on_change('value', update_predict_status)
 
 # ---------------- VISIBILITY --------------
 
-# # Data exploration plot
-# datavis_help.visible = False
-# data_exp.visible = False
-# select_x.visible = False
-# select_y.visible = False
+# Histogram
+histogram.visible = False
+hist_x_select.visible = False
 
-# # Callback function to toggle visibility
-# def toggle_data_exp_visibility():
-#     datavis_help.visible = not datavis_help.visible
-#     data_exp.visible = not data_exp.visible
-#     select_x.visible = not select_x.visible
-#     select_y.visible = not select_y.visible
-#     data_exp_vis_button.label = "Show Data Exploration*" if not data_exp.visible else "Hide Data Exploration*"
-#     data_exp_vis_button.icon = down_arrow if not data_exp.visible else up_arrow
+def toggle_hist_visibility():
+    histogram.visible = not histogram.visible
+    hist_x_select.visible = not hist_x_select.visible
+    hist_visibility_button.label = "Show Data Exploration*" if not histogram.visible else "Hide Data Exploration*"
+    hist_visibility_button.icon = down_arrow if not histogram.visible else up_arrow
 
-# # Link the button to the callback
-# data_exp_vis_button.on_click(toggle_data_exp_visibility)
+hist_visibility_button.on_click(toggle_hist_visibility)
+
 
 # Custom SMILES String input
-
 user_smiles_input.visible = False
 predict_instr.visible = False
 
@@ -2194,7 +2189,7 @@ data_config_layout = layout(
     [column(save_config_button, save_config_message)]
 )
 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer, hist_x_select, histogram))
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer, hist_visibility_button, hist_x_select, histogram))
 
 hyperparam_layout = layout(
     [step_three],
