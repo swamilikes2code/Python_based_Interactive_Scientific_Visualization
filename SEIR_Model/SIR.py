@@ -12,7 +12,7 @@ from scipy.integrate import solve_ivp
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from bokeh.models import (ColumnDataSource, Slider, TableColumn, DataTable, Button, TabPanel, Tabs, GraphRenderer, Div, Arrow, OpenHead, 
-                          BoxSelectTool, Circle, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool)
+                          BoxSelectTool, Scatter, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool)
 from bokeh.plotting import figure, from_networkx
 from math import exp
 from bokeh.palettes import Spectral4, Colorblind8
@@ -207,10 +207,10 @@ graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
 #creating the nodes/circles for the network graph
 graph_renderer.node_renderer.data_source.add(Colorblind8, 'color')
 graph_renderer.node_renderer.data_source.add(practice_sizes, 'size')
-graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+graph_renderer.node_renderer.glyph = Scatter(size='size', fill_color='color')
 graph_renderer.node_renderer.data_source.data['name'] =['Susceptible', 'Exposed', 'Unknown Asymptomatic Infected', 'Known Asymptomatic Infected', 'Non-Hospitalized Symptomatic Infected', 'Hospitalized Symptomatic Infected', 'Recovered', 'Dead']
-graph_renderer.node_renderer.selection_glyph = Circle(size=30, fill_color=Spectral4[2])
-graph_renderer.node_renderer.hover_glyph = Circle(size=30, fill_color=Spectral4[1])
+graph_renderer.node_renderer.selection_glyph = Scatter(size='size', fill_color=Spectral4[2])
+graph_renderer.node_renderer.hover_glyph = Scatter(size='size', fill_color=Spectral4[1])
 graph_renderer.node_renderer.data_source
 
 #Creating the edges for the network graph
@@ -241,7 +241,7 @@ start_vals=[Sb[0]/2.3, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2.
 current_source=ColumnDataSource(data=dict(sizes=start_vals))
 #updating the node sizes
 graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
-graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+graph_renderer.node_renderer.glyph = Scatter(size='size', fill_color='color')
 
 #when edge is hovered over, will display a description of the movement of individuals along that edge
 hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
@@ -276,7 +276,7 @@ def update_data_bubble(attr, old, new): #when time slider value changes the grap
     current_source.data=dict(sizes=new_dict)
     bar_source.data=dict(tall=new_bar, names=class_names, colors=Colorblind8)
     graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
-    graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+    graph_renderer.node_renderer.glyph = Scatter(size='size', fill_color='color')
     
 def animate_update(): #this function animates the graph by continually increasing the time point being looked at 
     day = time_slider.value
@@ -286,7 +286,7 @@ def animate_update(): #this function animates the graph by continually increasin
         current_source.data=dict(sizes=new_dict)
         bar_source.data=dict(tall=new_bar, names=class_names, colors=Colorblind8)
         graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size')
-        graph_renderer.node_renderer.glyph = Circle(size='size', fill_color='color')
+        graph_renderer.node_renderer.glyph = Scatter(size='size', fill_color='color')
         time_slider.value = day+1 #progress to next time unit
         
 
