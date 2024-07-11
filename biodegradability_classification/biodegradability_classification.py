@@ -616,7 +616,7 @@ asterisk = Div(text="""
                  <div style='background-color: #ffffff;'>
                     *Highest validation accuracy
                  </div>""",
-width=160, height=20)
+width=200, height=20)
 
 # --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
