@@ -450,43 +450,102 @@ nav li {
       </div>
   
       <div class="flexwrap1">
-      <div id="Algorithms" class="tabcontent">
-        <div class="row">
-        <h3>Using the Algorithms</h3>
-            <p>For this assessment, you will have the choice between 3 <b>Machine Learning algorithms</b>, 
-              each of which has its own strengths and weaknesses:</p>
-        </div>
-
-        <div class="row">
-          <div class="column_3">
-            <b>Decision Tree (DT):</b> Flowchart-like structure, narrows down choices given a large sample.
-            <ul>
-              <li><b>Pros:</b> Simple, handles numerical & categorical data</li>
-              <li><b>Cons:</b> Small changes can largely impact data</li>
-              </ul>
-            <img src="{{url_for('static', filename='tree_one.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+        <div id="Algorithms" class="tabcontent">
+          <div class="row">
+          <h3>Using the Algorithms</h3>
+              <p>For this module, you will have the choice between three <b>supervised learning algorithms,</b> each of which has its own strengths and weaknesses:</p>
           </div>
 
-          <div class="column_3">
-            <b>K-Nearest Neighbor (KNN):</b> Compares input to rest of data, determining which data 
-              the input is most similar to.
-            <ul>
-              <li><b>Pros:</b> Non-parametric, versatile </li>
-              <li><b>Cons:</b> Memory intensive, exhibits <b>curse of dimensionality</b></li>
+          <div class="row">
+            <div class="column_3">
+              <p><b>Decision Tree (DT):</b></p>
+              <p>Flowchart like structure, narrows down choices given a large sample.</p>
+                <ul>
+                  <li>Pros: Simple, handles numerical & categorical data</li>
+                  <li>Cons: Small changes can largely impact data</li>
+                </ul>
+              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+              <p><b>Hyperparameters:</b></p>
+              <ul>
+                <li>Max depth of tree</li>
+                <ul>
+                  <li>How far the tree is allowed to go</li>
+                  <li>Higher depths can fit data better, but too far can also <b>overfit</b> data</li>
+                </ul>
+                <li>Splitter strategy:</li>
+                <ul>
+                  <li>Best</li>
+                  <ul>
+                    <li>Chooses best split at each node</li>
+                  </ul>
+                  <li>Random</li>
+                  <ul>
+                    <li>Chooses best random split at each node</li>
+                  </ul>
+                </ul>
               </ul>
-          </div>
+            </div>
 
-          <div class="column_3">
-            <b>Support Vector Classification (SVC):</b> Separates classes using a line.
-            <ul>
-              <li><b>Pros:</b> Handles large datasets, memory efficient</li>
-              <li><b>Cons:</b> Computationally expensive, sensitive to noisy data</li>
+            <div class="column_3">
+              <p><b>K-Nearest Neighbor (KNN):</b></p>
+              <p>Compares input to a set amount of data, determining which data the input is most similar to.</p>
+                <ul>
+                  <li>Pros: Non-parametric, versatile</li>
+                  <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
+                </ul>
+              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+              <p><b>Hyperparameters:</b></p>
+              <ul>
+                <li>Number of neighbors</li>
+                <ul>
+                  <li>How many neighbors near a point will be used to classify that point</li>
+                  <li>Fewer neighbors can fit data better, but too few can <b>overfit</b> data</li>
+                </ul>
+                <li>Weights:</li>
+                <ul>
+                  <li>Uniform</li>
+                  <ul>
+                    <li>All nearby points are weighted equally</li>
+                  </ul>
+                  <li>Distance</li>
+                  <ul>
+                    <li>Closer neighbors are weighted more than further ones</li>
+                  </ul>
+                </ul>
               </ul>
+            </div>
+
+            <div class="column_3">
+              <p><b>Logistic Regression (LR):</b></p>
+              <p>Creates a <b>classification</b> boundary using logarithmic probabilities.</p>
+                <ul>
+                  <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
+                  <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
+                </ul>
+              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+              <p><b>Hyperparameters:</b></p>
+              <ul>
+                <li>Regularization Parameter (C)</li>
+                <ul>
+                  <li>How smooth the decision boundary will be</li>
+                  <li>Higher values can fit data better, but can also <b>overfit</b> data</li>
+                </ul>
+                <li>Solver</li>
+                <ul>
+                  <li>The particular algorithm being used to classify</li>
+                  <ul>
+                    <li>LBFGS, Limited-memory Broyden-Fletcher-Goldfarb-Shanno</li>
+                    <li>liblinear, large-scale linear classification</li>
+                    <li>SAGA, Stochastic Average Gradient Descent </li>
+                  </ul>
+                </ul>
+              </ul>
+            </div> 
           </div>
         </div>
       </div>
-      </div>
 
+      
       <div class="flexwrap1">
       <div id="Overfitting" class="tabcontent">
         <h3>Generalize Don't Memorize</h3>
