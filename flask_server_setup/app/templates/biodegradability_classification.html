@@ -464,7 +464,7 @@ nav li {
                   <li>Pros: Simple, handles numerical & categorical data</li>
                   <li>Cons: Small changes can largely impact data</li>
                 </ul>
-              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Max depth of tree</li>
@@ -493,7 +493,7 @@ nav li {
                   <li>Pros: Non-parametric, versatile</li>
                   <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
                 </ul>
-              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Number of neighbors</li>
@@ -522,7 +522,7 @@ nav li {
                   <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
                   <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
                 </ul>
-              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Regularization Parameter (C)</li>
@@ -593,27 +593,52 @@ nav li {
 
       <div class="flexwrap1">
         <div id="Glossary" class="tabcontent">
-          <h3>Glossary</h3>
-          <p>The goal of our module is to teach the user about the <b>biodegradability</b> of organic chemicals through 
-            <b>machine learning</b> and <b>data science</b> principles.</p>
-          
-          <p>Our module gives the user all of the options and tools needed to build a machine learning model, step-by-step. 
-            This includes selecting the data and type of <b>algorithm</b> to use, fine-tuning <b>hyperparameters</b>, evaluating 
-            the model's performance, and feeding the model new, unseen instances of organic chemicals, which the model will be able to 
-            predict and classify as <b>"readily biodegradable"</b> or <b>"not readily biodegradable."</b></p>
-  
-          <p>By giving the user these tools, they will be able to see what chemical properties are highly correlated to biodegradability, 
-            and which machine learning and data science practices help improve this model's accuracy.</p>
-         </div>
+          <p><b>Biodegradability:</b> how capable a molecule is of being broken down</p>
+          <ul>
+            <li>Non-ready biodegradability: (< 60% biodegradation within 28 days)</li>
+            <li>Ready biodegradability: (> 60% biodegradation within 28 days)</li>
+          </ul>
+          <p><b>Class:</b> the categorical group that a data point belongs to</p>
+          <ul>
+            <li>In the context of this module: 0 = Not-readily biodegradable, 1 = Readily biodegradable</li>
+          </ul>
+          <p><b>Curse of dimensionality:</b> refers to the idea that increasing the number of features/dimensions 
+            greatly increases the volume of the data space, posing an issue when not every combination of values 
+            can be accounted for by the given data set; due to this, more features does not equate to better performance</p>
+          <p><b>Data Preparation:</b> the stage where data is chosen, properly cleansed/adjusted, and split to be used throughout the 
+            development process</p>
+          <p><b>Feature:</b> what the model is trained on; the model finds patterns in the feature data and makes predictions from them</p>
+          <p><b>Fingerprint:</b> a binary representation of the molecule's substructures</p>
+          <ul>
+            <li>Morgan Fingerprint</li>
+            <li>Extended Connectivity Fingerprint (ECFP)</li>
+            <li>Path Fingerprint</li>
+          </ul>
+          <p><b>Hyperparameter:</b> settings of the model that the user sets in order to affect the model's performance</p>
+          <p><b>Simplified Molecular-Input Line-Entry System (SMILES) String:</b> a computer-friendly string representation of a molecule's 
+            three-dimensional structure</p>
+          <p><b>Supervised learning algorithm:</b> an algorithm that learns from datasets to predict outcomes</p>
+          <ul>
+            <li>Classification: determines predefined classes (qualitative)</li>
+            <li>Regression: determines numerical data (quantitative)</li>
+          </ul>
+          <p><b>Testing:</b> the model is evaluated on completely unseen data to determine its final/true performance</p>
+          <p><b>Training:</b> the model learns patterns from the given data to be evaluated later</p>
+          <p><b>Overfitting:</b> a phenomenon where the model learns the training data too well leading to excellent training performance 
+            but poor generalization to new data</p>
+          <p><b>Underfitting:</b> a phenomenon where the model fails to learn enough from the data, resulting in poor performance on both 
+            training and unseen data </p>
+          <p><b>Validation:</b> the model's prediction results are checked on another set of data while optimizing its hyperparameters to improve its performance</p>
         </div>
+      </div>
       
       <div class="flexwrap1">
         <div id="Questions" class="tabcontent">
           <h3>Supplemental Questions</h3>
-            <p>Leave any <b>questions</b> or <b>comments</b> you have on our module in 
-              the <b>Google Form</b> below.</p>
-              </div>
-            </div>
+            <p>WE STILL NEED TO UPDATE THIS TAB.</p>
+        </div>
+      </div>
+
   <script>
     function openTab(evt, tabName) {
       var i, tabcontent, tablinks;
