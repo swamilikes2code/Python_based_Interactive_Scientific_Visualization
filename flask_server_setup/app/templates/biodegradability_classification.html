@@ -394,66 +394,59 @@ nav li {
       </div>
       
       <div class="flexwrap1">
-      <div id="Dataset" class="tabcontent">
-        <h3>Working With the Dataset</h3>
+        <div id="Dataset" class="tabcontent">
+          <h3>Working With the Dataset</h3>
 
-        <div class="row">
-          <div class="column_4">
-            <h3>Class:</h3>
-            <p>This is the value we are training the model to find. It is a binary representation of biodegradability, where...</p>
-            <p>
-              <ul>
-              <li><b>Ready biodegradability</b> (> 60% biodegradation within 28 days) = (<b>1</b>)</li>
-              <li><b>Non-ready biodegradability</b> (< 60% biodegradation within 28 days)  = (<b>0</b>)</li>
-            </ul></p>
+          <div class="row">
+            <div class="column_4">
+              <h3>Class:</h3>
+              <p>This is the value the model is trained to determine. It is a binary representation of <b>biodegradability</b>, where...</p>
+              <p>
+                <ul>
+                  <li><b>Non-ready biodegradability</b> = (<b>0</b>)</li>
+                  <li><b>Ready biodegradability</b> = (<b>1</b>)</li>
+                </ul></p>
+            </div>
+
+            <div class="column_4">
+              <h3>Features:</h3>
+              <p>You will have a choice between four <b>feature</b> groups to use throughout the process:</p>
+              <p>
+                <ul>
+                  <li>A list of over 200 molecular properties</li>
+                  <li>Three different <b>fingerprints</b></li>
+                  <ul>
+                    <li>Morgan Fingerprint</li>
+                    <li>ECFP2</li>
+                    <li>Path Fingerprint</li>
+                  </ul>
+                </ul></p>
+              <p>These values are produced by passing a <b>SMILES string</b> to the program, which identifies the molecule 
+                and generates values for it.</p>
+            </div>
+
+            <div class="column_4">
+              <h3>Selecting/Dropping Data:</h3>
+              <p>Choosing which features will be used to train the model is an important step in <b>data preparation.</b></p>
+              <p>While one might assume that using more <b>features</b> would lead to better accuracy, this is not necessarily 
+                the case. This is referred to as the <b>curse of dimensionality</b>.</p>
+              <p>These ideas should be kept in mind when choosing whether to use molecular properties or one of the <b>fingerprints</b> 
+                to train your model.</p>
+            </div>
+
+            <div class="column_4">
+              <h3>Splitting Data:</h3>
+              <p>The data is the split into three segments to be used throughout the making of the model: <b>training, validation,</b> and <b>testing.</b></p>
+            </div>
+
           </div>
 
-          <div class="column_4">
-            <h3>SMILES String:</h3>
-            <p>
-              <ul>
-              <li><b>SMILES String:</b> A code representation of the organic chemical's formula/structure.</li>
-            </ul></p>
-          </div>
-
-          <div class="column_4">
-            <h3>Fingerprints:</h3>
-            <p>
-              <ul>
-              <li><b>Fingerprint:</b> A binary representation of the molecule's substructures.</li>
-              <li>For training their model, the user will have the choice between three fingerprints:</li>
-              <ul>
-                <li><b>Morgan Fingerprint</b></li>
-                <li><b>ECFP2</b></li>
-                <li><b>Path Fingerprint</b></li>
-              </ul>
-            </ul></p>
-          </div>
-
-          <div class="column_4">
-            <h3>Features:</h3>
-            <p>
-              <ul>
-              <li><b>Features:</b> A list of over 200 molecular/electronic properties, including...</li>
-              <li>For training their model, the user will have the choice between three fingerprints:</li>
-              <ul>
-                <li>molecular weight</li>
-                <li>number of valence electrons</li>
-                <li>number of aromatic rings</li>
-                <li>H Donor vs. Acceptor</li>
-                <li>etc.</li>
-              </ul>
-            </ul></p>
+          <div class="row">
+          <p><b>NOTE:</b> The data table shows only a preview of 15 of the chemicals in the dataset. In reality, the dataset contains over 6000 chemicals.
+            For more information about where the the dataset came from, see 
+            <a href="https://pubs.acs.org/doi/full/10.1021/acs.est.2c01764?casa_token=0tiijjgXmCgAAAAA%3A8KfqOPS7ASRDqKUDSQpEFw4r5iX8rABFY2JU21CzluPIHT37AprYFbIxjoKlPOLQ_7e7-0w2-6IziVFruQ"> the original study.</a></p>
           </div>
         </div>
-
-        <div class="row">
-        <p><b>NOTE:</b> The data table shows only a preview of 15 of the chemicals in the dataset. In reality, 
-          the dataset contains over 6000 chemicals. For more information about where the the dataset came from, visit 
-          <a href="url">https://pubs.acs.org/doi/full/10.1021/acs.est.2c01764?casa_token=0tiijjgXmCgAAAAA%3A8KfqOPS7ASRDqKUDSQpEFw4r5iX8rABFY2JU21CzluPIHT37AprYFbIxjoKlPOLQ_7e7-0w2-6IziVFruQ</a>
-          </p>
-        </div>
-      </div>
       </div>
   
       <div class="flexwrap1">
