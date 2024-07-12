@@ -371,11 +371,10 @@ nav li {
     <h1 class="head1">Biodegradability Classification</h1>
     <div class="tab">
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Introduction')" id="defaultOpen">Introduction</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Our Dataset')">Our Dataset</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Preparing Data')">Preparing Data</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Algorithms</button>
-        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Hyperparameters')">Hyperparameters</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Dataset')">Our Dataset</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Algorithms')">Preparing Data</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Overfitting')">Overfitting</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Glossary')">Glossary</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
       </div>
   
@@ -396,8 +395,8 @@ nav li {
       </div>
       
       <div class="flexwrap1">
-      <div id="Our Dataset" class="tabcontent">
-        <h3>About our dataset</h3>
+      <div id="Dataset" class="tabcontent">
+        <h3>Working With the Dataset</h3>
 
         <div class="row">
           <div class="column_4">
@@ -459,55 +458,9 @@ nav li {
       </div>
   
       <div class="flexwrap1">
-      <div id="Preparing Data" class="tabcontent">
-        <h3>Preparing Data</h3>
-        <div class="row">
-          <p>Before training can begin, several decisions must be made in terms of preparing data, 
-            and choosing the type of algorithm:</p>
-        </div>
-        
-        <div class="row">
-          <div class="column_3">
-            <h3>Selecting/Dropping Data:</h3>
-            <p>Choosing which properties will or won't be used to train the model is an important step 
-              in <b>data preparation.</b></p>
-            <p>While one might assume that using more properties would lead to better accuracy, 
-              this is not necessarily the case. This is referred to as the <b>curse of dimensionality</b>, 
-              where including too much data can worsen the decision-making of Machine Learning algorithms.</p>
-            <p>The user should keep this in mind when choosing whether to use <b>features</b> or one of the 
-              <b>fingerprints</b> to train their model.</p>
-          </div>
-
-          <div class="column_3">
-            <h3>Splitting Data:</h3>
-            <p>The next stage, <b>splitting data</b> can be broken down into three steps:</p>
-            <ul>
-              <li><b>Training:</b> Helps the model learn patterns and relationships within the data.</li>
-              <li><b>Validation:</b> Tunes the model's parameters and selects the best mode, generalizing the data well.</li>
-              <li><b>Testing:</b> Evaluates the final model's performance on entirely unseen data.</li>
-              </ul>
-          </div>
-
-          <div class="column_3">
-            <h3>Classification vs. Regression:</h3>
-            <p>Classification and Regression are both supervised learning algorithms (learning from datasets to predict outcomes), 
-              however, there is a difference:</p>
-            <ul>
-              <li><b>Classification:</b> Determined by predefined classes (color, size, etc.)</li>
-              <li><b>Regression:</b> Determined by numerical data (prices, temperature, etc.)
-              </li>
-              </ul>
-            <p>Because our module is focused on the binary property of ready biodegradability, 
-              we will be using <b>Classification.</b></p>
-          </div>
-        </div>
-      </div>
-      </div>
-
-      <div class="flexwrap1">
       <div id="Algorithms" class="tabcontent">
         <div class="row">
-        <h3>Our Algorithms</h3>
+        <h3>Using the Algorithms</h3>
             <p>For this assessment, you will have the choice between 3 <b>Machine Learning algorithms</b>, 
               each of which has its own strengths and weaknesses:</p>
         </div>
@@ -543,122 +496,68 @@ nav li {
       </div>
 
       <div class="flexwrap1">
-        <div id="Hyperparameters" class="tabcontent">
-          <div class="row">
-            <h3>Hyperparameter Tuning</h3>
-              <p><b>Hyperparameter tuning</b> is the process of finding the best set of hyperparameters for a machine learning 
-                algorithm by selecting the optimal values to improve the model's performance. However, be careful of <b>overfitting</b>. 
-                This occurs when the model essentially "memorizes" its training data, resulting in higher accuracy values for training data, 
-                but lower accuracy for new data. Depending on your chosen ML algorithm, you will be able to tune the following hyperparameters:</p>
+      <div id="Overfitting" class="tabcontent">
+        <h3>Generalize Don't Memorize</h3>
+        <div class="row">
+          <p>Underfitting occurs when a model fails to learn enough from the data, resulting in poor 
+            performance on both training and unseen data. Overfitting happens when a model learns the 
+            training data too well leading to excellent training performance but poor generalization to 
+            new data. To prevent under or overfitting, data scientists should split datasets into 
+            training (60-80%), validation (10-20%), and testing (10-20%) sets and choose appropriate 
+            hyperparameters for the respective algorithm. Learning curves, which show performance 
+            changes as more data is introduced, can help identify if under or overfitting is occuring. Below are 
+            examples of models that are either underfitting, overfitting, or are optimal and their 
+            respective learning curves.</p>
+        </div>
+        
+        <div class="row">
+          <div class="column_3">
+            <h3>Underfitting model</h3>
+            <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+            <br>
+            <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+            <p>This model exhibits high loss and low accuracy, failing to capture the data's general trends due to its overly simplistic linear decision boundary. With an accuracy of 58.8%, its performance in predicting biodegradability is only marginally better than random chance like flipping a coin. </p>
           </div>
 
-          <div class="row">
-            <div class="column_3">
-              <p>For Decision Tree (DT):</p>
-              <ul>
-                <li><b>Max depth of tree</b></li>
-                <ul>
-                  <li>How far the tree is allowed to go</li>
-                  <li>Higher depths can fit data better, but can also <b>overfit</b> data</li>
-                  </ul>
-                <li><b>Splitter strategy:</b></li>
-                <ul>
-                  <li>Best</li>
-                  <ul>
-                    <li>Chooses best split at each node</li>
-                    </ul>
-                  <li>Random</li>
-                  <ul>
-                    <li>Chooses best random split at each node</li>
-                    </ul>
-                  </ul>
-                </ul>
-              </div>
-            <div class="column_3">
-              <p>For K-Nearest Neighbor (KNN):</p>
-              <ul>
-                <li><b>Number of neighbors</b></li>
-                <ul>
-                  <li>How many neighbors near a point will be used to classify that point</li>
-                  <li>Fewer neighbors can fit data better, but k=1 will <b>overfit</b> data</li>
-                  </ul>
-                <li><b>Weights</b></li>
-                <ul>
-                  <li>Uniform</li>
-                  <ul>
-                    <li>All nearby points are weighted equally</li>
-                    </ul>
-                  <li>Distance</li>
-                  <ul>
-                    <li>Closer neighbors are weighted more than further ones</li>
-                    </ul>
-                  </ul>
-                  
-                </ul>
-            </div>
+          <div class="column_3">
+            <h3>Optimal model</h3>
+            <img src="{{url_for('static', filename='Optimal_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+            <br>
+            <img src="{{url_for('static', filename='Optimal_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+            <p>This model has low loss and high accuracy. It effectively captures the primary macro trends in the data. The learning curve shows consistent improvement on the validation set as the performance on the training set decreases, indicating strong generalization with a final accuracy of 72.8%.</p>
+          </div>
 
-            <div class="column_3">
-              <p>For Support Vector Classification (SVC):</p>
-              <ul>
-                <li><b>Regularization Parameter</b></li>
-                <ul>
-                  <li>How smooth the decision boundary will be</li>
-                  <li>Higher values can fit data better, but can also <b>overfit</b> data</li>
-                  </ul>
-                <li>In general, SVCs are the most resistant to <b>overfitting</b></li>
-                </ul>  
-            </div>
+          <div class="column_3">
+            <h3>Overfitting model</h3>
+            <img src="{{url_for('static', filename='Overfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+            <br>
+            <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
+            <p>This model possess low loss but low accuracy. It massively overfits the training data with 100% accuracy while the validation accuracy is much lower at 70.1%. Another indication of overfitting is if the training performance increases while the testing performance decreases.</p>
           </div>
         </div>
-        </div>
-        <div class="flexwrap1">
-        <div id="Overfitting" class="tabcontent">
-          <h3>Generalize Don't Memorize</h3>
-          <div class="row">
-            <p>Underfitting occurs when a model fails to learn enough from the data, resulting in poor 
-              performance on both training and unseen data. Overfitting happens when a model learns the 
-              training data too well leading to excellent training performance but poor generalization to 
-              new data. To prevent under or overfitting, data scientists should split datasets into 
-              training (60-80%), validation (10-20%), and testing (10-20%) sets and choose appropriate 
-              hyperparameters for the respective algorithm. Learning curves, which show performance 
-              changes as more data is introduced, can help identify if under or overfitting is occuring. Below are 
-              examples of models that are either underfitting, overfitting, or are optimal and their 
-              respective learning curves.</p>
-          </div>
+      </div>
+      </div>
+      </div>
+
+      <div class="flexwrap1">
+        <div id="Glossary" class="tabcontent">
+          <h3>Glossary</h3>
+          <p>The goal of our module is to teach the user about the <b>biodegradability</b> of organic chemicals through 
+            <b>machine learning</b> and <b>data science</b> principles.</p>
           
-          <div class="row">
-            <div class="column_3">
-              <h3>Underfitting model</h3>
-              <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <br>
-              <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>This model exhibits high loss and low accuracy, failing to capture the data's general trends due to its overly simplistic linear decision boundary. With an accuracy of 58.8%, its performance in predicting biodegradability is only marginally better than random chance like flipping a coin. </p>
-            </div>
+          <p>Our module gives the user all of the options and tools needed to build a machine learning model, step-by-step. 
+            This includes selecting the data and type of <b>algorithm</b> to use, fine-tuning <b>hyperparameters</b>, evaluating 
+            the model's performance, and feeding the model new, unseen instances of organic chemicals, which the model will be able to 
+            predict and classify as <b>"readily biodegradable"</b> or <b>"not readily biodegradable."</b></p>
   
-            <div class="column_3">
-              <h3>Optimal model</h3>
-              <img src="{{url_for('static', filename='Optimal_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <br>
-              <img src="{{url_for('static', filename='Optimal_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>This model has low loss and high accuracy. It effectively captures the primary macro trends in the data. The learning curve shows consistent improvement on the validation set as the performance on the training set decreases, indicating strong generalization with a final accuracy of 72.8%.</p>
-            </div>
-  
-            <div class="column_3">
-              <h3>Overfitting model</h3>
-              <img src="{{url_for('static', filename='Overfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <br>
-              <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>This model possess low loss but low accuracy. It massively overfits the training data with 100% accuracy while the validation accuracy is much lower at 70.1%. Another indication of overfitting is if the training performance increases while the testing performance decreases.</p>
-            </div>
-          </div>
+          <p>By giving the user these tools, they will be able to see what chemical properties are highly correlated to biodegradability, 
+            and which machine learning and data science practices help improve this model's accuracy.</p>
+         </div>
         </div>
-        </div>
-       </div>
-
       
       <div class="flexwrap1">
         <div id="Questions" class="tabcontent">
-          <h3>Questions?</h3>
+          <h3>Supplemental Questions</h3>
             <p>Leave any <b>questions</b> or <b>comments</b> you have on our module in 
               the <b>Google Form</b> below.</p>
               </div>
