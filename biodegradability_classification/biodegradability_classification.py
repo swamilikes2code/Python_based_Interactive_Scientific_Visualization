@@ -2269,8 +2269,7 @@ test_button_layout = layout(
     [asterisk],
     [test_button, test_help],
     [temp_test_status_message],
-    [step_four_warning],
-    [column(step_four, test_save_select, asterisk, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv, export_asterisk)]
+    [step_four_warning]
 )
 
 export_layout = layout(
