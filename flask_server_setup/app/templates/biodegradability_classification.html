@@ -478,6 +478,41 @@ nav li {
                   <li>Pros: Simple, handles numerical & categorical data</li>
                   <li>Cons: Small changes can largely impact data</li>
                 </ul>
+            </div>
+
+            <div class="column_3">
+              <h3>K-Nearest Neighbor (KNN):</h3>
+              <p>Compares input to a set amount of data, determining which data the input is most similar to.</p>
+                <ul>
+                  <li>Pros: Non-parametric, versatile</li>
+                  <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
+                </ul>
+            </div>
+
+            <div class="column_3">
+              <h3>Logistic Regression (LR):</h3>
+              <p>Creates a <b>classification</b> boundary using logarithmic probabilities.</p>
+                <ul>
+                  <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
+                  <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
+                </ul>
+            </div> 
+          </div>
+
+          <div class="row">
+            <div class="column_3">
+              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
+            </div>
+            <div class="column_3">
+              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
+            </div>
+            <div class="column_3">
+              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="column_3">
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Max depth of tree</li>
@@ -500,12 +535,6 @@ nav li {
             </div>
 
             <div class="column_3">
-              <h3>K-Nearest Neighbor (KNN):</h3>
-              <p>Compares input to a set amount of data, determining which data the input is most similar to.</p>
-                <ul>
-                  <li>Pros: Non-parametric, versatile</li>
-                  <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
-                </ul>
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Number of neighbors</li>
@@ -528,12 +557,6 @@ nav li {
             </div>
 
             <div class="column_3">
-              <h3>Logistic Regression (LR):</h3>
-              <p>Creates a <b>classification</b> boundary using logarithmic probabilities.</p>
-                <ul>
-                  <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
-                  <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
-                </ul>
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Regularization Parameter (C)</li>
@@ -551,21 +574,10 @@ nav li {
                   </ul>
                 </ul>
               </ul>
-            </div> 
-          </div>
-
-          <div class="row">
-            <div class="column_3">
-              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
-            </div>
-            <div class="column_3">
-              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
-            </div>
-            <div class="column_3">
-              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
             </div>
           </div>
         </div>
+
 
       
         <div id="Overfitting" class="tabcontent">
