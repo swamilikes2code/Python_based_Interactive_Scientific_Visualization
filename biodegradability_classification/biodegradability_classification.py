@@ -1884,6 +1884,8 @@ def load_test():
 test_button.on_click(load_test)
 
 # --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) --------------- #
+js_div = Div(text = ' ', visible = False)
+b64_excel_data = ''
 def helper():
     global b64_excel_data
     # Convert source into df
@@ -1904,44 +1906,42 @@ def helper():
     # Encode the binary data to base64
     b64_excel_data = base64.b64encode(excel_data).decode('UTF-8')
     # print(type(b64_excel_data))
+    js_xlsx.args = {'b64_excel_data' : b64_excel_data}
+    js_div.text += 'a '
 
-helper()
 
-def download_xlsx():
-    helper()
-    js_xlsx = CustomJS(args=dict(b64_excel_data=b64_excel_data), code="""
-        console.log('hi');
-        var filename = 'data_result.xlsx';
-        var filetext = atob(b64_excel_data.toString());
-        console.log(typeof b64_excel_data);
+js_xlsx = CustomJS(args={'b64_excel_data':b64_excel_data}, code="""
+    console.log('hi');
+    var filename = 'data_result.xlsx';
+    var filetext = atob(b64_excel_data.toString());
+    console.log(typeof b64_excel_data);
 
-        var buffer = new Uint8Array(filetext.length);
-        for (var i = 0; i < filetext.length; i++) {
-            buffer[i] = filetext.charCodeAt(i);
-        }
-        
-        var blob = new Blob([buffer], {"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-        var link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = filename;
-        link.target = '_blank';
-        link.style.visibility = 'hidden'
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        // link.dispatchEvent(new MouseEvent('click'))
-    """)
+    var buffer = new Uint8Array(filetext.length);
+    for (var i = 0; i < filetext.length; i++) {
+        buffer[i] = filetext.charCodeAt(i);
+    }
+    
+    var blob = new Blob([buffer], {"type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.target = '_blank';
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    // link.dispatchEvent(new MouseEvent('click'))
+""")
     # temp = PreText(text='')
     # temp.js_on_change('text',js_xlsx)
     # print(temp.text)
     # temp.text=''
     # temp.text='x'
     # print(temp.text)
-    export_excel.js_on_click(js_xlsx)
 
 
-export_excel.on_click(download_xlsx)
-# export_excel.js_on_click(js_xlsx)
+export_excel.on_click(helper)
+js_div.js_on_change('text', js_xlsx)
 
 # Create a CustomJS object with the JavaScript code
 # b64 = export_excel.on_click(download_xlsx)
@@ -2217,7 +2217,7 @@ left_page_spacer = Spacer(width = 20)
 large_left_page_spacer = Spacer(width = 90)
 
 # creating widget layouts
-tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr))
+tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr, js_div))
 
 data_config_layout = layout(
     [data_select, column(small_height_spacer)],
