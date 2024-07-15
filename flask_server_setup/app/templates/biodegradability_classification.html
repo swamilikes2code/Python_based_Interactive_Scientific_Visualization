@@ -274,9 +274,9 @@ margin: auto;
     padding-left: 5.21vw;
 }
 .flexcol6 {
-    width: 55%;
+    width: 75%;
     position: relative;
-    height: auto;
+
 }
 .footerbutton {
     margin: 5px 2px;
@@ -388,6 +388,7 @@ nav li {
 /* Links inside the dropdown */
 .dropdown-content a {
   padding: 12px 16px;
+  width: 240px;
   text-decoration: none;
   color: white;
   display: block;
@@ -554,7 +555,7 @@ nav li {
             </div>
 
             <div class="column_3">
-              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:100%; height: 100%; float: none">
+              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
               <div class="caption">K-Nearest Neighbor</div>
             </div>
 
@@ -759,132 +760,135 @@ tablinks[currentTab].click();
     <br>
 </body>
 <div class="footer1">
-    <div class="flexcol5">
-        <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" style="margin: 5px; width: 44.14vw; height: 8.854vw;">
+  <div class="container">
+      <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo";>
+  </div>
+
+  <div class="flexcol6">
+      <h2 style="font-family: Segoe UI; text-align:right; font-size: 18px; font-weight: 500; padding-right:10px; color: #fff;"> Acknowledgements</h2>
+  </div>
+</div>
+
+
+<div class="footer">
+  <div class="flexcol2">
+    <pre style="font-family: Segoe UI; text-align:center; font-size: 18px; font-weight: 250; color: #fff;">     Faculty & External Advisors:                                                  Developers:</pre>
+    <div class="flexwrap"> 
+      <div class="flexcol1">
+        <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='Raghu.jpg')}}" alt= "Raghu" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='grassi1.jpg')}}" alt= "Dr. Grassi" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='steve.jpg')}}" alt= "Steve" class="footerpic"> <br><br><br><br><br><br>
+        <img
+          src="{{url_for('static', filename='Joseph_Menicucci.jpg')}}"
+          alt="Joseph"
+          class="footerpic"
+        />
+        <br /><br /><br /><br /><br /><br />
+      </div>
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator <br><br> <a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="footerbutton">Bio</a></p><br><br><br><br><br><br>
+        <p> <strong>Dr. Raghuram Thiagarajan</strong> <br> Project Lead <br> <a href="https://www.linkedin.com/in/raghuramt/" class="fa fa-linkedin"></a> <a href="https://github.com/swamilikes2code" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="footerbutton">Memo</a></p><br><br><br><br><br><br>
+        <p> <strong>Steve Anthony</strong> <br> Tech Assistant<br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p><br><br><br><br><br><br>
+        <p>
+            <strong>Dr. Joseph Menicucci</strong> <br />
+            External Advisor<br /><br />
+            <a
+              href="https://engineering.lehigh.edu/faculty/joseph-menicucci"
+              class="footerbutton"
+              >Bio</a
+            >
+        </p>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    </div>    
+  </div>
+  <div class="flexcol4">
+    <div class="flexwrap">
+      <div class="flexcol1">
+        <img src="{{url_for('static', filename='Neel.jpg')}}" alt= "Neel" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='Timothy.jpg')}}" alt= "Timothy" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='Xu.jpg')}}" alt= "Xu" class="footerpic"> <br><br><br><br><br><br>
+        <img
+          src="{{url_for('static', filename='Alex_Pellett.jpg')}}"
+          alt="Alex Pellett"
+          class="footerpic"
+        />
+        <br /><br /><br /><br /><br /><br />
+        <img
+          src="{{url_for('static', filename='Alicia_Zhang.jpg')}}"
+          alt="Alicia"
+          class="footerpic"
+        />
+        <br /><br /><br /><br /><br /><br />
+      </div>
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Neel Surya</strong> - Class of 2021 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/neel-surya-a6a4881b4/" class="fa fa-linkedin"></a> <a href="https://github.com/Neel-Surya" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Timothy Odom</strong> - Class of 2021 <br> Core Developer <br> <a href="https://www.linkedin.com/in/timothy-odom-831218216at3/" class="fa fa-linkedin"></a> <a href="https://github.com/too223" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Xu Chen</strong> - Class of 2021 <br> Core Developer <br> <a href="https://www.linkedin.com/in/xu-chen-lu/" class="fa fa-linkedin"></a> <a href="https://github.com/xuc323" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p>
+          <strong>Alex Pellett</strong> - Class of 2023, 2024G <br />
+          Core Developer <br />
+          <a
+            href="https://www.linkedin.com/in/alexandria-pellett/"
+            class="fa fa-linkedin"
+          ></a>
+        </p>
+        <br /><br /><br /><br /><br /><br />
+        <p>
+          <strong>Alicia Zhang</strong> - Class of 2025 <br />
+          Core Developer <br />
+          <a
+            href="https://www.linkedin.com/in/alicia-zhang1/"
+            class="fa fa-linkedin"
+          ></a>
+        </p>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    </div>    
+  </div>
+  <div class="flexcol3" style="padding-right:15px">
+    <div class="flexwrap">
+      <div class="flexcol1">
+        <img src="{{url_for('static', filename='Alex.JPG')}}" alt= "Alex" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
+        <img
+          src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
+          alt="Madeline"
+          class="footerpic"
+        />
+        <br /><br /><br /><br /><br /><br />
+        <img
+          src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
+          alt="Tyreese"
+          class="footerpic"
+        />
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    <div class="flexcol1" style="float:left">
+      <p> <strong>Alex Outkou</strong> - Class of 2021 <br> UI/UX and HTML Developer <br> <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> <a href="https://github.com/ado323" class="fa fa-github"></a></p><br><br><br><br><br><br>
+      <p> <strong>Anna Moragne</strong> - Class of 2020 <br> Core Developer <br> <a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> <a href="https://github.com/annamoragne" class="fa fa-github"></a></p><br><br><br><br><br><br>
+      <p> <strong>Brian Lucas</strong> - Class of 2020 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> <a href="https://github.com/cariocabrian" class="fa fa-github"></a></p><br><br><br><br><br><br>
+      <p>
+        <strong>Madeline Judd</strong> - Class of 2025 <br />
+        Core Developer <br />
+        <a href="https://github.com/kr225" class="fa fa-github"></a>
+      </p>
+      <br /><br /><br /><br /><br /><br />
+      <p>
+        <strong>Tyreese Davidson</strong> - Class of 2026 <br />
+        Core Developer <br />
+        <a
+          href="https://www.linkedin.com/in/tyreese-davidson/"
+          class="fa fa-linkedin"
+        ></a>
+      </p>
+      <br /><br /><br /><br /><br /><br />
     </div>
-    <div class="flexcol6">
-        <h2 style="font-family: Segoe UI; text-align:center; font-size: 24px; font-weight: 500; color: #fff;"> Acknowledgements</h2>
-    </div>
-    </div>
-    <div class="footer">
-            <div class="flexcol2">
-          <pre style="font-family: Segoe UI; text-align:center; font-size: 24px; font-weight: 250; color: #fff;">     Faculty & External Advisors:                                                  Developers:</pre>
-               <div class="flexwrap"> 
-                    <div class="flexcol1">
-                        <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic"> <br><br><br><br><br><br>
-                        <img src="{{url_for('static', filename='Raghu.jpg')}}" alt= "Raghu" class="footerpic"> <br><br><br><br><br><br>
-                        <img src="{{url_for('static', filename='grassi1.jpg')}}" alt= "Dr. Grassi" class="footerpic"> <br><br><br><br><br><br>
-                        <img src="{{url_for('static', filename='steve.jpg')}}" alt= "Steve" class="footerpic"> <br><br><br><br><br><br>
-                        <img
-            src="{{url_for('static', filename='Joseph_Menicucci.jpg')}}"
-            alt="Joseph"
-            class="footerpic"
-          />
-          <br /><br /><br /><br /><br /><br />
-                    </div>
-                    <div class="flexcol1" style="float:left">
-                        <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator <br><br> <a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="footerbutton">Bio</a></p><br><br><br><br><br><br>
-                        <p> <strong>Dr. Raghuram Thiagarajan</strong> <br> Project Lead <br> <a href="https://www.linkedin.com/in/raghuramt/" class="fa fa-linkedin"></a> <a href="https://github.com/swamilikes2code" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                        <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="footerbutton">Memo</a></p><br><br><br><br><br><br>
-                        <p> <strong>Steve Anthony</strong> <br> Tech Assistant<br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p><br><br><br><br><br><br>
-                        <p>
-                            <strong>Dr. Joseph Menicucci</strong> <br />
-                            External Advisor<br /><br />
-                            <a
-                              href="https://engineering.lehigh.edu/faculty/joseph-menicucci"
-                              class="footerbutton"
-                              >Bio</a
-                            >
-                          </p>
-                          <br /><br /><br /><br /><br /><br />
-                    </div>
-                </div>    
-            </div>
-            <div class="flexcol4">
-                <div class="flexwrap">
-                    <div class="flexcol1">
-                        <img src="{{url_for('static', filename='Neel.jpg')}}" alt= "Neel" class="footerpic"> <br><br><br><br><br><br>
-                        <img src="{{url_for('static', filename='Timothy.jpg')}}" alt= "Timothy" class="footerpic"> <br><br><br><br><br><br>
-                        <img src="{{url_for('static', filename='Xu.jpg')}}" alt= "Xu" class="footerpic"> <br><br><br><br><br><br>
-                        <img
-            src="{{url_for('static', filename='Alex_Pellett.jpg')}}"
-            alt="Alex Pellett"
-            class="footerpic"
-          />
-          <br /><br /><br /><br /><br /><br />
-          <img
-            src="{{url_for('static', filename='Alicia_Zhang.jpg')}}"
-            alt="Alicia"
-            class="footerpic"
-          />
-          <br /><br /><br /><br /><br /><br />
-                    </div>
-                    <div class="flexcol1" style="float:left">
-                        <p> <strong>Neel Surya</strong> - Class of 2021 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/neel-surya-a6a4881b4/" class="fa fa-linkedin"></a> <a href="https://github.com/Neel-Surya" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                        <p> <strong>Timothy Odom</strong> - Class of 2021 <br> Core Developer <br> <a href="https://www.linkedin.com/in/timothy-odom-831218216at3/" class="fa fa-linkedin"></a> <a href="https://github.com/too223" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                        <p> <strong>Xu Chen</strong> - Class of 2021 <br> Core Developer <br> <a href="https://www.linkedin.com/in/xu-chen-lu/" class="fa fa-linkedin"></a> <a href="https://github.com/xuc323" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                        <p>
-                            <strong>Alex Pellett</strong> - Class of 2023, 2024G <br />
-                            Core Developer <br />
-                            <a
-                              href="https://www.linkedin.com/in/alexandria-pellett/"
-                              class="fa fa-linkedin"
-                            ></a>
-                          </p>
-                          <br /><br /><br /><br /><br /><br />
-                          <p>
-                            <strong>Alicia Zhang</strong> - Class of 2025 <br />
-                            Core Developer <br />
-                            <a
-                              href="https://www.linkedin.com/in/alicia-zhang1/"
-                              class="fa fa-linkedin"
-                            ></a>
-                          </p>
-                          <br /><br /><br /><br /><br /><br />
-                    </div>
-                </div>    
-            </div>
-            <div class="flexcol3" style="padding-right:15px">
-                <div class="flexwrap">
-                    <div class="flexcol1">
-                        <img src="{{url_for('static', filename='Alex.JPG')}}" alt= "Alex" class="footerpic"> <br><br><br><br><br><br>
-                        <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic"> <br><br><br><br><br><br>
-                        <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
-                        <img
-            src="{{url_for('static', filename='Madeline_Judd.jpg')}}"
-            alt="Madeline"
-            class="footerpic"
-          />
-          <br /><br /><br /><br /><br /><br />
-          <img
-            src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
-            alt="Tyreese"
-            class="footerpic"
-          />
-          <br /><br /><br /><br /><br /><br />
-                    </div>
-                    <div class="flexcol1" style="float:left">
-                        <p> <strong>Alex Outkou</strong> - Class of 2021 <br> UI/UX and HTML Developer <br> <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> <a href="https://github.com/ado323" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                        <p> <strong>Anna Moragne</strong> - Class of 2020 <br> Core Developer <br> <a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> <a href="https://github.com/annamoragne" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                        <p> <strong>Brian Lucas</strong> - Class of 2020 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> <a href="https://github.com/cariocabrian" class="fa fa-github"></a></p><br><br><br><br><br><br>
-                        <p>
-                            <strong>Madeline Judd</strong> - Class of 2025 <br />
-                            Core Developer <br />
-                            <a href="https://github.com/kr225" class="fa fa-github"></a>
-                          </p>
-                          <br /><br /><br /><br /><br /><br />
-                          <p>
-                            <strong>Tyreese Davidson</strong> - Class of 2026 <br />
-                            Core Developer <br />
-                            <a
-                              href="https://www.linkedin.com/in/tyreese-davidson/"
-                              class="fa fa-linkedin"
-                            ></a>
-                          </p>
-                          <br /><br /><br /><br /><br /><br />
-                    </div>
-                </div>    
-            </div>
-    </div>
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" style= "background-color: #262626" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+  </div>    
+</div>
+</div>
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" style= "background-color: #262626" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 </html>
