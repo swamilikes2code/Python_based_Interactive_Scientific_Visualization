@@ -420,8 +420,8 @@ intro_instr_template = """
         }}
 
         .column_5 {{
-            flex: 1;
-            padding: 5px;
+            width = 17.9%;
+            padding-right = 2%;
         }}
 
         p {{
