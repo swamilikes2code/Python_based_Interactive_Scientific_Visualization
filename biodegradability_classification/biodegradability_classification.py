@@ -1301,8 +1301,14 @@ def train_validate_model():
     set_learning_curve()
     save_model()
     model_list.append(model)
-    test_save_select.value = test_save_select.options[-1]
-    predict_select.value = predict_select.options[-1]
+
+    for opt in test_save_select.options:
+        if '*' in opt:
+            test_save_select.value = opt
+            predict_select.value = opt
+
+    # test_save_select.value = test_save_select.options[-1]
+    # predict_select.value = predict_select.options[-1]
     # print(test_save_select.value)
     # print(predict_select.value)
 
