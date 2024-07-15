@@ -54,6 +54,11 @@
   }
 }
 
+.caption {
+  float: center;
+  font-size: 12px;
+}
+
 .row:after {
     content: "";
     display: table;
@@ -545,15 +550,15 @@ nav li {
           <div class="row">
             <div class="column_3">
               <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
-              <p>Decision Tree</p>
+              <div class="caption">Decision Tree</div>
             </div>
             <div class="column_3">
               <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
-              <p>K Nearest Neighbor</p>
+              <div class="caption">K Nearest Neighbor</div>
             </div>
             <div class="column_3">
               <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
-              <p>Logistic Regression</p>
+              <div class="caption">Logistic Regression</div>
             </div>
           </div>
 
