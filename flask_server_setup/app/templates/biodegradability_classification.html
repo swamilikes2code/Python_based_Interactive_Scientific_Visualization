@@ -55,7 +55,7 @@
 }
 
 .caption {
-  float: left;
+  float: none;
   font-size: 12px;
 }
 
@@ -526,8 +526,6 @@ nav li {
                   <li>Pros: Simple, handles numerical & categorical data</li>
                   <li>Cons: Small changes can largely impact data</li>
                 </ul>
-              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
-              <div class="caption">Decision Tree</div>
             </div>
 
             <div class="column_3">
@@ -537,8 +535,6 @@ nav li {
                   <li>Pros: Non-parametric, versatile</li>
                   <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
                 </ul>
-              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
-              <div class="caption">K Nearest Neighbor</div>
             </div>
 
             <div class="column_3">
@@ -548,9 +544,24 @@ nav li {
                   <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
                   <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
                 </ul>
+            </div> 
+          </div>
+
+          <div class="row">
+            <div class="column_3">
+              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
+              <div class="caption">Decision Tree</div>
+            </div>
+
+            <div class="column_3">
+              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
+              <div class="caption">K-Nearest Neighbor</div>
+            </div>
+
+            <div class="column_3">
               <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
               <div class="caption">Logistic Regression</div>
-            </div> 
+            </div>
           </div>
 
           <div class="row">
