@@ -65,12 +65,6 @@ header {
     height: 80px;
 }
 
-@media screen and (max-width: 1600px) {
-  .header {
-    height: 180px;
-  }
-}
-
 Header::after {
     content: '';
     display: table;
@@ -363,6 +357,48 @@ nav li {
         display: none;
         padding: 6px 12px;
       }
+
+/* Dropdown Button */
+.dropbtn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
     </style>
 </head>
 
@@ -374,13 +410,20 @@ nav li {
         <nav>
             <ul>
                 <li><a href="/app" class="text-size">Home</a></li>
-                <li><a href="sliders_reaction_kinetics" class="text-size">Reaction Kinetics</a></li>
-                <li><a href="ZECC" class="text-size">ZECC</a></li>
-                <li><a href="SIR" class="text-size">SIR</a></li>
-                <li><a href="DAC" class="text-size">DAC</a></li>
-                <li><a href="catalysis_data_interactive_visualization" class="text-size">Catalysis</a></li>
-                <li><a href="DLT" class="text-size">DLT</a></li>
-                <li><a href="biodegradability_classification" class="text-size">Biodegradability Classification</a></li>
+                <li>
+                  <div class="dropdown">
+                  <button class="dropbtn">Module</button>
+                    <div class="dropdown-content">
+                      <a href="sliders_reaction_kinetics">Reaction Kinetics</a>
+                      <a href="ZECC">ZECC</a>
+                      <a href="SIR">SIR</a>
+                      <a href="DAC">DAC</a>
+                      <a href="catalysis_data_interactive_visualization">Catalysis</a>
+                      <a href="DLT">DLT</a>
+                      <a href="biodegradability_classification">Biodegradability Classification</a>
+                    </div>
+                  </div>
+                </li>
             </ul>
         </nav>
     </header>
