@@ -55,7 +55,7 @@
 }
 
 .caption {
-  float: center;
+  float: left;
   font-size: 12px;
 }
 
@@ -514,8 +514,8 @@ nav li {
   
         <div id="Algorithms" class="tabcontent">
           <div class="row">
-          <h3>Using the Algorithms</h3>
-              <p>For this module, you will have the choice between three <b>supervised learning algorithms</b>, each of which has its own strengths and weaknesses:</p>
+            <h3>Using the Algorithms</h3>
+                <p>For this module, you will have the choice between three <b>supervised learning algorithms</b>, each of which has its own strengths and weaknesses:</p>
           </div>
 
           <div class="row">
@@ -526,44 +526,9 @@ nav li {
                   <li>Pros: Simple, handles numerical & categorical data</li>
                   <li>Cons: Small changes can largely impact data</li>
                 </ul>
-            </div>
-
-            <div class="column_3">
-              <h3>K-Nearest Neighbor (KNN):</h3>
-              <p>Compares input to a set amount of data, determining which data the input is most similar to.</p>
-                <ul>
-                  <li>Pros: Non-parametric, versatile</li>
-                  <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
-                </ul>
-            </div>
-
-            <div class="column_3">
-              <h3>Logistic Regression (LR):</h3>
-              <p>Creates a <b>classification</b> boundary using logarithmic probabilities.</p>
-                <ul>
-                  <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
-                  <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
-                </ul>
-            </div> 
-          </div>
-
-          <div class="row">
-            <div class="column_3">
               <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
               <div class="caption">Decision Tree</div>
-            </div>
-            <div class="column_3">
-              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
-              <div class="caption">K Nearest Neighbor</div>
-            </div>
-            <div class="column_3">
-              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
-              <div class="caption">Logistic Regression</div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="column_3">
+              <br>
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Max depth of tree</li>
@@ -586,6 +551,15 @@ nav li {
             </div>
 
             <div class="column_3">
+              <h3>K-Nearest Neighbor (KNN):</h3>
+              <p>Compares input to a set amount of data, determining which data the input is most similar to.</p>
+                <ul>
+                  <li>Pros: Non-parametric, versatile</li>
+                  <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
+                </ul>
+              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
+              <div class="caption">K Nearest Neighbor</div>
+              <br>
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Number of neighbors</li>
@@ -608,6 +582,15 @@ nav li {
             </div>
 
             <div class="column_3">
+              <h3>Logistic Regression (LR):</h3>
+              <p>Creates a <b>classification</b> boundary using logarithmic probabilities.</p>
+                <ul>
+                  <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
+                  <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
+                </ul>
+              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
+              <div class="caption">Logistic Regression</div>
+              <br>
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Regularization Parameter (C)</li>
@@ -625,10 +608,9 @@ nav li {
                   </ul>
                 </ul>
               </ul>
-            </div>
+            </div> 
           </div>
         </div>
-
 
       
         <div id="Overfitting" class="tabcontent">
@@ -645,31 +627,31 @@ nav li {
             <div class="column_3">
               <h3>Underfitting model</h3>
               <img src="{{url_for('static', filename='Underfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>High loss, low accuracy</p>
+              <div class="caption">High loss, low accuracy</div>
               <br>
               <p>Underfit learning curve</p>
               <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>60.1% val. acc., 63.3% test acc.</p>
+              <div class="caption">60.1% val. acc., 63.3% test acc.</div>
             </div>
 
             <div class="column_3">
               <h3>Optimal model</h3>
               <img src="{{url_for('static', filename='Optimal_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>Low loss, high accuracy</p>
+              <div class="caption">Low loss, high accuracy</div>
               <br>
               <p>Optimal learning curve</p>
               <img src="{{url_for('static', filename='Optimal_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>75.3% val. acc., 74.5% test acc.</p>
+              <div class="caption">75.3% val. acc., 74.5% test acc.</div>
             </div>
 
             <div class="column_3">
               <h3>Overfitting model</h3>
               <img src="{{url_for('static', filename='Overfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>Low loss, low accuracy</p>
+              <div class="caption">Low loss, low accuracy</div>
               <br>
               <p>Overfit learning curve</p>
               <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <p>76.1% val. acc, 72.5% test acc.</p>
+              <div class="caption">76.1% val. acc, 72.5% test acc.</div>
             </div>
           </div>
         </div>
