@@ -63,7 +63,6 @@
 header {
     background: #262626;
     height: 80px;
-    padding:none
 }
 
 Header::after {
@@ -83,16 +82,15 @@ nav {float: left;
 }
 
 nav ul {
+    float:left;
     margin: 0;
-    padding: 0;
+    padding: 16px;
     list-style:none;
 }
 
 nav li {
-    display:inline-block;
-    margin: left 3.56vw;
-    margin: 0 2.28vw;
-    padding-top: 10px;
+    display: inline;
+    padding: 16px;
     position: relative;
     
 }
@@ -110,10 +108,10 @@ nav a::before {
     content: '';
     display: block;
     height:5px;
-    width: 100%;
+    width:100%;
     background-color: #31A6FF;
 
-    position:absolute;
+    position:relative;
     width: 0%;
     top: 0;
     transition: all ease-in-out 250ms;
@@ -319,7 +317,7 @@ margin: auto;
 
 @media all and (max-width: 960px) {
 nav li {
-    padding-top: 10px;
+    padding-top: 16px;
 }
 .flexcol{
     padding: 0 10px;
@@ -361,7 +359,6 @@ nav li {
 
 /* Dropdown Button */
 .dropbtn {
-  padding: 16px;
   font-size: 16px;
   background-color: #262626;
   color: white;
@@ -370,7 +367,7 @@ nav li {
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
-  position: relative;
+  position: absolute;
   display: inline-block;
 }
 
