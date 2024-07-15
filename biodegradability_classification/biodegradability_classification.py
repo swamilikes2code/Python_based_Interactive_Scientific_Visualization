@@ -1238,15 +1238,7 @@ alg_select.on_change('value', update_algorithm)
 
 
 def run_ML():
-    if save_config_message.styles == not_updated:
-        train_status_message.text = 'Error: must save data configuration before training'
-        train_status_message.styles = not_updated
-        return
-
-    #stage can be train or tune, determines which list to write to
-    global stage
     global model
-    stage = 'Train'
     train_status_message.text = f'Algorithm: {my_alg}'
     train_status_message.styles = updated
 
@@ -1347,17 +1339,7 @@ tuned_accuracy_display = Div(text = """
                              </div>""")
 
 def run_tuned_config():
-    if save_config_message.styles == not_updated:
-        tune_status_message.text = 'Error: must save data configuration before tuning'
-        tune_status_message.styles = not_updated
-        return
-    elif train_status_message.styles == not_updated:
-        tune_status_message.text = 'Error: must train model before tuning'
-        tune_status_message.styles = not_updated
-        return
-
-    global my_alg, stage
-    stage = 'Tune'
+    global my_alg
     tune_status_message.text = f'Algorithm: {my_alg}'
     tune_status_message.styles = updated
 
@@ -1870,13 +1852,6 @@ def train_test_model():
     temp_test_status_message.styles = updated
     update_color()
 
-# def run_test():
-#     global my_alg, stage
-#     stage = 'Test'
-#     global model
-
-#     train_test_model()
-
 def load_test():
     temp_test_status_message.text = "Testing..."
     temp_test_status_message.styles = loading
@@ -2081,11 +2056,13 @@ smiles_select.on_change('value', update_predict_status)
 # Histogram
 histogram.visible = False
 hist_x_select.visible = False
+datavis_help.visible = False
 
 def toggle_hist_visibility():
     histogram.visible = not histogram.visible
     hist_x_select.visible = not hist_x_select.visible
-    hist_visibility_button.label = "Show Data Exploration*" if not histogram.visible else "Hide Data Exploration*"
+    datavis_help.visible = not datavis_help.visible
+    hist_visibility_button.label = "Show Data Exploration" if not histogram.visible else "Hide Data Exploration"
     hist_visibility_button.icon = down_arrow if not histogram.visible else up_arrow
 
 hist_visibility_button.on_click(toggle_hist_visibility)
@@ -2231,7 +2208,7 @@ data_config_layout = layout(
 
 histogram_layout = layout(
     [hist_visibility_button],
-    [hist_x_select],
+    [hist_x_select, column(small_height_spacer, datavis_help)],
     [histogram]
 )
 
