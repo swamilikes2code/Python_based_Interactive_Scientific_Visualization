@@ -77,7 +77,7 @@ down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="2
 hist_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
 export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
-export_csv = Button(label="Download Full Table to CSV (.csv)", width=200, height=31)
+export_csv = Button(label="Download Full Table to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
 
 # --------------- HTML TEMPLATES --------------- #
 html_val_template = """
@@ -617,6 +617,8 @@ asterisk = Div(text="""
                     *Highest validation accuracy
                  </div>""",
 width=200, height=20)
+
+export_asterisk = Div(text='''<div>**Values are separated by "/", not ","</div>''', width=200, height = 20)
 
 # --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
@@ -2247,12 +2249,12 @@ delete_layout = layout(
 tab2_layout = row(left_page_spacer, column(top_page_spacer, step_two, alg_select, row(train_button), train_status_message, step_two_warning, warning_spacer_1, hyperparam_layout, warning_spacer_2, step_three_warning, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 test_button_layout = layout(
-    [column(step_four, test_save_select, asterisk, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv)]
+    [column(step_four, test_save_select, asterisk, row(test_button), temp_test_status_message, step_four_warning, warning_spacer_3, export_excel, export_csv, export_asterisk)]
 )
 
-tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), new_table), column(small_med_height_spacer, test_acc_display))))
+tab3_layout = row(left_page_spacer, column(top_page_spacer, row(column(row(test_button_layout, large_left_page_spacer, bubble), small_med_height_spacer, new_table), left_page_spacer, column(small_med_height_spacer, test_acc_display))))
 
-tab4_layout = row(left_page_spacer, column(top_page_spacer, step_five, predict_select, asterisk, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message, step_five_warning), column(top_page_spacer, predict_display))
+tab4_layout = row(left_page_spacer, column(top_page_spacer, step_five, predict_select, asterisk, smiles_select, user_smiles_input, predict_instr, predict_button, predict_status_message, step_five_warning), row(left_page_spacer, column(top_page_spacer, predict_display)))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Steps'),
                     TabPanel(child = tab1_layout, title = 'Data'),
