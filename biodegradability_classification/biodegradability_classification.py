@@ -931,7 +931,7 @@ source = ColumnDataSource(data=dict(
 histogram = figure(title=f"Histogram of {default_hist_column} with Class Color Coding",
            x_axis_label=default_hist_column, y_axis_label='Frequency',
            tools="save",
-           width=800, height=400)
+           width=600, height=300)
 
 # Add class 0 bars
 bars_class_0 = histogram.vbar(x=dodge('hist_centers', -dodge_val, range=histogram.x_range), top='top_class_0', width=0.3*(hist_centers[1] - hist_centers[0]),
