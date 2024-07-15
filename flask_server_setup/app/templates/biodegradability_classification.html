@@ -30,6 +30,19 @@
   }
 }
 
+.column_2 {
+    float: left;
+    width: 45.9%;
+    padding-right: 4%;
+    }
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column_2 {
+    width: 100%;
+  }
+}
+
 .column_3 {
     float: left;
     width: 29.3%;
@@ -384,15 +397,17 @@ nav li {
       <div class="flexwrap1">
         <div id="Introduction" class="tabcontent">
           <h3>Welcome to Biodegradability Classification</h3>
-          <p>The goal of our module is to teach the user about machine learning and data science principles through the <b>biodegradability</b> 
-            of organic chemicals.</p>
-          
-          <p>Our module gives the basic tools needed to build a machine learning model step-by-step. This includes selecting the data and type of 
-            algorithm to use, fine-tuning <b>hyperparameters</b>, evaluating the model's performance, and feeding the model new, unseen instances of 
-            organic chemicals, which the model will be able to predict and classify as "<b>readily biodegradable</b>" or "<b>not readily biodegradable</b>."</p>
+          <div class="column_2">
+            <p>The goal of our module is to teach the user about machine learning and data science principles through the <b>biodegradability</b> 
+              of organic chemicals.</p>
+            
+            <p>Our module gives the basic tools needed to build a machine learning model step-by-step. This includes selecting the data and type of 
+              algorithm to use, fine-tuning <b>hyperparameters</b>, evaluating the model's performance, and feeding the model new, unseen instances of 
+              organic chemicals, which the model will be able to predict and classify as "<b>readily biodegradable</b>" or "<b>not readily biodegradable</b>."</p>
 
-          <p>From this module, the user will be able to see which chemical properties are highly correlated to biodegradability, and which machine learning 
-            and data science practices help improve this model's accuracy. </p>
+            <p>From this module, the user will be able to see which chemical properties are highly correlated to biodegradability, and which machine learning 
+              and data science practices help improve this model's accuracy. </p>
+          </div>
         </div>
       
         <div id="Dataset" class="tabcontent">
@@ -463,7 +478,6 @@ nav li {
                   <li>Pros: Simple, handles numerical & categorical data</li>
                   <li>Cons: Small changes can largely impact data</li>
                 </ul>
-              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Max depth of tree</li>
@@ -492,7 +506,6 @@ nav li {
                   <li>Pros: Non-parametric, versatile</li>
                   <li>Cons: Memory intensive, exhibits <b>curse of dimensionality</b></li>
                 </ul>
-              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Number of neighbors</li>
@@ -521,7 +534,6 @@ nav li {
                   <li>Pros: Efficient, less inclined to <b>overfitting</b></li>
                   <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
                 </ul>
-              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
               <p><b>Hyperparameters:</b></p>
               <ul>
                 <li>Regularization Parameter (C)</li>
@@ -540,6 +552,18 @@ nav li {
                 </ul>
               </ul>
             </div> 
+          </div>
+
+          <div class="row">
+            <div class="column_3">
+              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
+            </div>
+            <div class="column_3">
+              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
+            </div>
+            <div class="column_3">
+              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:95%; height: 95%; float: none">
+            </div>
           </div>
         </div>
 
