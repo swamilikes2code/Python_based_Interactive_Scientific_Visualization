@@ -654,7 +654,7 @@ nav li {
               <br>
               <h3>Underfit learning curve</h3>
               <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <div class="caption">59.9 train acc., 58.8% val. acc., 59.1% test acc.</div>
+              <div class="caption">59.9% train acc., 58.8% val. acc., 59.1% test acc.</div>
               <div class="caption">This model underfits the data. You can see the linear decision boundary fails to capture the large trends in the data. You can also see on learning curve and results stated above that this model exhibits poor performance with its accuracy being only marginally better than random chance like flipping a coin.</div>
             </div>
 
@@ -677,7 +677,7 @@ nav li {
               <h3>Overfit learning curve</h3>
               <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <div class="caption"><b>100%</b> train acc., 76.1% val. acc, 72.5% test acc.</div>
-              <div class="caption">This model massively overfits the data. It does not generalize the random trends. Rather it memorized the training set to get 100% accuracy in the training stage and it exhibits much lower performance on the unseen validation instances. Being wary of overfitting is the job of the data scientist to prevent. Being analytical of your models learning curve is key in order to detail when your model selection may potentially be having overfitting occur. Another example of overfitting is the reserve of the graph for the optimal model. If the performance on the training set increases while the the validation set decreases this is an indicator of overfitting as well. On the predict tab, choosing a model that overfit and had higher validation accuracy than a model that did not overfit is a poor choice. Since it will not generalize as well to unseen instances when you use it on the predict tab.</div>
+              <div class="caption">This model massively overfits the data. It does not generalize the random trends. Rather it memorized the training set to get 100% accuracy in the training stage and it exhibits much lower performance on the unseen validation instances. Being wary of overfitting is the job of the data scientist to prevent. Being analytical of your models learning curve is key in order to detect when your model selection may potentially be overfitting.r of overfitting as well. On the predict tab, choosing a model that overfit and had higher validation accuracy than a model that did not overfit is a poor choice since it will not generalize as well to unseen instances when you use it on the predict tab.</div>
             </div>
           </div>
         </div>
