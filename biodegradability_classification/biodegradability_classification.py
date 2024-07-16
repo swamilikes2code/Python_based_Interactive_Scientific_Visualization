@@ -689,7 +689,7 @@ read_csv_start = datetime.now()                                         # ------
 
 # toggle whether you are testing here or running from server
 master = True
-# master = False
+#master = False
 
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
