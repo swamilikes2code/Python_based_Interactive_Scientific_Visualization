@@ -96,7 +96,7 @@ nav ul {
 nav li {
     display: inline;
     padding: 16px;
-    position: relative;
+    position: absolute;
     
 }
 
@@ -133,20 +133,20 @@ nav a:hover::before {
     max-width: 90rem;
 }
 .flexwrap1 {
-display: flex;
-width: auto;
-height: auto;
-font-family: 'Segoe UI';
-color:#484848;
-font-weight: 600;
-font-size: 16px;
-padding-left:5px;
-padding-right:10px;
-padding-bottom:10px;
-background:#b2e3f4;
-gap: 2.083vw;
-line-height: 1.5;
-margin: auto;
+  display: flex;
+  width: auto;
+  height: auto;
+  font-family: 'Segoe UI';
+  color:#484848;
+  font-weight: 600;
+  font-size: 16px;
+  padding-left:5px;
+  padding-right:10px;
+  padding-bottom:10px;
+  background:#b2e3f4;
+  gap: 2.083vw;
+  line-height: 1.5;
+  margin: auto;
 }
 .flexcol {
     color:#484848;
@@ -201,25 +201,22 @@ margin: auto;
 }
 .footer {
     margin: 0;
-    padding: 0;
+    padding: 10px;
     list-style:none;
     text-decoration: none;
     overflow: hidden;
-    padding: 1.953vw 0;
     box-sizing: border-box;
     background-color: #262626;
     display:flex;
     width: 100%;
-    height: 20%;
     font-family: 'Segoe UI';
 }
 .footer1 {
     margin: 0;
-    padding: 0;
+    padding: 10px;
     list-style:none;
     text-decoration: none;
     overflow: hidden;
-    padding: 1.953vw 0;
     box-sizing: border-box;
     background-color: #262626;
     display:flex;
@@ -229,6 +226,7 @@ margin: auto;
 }
 .footerpic {
     width: 7.161vw;
+    max-width: 200px;
     height: 6.51vw;
     padding: 0.65vw;
 }
@@ -459,6 +457,9 @@ nav li {
 
             <p>From this module, the user will be able to see which chemical properties are highly correlated to biodegradability, and which machine learning 
               and data science practices help improve this model's accuracy. </p>
+          </div>
+          <div class="column_2">
+            <a href="#jumpto">Jump to Module</a><br>
           </div>
         </div>
       
@@ -724,6 +725,8 @@ nav li {
         </div>
       </div>
 
+      <h3 id="jumpto"> </h3>
+
   <script>
     function openTab(evt, tabName) {
       var i, tabcontent, tablinks;
@@ -755,6 +758,7 @@ return;
 
 tablinks[currentTab].click();
 });
+
   </script>
      <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
 
@@ -773,7 +777,7 @@ tablinks[currentTab].click();
   </div>
 </div>
 
-<div class="footer1">
+<div class="footer">
   <div class="flexcol3">
       <h2 style="font-family: Segoe UI; text-align:left; font-size: 18px; font-weight: 250; padding-left:20px; color: #fff;"> Faculty & External Advisors:</h2>
   </div>
