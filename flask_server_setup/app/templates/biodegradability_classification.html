@@ -654,7 +654,8 @@ nav li {
               <br>
               <h3>Underfit learning curve</h3>
               <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <div class="caption">59.9 train acc., 60.1% val. acc., 63.3% test acc.</div>
+              <div class="caption"><u>59.9% train acc., 58.8% val. acc., 59.1% test acc.</u></div>
+              <div class="caption">This model underfits the data with a too simplistic linear decision boundary, failing to capture the significant trends. Both the learning curve and results show poor performance being barely better than random chance like flipping a coin.</div>
             </div>
 
             <div class="column_3">
@@ -664,9 +665,9 @@ nav li {
               <br>
               <h3>Optimal learning curve</h3>
               <img src="{{url_for('static', filename='Optimal_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <div class="caption">78.2% train acc., 75.3% val. acc., 74.5% test acc.</div>
+              <div class="caption"><u>78.2% train acc., 75.3% val. acc., 74.5% test acc.</u></div>
+              <div class="caption">This model is optimal, capturing macro trends in the data effectively. The learning curve illustrates strong generalization, with training performance decreasing as validation performance improves.</div>
             </div>
-
             <div class="column_3">
               <h3>Overfitting model</h3>
               <img src="{{url_for('static', filename='Overfitting_graph.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
@@ -674,7 +675,8 @@ nav li {
               <br>
               <h3>Overfit learning curve</h3>
               <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <div class="caption"><b>100%</b> train acc., 76.1% val. acc, 72.5% test acc.</div>
+              <div class="caption"><u><b>100% train acc.,</b> 76.1% val. acc, 72.5% test acc.</u></div>
+              <div class="caption">This model severely overfits the data. Failing to capture general trends and it instead memorizes the training set to achieve 100% accuracy on it. As a result, it performs significantly worse on unseen validation instances. <b>Preventing overfitting is the critical responsibility of a data scientist.</b></div>
             </div>
           </div>
         </div>
