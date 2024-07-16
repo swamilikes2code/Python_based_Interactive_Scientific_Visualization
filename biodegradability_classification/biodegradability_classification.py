@@ -12,7 +12,7 @@ from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, Button, 
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
-from bokeh.plotting import figure
+from bokeh.plotting import figure, show
 from bokeh.transform import dodge
 import pubchempy
 from rdkit import Chem, RDLogger
@@ -596,21 +596,27 @@ tune_help = HelpButton(tooltip=Tooltip(content=HTML("""
                                                    <div>For more info, see <i>Hyperparameters</i> and <i>Overfitting</i> in the menu above.</div>
                  </div>""", ), position="right"))
 
-test_help = HelpButton(tooltip=Tooltip(content=HTML("""
+test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                 <div>Select the save from the previous tab to test the model, and view its <b>confusion matrix</b> below.</div>
                 <div>‎</div>     
                 <div>NOTE: This should be considered the <b>final</b> test of your model, and is NOT intended for additional validation.</div>
-                </div>""", ), position="right"))
+                </div>""", width=280), position="right"))
 
-predict_instr = Div(text="""
-                 <div style='background-color: #DEF2F1; padding: 1px; font-family: Arial, sans-serif;'>
-                    To create a SMILES String, visit
-                    <a href="http://pubchem.ncbi.nlm.nih.gov//edit3/index.html" target="_blank">
-                    pubchem.ncbi.nlm.nih.gov//edit3/index.html </a>
-                    (Instructions on 'Help' button)
-                 </div>""",
-width=160, height=60)
+site_url = "https://pubchem.ncbi.nlm.nih.gov//edit3/index.html"
+
+predict_instr = Div(text=f"""
+    <div style='background-color: #DEF2F1; padding: 10px; font-family: Arial, sans-serif;'>
+        <iframe src="{site_url}" width="900" height="450" style="transform: scale(0.6); transform-origin: 0 0;" frameborder="0" allowfullscreen></iframe>
+        <p style="margin-top: 10px;">
+            Confused how to generate a SMILES String?
+            <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
+            (Instructions on 'Help' button)
+        </p>
+    </div>
+""", width=550, height=550)
+
+show(column(predict_instr))
 
 asterisk = Div(text="""
                  <div style='background-color: #ffffff;'>
