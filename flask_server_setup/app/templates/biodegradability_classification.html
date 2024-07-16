@@ -655,7 +655,7 @@ nav li {
               <h3>Underfit learning curve</h3>
               <img src="{{url_for('static', filename='Underfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <div class="caption">59.9% train acc., 58.8% val. acc., 59.1% test acc.</div>
-              <div class="caption">This model underfits the data. You can see the linear decision boundary is to simplic and fails to capture the large trends in the data. You can also see on learning curve and results stated above that this model exhibits poor performance with its accuracy being only marginally better than random chance like flipping a coin.</div>
+              <div class="caption">This model underfits the data. The linear decision boundary is to simplic and fails to capture the large trends in the data. The learning curve and results stated above that this model exhibits poor performance with its accuracy being only marginally better than random chance like flipping a coin.</div>
             </div>
 
             <div class="column_3">
@@ -666,7 +666,7 @@ nav li {
               <h3>Optimal learning curve</h3>
               <img src="{{url_for('static', filename='Optimal_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <div class="caption">78.2% train acc., 75.3% val. acc., 74.5% test acc.</div>
-              <div class="caption">This model is optimal. You can see it succeeded in capturing the macro trends in the data. The learning curve also exhibits an excellent visualization of generalization with the performance on the training set declining through time as the performance on the validation set increases.</div>
+              <div class="caption">This model is optimal. It succeeded in capturing the macro trends in the data. The learning curve also exhibits an excellent visualization of model generalization with the performance on the training set declining as it increases on the validation set.</div>
             </div>
             <div class="column_3">
               <h3>Overfitting model</h3>
@@ -676,7 +676,7 @@ nav li {
               <h3>Overfit learning curve</h3>
               <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
               <div class="caption"><b>100% train acc.,</b> 76.1% val. acc, 72.5% test acc.</div>
-              <div class="caption">This model massively overfits the data by failing to find the general trends. Rather it memorized the training set to get 100% accuracy on it. It exhibits much lower performance on the unseen validation instances. Being wary of overfitting and preventing it is the job of (you) the data scientist. Being analytical of your models learning curve is key in order to detect when your model  may potentially be overfitting. On the predict tab, choosing a model that had high validation accuracy but overfit is a poor choice since it will not generalize as well to unseen instances when you use it on the predict tab.</div>
+              <div class="caption">This model massively overfits the data by failing to find the general trends. Rather it memorized the training set to getting 100% accuracy on it. Consequentially it exhibits much lower performance on the unseen validation instances. Being wary of overfitting and preventing it is the job of (you) the data scientist.</div>
             </div>
           </div>
         </div>
