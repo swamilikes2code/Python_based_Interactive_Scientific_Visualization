@@ -30,7 +30,7 @@
 
 .column_2 {
     float: left;
-    width: 45.9%;
+    width: 62.6%;
     padding-right: 4%;
     }
 
@@ -91,12 +91,12 @@ nav ul {
     margin: 0;
     padding: 16px;
     list-style:none;
+    position: relative;
 }
 
 nav li {
     display: inline;
     padding: 16px;
-    position: absolute;
     
 }
 
@@ -366,6 +366,7 @@ nav li {
   background-color: #262626;
   color: white;
   border: none;
+  display: inline;
 }
 
 /* The container <div> - needed to position the dropdown content */
@@ -409,9 +410,9 @@ nav li {
         <nav>
             <ul>
                 <li>
-                  <a href="/app">
-                    <button class="dropbtn">HOME</button>
-                  </a></li>
+                  <a href="/app" class="text-size"><button class="dropbtn">HOME</button></a>
+                </li>
+
                 <li>
                   <div class="dropdown">
                   <button class="dropbtn">MODULES</button>
@@ -457,9 +458,8 @@ nav li {
 
             <p>From this module, the user will be able to see which chemical properties are highly correlated to biodegradability, and which machine learning 
               and data science practices help improve this model's accuracy. </p>
-          </div>
-          <div class="column_2">
-            <a href="#jumpto">Jump to Module</a><br>
+
+            <h3><a href="#jump">Jump to Module</a></h3><br>
           </div>
         </div>
       
@@ -725,7 +725,7 @@ nav li {
         </div>
       </div>
 
-      <h3 id="jumpto"> </h3>
+      <h3 id="jump"> </h3>
 
   <script>
     function openTab(evt, tabName) {
