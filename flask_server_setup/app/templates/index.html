@@ -155,6 +155,10 @@
         position: relative;
         height: 15.625vw;
       }
+      #biodegrad.flexcol {
+        position: relative;
+        height: 15.625vw;
+      }
       .head2 {
         font-size: 2.083vw;
         color: rgb(24, 24, 24);
@@ -439,6 +443,17 @@
         margin: -25px 0 0 -25px;
       }
 
+      #biodegrad.flexcol h2 {
+        top: 14%;
+        margin: -1px 0 0 -1px;
+      }
+      #biodegrad.flexcol p {
+        position: absolute;
+        left: 6%;
+        top: 38%;
+        margin: -25px 0 0 -25px;
+      }
+
       @media all and (max-width: 960px) {
         .tile {
           font-family: "Segoe UI";
@@ -508,6 +523,15 @@
           left: 8%;
           top: 50%;
         }
+        #biodegrad.flexcol h2 {
+          left: 28%;
+          top: 20%;
+        }
+        #biodegrad.flexcol p {
+          padding: 0 15px;
+          left: 8%;
+          top: 50%;
+        }
       }
     </style>
   </head>
@@ -524,20 +548,13 @@
       <nav>
         <ul>
           <li><a href="/app" class="text-size">Home</a></li>
-          <li>
-            <a href="sliders_reaction_kinetics" class="text-size"
-              >Reaction Kinetics</a
-            >
-          </li>
+          <li><a href="sliders_reaction_kinetics" class="text-size">Reaction Kinetics</a></li>
           <li><a href="ZECC" class="text-size">ZECC</a></li>
           <li><a href="SIR" class="text-size">SIR</a></li>
           <li><a href="DAC" class="text-size">DAC</a></li>
-          <li>
-            <a href="catalysis_data_interactive_visualization" class="text-size"
-              >Catalysis</a
-            >
-          </li>
+          <li><a href="catalysis_data_interactive_visualization" class="text-size">Catalysis</a></li>
           <li><a href="DLT" class="text-size">Digital Lab Twin</a></li>
+          <li><a href="biodegradability_classification" class="text-size">Biodegradability Classification</a></li>
         </ul>
       </nav>
     </header>
@@ -704,6 +721,22 @@
           and maximize valuable bioproducts.
         </p>
         <a href="DLT" class="button1">DLT Model</a>
+      </div>
+    </div>
+    <div class="flexwrap">
+      <div class="flexcol" id="biodegrad">
+        <h2 class="head2">Biodegradability Classification:</h2>
+        <p>
+          DESCRIPTION OF BIODEGRADABILITY CLASSIFICATION
+        </p>
+        <a href="biodegradability_classification" class="button1"
+        >Biodegradability Classification Model</a>
+      </div>
+    
+      <div class="flexcol" id="biodegrad">
+        <h2 class="head2"> </h2>
+        <p>
+          </p>
       </div>
     </div>
 
