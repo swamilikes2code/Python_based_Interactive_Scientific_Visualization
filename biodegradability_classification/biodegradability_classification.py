@@ -570,30 +570,30 @@ step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200
 splitter_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
-                 <div>For more info, see <i>Preparing Data</i> in the above menu.</div>"""), position="right"))
+                 <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>"""), position="right"))
 
 datatable_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Select whether to use <b>features</b> or a <b>molecular fingerprint</b> to train model.</div>
-                                                        <div>For more info, see <i>Our Dataset</i> and <i>Fingerprints</i> in the above menu.</div>
+                                                        <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>
                  </div>""", ), position="right"))
 
 datavis_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
-                 UPDATE THIS WHEN HISTOGRAMS ARE IN
+                 <div>Explore the data by viewing the distribution of certain molecular features across the dataset.</div>
                  </div>""", ), position="right"))
 
 train_help = HelpButton(tooltip=Tooltip(content=HTML("""
                   <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                   <div>Select one of the following <b>Machine Learning algorithms</b>.</div> 
-                                                    <div>For more info, see <i>Algorithms</i> in the above menu.</div>
+                                                    <div>For more info, see the <i>Algorithms</i> tab above the light blue menu area.</div>
                   </div>""", ), position="right"))
 
 tune_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                  <div>Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy.
                                                    Use the <b>Learning Curve</b> to detect <b>Overfitting.</b></div>
-                                                   <div>For more info, see <i>Hyperparameters</i> and <i>Overfitting</i> in the menu above.</div>
+                                                   <div>For more info, see the <i>Algorithms</i> and <i>Overfitting</i> tabs in the menu above.</div>
                  </div>""", ), position="right"))
 
 test_help = HelpButton(tooltip=Tooltip(content=HTML("""
