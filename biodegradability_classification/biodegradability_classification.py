@@ -607,14 +607,14 @@ site_url = "https://pubchem.ncbi.nlm.nih.gov//edit3/index.html"
 
 predict_instr = Div(text=f"""
     <div style='background-color: #DEF2F1; padding: 10px; font-family: Arial, sans-serif;'>
-        <iframe src="{site_url}" width="900" height="450" style="transform: scale(0.6); transform-origin: 0 0;" frameborder="0" allowfullscreen></iframe>
+        <iframe src="{site_url}" width="900" height="450" style="transform: scale(0.8); transform-origin: 0 0;" frameborder="0" allowfullscreen></iframe>
         <p style="margin-top: 10px;">
             Confused how to generate a SMILES String?
             <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
             (Instructions on 'Help' button)
         </p>
     </div>
-""", width=550, height=550)
+""", width=710, height=500)
 
 show(column(predict_instr))
 
