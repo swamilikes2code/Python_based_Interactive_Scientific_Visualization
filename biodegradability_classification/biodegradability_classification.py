@@ -489,7 +489,7 @@ intro_instr_template = """
                 <div class="column_5">
                     <h2>3) VALIDATE</h2>
                     <h3>Fine-tune the hyperparameters of your model.</h3>
-                    <p>On the <span class="highlight"><b>Train and Validate</b></span> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by looking at the Learning Curves. </p>
+                    <p>On the <span class="highlight"><b>Train and Validate</b></span> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by analyzing the model's Learning Curve. </p>
                 </div>
             </div>
 
@@ -592,8 +592,8 @@ train_help = HelpButton(tooltip=Tooltip(content=HTML("""
 tune_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                  <div>Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy.
-                                                   Use the <b>Learning Curve</b> to prevent <b>Overfitting.</b></div>
-                                                   <div>For more info, see <i>Hyperparameters</i> and <i>Overfitting</i> in the above menu.</div>
+                                                   Use the <b>Learning Curve</b> to detect <b>Overfitting.</b></div>
+                                                   <div>For more info, see <i>Hyperparameters</i> and <i>Overfitting</i> in the menu above.</div>
                  </div>""", ), position="right"))
 
 test_help = HelpButton(tooltip=Tooltip(content=HTML("""
