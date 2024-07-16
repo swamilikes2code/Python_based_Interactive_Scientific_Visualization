@@ -675,7 +675,7 @@ nav li {
               <br>
               <h3>Overfit learning curve</h3>
               <img src="{{url_for('static', filename='Overfitting_LC.png')}}" alt="Data Picture" class="center" style="width:75%; height: 75%; float: none">
-              <div class="caption"><b>100%</b> train acc., 76.1% val. acc, 72.5% test acc.</div>
+              <div class="caption"><b>100% train acc.,</b> 76.1% val. acc, 72.5% test acc.</div>
               <div class="caption">This model massively overfits the data by failing to find the general trends. Rather it memorized the training set to get 100% accuracy on it. It exhibits much lower performance on the unseen validation instances. Being wary of overfitting and preventing it is the job of (you) the data scientist. Being analytical of your models learning curve is key in order to detect when your model  may potentially be overfitting. On the predict tab, choosing a model that had high validation accuracy but overfit is a poor choice since it will not generalize as well to unseen instances when you use it on the predict tab.</div>
             </div>
           </div>
