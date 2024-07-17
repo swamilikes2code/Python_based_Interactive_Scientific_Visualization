@@ -596,27 +596,35 @@ tune_help = HelpButton(tooltip=Tooltip(content=HTML("""
                                                    <div>For more info, see the <i>Algorithms</i> and <i>Overfitting</i> tabs in the menu above.</div>
                  </div>""", ), position="right"))
 
-test_help = HelpButton(tooltip=Tooltip(content=Div(text="""
+test_help = HelpButton(tooltip=Tooltip(content=HTML("""
                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
                 <div>Select the save from the previous tab to test the model, and view its <b>confusion matrix</b> below.</div>
                 <div>‎</div>     
                 <div>NOTE: This should be considered the <b>final</b> test of your model, and is NOT intended for additional validation.</div>
-                </div>""", width=280), position="right"))
+                </div>"""), position="right"))
 
 site_url = "https://pubchem.ncbi.nlm.nih.gov//edit3/index.html"
 
-predict_instr = Div(text=f"""
-    <div style='background-color: #DEF2F1; padding: 10px; font-family: Arial, sans-serif;'>
-        <iframe src="{site_url}" width="900" height="450" style="transform: scale(0.8); transform-origin: 0 0;" frameborder="0" allowfullscreen></iframe>
-        <p style="margin-top: 10px;">
-            Confused how to generate a SMILES String?
-            <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
-            (Instructions on 'Help' button)
-        </p>
-    </div>
-""", width=710, height=500)
+smiles_gen = Div(text=f"""
+    <iframe src="{site_url}" width="900" height="450" style="transform: scale(0.8); transform-origin: 0 0;" frameborder="0" allowfullscreen></iframe>
+""")
 
-show(column(predict_instr))
+smiles_help = HelpButton(tooltip=Tooltip(content=HTML("""
+                <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                    Use the molecule drawer to the right to generate a custom SMILES. <br /><br />
+                    Confused on how to generate a SMILES String?
+                    <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
+                    (Instructions on 'Help' button)
+                </div>"""), position="right"))
+
+# predict_instr = Div(text=f"""
+#     <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+#         Use the molecule drawer to the right to generate a custom SMILES. <br /><br />
+#         Confused on how to generate a SMILES String?
+#         <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
+#         (Instructions on 'Help' button)
+#     </div>
+# """) #, width=200, height=500
 
 asterisk = Div(text="""
                  <div style='background-color: #ffffff;'>
@@ -1946,7 +1954,7 @@ random_smiles = random.choices(df1_dict['SMILES'], k=3)
 
 smiles_select = Select(title="Select SMILES String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=200)
 
-user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=200)
+user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=150, height=31)
 
 # test in dataset C=C(C)C(=O)O
 
@@ -2076,15 +2084,21 @@ hist_visibility_button.on_click(toggle_hist_visibility)
 
 # Custom SMILES String input
 user_smiles_input.visible = False
-predict_instr.visible = False
+# predict_instr.visible = False
+smiles_help.visible = False
+smiles_gen.visible = False
 
 def toggle_smiles_input_vis(attr, old, new):
     if smiles_select.value == 'Custom':
         user_smiles_input.visible = True
-        predict_instr.visible = True
+        # predict_instr.visible = True
+        smiles_help.visible = True
+        smiles_gen.visible = True
     else:
         user_smiles_input.visible = False
-        predict_instr.visible = False
+        # predict_instr.visible = False
+        smiles_help.visible = False
+        smiles_gen.visible = False
 
 smiles_select.on_change('value', toggle_smiles_input_vis)
 
@@ -2191,7 +2205,8 @@ predict_button.on_click(toggle_step_five_warn)
 # --------------- LAYOUTS --------------- 
 
 tiny_height_spacer = Spacer(height = 15)
-small_height_spacer = Spacer(height = 16)
+small_height_spacer = Spacer(height = 18)  #used when buttons have help buttons next to them
+input_help_height_spacer = Spacer(height=17)  #used when select or input widgets have help buttons next to them
 small_med_height_spacer = Spacer(height = 23)
 med_height_spacer = Spacer(height = 30)
 large_height_spacer = Spacer(height = 45)
@@ -2205,16 +2220,16 @@ large_left_page_spacer = Spacer(width = 90)
 tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr, js_div))
 
 data_config_layout = layout(
-    [data_select, column(small_height_spacer, datatable_help)],
+    [data_select, column(input_help_height_spacer, datatable_help)],
     [tiny_height_spacer],
-    [column(row(tvt_slider, column(small_med_height_spacer, splitter_help)), split_display)],
+    [column(row(tvt_slider, column(input_help_height_spacer, splitter_help)), split_display)],
     [tiny_height_spacer],
     [column(save_config_button, save_config_message)]
 )
 
 histogram_layout = layout(
     [hist_visibility_button],
-    [hist_x_select, column(small_height_spacer, datavis_help)],
+    [hist_x_select, column(input_help_height_spacer, datavis_help)],
     [histogram]
 )
 
@@ -2275,14 +2290,14 @@ predict_button_layout = layout(
     [predict_select],
     [asterisk],
     [smiles_select],
-    [user_smiles_input],
-    [predict_instr],
+    [tiny_height_spacer],
+    [user_smiles_input, column(input_help_height_spacer, smiles_help, tiny_height_spacer)],
     [predict_button],
     [predict_status_message],
     [step_five_warning]
 )
 
-tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer, column(top_page_spacer, predict_display)))
+tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer, column(top_page_spacer, predict_display)), row(left_page_spacer, column(top_page_spacer, smiles_gen)))
 
 tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Steps'),
                     TabPanel(child = tab1_layout, title = 'Data'),
