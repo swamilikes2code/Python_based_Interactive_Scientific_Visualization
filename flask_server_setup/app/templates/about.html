@@ -128,9 +128,11 @@ nav a:hover::before {
 }
 .flexwrap1 {
   display: flex;
+  flex-direction: column;
   width: auto;
   height: auto;
   font-family: 'Segoe UI';
+  text-align: center;
   color:#484848;
   font-weight: 600;
   font-size: 16px;
@@ -187,7 +189,7 @@ nav a:hover::before {
     max-width: 85rem;
 }    
 .center {
-    display: block;
+    /* display: block; */
   margin-left: auto;
   margin-right: auto;
   width: 52.083vw;
@@ -204,7 +206,7 @@ nav a:hover::before {
     width: 100%;
     font-family: 'Segoe UI';
 }
-.footer1 {
+.footerhead {
     margin: 0;
     padding: 10px;
     list-style:none;
@@ -213,6 +215,7 @@ nav a:hover::before {
     box-sizing: border-box;
     background-color: #262626;
     display:flex;
+    flex-direction: column;
     width: 100%;
     font-family: 'Segoe UI';
     margin-bottom: -4.883vw;
@@ -437,13 +440,8 @@ nav li {
 
 </body>
 
-<div class="footer">
-  <div class="column_3">
-    <p></p>
-  </div>
-  <div class="column_3">
-    <h2 style="font-family: Segoe UI; text-align:center; color: #fff;"> Faculty & Advisors:</h2>
-  </div>
+<div class="footerhead" style="text-align: center;">
+    <h2 style="font-family: Segoe UI; text-align:center; color: #fff;">Faculty & Advisors:</h2>
 </div>
 
 
@@ -527,13 +525,8 @@ nav li {
   </div>
 </div>
 
-<div class="footer">
-  <div class="column_3">
-    <p></p>
-  </div>
-  <div class="column_3">
-    <h2 style="font-family: Segoe UI; text-align:center; color: #fff;"> Developers:</h2>
-  </div>
+<div class="footerhead">
+  <h2 style="font-family: Segoe UI; text-align:center; color: #fff;"> Developers:</h2>
 </div>
 
 <div class="footer">
@@ -647,20 +640,10 @@ nav li {
 
 <body>
   <div class="flexwrap1">
-    <div class="column_3">
-      <p><p>
-    </div>
-    <div class="column_3">
       <h1 class="head1"><u>Contact Us</u></h1>
-    </div>
   </div>
   <div class="flexwrap1">
-    <div class="column_3">
-      <p><p>
-    </div>
-    <div class="column_3">
-      <p>Put any suggestions you have about the site here. We appreciate your feedback!</p>
-    </div>
+    <p>Put any suggestions you have about the site here. We appreciate your feedback!</p>
   </div>
   <div class="flexwrap1">
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
