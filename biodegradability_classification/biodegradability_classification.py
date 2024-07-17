@@ -611,7 +611,7 @@ smiles_gen = Div(text=f"""
 
 smiles_help = HelpButton(tooltip=Tooltip(content=HTML("""
                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
-                    Use the molecule drawer to the right to generate a custom SMILES. <br /><br />
+                    Use the molecule drawer to the right to generate a custom SMILES.<br />
                     Confused on how to generate a SMILES String?
                     <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
                     (Instructions on 'Help' button)
