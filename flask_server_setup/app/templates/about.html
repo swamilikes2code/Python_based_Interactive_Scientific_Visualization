@@ -47,12 +47,6 @@
     padding-right: 4%;
     }
 
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-  .column_3 {
-    width: 100%;
-  }
-}
 
 .caption {
   float: none;
@@ -140,9 +134,9 @@ nav a:hover::before {
   color:#484848;
   font-weight: 600;
   font-size: 16px;
-  padding-left:5px;
-  padding-right:10px;
-  padding-bottom:10px;
+  padding-left:20px;
+  padding-right:20px;
+  padding-bottom:20px;
   background:#b2e3f4;
   gap: 2.083vw;
   line-height: 1.5;
@@ -201,7 +195,6 @@ nav a:hover::before {
 }
 .footer {
     margin: 0;
-    padding: 10px;
     list-style:none;
     text-decoration: none;
     overflow: hidden;
@@ -230,6 +223,7 @@ nav a:hover::before {
     height: 6.51vw;
     padding: 0.65vw;
 }
+
 .flexcol1 {
     position: relative;
     color: #ddd;
@@ -444,12 +438,11 @@ nav li {
 </body>
 
 <div class="footer">
-  <div class="flexcol3">
-      <h2 style="font-family: Segoe UI; text-align:left; font-size: 18px; font-weight: 250; padding-left:20px; color: #fff;"> Faculty & External Advisors:</h2>
+  <div class="column_3">
+    <p></p>
   </div>
-
-  <div class="flexcol3">
-      <h2 style="font-family: Segoe UI; text-align:center; font-size: 18px; font-weight: 250; padding-right:10px; color: #fff;"> Developers:</h2>
+  <div class="column_3">
+    <h2 style="font-family: Segoe UI; text-align:center; color: #fff;"> Faculty & Advisors:</h2>
   </div>
 </div>
 
@@ -459,9 +452,58 @@ nav li {
     <div class="flexwrap"> 
       <div class="flexcol1">
         <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic"> <br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator <br><br> <a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="footerbutton">Bio</a></p><br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    </div>    
+  </div>
+
+  <div class="flexcol2">
+    <div class="flexwrap"> 
+      <div class="flexcol1">
         <img src="{{url_for('static', filename='Raghu.jpg')}}" alt= "Raghu" class="footerpic"> <br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Dr. Raghuram Thiagarajan</strong> <br> Project Lead <br> <a href="https://www.linkedin.com/in/raghuramt/" class="fa fa-linkedin"></a> <a href="https://github.com/swamilikes2code" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    </div>    
+  </div>
+
+  <div class="flexcol2">
+    <div class="flexwrap"> 
+      <div class="flexcol1">
         <img src="{{url_for('static', filename='grassi1.jpg')}}" alt= "Dr. Grassi" class="footerpic"> <br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="footerbutton">Memo</a></p><br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    </div>    
+  </div>
+
+  <div class="flexcol2">
+    <div class="flexwrap"> 
+      <div class="flexcol1">
         <img src="{{url_for('static', filename='steve.jpg')}}" alt= "Steve" class="footerpic"> <br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Steve Anthony</strong> <br> Tech Assistant<br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p><br><br><br><br><br><br>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    </div>    
+  </div>
+
+  
+  <div class="flexcol2">
+    <div class="flexwrap"> 
+      <div class="flexcol1">
         <img
           src="{{url_for('static', filename='Joseph_Menicucci.jpg')}}"
           alt="Joseph"
@@ -470,10 +512,6 @@ nav li {
         <br /><br /><br /><br /><br /><br />
       </div>
       <div class="flexcol1" style="float:left">
-        <p> <strong>Prof. Srinivas Rangarajan</strong> <br> Principal Investigator <br><br> <a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="footerbutton">Bio</a></p><br><br><br><br><br><br>
-        <p> <strong>Dr. Raghuram Thiagarajan</strong> <br> Project Lead <br> <a href="https://www.linkedin.com/in/raghuramt/" class="fa fa-linkedin"></a> <a href="https://github.com/swamilikes2code" class="fa fa-github"></a></p><br><br><br><br><br><br>
-        <p> <strong>Dr. Vincent Grassi</strong> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="footerbutton">Memo</a></p><br><br><br><br><br><br>
-        <p> <strong>Steve Anthony</strong> <br> Tech Assistant<br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p><br><br><br><br><br><br>
         <p>
             <strong>Dr. Joseph Menicucci</strong> <br />
             External Advisor<br /><br />
@@ -487,8 +525,18 @@ nav li {
       </div>
     </div>    
   </div>
+</div>
 
+<div class="footer">
+  <div class="column_3">
+    <p></p>
+  </div>
+  <div class="column_3">
+    <h2 style="font-family: Segoe UI; text-align:center; color: #fff;"> Developers:</h2>
+  </div>
+</div>
 
+<div class="footer">
   <div class="flexcol2">
     <div class="flexwrap">
       <div class="flexcol1">
@@ -554,29 +602,68 @@ nav li {
         />
         <br /><br /><br /><br /><br /><br />
       </div>
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Alex Outkou</strong> - Class of 2021 <br> UI/UX and HTML Developer <br> <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> <a href="https://github.com/ado323" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Anna Moragne</strong> - Class of 2020 <br> Core Developer <br> <a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> <a href="https://github.com/annamoragne" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Brian Lucas</strong> - Class of 2020 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> <a href="https://github.com/cariocabrian" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p>
+          <strong>Madeline Judd</strong> - Class of 2025 <br />
+          Core Developer <br />
+          <a href="https://github.com/kr225" class="fa fa-github"></a>
+        </p>
+        <br /><br /><br /><br /><br /><br />
+        <p>
+          <strong>Tyreese Davidson</strong> - Class of 2026 <br />
+          Core Developer <br />
+          <a
+            href="https://www.linkedin.com/in/tyreese-davidson/"
+            class="fa fa-linkedin"
+          ></a>
+        </p>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+    </div>
+  </div>    
 
-    <div class="flexcol1" style="float:left">
-      <p> <strong>Alex Outkou</strong> - Class of 2021 <br> UI/UX and HTML Developer <br> <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> <a href="https://github.com/ado323" class="fa fa-github"></a></p><br><br><br><br><br><br>
-      <p> <strong>Anna Moragne</strong> - Class of 2020 <br> Core Developer <br> <a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> <a href="https://github.com/annamoragne" class="fa fa-github"></a></p><br><br><br><br><br><br>
-      <p> <strong>Brian Lucas</strong> - Class of 2020 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> <a href="https://github.com/cariocabrian" class="fa fa-github"></a></p><br><br><br><br><br><br>
-      <p>
-        <strong>Madeline Judd</strong> - Class of 2025 <br />
-        Core Developer <br />
-        <a href="https://github.com/kr225" class="fa fa-github"></a>
-      </p>
-      <br /><br /><br /><br /><br /><br />
-      <p>
-        <strong>Tyreese Davidson</strong> - Class of 2026 <br />
-        Core Developer <br />
-        <a
-          href="https://www.linkedin.com/in/tyreese-davidson/"
-          class="fa fa-linkedin"
-        ></a>
-      </p>
-      <br /><br /><br /><br /><br /><br />
+  <div class="flexcol2" style="padding-right:15px">
+    <div class="flexwrap">
+      <div class="flexcol1">
+        <img src="{{url_for('static', filename='Eric.jpg')}}" alt= "Eric" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='Sophia.jpg')}}" alt= "Sophia" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
+        <img src="{{url_for('static', filename='Matt.jpg')}}" alt="Matt" class="footerpic"/>
+        <br /><br /><br /><br /><br /><br />
+      </div>
+
+      <div class="flexcol1" style="float:left">
+        <p> <strong>Eric Burton</strong> - Class of 2026 <br> Core Developer <br> <a href="https://www.linkedin.com/in/eric-burton-b28192273/" class="fa fa-linkedin"></a> <a href="https://github.com/ecb426" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Sophia Pham</strong> - Class of 2027 <br> Core Developer <br> <a href="https://www.linkedin.com/in/sophialpham/" class="fa fa-linkedin"></a> <a href="https://github.com/slp227" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Devin Pombo</strong> - Class of 2026 <br> Core Developer <br> <a href="https://www.linkedin.com/in/devin-pombo/" class="fa fa-linkedin"></a> <a href="https://github.com/dep326" class="fa fa-github"></a></p><br><br><br><br><br><br>
+        <p> <strong>Mathurtion Rajendrackumaar</strong> - Class of 2027 <br> Core Developer <br> <a href="https://www.linkedin.com/in/mathurtion-rajendrackumaar-4154b0299/" class="fa fa-linkedin"></a> <a href="https://github.com/mathution" class="fa fa-github"></a></p><br /><br /><br /><br /><br /><br />
+      </div>
     </div>
   </div>    
 </div>
-</div>
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" style= "background-color: #262626" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+
+<body>
+  <div class="flexwrap1">
+    <div class="column_3">
+      <p><p>
+    </div>
+    <div class="column_3">
+      <h1 class="head1"><u>Contact Us</u></h1>
+    </div>
+  </div>
+  <div class="flexwrap1">
+    <div class="column_3">
+      <p><p>
+    </div>
+    <div class="column_3">
+      <p>Put any suggestions you have about the site here. We appreciate your feedback!</p>
+    </div>
+  </div>
+  <div class="flexwrap1">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfk_R8of6mNMjPTKDMvzR5CNC4E6SF-VjPujJxoTxdHDm2BPA/viewform?embedded=true" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+  </div>
+</body>
 </html>
