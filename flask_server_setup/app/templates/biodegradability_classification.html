@@ -90,7 +90,7 @@ Header::after {
 nav {
   flex-grow: 1;
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 .nav-menu {
@@ -108,7 +108,7 @@ nav {
     align-items: center;    
 }
 
-@media (max-width: 960px) {
+@media (max-width: 680px) {
   .container {
     flex-direction: column;
     align-items: flex-start;
@@ -246,12 +246,13 @@ nav a:hover::before {
     box-sizing: border-box;
     background-color: #262626;
     display:flex;
+    justify-content: flex-end;
     width: 100%;
     font-family: 'Segoe UI';
 }
 .footer1 {
     margin: 0;
-    padding: 10px;
+    padding: none;
     list-style:none;
     text-decoration: none;
     overflow: hidden;
@@ -356,15 +357,6 @@ nav a:hover::before {
     border:0.195vw solid #521D91;
 } 
 
-@media all and (max-width: 960px) {
-nav li {
-    padding-top: 16px;
-}
-.flexcol{
-    padding: 0 10px;
-    border-radius: 17px;
-}
-}
 .tab {
         overflow: hidden;
         border: 1px solid #ccc;
@@ -402,7 +394,7 @@ nav li {
 .dropbtn {
   background-color: #262626;
   color: white;
-  padding-bottom: 20px;
+  padding-top: 10px;
   padding-left: 16px;
   padding-right: 16px;
   font-size: 16px;
