@@ -15,6 +15,11 @@ app = Flask(__name__, static_url_path="/app/static")
 def index():
     return render_template("index.html")
 
+# create about page (this is new)
+@app.route("/about", methods=["GET"])
+def about():
+    return render_template("about.html")
+
 
 @app.route("/sliders_reaction_kinetics", methods=["GET"])
 def sliders_reaction_kinetics():
