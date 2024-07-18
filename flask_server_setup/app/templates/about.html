@@ -371,7 +371,6 @@ nav a:hover::before {
   background-color: transparent;
   color: rgb(255, 251, 251);
   text-decoration: none;
-  text-align: center;
   border: none;
   margin-top: -1.2px;
 }
@@ -396,7 +395,8 @@ nav a:hover::before {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #262626;
+  top: 80px;
+  background-color: #5c5c5c;
 
   z-index: 1;
 }
@@ -409,6 +409,7 @@ nav a:hover::before {
   text-decoration: none;
   color: white;
   display: block;
+  text-align: left;
 }
 
 .dropdown-content a:hover::before {
@@ -419,6 +420,7 @@ nav a:hover::before {
 .dropdown:hover .dropdown-content {display: block;}
 .dropdown:hover .dropbtn::before {width: 100%}
 .dropdown:hover .dropbtn {color: #31A6FF}
+li:hover .dropdown-content {display: block;}
 
 </style>
 </head>
@@ -427,7 +429,6 @@ nav a:hover::before {
     <header>
       <div><img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo"></div>
       <nav>
-        <ul>
           <li><a href="/app" class="header-text">HOME</a></li>
           <li><div class="dropdown">
               <button class="dropbtn">MODULES</button>
@@ -443,7 +444,6 @@ nav a:hover::before {
             </div>
           </li>
           <li><a href="about" class="header-text">ABOUT</a></li>
-        </ul>
       </div>
     </header>
     <h1 class="head1">Acknowledgements</h1>
