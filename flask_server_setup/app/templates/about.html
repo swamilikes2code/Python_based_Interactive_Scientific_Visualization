@@ -20,8 +20,8 @@ body {
 header {
     background: #262626;
     height: 80px;
-    /* display: flex; */
-    align-items: center;
+    display: flex;
+    /* align-items: center; */
 }
 
 header::after {
@@ -69,7 +69,7 @@ nav a:hover {
     color: #31A6FF;
 }
 
-nav li::before {
+nav a::before {
     content: '';
     display: block;
     height:5px;
@@ -81,7 +81,7 @@ nav li::before {
     transition: all ease-in-out 250ms;
 }
 
-nav li:hover::before {
+nav a:hover::before {
    width: 100%;
 }
 
@@ -371,12 +371,9 @@ nav li {
   text-align: center;
   border: none;
   margin-top: -1.2px;
-  /* padding:13px 16px; */
-  /* display: inline-block;
-  position: relative; */
 }
 
-/* .dropbtn::before {
+.dropbtn::before {
   content: '';
   display: block;
   height:5px;
@@ -390,7 +387,7 @@ nav li {
 
 .dropbtn:hover::before {
   width: 100%
-} */
+}
 
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
@@ -411,12 +408,15 @@ nav li {
   display: block;
 }
 
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {display: block;}
+.dropdown-content a:hover::before {
+  width:0;
+}
 
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {color: #31A6FF;}
+/* Show the dropdown menu on hover, change text color, apply hover bar above */
+.dropdown:hover .dropdown-content {display: block;}
 .dropdown:hover .dropbtn::before {width: 100%}
+.dropdown:hover .dropbtn {color: #31A6FF}
+
 </style>
 </head>
 
