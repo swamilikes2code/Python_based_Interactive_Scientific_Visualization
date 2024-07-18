@@ -350,14 +350,27 @@
   } 
 
   @media all and (max-width: 608px) {
-  header{
+  header {
     height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo {
+    float: none;
   }
 
   nav {
-    float: left;
-    padding-left: 16px;
+    float: none;
   }
+
+  nav ul {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+  }
+
 
 
   }
