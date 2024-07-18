@@ -1209,7 +1209,7 @@ def set_hyperparameter_widgets():
         hp_select.update(
             title = "solver",
             value = "liblinear",
-            options = ['lbfgs', 'liblinear', 'newton-cholesky', 'sag', 'saga']  #'newton-cg' took a long time to run
+            options = ['lbfgs', 'liblinear','saga']  #'newton-cg' took a long time to run
         )
 
         model.C = hp_slider.value
