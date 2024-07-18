@@ -4,120 +4,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>About</title>
-    <style>
-       body {
-    margin: 0;
-    background: #fff;
-    font-family: 'Work Sans', sans-serif;
-    font-weight: 400;
-       }
-      .container {
-    position: relative;
+<style>
+
+body {
+  margin: 0;
+  background: #fff;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 400;
 }
 
-.column_4 {
-    float: left;
-    width: 20.9%;
-    padding-right: 4%;
-    }
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-  .column_4 {
-    width: 100%;
-  }
+.container {
+  position: relative;
 }
-
-.column_2 {
-    float: left;
-    width: 62.6%;
-    padding-right: 4%;
-    }
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-  .column_2 {
-    width: 100%;
-  }
-}
-
-.column_3 {
-    float: left;
-    width: 29.3%;
-    padding-right: 4%;
-    }
-
-
-.caption {
-  float: none;
-  font-size: 12px;
-}
-
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-    }
 
 header {
     background: #262626;
     height: 80px;
+    /* display: flex; */
+    align-items: center;
 }
 
-Header::after {
+header::after {
     content: '';
     display: table;
     clear:both;
 }
 
 .logo {
-    padding-top:10px;
-    padding-left:10px;
-    float:left;
-    width:300px;
+  padding-top:10px;
+  padding-left:10px;
+  float:left;
+  width:300px;
 }
 
-nav {float: left;
+nav {
+  float: left;
 }
 
 nav ul {
-    float:left;
-    margin: 0;
-    padding: 4px;
-    list-style:none;
-    position: relative;
+  margin: 0;
+  padding: 0;
+  list-style:none;
+  /* position: relative; */
 }
 
 nav li {
-    display: inline;
-    padding: 4px;
-    
+  /* display: inline-block; */
+  margin: left 3.56vw;
+  margin: 0 2.28vw;
+  padding-top: 2.21vw;
+  position: relative;
+  float: left;
 }
 
 nav a {
-    color: rgb(255, 251, 251);
-    text-decoration: none;
-    font-size: 1.3vw;
+  color: rgb(255, 251, 251);
+  /* float: left; */
+  text-decoration: none;
+  font-size: 16px;
+  text-align: center;
 }
 
 nav a:hover {
     color: #31A6FF;
 }
-nav a::before {
+
+nav li::before {
     content: '';
     display: block;
     height:5px;
-    width:100%;
     background-color: #31A6FF;
 
-    position:relative;
+    position:absolute;
     width: 0%;
     top: 0;
     transition: all ease-in-out 250ms;
 }
 
-nav a:hover::before {
-   width: 60%;
+nav li:hover::before {
+   width: 100%;
+}
+
+/* .navbar {
+  overflow: hidden;
+}
+
+.navbar ul {
+  float: left;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  position: relative;
+}
+
+.navbar li {
+  display: inline-block;
+  padding: 4px;
+  padding: 14px 16px;
+
+}
+
+.navbar a {
+    color: rgb(255, 251, 251);
+    float: left;
+    text-decoration: none;
+    font-size: 16px;
+    text-align: center;
+}
+
+.navbar a:hover {
+    color: #31A6FF;
+}
+
+.navbar a::before {
+    content: '';
+    display: block;
+    height:5px;
+    background-color: #31A6FF;
+
+    position:absolute;
+    width: 0%;
+    top: 0;
+    transition: all ease-in-out 250ms;
+}
+
+.navbar a:hover::before {
+   width: fit-content;
+} */
+
+.header-text {
+    font-size: 16px; /* Adjust the font size as desired */
 }
 .flexwrap {
     display:flex;
@@ -326,58 +342,48 @@ nav li {
     border-radius: 17px;
 }
 }
-.tab {
-        overflow: hidden;
-        border: 1px solid #ccc;
-        background-color: #f1f1f1;
-      }
-
-      /* Style the buttons inside the tab */
-      .tab button {
-        background-color: inherit;
-        float: left;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 14px 16px;
-        transition: 0.3s;
-        font-size: 17px;
-      }
-
-      /* Change background color of buttons on hover */
-      .tab button:hover {
-        background-color: #ddd;
-      }
-      /* Create an active/current tablink class */
-      .tab button.active {
-        background-color: #ccc;
-      }
-
-      /* Style the tab content */
-      .tabcontent {
-        display: none;
-        padding: 6px 12px;
-      }
-
-/* Dropdown Button */
-.dropbtn {
-  font-size: 16px;
-  background-color: #262626;
-  color: white;
-  border: none;
-  display: inline;
-}
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
-  position: absolute;
-  display: inline-block;
+  float:left;
+  overflow:hidden;
 }
+
+/* Dropdown Button */
+.dropdown .dropbtn {
+  padding: 0;
+  font-size: 16px;
+  background-color: transparent;
+  color: rgb(255, 251, 251);
+  text-decoration: none;
+  text-align: center;
+  border: none;
+  margin-top: -1.2px;
+  /* padding:13px 16px; */
+  /* display: inline-block;
+  position: relative; */
+}
+
+/* .dropbtn::before {
+  content: '';
+  display: block;
+  height:5px;
+  background-color: #31A6FF;
+
+  position:absolute;
+  width: 0%;
+  top: 0;
+  transition: all ease-in-out 250ms;
+}
+
+.dropbtn:hover::before {
+  width: 100%
+} */
 
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
   display: none;
-  position: relative;
+  position: absolute;
   background-color: #262626;
 
   z-index: 1;
@@ -385,6 +391,7 @@ nav li {
 
 /* Links inside the dropdown */
 .dropdown-content a {
+  float: none;
   padding: 12px 16px;
   width: 240px;
   text-decoration: none;
@@ -397,47 +404,33 @@ nav li {
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {color: #31A6FF;}
-    </style>
+.dropdown:hover .dropbtn::before {width: 100%}
+</style>
 </head>
 
 <body>
     <header>
-        <div class="container">
-            <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo">
-        </div>
-
-        <nav>
-            <ul>
-                <li>
-                  <a href="/app" class="text-size"><button class="dropbtn">HOME</button></a>
-                </li>
-
-                <li>
-                  <a href="about" class="text-size"><button class="dropbtn">ABOUT</button></a>
-                </li>
-
-                <li>
-                  <div class="dropdown">
-                  <button class="dropbtn">MODULES</button>
-                    <div class="dropdown-content">
-                      <a href="sliders_reaction_kinetics" class="text-size">Reaction Kinetics</a>
-                      <a href="ZECC" class="text-size">Zero Energy Cooling Chamber</a>
-                      <a href="SIR" class="text-size">SIR Infectious Diseases</a>
-                      <a href="DAC" class="text-size">Direct Air Captures</a>
-                      <a href="catalysis_data_interactive_visualization" class="text-size">Catalysis Data Science</a>
-                      <a href="DLT" class="text-size">Digital Lab Twin</a>
-                      <a href="biodegradability_classification" class="text-size">Biodegradability Classification</a>
-                    </div>
-                  </div>
-                </li>
-            </ul>
-        </nav>
+      <div><img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo"></div>
+      <nav>
+        <ul>
+          <li><a href="/app" class="header-text">HOME</a></li>
+          <li><div class="dropdown">
+              <button class="dropbtn">MODULES</button>
+              <div class="dropdown-content">
+                <a href="sliders_reaction_kinetics" class="header-text">Reaction Kinetics</a>
+                <a href="ZECC" class="header-text">Zero Energy Cooling Chamber</a>
+                <a href="SIR" class="header-text">SIR Infectious Diseases</a>
+                <a href="DAC" class="header-text">Direct Air Captures</a>
+                <a href="catalysis_data_interactive_visualization" class="header-text">Catalysis Data Science</a>
+                <a href="DLT" class="header-text">Digital Lab Twin</a>
+                <a href="biodegradability_classification" class="header-text">Biodegradability Classification</a>
+              </div>
+            </div>
+          </li>
+          <li><a href="about" class="header-text">ABOUT</a></li>
+        </ul>
+      </div>
     </header>
-    <style>
-        .text-size {
-            font-size: 16px; /* Adjust the font size as desired */
-        }
-    </style>
     <h1 class="head1">Acknowledgements</h1>
 
 </body>
