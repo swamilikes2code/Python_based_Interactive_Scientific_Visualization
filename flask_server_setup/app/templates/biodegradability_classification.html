@@ -20,6 +20,14 @@ body {
     padding: 10px;
 }
 
+.container2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    padding: 10px;
+}
+
 .column_4 {
     float: left;
     width: 20.9%;
@@ -107,6 +115,7 @@ nav {
     align-items: center;    
 }
 
+
 @media (max-width: 680px) {
   .container {
     flex-direction: column;
@@ -147,21 +156,23 @@ nav a {
 nav a:hover, .dropbtn:hover {
     color: #31A6FF;
 }
-nav a::before {
+
+.nav-menu > li > a::before {
     content: '';
     display: block;
-    height:5px;
-    width:100%;
+    height: 5px;
+    width: 100%;
     background-color: #31A6FF;
-    position:relative;
-    width: 0%;
+    position: relative;
+    width: 0;
     top: 0;
     transition: all ease-in-out 250ms;
 }
 
-nav a:hover::before {
-   width: 100%;
+.nav-menu > li > a:hover::before {
+    width: 100%;
 }
+
 .flexwrap {
     display:flex;
     width: auto;
@@ -421,17 +432,20 @@ nav a:hover::before {
   position: absolute;
   background-color: #262626;
   min-width: 160px;
-  z-index: 1;
   top: 100%;
 }
 
 /* Links inside the dropdown */
 .dropdown-content a {
   color: white;
-  padding: 12px 16px;
+  padding: 14px 16px;
   text-decoration: none;
   display: block;
   text-align: left;
+}
+
+.dropdown-content a::before {
+    content: none;
 }
 
 /* Show the dropdown menu on hover */
@@ -439,10 +453,10 @@ nav a:hover::before {
   display: block;
 }
 
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.dropbtn:hover .dropbtn {
+.dropdown:hover .dropbtn {
   color: #31A6FF;
 }
+
     </style>
 </head>
 
@@ -451,28 +465,28 @@ nav a:hover::before {
     <div class="container">
         <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo">
         <nav>
-            <ul class="nav-menu">
-                <li>
-                  <a href="/app" class="text-size"><button class="dropbtn">HOME</button></a>
-                </li>
-                <li>
-                  <a href="about" class="text-size"><button class="dropbtn">ABOUT</button></a>
-                </li>
-                <li>
-                  <div class="dropdown">
-                  <button class="dropbtn">MODULES</button>
-                    <div class="dropdown-content">
-                      <a href="sliders_reaction_kinetics" class="text-size">Reaction Kinetics</a>
-                      <a href="ZECC" class="text-size">Zero Energy Cooling Chamber</a>
-                      <a href="SIR" class="text-size">SIR Infectious Diseases</a>
-                      <a href="DAC" class="text-size">Direct Air Captures</a>
-                      <a href="catalysis_data_interactive_visualization" class="text-size">Catalysis Data Science</a>
-                      <a href="DLT" class="text-size">Digital Lab Twin</a>
-                      <a href="biodegradability_classification" class="text-size">Biodegradability Classification</a>
-                    </div>
-                  </div>
-                </li>
-            </ul>
+          <ul class="nav-menu">
+            <li>
+              <a href="/app" class="text-size">HOME</a>
+            </li>
+            <li>
+              <a href="about" class="text-size">ABOUT</a>
+            </li>
+            <li>
+              <div class="dropdown">
+                <a href="#" class="dropbtn">MODULES</a>
+                <div class="dropdown-content">
+                  <a href="sliders_reaction_kinetics" class="text-size">Reaction Kinetics</a>
+                  <a href="ZECC" class="text-size">Zero Energy Cooling Chamber</a>
+                  <a href="SIR" class="text-size">SIR Infectious Diseases</a>
+                  <a href="DAC" class="text-size">Direct Air Captures</a>
+                  <a href="catalysis_data_interactive_visualization" class="text-size">Catalysis Data Science</a>
+                  <a href="DLT" class="text-size">Digital Lab Twin</a>
+                  <a href="biodegradability_classification" class="text-size">Biodegradability Classification</a>
+                </div>
+              </div>
+            </li>
+          </ul>
         </nav>
     </div>
   </header>
@@ -815,7 +829,7 @@ tablinks[currentTab].click();
 </body>
 
 <div class="footer1">
-  <div class="container">
+  <div class="container2">
       <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo";>
   </div>
 </div>
