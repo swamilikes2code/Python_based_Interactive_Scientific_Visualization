@@ -1750,7 +1750,7 @@ test_table_data = {'Index': indices,
             'Predicted Class': predicted,
             'Actual Class': actual,
             'Prediction Type': tfpn}
-new_source = ColumnDataSource(data=test_table_data)
+tested_source = ColumnDataSource(data=test_table_data)
 abridg_source = ColumnDataSource(data=test_table_data)
 test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height_policy = 'auto', autosize_mode = "none", index_position=None)
 
