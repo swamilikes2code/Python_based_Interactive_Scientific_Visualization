@@ -634,6 +634,9 @@ width=200, height=20)
 
 export_asterisk = Div(text='''<div>**Values are separated by "/", not ","</div>''', width=200, height = 20)
 
+data_tab_table_title = Div(text='<b>Table: First 15 items in dataset with selected features</b>')
+test_table_title = Div(text='<b>Table: 15 random tested cases with prediction type</b>')
+
 # --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
     bg_1 = '#fafafa'
@@ -1209,7 +1212,7 @@ def set_hyperparameter_widgets():
         hp_select.update(
             title = "solver",
             value = "liblinear",
-            options = ['lbfgs', 'liblinear', 'newton-cholesky', 'sag', 'saga']  #'newton-cg' took a long time to run
+            options = ['lbfgs', 'liblinear','saga']  #'newton-cg' took a long time to run
         )
 
         model.C = hp_slider.value
@@ -1747,9 +1750,9 @@ test_table_data = {'Index': indices,
             'Predicted Class': predicted,
             'Actual Class': actual,
             'Prediction Type': tfpn}
-new_source = ColumnDataSource(data=test_table_data)
+tested_source = ColumnDataSource(data=test_table_data)
 abridg_source = ColumnDataSource(data=test_table_data)
-new_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height_policy = 'auto', autosize_mode = "none", index_position=None)
+test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height_policy = 'auto', autosize_mode = "none", index_position=None)
 
 
 # Testing model, and updating confusion matrix and table
@@ -1846,7 +1849,7 @@ def train_test_model():
                 'Actual Class': actual[:15],
                 'Prediction Type': tfpn[:15]}
 
-    new_source.data=full_test_table_data
+    tested_source.data=full_test_table_data
     abridg_source.data=abridg_test_table_data
 
     confusion_values = confusion_matrix(y_test, y_test_pred)
@@ -1880,7 +1883,7 @@ b64_excel_data = ''
 def helper():
     global b64_excel_data
     # Convert source into df
-    tested_df = new_source.to_df()
+    tested_df = tested_source.to_df()
     # print(tested_df.info)
     # print(tested_df)
 
@@ -1942,7 +1945,7 @@ js_div.js_on_change('text', js_xlsx)
 
 
 #from the bokeh export csv demo
-export_csv.js_on_click(CustomJS(args=dict(source=new_source), code=open(os.path.join(os.path.dirname(__file__),"csv_download.js")).read()))
+export_csv.js_on_click(CustomJS(args=dict(source=tested_source), code=open(os.path.join(os.path.dirname(__file__),"csv_download.js")).read()))
 
 # export_csv.on_click(download_csv)
 
@@ -2233,7 +2236,7 @@ histogram_layout = layout(
     [histogram]
 )
 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), data_tab_table), tiny_height_spacer, histogram_layout))
+tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), column(data_tab_table_title, data_tab_table)), tiny_height_spacer, histogram_layout))
 
 train_layout = layout(
     [step_two],
@@ -2279,7 +2282,7 @@ export_layout = layout(
 tab3_temp = layout(
     [column(test_button_layout, warning_spacer_3, export_layout), large_left_page_spacer, bubble],
     [small_med_height_spacer],
-    [new_table]
+    [column(test_table_title, test_table)]
 )
 
 tab3_layout = column(top_page_spacer, row(left_page_spacer, tab3_temp, row(left_page_spacer, column(small_med_height_spacer, test_acc_display))))
