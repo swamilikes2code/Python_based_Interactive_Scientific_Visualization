@@ -752,7 +752,73 @@ body {
       
         <div id="Questions" class="tabcontent">
           <h3>Supplemental Questions</h3>
-            <p>WE STILL NEED TO UPDATE THIS TAB.</p>
+          <div class = "row">
+            <div class = "column_3">
+              <h3>Data Split and Feature Selection</h3>
+                <p>
+                  <ol type="1">
+                    <li>Begin with molecular properties as your selected features, and a data split of 60% training, 20% validation, and 20% testing. 
+                      Next, run decision tree with its default hyperparameters.
+                    </li>
+                    <li>Now, change the data split so the training percentage is below 50%, and run it.</li>
+                    <ol type="a">
+                      <li>How does having this data split (training <50%) affect the validation accuracy of your model?</li>
+                    </ol>
+                    <li>Now, change the data split so that the training percentage is at least 80%, and run it.</li>
+                    <ol type="a">
+                      <li>How does having this data split (training >=80%) affect the validation accuracy of your model?</li>
+                    </ol>
+                    <li>Using whichever data split yielded the best validation accuracy, experiment training the decision tree model with different features.</li>
+                    <ol type="a">
+                      <li>Which set of features seem to train the model best?</li>
+                    </ol>
+                  </ol>
+                </p>
+            </div>
+
+            <div class = "column_3">
+              <h3>Training, Validation, and Testing</h3>
+                <p>
+                  <ol type="1" start="5">
+                    <li>Delete all saves except for the one whose data split and feature selection yielded the best validation results. 
+                      Alternatively, refresh your window and run decision tree once with said best data split and feature selection. 
+                      Take note of the validation accuracy and learning curve for your chosen model.</li>
+                    <li>Next, gradually increase the max depth of tree until you have 3-5 saves in the data table. 
+                      Take note of how the learning curve for the training score and validation score change as the max depth of tree increases.</li>
+                    <ol type="a">
+                      <li>How does the model's performance change as the max depth of tree increases?</li>
+                    </ol>
+                    <li>Test the default save (this will be the one with the highest validation accuracy), taking note of its confusion matrix and test performance. 
+                      Next, test your other saves.</li>
+                    <ol type="a">
+                      <li>Does your highest validation accuracy always relate to highest testing accuracy? Why or why not?</li>
+                    </ol>
+                    <li>Now, experiment using a different machine learning algorithm and adjusting its hyperparameters.</li>
+                    <ol type="a">
+                      <li>How do different machine learning algorithms and hyperparameter settings affect the learning curve and validation accuracies? Please provide an example.</li>
+                    </ol>
+                  </ol>
+                </p>
+            </div>
+
+            <div class = "column_3">
+              <h3>Predicting</h3>
+                <p>
+                  <ol type="1" start="9">
+                    <li>Choose one final save to test. 
+                      For all practical machine-learning purposes, testing should be considered the final measure of performance of your model, and should not be used for additional validation.</li>
+                    <li>Choose your tested save to predict the biodegradability of each of the 3 randomly-selected molecules from the dataset.</li>
+                    <ol type="a">
+                      <li>Did your model correctly predict all three of the randomly-selected molecules from the dataset?</li>
+                    </ol>
+                    <li>Now create a custom SMILES string using the tools provided, and predict its biodegradability. Try to find at least one molecule that does not appear in the dataset.</li>
+                    <ol type="a">
+                      <li>Which molecules were you able to find that do not appear in the dataset?</li>
+                    </ol>
+                  </ol>
+                </p>
+            </div>
+          </div>
         </div>
       </div>
 
