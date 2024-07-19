@@ -416,12 +416,8 @@ intro_instr_template = """
         .row {{
             display: flex;
             text-align: center;
-            padding-bottom: 10px
-        }}
-
-        .column_5 {{
-            width = 17.9%;
-            padding-right = 2%;
+            padding-bottom: 10px;
+            justify-content: center;
         }}
 
         p {{
@@ -455,77 +451,46 @@ intro_instr_template = """
 <body>
     <div class="section">
         <div class="row">
-            <div style="background-color: {bg_color_1}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
-                <div class="column_5">
-                    <h2>1) PREPARE DATA</h2>
-                    <h3>Prepare the biodegradability data for training.</h3>
-                    <p>On the <span class="highlight"><b>Data</b></span> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>.</p> 
-                    <p>You can also view a <b>Data Exploration Histogram</b>, showing the distribution of certain molecular features across the dataset.</p>
-                </div>
-            </div>
-
-            <div style="background-color: #ffffff;">
-                <div class="column_5">
-                    <p>‎</p>
-                </div>
+            <div style="background-color: {bg_color_1}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 18%">
+                <h2>1) PREPARE DATA</h2>
+                <h3>Prepare the biodegradability data for training.</h3>
+                <p>On the <span class="highlight"><b>Data</b></span> tab, first choose whether to use <b>Molecular Features</b> or <b>Fingerprints</b> to train the model. Next, split the data into <b>training</b>, <b>validating</b>, and <b>testing</b>.</p> 
+                <p>You can also view a <b>Data Exploration Histogram</b>, showing the distribution of certain molecular features across the dataset.</p>
             </div>
 
 
-            <div style="background-color: {bg_color_2}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
-                <div class="column_5">
+
+            <div style="background-color: {bg_color_2}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 18%">
                     <h2>2) TRAIN</h2>
                     <h3>Train a machine learning model on your prepared data.</h3>
                     <p>On the <span class="highlight"><b>Train and Validate</b></span> tab, select the <b>machine learning algorithm</b> of your choice, and run it, displaying the run's <b>validation accuracy</b> in both a datatable, and a <b>Learning Curve</b>.</p>
-                </div>
             </div>
 
-            <div style="background-color: #ffffff;">
-                <div class="column_5">
-                    <p>‎</p>
-                </div>
-            </div>
 
-            <div style="background-color: {bg_color_3}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">    
-                <div class="column_5">
+            <div style="background-color: {bg_color_3}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 18%">    
                     <h2>3) VALIDATE</h2>
                     <h3>Fine-tune the hyperparameters of your model.</h3>
                     <p>On the <span class="highlight"><b>Train and Validate</b></span> tab, fine-tune the algorithm's <b>hyperparameters</b>, and compare different runs' validation accuracies in the table, avoiding <b>overfitting</b> by analyzing the model's Learning Curve. </p>
-                </div>
             </div>
 
-            <div style="background-color: #ffffff;">
-                <div class="column_5">
-                    <p>‎</p>
-                </div>
-            </div>
             
-            <div style="background-color: {bg_color_4}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
-                <div class="column_5">
+            <div style="background-color: {bg_color_4}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 18%">
                     <h2>4) TEST</h2>
                     <h3>Perform a final test of your model's performance.</h3>
                     <p>On the <span class="highlight"><b>Test</b></span> tab complete your final test of the saved model of your choice, displaying its testing accuracy, and a <b>confusion matrix</b>.</p> 
                     <p>It is recommended to use your run with the highest validation accuracy here.</p>
-                </div>
             </div>
 
-            <div style="background-color: #ffffff;">
-                <div class="column_5">
-                    <p>‎</p>
-                </div>
-            </div>
-            
-            <div style="background-color: {bg_color_5}; padding: 5px; border: 1px solid #ddd; border-radius: 7px;">
-                <div class="column_5">
+            <div style="background-color: {bg_color_5}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 18%">
                     <h2>5) PREDICT</h2>
                     <h3>Input a SMILES string and predict its class using your model.</h3>
                     <p>On the <span class="highlight"><b>Predict</b></span> tab, test any of the saved models by inputting a <b>SMILES string</b>, displaying the IUPAC name of your chosen molecule, its predicted class, and if the molecule appears in the dataset, its actual class.</p>
-                </div>
             </div>
         </div>
     </div>
 
     <div class="section full-width"> 
-    <div style="background-color: {bg_color_6}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 100%;">
+    <div style="background-color: {bg_color_6}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 90%;">
         <div class="center-text">    
             <h3>{text}</h3>
             </div>
@@ -545,7 +510,7 @@ formatted_instr_html = intro_instr_template.format(
     text='Explore the module to create your own Machine Learning Model.'
 )
 
-intro_instr = Div(text=formatted_instr_html, width=1000, height=1000)
+intro_instr = Div(text=formatted_instr_html, sizing_mode="scale_width")
 
 formatted_val_html = html_val_template.format('N/A')
 val_acc_display = Div(text=formatted_val_html)
@@ -2220,7 +2185,7 @@ left_page_spacer = Spacer(width = 20)
 large_left_page_spacer = Spacer(width = 90)
 
 # creating widget layouts
-tab0_layout = row(left_page_spacer, column(top_page_spacer, intro_instr, js_div))
+tab0_layout = row(children=[column(top_page_spacer, intro_instr, js_div)])
 
 data_config_layout = layout(
     [data_select, column(input_help_height_spacer, datatable_help)],
