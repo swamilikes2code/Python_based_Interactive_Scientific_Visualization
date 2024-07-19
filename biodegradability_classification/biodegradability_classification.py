@@ -533,36 +533,36 @@ step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200
 
 
 splitter_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
                  <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>"""), position="right"))
 
 datatable_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Select whether to use <b>features</b> or a <b>molecular fingerprint</b> to train model.</div>
                                                         <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>
                  </div>""", ), position="right"))
 
 datavis_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='background-color: #DEF2F1; padding: 16px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Explore the data by viewing the distribution of certain molecular features across the dataset.</div>
                  </div>""", ), position="right"))
 
 train_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                  <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                  <div style='padding: 20px; font-family: Arial, sans-serif;'>
                   <div>Select one of the following <b>Machine Learning algorithms</b>.</div> 
                                                     <div>For more info, see the <i>Algorithms</i> tab above the light blue menu area.</div>
                   </div>""", ), position="right"))
 
 tune_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 20px; font-family: Arial, sans-serif;'>
                  <div>Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy.
                                                    Use the <b>Learning Curve</b> to detect <b>Overfitting.</b></div>
                                                    <div>For more info, see the <i>Algorithms</i> and <i>Overfitting</i> tabs in the menu above.</div>
                  </div>""", ), position="right"))
 
 test_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                <div style='padding: 20px; font-family: Arial, sans-serif;'>
                 <div>Select the save from the previous tab to test the model, and view its <b>confusion matrix</b> below.</div>
                 <div>‎</div>     
                 <div>NOTE: This should be considered the <b>final</b> test of your model, and is NOT intended for additional validation.</div>
@@ -575,7 +575,7 @@ smiles_gen = Div(text=f"""
 """)
 
 smiles_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
+                <div style='padding: 20px; font-family: Arial, sans-serif;'>
                     Use the molecule drawer to the right to generate a custom SMILES.<br />
                     Confused on how to generate a SMILES String?
                     <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
