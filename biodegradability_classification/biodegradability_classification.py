@@ -63,7 +63,7 @@ delete_status_message = Div(text='Changes not saved', styles = not_updated)
 # --------------- BUTTONS --------------- #
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning", width = 250)
-train_button = Button(label="Run ML algorithm", button_type="success", width=150, height = 31)
+train_button = Button(label="Train", button_type="success", width=150, height = 31)
 tune_button = Button(label="Tune", button_type="success", width=150, height = 31)
 delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
 test_button = Button(label = "Test", button_type = "success", width = 150, height = 31)
