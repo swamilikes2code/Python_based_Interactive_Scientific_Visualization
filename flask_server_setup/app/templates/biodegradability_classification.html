@@ -70,6 +70,12 @@ body {
     clear: both;
     }
 
+.scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
   /* ------------------------- FOR THE HEADER -------------------------*/
 
   
@@ -783,8 +789,9 @@ tablinks[currentTab].click();
 
   </script>
      <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
-
-    {{bokeh_script_biodegradability_classification|safe}}
+    <div class="scrollable-container">
+      {{bokeh_script_biodegradability_classification|safe}}
+    </div>
     <br>
     <br>
 </body>
