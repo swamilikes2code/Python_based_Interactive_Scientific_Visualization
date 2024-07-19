@@ -459,7 +459,6 @@ intro_instr_template = """
             </div>
 
 
-
             <div style="background-color: {bg_color_2}; padding: 5px; border: 1px solid #ddd; border-radius: 7px; width: 18%">
                     <h2>2) TRAIN</h2>
                     <h3>Train a machine learning model on your prepared data.</h3>
