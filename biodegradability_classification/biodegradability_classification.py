@@ -684,7 +684,7 @@ dataset_size = len(df1)                              # ---- This section takes 1
 all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
                                                      # ---- This section takes 1.5-2.5 to run ---- #
 # just holding mandatory cols                        # ---- This section takes 1.5-2.5 to run ---- #
-df = df1.iloc[:, :4]                                 # ---- This section takes 1.5-2.5 to run ---- #
+df = df1.iloc[:, :3]                                 # ---- This section takes 1.5-2.5 to run ---- #
 ####################################################################################################
 read_csv_stop = datetime.now()                                          # ----------- TIMER CODE
 elapsed_time = read_csv_stop - read_csv_start                           # ----------- TIMER CODE
