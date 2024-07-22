@@ -709,10 +709,10 @@ df2_tab_source = ColumnDataSource(df2_subset)
 df3_tab_source = ColumnDataSource(df3_subset)
 df4_tab_source = ColumnDataSource(df4_subset)
 
-cols1 = df1.columns.tolist()
-cols2 = df2.columns.tolist()
-cols3 = df3.columns.tolist()
-cols4 = df4.columns.tolist()
+cols1 = df1.columns[3:].tolist()
+cols2 = df2.columns[3:].tolist()
+cols3 = df3.columns[3:].tolist()
+cols4 = df4.columns[3:].tolist()
 
 all_cols = [cols1, cols2, cols3, cols4]
 
