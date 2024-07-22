@@ -709,29 +709,6 @@ df2_tab_source = ColumnDataSource(df2_subset)
 df3_tab_source = ColumnDataSource(df3_subset)
 df4_tab_source = ColumnDataSource(df4_subset)
 
-to_dictionary_time_start = datetime.now()                                   # ----------- TIMER CODE
-####################################################################################################
-
-def to_dict(df): 
-    return {col: df[col].tolist() for col in df.columns} # sped up to 1 second execution
-
-# df1_dict = to_dict(df1)
-# df2_dict = to_dict(df2)
-# df3_dict = to_dict(df3)
-# df4_dict = to_dict(df4)
-#df1_dict = df1.to_dict("list")                      # ---- This section takes 5.0-10.0 to run ---- #
-#df2_dict = df2.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-#df3_dict = df3.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-#df4_dict = df4.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-####################################################################################################
-to_dictionary_time_end = datetime.now()                                     # ----------- TIMER CODE
-elapsed_time = to_dictionary_time_end - to_dictionary_time_start            # ----------- TIMER CODE
-print(f"Data to dictionary time: {elapsed_time.total_seconds():.2f} seconds") #606 - 615 takes 5-10 seconds
-
-# cols1 = [key for key in df1_dict.keys() if key not in mandatory_columns]
-# cols2 = [key for key in df2_dict.keys() if key not in mandatory_columns]
-# cols3 = [key for key in df3_dict.keys() if key not in mandatory_columns]
-# cols4= [key for key in df4_dict.keys() if key not in mandatory_columns]
 cols1 = df1.columns.tolist()
 cols2 = df2.columns.tolist()
 cols3 = df3.columns.tolist()
