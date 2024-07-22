@@ -64,7 +64,7 @@ delete_status_message = Div(text='Changes not saved', styles = not_updated)
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning", width = 250)
 train_button = Button(label="Train", button_type="success", width=150, height = 31)
-tune_button = Button(label="Tune", button_type="success", width=150, height = 31)
+tune_button = Button(label="Validate", button_type="success", width=150, height = 31)
 delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
 test_button = Button(label = "Test", button_type = "success", width = 150, height = 31)
 predict_button = Button(label = 'Predict', button_type = "success", width = 200, height = 31)
@@ -684,7 +684,7 @@ dataset_size = len(df1)                              # ---- This section takes 1
 all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
                                                      # ---- This section takes 1.5-2.5 to run ---- #
 # just holding mandatory cols                        # ---- This section takes 1.5-2.5 to run ---- #
-df = df1.iloc[:, :4]                                 # ---- This section takes 1.5-2.5 to run ---- #
+df = df1.iloc[:, :3]                                 # ---- This section takes 1.5-2.5 to run ---- #
 ####################################################################################################
 read_csv_stop = datetime.now()                                          # ----------- TIMER CODE
 elapsed_time = read_csv_stop - read_csv_start                           # ----------- TIMER CODE
@@ -709,29 +709,10 @@ df2_tab_source = ColumnDataSource(df2_subset)
 df3_tab_source = ColumnDataSource(df3_subset)
 df4_tab_source = ColumnDataSource(df4_subset)
 
-to_dictionary_time_start = datetime.now()                                   # ----------- TIMER CODE
-####################################################################################################
-
-def to_dict(df): 
-    return {col: df[col].tolist() for col in df.columns} # sped up to 1 second execution
-
-df1_dict = to_dict(df1)
-df2_dict = to_dict(df2)
-df3_dict = to_dict(df3)
-df4_dict = to_dict(df4)
-#df1_dict = df1.to_dict("list")                      # ---- This section takes 5.0-10.0 to run ---- #
-#df2_dict = df2.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-#df3_dict = df3.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-#df4_dict = df4.to_dict("list")                      # ---- This section takes 5.5-10.0 to run ---- #
-####################################################################################################
-to_dictionary_time_end = datetime.now()                                     # ----------- TIMER CODE
-elapsed_time = to_dictionary_time_end - to_dictionary_time_start            # ----------- TIMER CODE
-print(f"Data to dictionary time: {elapsed_time.total_seconds():.2f} seconds") #606 - 615 takes 5-10 seconds
-
-cols1 = [key for key in df1_dict.keys() if key not in mandatory_columns]
-cols2 = [key for key in df2_dict.keys() if key not in mandatory_columns]
-cols3 = [key for key in df3_dict.keys() if key not in mandatory_columns]
-cols4= [key for key in df4_dict.keys() if key not in mandatory_columns]
+cols1 = df1.columns[3:].tolist()
+cols2 = df2.columns[3:].tolist()
+cols3 = df3.columns[3:].tolist()
+cols4 = df4.columns[3:].tolist()
 
 all_cols = [cols1, cols2, cols3, cols4]
 
@@ -1774,15 +1755,15 @@ def train_test_model():
 
     actual.clear()
     for index in indices:
-            actual.append(df1_dict['Class'][index])
+            actual.append(df['Class'][index])
 
     tested_names.clear()
     for index in indices:
-        tested_names.append(df1_dict['Substance Name'][index])
+        tested_names.append(df['Substance Name'][index])
     
     tested_smiles.clear()
     for index in indices:
-        tested_smiles.append(df1_dict['SMILES'][index])
+        tested_smiles.append(df['SMILES'][index])
 
 
     tfpn.clear()
@@ -1917,7 +1898,7 @@ export_csv.js_on_click(CustomJS(args=dict(source=tested_source), code=open(os.pa
 # --------------- PREDICTING --------------- #
 ##############################################
 
-random_smiles = random.choices(df1_dict['SMILES'], k=3)
+random_smiles = random.choices(df['SMILES'], k=3)
 
 smiles_select = Select(title="Select SMILES String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=200)
 
@@ -1981,13 +1962,7 @@ def predict_biodegrad():
             predict_status_message.text = 'Error: invalid SMILES string'
             predict_status_message.styles = not_updated
             return
-
-    if user_smiles in df1_dict['SMILES']:
-        known_index = df1_dict['SMILES'].index(user_smiles)
-        user_name = df1_dict['Substance Name'][known_index].lower()
-    else:
-        user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
-        user_name = user_compound[0].iupac_name
+   
 
     if save_source.data['saved_data_choice'][save_index] == data_opts[0]:
         y_pred = molecule_to_descriptors(user_molec)
@@ -1998,11 +1973,15 @@ def predict_biodegrad():
     elif save_source.data['saved_data_choice'][save_index] == data_opts[3]:
         y_pred = molecule_to_pathfp(user_molec)
         
+    condition = df['SMILES'].str.contains(user_smiles, na=False, regex=False)
 
-    if user_smiles in df1_dict['SMILES']:
-        known_index = df1_dict['SMILES'].index(user_smiles)
-        actual_class = df1_dict['Class'][known_index]
+    if condition.any():
+        known_index = condition.idxmax()  # Get the index of the first True value
+        actual_class = df.at[known_index, 'Class']
+        user_name = df['Substance Name'][known_index].lower()
     else:
+        user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
+        user_name = user_compound[0].iupac_name
         actual_class = 'Unknown'
 
     predict_status_message.text = 'Prediction complete'
