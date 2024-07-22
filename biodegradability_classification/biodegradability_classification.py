@@ -1962,13 +1962,7 @@ def predict_biodegrad():
             predict_status_message.text = 'Error: invalid SMILES string'
             predict_status_message.styles = not_updated
             return
-
-    if user_smiles in df['SMILES']:
-        known_index = df['SMILES'].index(user_smiles)
-        user_name = df['Substance Name'][known_index].lower()
-    else:
-        user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
-        user_name = user_compound[0].iupac_name
+   
 
     if save_source.data['saved_data_choice'][save_index] == data_opts[0]:
         y_pred = molecule_to_descriptors(user_molec)
@@ -1979,11 +1973,15 @@ def predict_biodegrad():
     elif save_source.data['saved_data_choice'][save_index] == data_opts[3]:
         y_pred = molecule_to_pathfp(user_molec)
         
+    condition = df['SMILES'].str.contains(user_smiles, na=False, regex=False)
 
-    if user_smiles in df['SMILES']:
-        known_index = df['SMILES'].index(user_smiles)
-        actual_class = df['Class'][known_index]
+    if condition.any():
+        known_index = condition.idxmax()  # Get the index of the first True value
+        actual_class = df.at[known_index, 'Class']
+        user_name = df['Substance Name'][known_index].lower()
     else:
+        user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
+        user_name = user_compound[0].iupac_name
         actual_class = 'Unknown'
 
     predict_status_message.text = 'Prediction complete'
