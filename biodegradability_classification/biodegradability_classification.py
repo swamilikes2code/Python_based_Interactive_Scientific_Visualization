@@ -868,8 +868,33 @@ class_1 = df1[df1['Class'] == 1]
 # Default histogram column
 default_hist_column = 'MolWt'
 
+#https://stackoverflow.com/questions/62802061/python-find-outliers-inside-a-list
+def reject_outliers(data, m=10.):
+    d = np.abs(data-np.median(data))
+    mdev = np.median(d)
+    s = d / (mdev if mdev else 1.)
+    return data[s < m].tolist()
+
+# def reject_outliers_iqr(col):
+#     q1 = np.quantile(df1[col], .25)
+#     q3 = np.quantile(df1[col], .75)
+#     fence = (q3-q1)*1.5
+#     min_cutoff = q1 - fence
+#     max_cutoff = q3 + fence
+#     return df1.loc[(df1[col] >= min_cutoff) & (df1[col] <= max_cutoff), col].to_list()
+
+
+hist_list = reject_outliers(df1[default_hist_column])
+# hist_list = reject_outliers_iqr(default_hist_column)
+# print(len(hist_list))
+# print(df1['MolWt'].shape)
+# print(df1[default_hist_column].min())
+# print(np.quantile(df1[default_hist_column], .25))
+# print(np.quantile(df1[default_hist_column], .75))
+# print(df1[default_hist_column].max())
+
 # Define the bins
-bins = np.linspace(df1[default_hist_column].min(), df1[default_hist_column].max(), 20)
+bins = np.linspace(min(hist_list), max(hist_list), 20)
 
 # Calculate histogram for each class
 hist_0, edges_0 = np.histogram(class_0[default_hist_column], bins=bins)
@@ -920,11 +945,7 @@ histogram.ygrid.grid_line_dash = [6, 4]
 # Create a Select widget for choosing histogram column
 hist_options = ['Class',
                 'MolWt',
-                'NumValenceElectrons',
-                'NumRadicalElectrons',
                 'HeavyAtomCount',
-                'NHOHCount',
-                'NOCount',
                 'NumAliphaticCarbocycles',
                 'NumAliphaticHeterocycles',
                 'NumAliphaticRings',
@@ -939,6 +960,8 @@ hist_options = ['Class',
                 'NumSaturatedHeterocycles',
                 'NumSaturatedRings',
                 'RingCount',
+                'LabuteASA',
+                'MolLogP'
                 ]
 hist_x_select = Select(title="X Axis:", value=default_hist_column, options=hist_options)
 
@@ -946,7 +969,9 @@ hist_x_select = Select(title="X Axis:", value=default_hist_column, options=hist_
 def update_hist(attrname, old, new):
     selected_column = hist_x_select.value
 
-    bins = np.linspace(df1[selected_column].min(), df1[selected_column].max(), 20)
+    hist_list = reject_outliers(df1[selected_column])
+
+    bins = np.linspace(min(hist_list), max(hist_list), 20)
 
     # Update histogram data based on selected column
     hist_0, edges_0 = np.histogram(class_0[selected_column], bins=bins)
