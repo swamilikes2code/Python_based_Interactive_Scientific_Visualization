@@ -77,8 +77,8 @@ down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="2
 # still calling it data exploration for now instead of "Show Histogram" as it's less descriptive
 data_exp_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
-export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
-export_csv = Button(label="Download Full Table to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
+export_excel = Button(label="Download Tested Cases to Excel (.xlsx)", width=200, height=31)
+export_csv = Button(label="Download Tested Cases to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
 
 # --------------- HTML TEMPLATES --------------- #
 html_val_template = """
@@ -602,8 +602,8 @@ width=200, height=20)
 
 export_asterisk = Div(text='''<div>**Values are separated by "/", not ","</div>''', width=200, height = 20)
 
-data_tab_table_title = Div(text='<b>Table: First 15 items in dataset with selected features</b>')
-test_table_title = Div(text='<b>Table: 15 random tested cases with prediction type</b>')
+data_tab_table_title = Div(text='<b>Table: First 15 items in dataset with current selected features</b>')
+test_table_title = Div(text='<b>Table: 5 tested cases with prediction type</b>')
 
 # --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
@@ -722,7 +722,7 @@ all_cols = [cols1, cols2, cols3, cols4]
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
-data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 600, height = 300, autosize_mode = "none")
+data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 500, height = 300, autosize_mode = "none")
 
 data_select = Select(title="Select Features:", value = 'Molecular Properties', options=data_opts, width = 200)
 
@@ -1726,7 +1726,7 @@ test_table_data = {'Index': indices,
             'Prediction Type': tfpn}
 tested_source = ColumnDataSource(data=test_table_data)
 abridg_source = ColumnDataSource(data=test_table_data)
-test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height_policy = 'auto', autosize_mode = "none", index_position=None)
+test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height = 150, autosize_mode = "none", index_position=None)
 
 
 # Testing model, and updating confusion matrix and table
@@ -1816,12 +1816,12 @@ def train_test_model():
                 'Actual Class': actual,
                 'Prediction Type': tfpn}
     
-    abridg_test_table_data = {'Index': indices[:15],
-                'Substance Name': tested_names[:15],
-                'SMILES': tested_smiles[:15], 
-                'Predicted Class': predicted[:15],
-                'Actual Class': actual[:15],
-                'Prediction Type': tfpn[:15]}
+    abridg_test_table_data = {'Index': indices[:5],
+                'Substance Name': tested_names[:5],
+                'SMILES': tested_smiles[:5], 
+                'Predicted Class': predicted[:5],
+                'Actual Class': actual[:5],
+                'Prediction Type': tfpn[:5]}
 
     tested_source.data=full_test_table_data
     abridg_source.data=abridg_test_table_data
@@ -2368,13 +2368,20 @@ export_layout = layout(
     [export_asterisk]
 )
 
-tab3_temp = layout(
+test_layout = layout(
     [column(test_button_layout, warning_spacer_3, export_layout), large_left_page_spacer, bubble],
     [small_med_height_spacer],
     [column(test_table_title, test_table)]
 )
 
-tab3_layout = column(top_page_spacer, row(left_page_spacer, tab3_temp, row(left_page_spacer, column(small_med_height_spacer, test_acc_display))))
+tab3_layout = layout(
+    [top_page_spacer],
+    [left_page_spacer, test_layout],
+    [small_med_height_spacer],
+    [left_page_spacer, test_acc_display]
+)
+
+# tab3_layout = column(top_page_spacer, row(left_page_spacer, test_layout, row(left_page_spacer, column(small_med_height_spacer, test_acc_display))))
 
 predict_button_layout = layout(
     [top_page_spacer],
@@ -2393,7 +2400,7 @@ tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer,
 
 tabs = Tabs(tabs = [
                     # TabPanel(child = tab0_layout, title = 'Steps'),
-                    TabPanel(child = tab1_layout, title = 'Data'),
+                    TabPanel(child = tab1_layout, title = 'Train and Validate'),
                     # TabPanel(child = tab2_layout, title = 'Train and Validate'),
                     TabPanel(child = tab3_layout, title = 'Test'),
                     TabPanel(child = tab4_layout, title = 'Predict')
