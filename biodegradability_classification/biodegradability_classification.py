@@ -41,6 +41,8 @@ not_updated = {'color': 'red', 'font-size': '14px'}
 loading = {'color': 'orange', 'font-size': '14px'}
 updated = {'color': 'green', 'font-size': '14px'}
 completed = {'color': 'black', 'font-size': '14px'}
+    # <div style='width: 250px; background-color: #def2f1; padding: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
+warning = {'width': '250px', 'background-color': '#def2f1', 'padding': '5px 10px', 'box-shadow': '0 0 10px rgba(0,0,0,0.1)', 'font-size': '12px', 'height': '100px', 'margin':'5px 5px 15px 5px'}
 
 # --------------- ACCURACY LISTS --------------- #
 # declare at the top to use everywhere
@@ -57,7 +59,7 @@ step_five = Div(text='<b>5) PREDICT</b>', styles=header)
 save_config_message = Div(text='Configuration not saved', styles=not_updated)
 train_status_message = Div(text='Not running', styles=not_updated)
 tune_status_message = Div(text='Not running', styles=not_updated)
-temp_test_status_message = Div(text='Not running', styles=not_updated)
+test_status_message = Div(text='Not running', styles=not_updated)
 predict_status_message = Div(text = 'Not running', styles=not_updated)
 delete_status_message = Div(text='Changes not saved', styles = not_updated)
 
@@ -67,8 +69,8 @@ save_config_button = Button(label="Save Current Configuration", button_type="war
 train_button = Button(label="Train", button_type="success", width=197, height = 31)
 tune_button = Button(label="Validate", button_type="success", width=197, height = 31)
 delete_button = Button(label = "Delete", button_type = 'danger', width = 250, height = 31)
-test_button = Button(label = "Test", button_type = "success", width = 150, height = 31)
-predict_button = Button(label = 'Predict', button_type = "success", width = 200, height = 31)
+test_button = Button(label = "Test", button_type = "success", width = 197, height = 31)
+predict_button = Button(label = 'Predict', button_type = "success", width = 250, height = 31)
 
 #svg icons for buttons
 up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg>''')
@@ -529,7 +531,7 @@ predict_display = Div(text=formatted_predict_html)
 step_two_warning_html = html_warning_template.format('1) Preparing Data', '<b>Save Current Configuration</b>')
 step_two_warning = Div(text=step_two_warning_html, width=200, height=200, visible=False)
 
-step_three_warning_html = html_warning_template.format('2) Train', '<b>Train</b> current <b>ML Algorithm</b>')
+step_three_warning_html = html_warning_template.format('2) Train', '<b>Train</b> a <b>ML Algorithm</b>')
 step_three_warning = Div(text=step_three_warning_html, width=200, height=200, visible=False)
 
 steps_four_five_warning_html = html_warning_template.format('2) Train', 'return to <b>Train and Validate</b> and <b>Train</b> at least one <b>ML Algorithm</b>')
@@ -624,7 +626,7 @@ def update_color():
         bg_2='#9fdbad'
     if tune_status_message.styles == updated:
         bg_3='#9fdbad'
-    if temp_test_status_message.styles == updated:
+    if test_status_message.styles == updated:
         bg_4='#9fdbad'
     if predict_status_message.styles == updated:
         bg_5='#9fdbad' 
@@ -854,9 +856,11 @@ def load_config():
 
     train_status_message.text='Not running'
     train_status_message.styles=not_updated
+    warning_spacer_1.visible = True
 
     tune_status_message.text='Not running'
     tune_status_message.styles=not_updated
+    warning_spacer_2.visible=True
 
     curdoc().add_next_tick_callback(save_config)
 
@@ -1300,13 +1304,23 @@ def train_validate_model():
     # print(predict_select.value)
 
 def load_ML():
-    train_status_message.text = f'Running {my_alg}...'
-    train_status_message.styles = loading
+    if save_config_message.styles == not_updated:
+        warning_spacer_1.visible = False
+        train_status_message.styles = warning
+        train_status_message.text = """
+        <h1 style='font-size: 16px; color: #444'>Incomplete Step:</h1>
+        <p>Navigate to <b>1) PREPARE DATA</b> and <b>Save Current Configuration</b> before continuing.<p>
+        """
+        return
+    else:
+        train_status_message.text = f'Running {my_alg}...'
+        train_status_message.styles = loading
 
-    tune_status_message.text='Not running'
-    tune_status_message.styles=not_updated
+        tune_status_message.text='Not running'
+        tune_status_message.styles=not_updated
+        warning_spacer_2.visible=True
 
-    curdoc().add_next_tick_callback(run_ML)
+        curdoc().add_next_tick_callback(run_ML)
 
 # Attach callback to the run button
 train_button.on_click(load_ML)
@@ -1402,10 +1416,19 @@ hp_toggle.on_change('active', hp_toggle_callback)
 
 
 def load_tuned_config():
-    tune_status_message.text = "Loading tuned config..."
-    tune_status_message.styles = loading
-    
-    curdoc().add_next_tick_callback(run_tuned_config)
+    if train_status_message.styles == not_updated or train_status_message.styles == warning:
+        warning_spacer_2.visible = False
+        tune_status_message.styles = warning
+        tune_status_message.text = """
+        <h1 style='font-size: 16px; color: #444'>Incomplete Step:</h1>
+        <p>Navigate to <b>2) TRAIN</b> and <b>Train</b> a <b>ML Algorithm</b> before continuing.<p>
+        """
+        return
+    else:
+        tune_status_message.text = "Loading tuned config..."
+        tune_status_message.styles = loading
+        
+        curdoc().add_next_tick_callback(run_tuned_config)
 
 tune_button.on_click(load_tuned_config)
 
@@ -1416,17 +1439,17 @@ tune_button.on_click(load_tuned_config)
 
 # making select to choose save num to display/use
 delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 250)
-test_save_select = Select(title = "Choose a save to test:", options = [], margin=(5, 40, 5, 5), width = 200, height = 40)
+test_save_select = Select(title = "Choose a save to test:", options = [], margin=(5, 40, 5, 5), width = 250, height = 40)
 
 def update_test_message(attr, old, new):
-    temp_test_status_message.text = "Not running"
-    temp_test_status_message.styles = not_updated
+    test_status_message.text = "Not running"
+    test_status_message.styles = not_updated
 
     update_color()
 
 test_save_select.on_change('value', update_test_message)
 
-predict_select = Select(title = 'Choose a save to predict with:', options = [], width = 200, height = 40)
+predict_select = Select(title = 'Choose a save to predict with:', options = [], width = 250, height = 40)
 
 new_save_number = 0
 
@@ -1497,8 +1520,8 @@ def save_model():
     predict_select.options[high_score[1]] = str(high_score[0]) + '*'
 
 
-    temp_test_status_message.text = 'Not running'
-    temp_test_status_message.styles = not_updated
+    test_status_message.text = 'Not running'
+    test_status_message.styles = not_updated
 
     update_color()
 
@@ -1613,8 +1636,8 @@ twenty_five_percent = dataset_size * 0.25
 def determine_scale():
     # Calculate the number of instances in each split
     if test_save_select.value == '':
-        temp_test_status_message.text = 'Error: please select a Save'
-        temp_test_status_message.styles = not_updated
+        test_status_message.text = 'Error: please select a Save'
+        test_status_message.styles = not_updated
         update_color()
         return
         
@@ -1748,8 +1771,8 @@ def train_test_model():
     np.random.seed(123)
 
     if test_save_select.value == '':
-        temp_test_status_message.text = 'Error: please select a Save'
-        temp_test_status_message.styles = not_updated
+        test_status_message.text = 'Error: please select a Save'
+        test_status_message.styles = not_updated
         return
         
     save_index = test_save_select.options.index(test_save_select.value)
@@ -1841,15 +1864,26 @@ def train_test_model():
 
     update_cmatrix(None, None, None)
 
-    temp_test_status_message.text = "Testing complete"
-    temp_test_status_message.styles = updated
+    test_status_message.text = "Testing complete"
+    test_status_message.styles = updated
     update_color()
 
+saves_exist = False
 def load_test():
-    temp_test_status_message.text = "Testing..."
-    temp_test_status_message.styles = loading
+    if save_source.data['saved_data_choice'] == []:
+        # saves_exist = True
+        warning_spacer_3.visible = False
+        test_status_message.styles = warning
+        test_status_message.text = """
+        <h1 style='font-size: 16px; color: #444'>Incomplete Step:</h1>
+        <p>Navigate to <b>2)</b> and <b>Train</b> at least one <b>ML Algorithm</b>before continuing.<p>
+        """
+    else:
+        test_status_message.text = "Testing..."
+        test_status_message.styles = loading
+        warning_spacer_3.visible = True
     
-    curdoc().add_next_tick_callback(train_test_model)
+        curdoc().add_next_tick_callback(train_test_model)
 
 test_button.on_click(load_test)
 
@@ -1931,9 +1965,9 @@ export_csv.js_on_click(CustomJS(args=dict(source=tested_source), code=open(os.pa
 
 random_smiles = random.choices(df['SMILES'], k=3)
 
-smiles_select = Select(title="Select SMILES String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=200)
+smiles_select = Select(title="Select SMILES String", value=random_smiles[0], options=[random_smiles[0], random_smiles[1], random_smiles[2], "Custom"], width=250)
 
-user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=150, height=31)
+user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=197, height=31)
 
 # test in dataset C=C(C)C(=O)O
 
@@ -2080,9 +2114,16 @@ def predict_biodegrad():
     return
 
 def load_predict():
-     predict_status_message.text = 'Predicting...'
-     predict_status_message.styles = loading
-     curdoc().add_next_tick_callback(predict_biodegrad)
+    if save_source.data['saved_data_choice'] == []:
+        predict_status_message.styles = warning
+        predict_status_message.text = """
+        <h1 style='font-size: 16px; color: #444'>Incomplete Step:</h1>
+        <p>Navigate to <b>2)</b> and <b>Train</b> at least one <b>ML Algorithm</b>before continuing.<p>
+        """
+    else:
+        predict_status_message.text = 'Predicting...'
+        predict_status_message.styles = loading
+        curdoc().add_next_tick_callback(predict_biodegrad)
 
  # callback for predict button
 predict_button.on_click(load_predict)
@@ -2154,16 +2195,20 @@ def toggle_smiles_input_vis(attr, old, new):
         # predict_instr.visible = True
         smiles_help.visible = True
         smiles_gen.visible = True
+        smiles_tiny_height_spacer.visible = True
+        smiles_input_help_height_spacer.visible = True
     else:
         user_smiles_input.visible = False
         # predict_instr.visible = False
         smiles_help.visible = False
         smiles_gen.visible = False
+        smiles_tiny_height_spacer.visible = False
+        smiles_input_help_height_spacer.visible = False
 
 smiles_select.on_change('value', toggle_smiles_input_vis)
 
 
-# Visiblility of warning messages vs. status messages
+# # Visiblility of warning messages vs. status messages
 
 warning_spacer_1 = Spacer(height = 80)
 warning_spacer_2 = Spacer(height = 80)
@@ -2173,101 +2218,103 @@ warning_spacer_1.visible = True
 warning_spacer_2.visible = True
 warning_spacer_3.visible = True
 
-train_status_message.visible = True
-tune_status_message.visible = True
-temp_test_status_message.visible = True
-predict_status_message.visible = True
+# train_status_message.visible = True
+# tune_status_message.visible = True
+# test_status_message.visible = True
+# predict_status_message.visible = True
 
-def toggle_step_two_warn():
-    if save_config_message.styles != not_updated:
-        train_status_message.visible = True
-        step_two_warning.visible = False
-        warning_spacer_1.visible = True
-        tune_status_message.visible = True
-        step_three_warning.visible = False
-        warning_spacer_2.visible = True
-        temp_test_status_message.text = 'Not running'
-        temp_test_status_message.styles = not_updated
-        temp_test_status_message.visible  = True
-        step_four_warning.visible = False
-        warning_spacer_3.visible = True
-        predict_status_message.text = 'Not running'
-        predict_status_message.styles = not_updated
-        predict_status_message.visible = True
-        step_five_warning.visible = False
+# def toggle_step_two_warn():
+#     if save_config_message.styles != not_updated:
+#         train_status_message.visible = True
+#         step_two_warning.visible = False
+#         warning_spacer_1.visible = True
+#         tune_status_message.visible = True
+#         step_three_warning.visible = False
+#         warning_spacer_2.visible = True
+#         test_status_message.text = 'Not running'
+#         test_status_message.styles = not_updated
+#         test_status_message.visible  = True
+#         step_four_warning.visible = False
+#         warning_spacer_3.visible = True
+#         predict_status_message.text = 'Not running'
+#         predict_status_message.styles = not_updated
+#         predict_status_message.visible = True
+#         step_five_warning.visible = False
 
-    else:
-        train_status_message.styles = not_updated
-        train_status_message.visible = False
-        step_two_warning.visible = True
-        warning_spacer_1.visible = False
+#     else:
+#         train_status_message.styles = not_updated
+#         train_status_message.visible = False
+#         step_two_warning.visible = True
+#         warning_spacer_1.visible = False
 
-    update_color()
+#     update_color()
 
-train_button.on_click(toggle_step_two_warn)
-save_config_button.on_click(toggle_step_two_warn)
+# # train_button.on_click(toggle_step_two_warn)
+# # save_config_button.on_click(toggle_step_two_warn)
 
-def toggle_step_three_warn():
-    if train_status_message.styles != not_updated:
-        step_three_warning.visible = False
-        tune_status_message.visible = True
-        warning_spacer_2.visible = True
-    else:
-        step_three_warning.visible = True
-        tune_status_message.visible = False
-        warning_spacer_2.visible = False
+# def toggle_step_three_warn():
+#     if train_status_message.styles != not_updated:
+#         step_three_warning.visible = False
+#         tune_status_message.visible = True
+#         warning_spacer_2.visible = True
+#     else:
+#         step_three_warning.visible = True
+#         tune_status_message.visible = False
+#         warning_spacer_2.visible = False
 
-    update_color()
+#     update_color()
 
-tune_button.on_click(toggle_step_three_warn)
-# train_button.on_click(toggle_step_three_warn)
+# # tune_button.on_click(toggle_step_three_warn)
+# # train_button.on_click(toggle_step_three_warn)
 
-saves_exist = False
-def toggle_step_four_warn():
-    global saves_exist
-    if saves_exist:
-        step_four_warning.visible = False
-        temp_test_status_message.visible = True
-        warning_spacer_3.visible = True
+# saves_exist = False
+# def toggle_step_four_warn():
+#     global saves_exist
+#     if saves_exist:
+#         step_four_warning.visible = False
+#         test_status_message.visible = True
+#         warning_spacer_3.visible = True
 
-    elif save_source.data['saved_data_choice'] != []:
-        saves_exist = True
-        step_four_warning.visible = False
-        temp_test_status_message.visible = True
-        warning_spacer_3.visible = True
-    else:
-        step_four_warning.visible = True
-        temp_test_status_message.visible = False
-        warning_spacer_3.visible = False
+#     elif save_source.data['saved_data_choice'] != []:
+#         saves_exist = True
+#         step_four_warning.visible = False
+#         test_status_message.visible = True
+#         warning_spacer_3.visible = True
+#     else:
+#         step_four_warning.visible = True
+#         test_status_message.visible = False
+#         warning_spacer_3.visible = False
 
-    update_color()
+#     update_color()
 
-test_button.on_click(toggle_step_four_warn)
+# # test_button.on_click(toggle_step_four_warn)
 
-def toggle_step_five_warn():
-    global saves_exist
-    if saves_exist:
-        step_five_warning.visible = False
-        predict_status_message.visible = True
+# def toggle_step_five_warn():
+#     global saves_exist
+#     if saves_exist:
+#         step_five_warning.visible = False
+#         predict_status_message.visible = True
 
-    elif save_source.data['saved_data_choice'] != []:
-        saves_exist = True
-        step_five_warning.visible = False
-        predict_status_message.visible = True
-    else:
-        step_five_warning.visible = True
-        predict_status_message.visible = False
+#     elif save_source.data['saved_data_choice'] != []:
+#         saves_exist = True
+#         step_five_warning.visible = False
+#         predict_status_message.visible = True
+#     else:
+#         step_five_warning.visible = True
+#         predict_status_message.visible = False
 
-    update_color()
+#     update_color()
 
-predict_button.on_click(toggle_step_five_warn)
+# # predict_button.on_click(toggle_step_five_warn)
 
 
 # --------------- LAYOUTS --------------- 
 
 tiny_height_spacer = Spacer(height = 15)
+smiles_tiny_height_spacer = Spacer(height=15)
 small_height_spacer = Spacer(height = 18)  #used when buttons have help buttons next to them
 input_help_height_spacer = Spacer(height=17)  #used when select or input widgets have help buttons next to them
+smiles_input_help_height_spacer = Spacer(height=17)
 small_med_height_spacer = Spacer(height = 23)
 med_height_spacer = Spacer(height = 30)
 large_height_spacer = Spacer(height = 45)
@@ -2361,7 +2408,7 @@ test_button_layout = layout(
     [test_save_select],
     [asterisk],
     [test_button, test_help],
-    [temp_test_status_message],
+    [test_status_message],
     [step_four_warning]
 )
 
@@ -2393,7 +2440,7 @@ predict_button_layout = layout(
     [asterisk],
     [smiles_select],
     [tiny_height_spacer],
-    [user_smiles_input, column(input_help_height_spacer, smiles_help, tiny_height_spacer)],
+    [user_smiles_input, column(smiles_input_help_height_spacer, smiles_help, smiles_tiny_height_spacer)],
     [predict_button],
     [predict_status_message],
     [step_five_warning]
