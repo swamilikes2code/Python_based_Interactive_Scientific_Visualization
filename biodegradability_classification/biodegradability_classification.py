@@ -2055,10 +2055,10 @@ def predict_biodegrad():
     elif save_source.data['saved_data_choice'][pred_index] == data_opts[3]:
         y_pred = molecule_to_pathfp(user_molec)
         
-    condition = df['SMILES'].str.contains(user_smiles, na=False, regex=False)
+    # condition = df['SMILES'].str.contains(user_smiles, na=False, regex=False)
 
-    if condition.any():
-        known_index = condition.idxmax()  # Get the index of the first True value
+    if user_smiles in df['SMILES'].values:
+        known_index = df['SMILES'].values.tolist().index(user_smiles)
         actual_class = df.at[known_index, 'Class']
         user_name = df['Substance Name'][known_index].lower()
     else:
