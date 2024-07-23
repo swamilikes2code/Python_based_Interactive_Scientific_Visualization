@@ -601,7 +601,7 @@ padding-right: 4%;
             
 
             <div class="home_picture_col">
-              <p><b>PUT PICUTRE HERE:</b></p>
+              <p><b>PUT PICTURE HERE:</b></p>
             </div>
           </div>
 
@@ -628,7 +628,7 @@ padding-right: 4%;
             <div class="step_row">
 
               <div class="step_col">
-                <p><b>1) PREPARING DATA:</b></p>
+                <p><b>1) PREPARE DATA:</b></p>
                 <p>Choose which 
                   <span class="tooltip"><b>feature group</b>
                     <span class="tooltiptext">For more info on the specific 
@@ -648,7 +648,7 @@ padding-right: 4%;
                   <span class="tooltip"><b>supervised learning algorithm</b>
                     <span class="tooltiptext">For more info on each machine learning algorithm, visit <b><i>Algorithms</i></b>.</span>
                   </span> 
-                  to train your model with, and press Train.</p>
+                  to train your model with, and press <b><i>Train.</i></b></p>
               </div>
 
               <div class="step_col">
@@ -657,12 +657,12 @@ padding-right: 4%;
                   <span class="tooltip"><b>hyperparameters</b>
                     <span class="tooltiptext">For more info on each machine learning algorithm's hyperparameters, visit <b><i>Algorithms</i></b>.</span>
                   </span> 
-                  of your chosen algorithm, and press Validate.</p>
+                  of your chosen algorithm, and press <b><i>Validate.</i></b></p>
               </div>
 
               <div class="step_col">
                 <p><b>4) TEST:</b></p>
-                <p>Choose any of your previous saves to run a final test of your model, and press Test.</p>
+                <p>Choose any of your previous saves to run a final test of your model, and press <b><i>Test.</i></b></p>
               </div>
 
               <div class="step_col">
@@ -673,7 +673,7 @@ padding-right: 4%;
                       three-dimensional structure. On the Predict tab, you will find some randomly-selected SMILES strings of molecules from the dataset,
                       or the option to create your own SMILES string with an online SMILES-generator.</span>
                   </span>
-                  and press Predict.
+                  and press <b><i>Predict.</i></b>
                   You have now successfully created a machine learning model that can predict whether molecules are readily biodegradable!</p>
               </div>
             </div>
@@ -1022,41 +1022,67 @@ padding-right: 4%;
           <h3>Supplemental Questions</h3>
           <div class = "row">
             <div class = "column_3">
+              <p>For <b>questions 1-6,</b> let “optimal” be defined as producing the <b>highest validation accuracy,</b> without the learning curve showing signs of <b>underfitting</b> or <b>overfitting.</b></p> 
+              <p>It is recommended to run steps <b>1) PREPARE DATA</b> and <b>2) TRAIN</b> with all default parameters before answering any questions.</p>
+            </div>
+            <div class = "column_3">
+              <p></p>
+            </div>
+            <div class = "column_3">
+              <p>For <b>questions 7-9,</b> let your “most optimal save” be defined as whichever save yielded the <b>highest testing accuracy.</b></p>
+              <p>“Saves” refer to previously-run models and are displayed in the table in the <b>Train and Validate tab.</b></p>
+            </div>
+          </div>
+          <div class = "row">
+            <div class = "column_3">
               <h3>Data Split and Feature Selection:</h3>
                 <p>
                   <ol type="1">
-                    <li>Experiment <b>training</b> the decision tree model with different features. 
-                      Which set of features seem to train the model best?</li>
-                    <li>Experiment <b>training</b> the decision tree model using different data split percentages. 
-                      How does having a training percentage of less than 50% affect your model's validation accuracy? 
-                      What about a training percentage of over 80%?</li>
+                    <li>Train the decision tree model using each of the four feature choices. 
+                      Find the optimal features for training your decision tree model.</li>
+                    <li>Train the decision tree model using different data split percentages, ranging from 40% to 80% training. 
+                      Find the optimal data split for your decision tree model, to the nearest 5%.</li>
+                    <li>Tune the decision tree model by modifying its hyperparameters.</li>
+                    <ol type="a">
+                      <li>How does increasing the max. depth of tree affect your model’s performance? </li>
+                      <li>What about changing the splitter?</li>
+                    </ol>
                   </ol>
                 </p>
             </div>
 
             <div class = "column_3">
-              <h3>Training, Validation, and Testing:</h3>
+              <h3>Algorithm Selection and Hyperparameter Tuning:</h3>
                 <p>
-                  <ol type="1" start="3">
-                    <li><b>Tune</b> your decision tree model's hyperparameters by using different maximum depths of trees. 
-                      How does increasing the max. depth of tree affect your model's performance?</li>
-                    <li><b>Test</b> your default save (this will be the one with the highest validation accuracy), 
-                      and then test your other saves. Does your highest validation accuracy always relate to highest testing accuracy? Why or why not?</li>
-                    <li>Experiment <b>training</b> different machine learning algorithms and <b>tuning</b> their hyperparameters. 
-                      How do different machine learning algorithms and hyperparameter settings affect the learning curve and validation accuracies? Please provide an example.</li>
-                    <li>Do different machine learning algorithms have different optimal features and/or data splits? Provide an example and give a brief explanation.</li>
+                  <ol type="1" start="4">
+                    <li>Train the model using a different machine learning algorithm (either KNN or LR). 
+                      Are the features and data split still the most optimal for this model? Why or why not?</li>
+                    <li>Tune your chosen model by modifying its hyperparameters.</li>
+                    <ol type="a">
+                      <li>How does increasing or decreasing your model's numerical hyperparameter affect its performance?</li>
+                      <li>How does changing the categorical hyperparameter of your model affect its performance?</li>
+                    </ol>
+                    <li>Using your above findings, try to find an optimum combination of feature, data split, machine learning algorithm, and hyperparameters for this model.</li>
                   </ol>
                 </p>
             </div>
 
             <div class = "column_3">
-              <h3>Predicting:</h3>
+              <h3>Testing and Predicting:</h3>
                 <p>
                   <ol type="1" start="7">
-                    <li>Choose your best tested save to <b>predict</b> the biodegradability of each of the 3 randomly-selected SMILES strings from the dataset. 
-                      Did your model correctly <b>predict</b> all three of the randomly-selected molecules?</li>
-                    <li>Now create a custom SMILES string using the tools provided, and <b>predict</b> its biodegradability. Try to find a molecule that does not appear in the dataset. 
-                      Which molecule(s) were you able to find?</li>
+                    <li>Test each of your saves and view their testing accuracies. 
+                      Does highest validation accuracy always relate to highest testing accuracy? 
+                      Why or why not? If not, which save ended up being most optimal?</li>
+                    <li>Choose your most optimal save to predict the biodegradability of each of the 3 randomly-selected SMILES strings from the dataset. 
+                      Did your model correctly predict all three of the randomly-selected molecules?</li>
+                    <li>For further exploration:</li>
+                    <ol type="a">
+                      <li>Choose a different save to predict the biodegradability of these SMILES strings. 
+                        Are any of the prediction results different?</li>
+                      <li>Create a custom SMILES string using the tools provided, and predict its biodegradability. 
+                        Find a molecule that does not appear in the dataset (whose Actual Class = “unknown”).</li>
+                    </ol>
                   </ol>
                 </p>
             </div>
