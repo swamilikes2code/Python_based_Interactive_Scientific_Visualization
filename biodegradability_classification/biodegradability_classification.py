@@ -64,9 +64,9 @@ delete_status_message = Div(text='Changes not saved', styles = not_updated)
 # --------------- BUTTONS --------------- #
 
 save_config_button = Button(label="Save Current Configuration", button_type="warning", width = 250)
-train_button = Button(label="Train", button_type="success", width=150, height = 31)
-tune_button = Button(label="Validate", button_type="success", width=150, height = 31)
-delete_button = Button(label = "Delete", button_type = 'danger', width = 200, height = 31)
+train_button = Button(label="Train", button_type="success", width=197, height = 31)
+tune_button = Button(label="Validate", button_type="success", width=197, height = 31)
+delete_button = Button(label = "Delete", button_type = 'danger', width = 250, height = 31)
 test_button = Button(label = "Test", button_type = "success", width = 150, height = 31)
 predict_button = Button(label = 'Predict', button_type = "success", width = 200, height = 31)
 
@@ -77,8 +77,8 @@ down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="2
 # still calling it data exploration for now instead of "Show Histogram" as it's less descriptive
 data_exp_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
-export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
-export_csv = Button(label="Download Full Table to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
+export_excel = Button(label="Download Tested Cases to Excel (.xlsx)", width=200, height=31)
+export_csv = Button(label="Download Tested Cases to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
 
 # --------------- HTML TEMPLATES --------------- #
 html_val_template = """
@@ -97,6 +97,7 @@ html_val_template = """
         }}
         .container {{
             background-color: #ffffff;
+            width: 420px;
         }}
         h1 {{
             text-align: center;
@@ -182,7 +183,7 @@ html_test_template = """
         }}
         p {{
             margin: 5px 0;
-            max-width: 575px;
+            max-width: 670px;
         }}
         .section {{
             margin-bottom: 20px;
@@ -340,6 +341,7 @@ html_warning_template = """
             background-color: #f4f4f4;
         }}
         .container {{
+            width: 250px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }}
@@ -524,13 +526,13 @@ test_acc_display = Div(text=formatted_test_html)
 formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 predict_display = Div(text=formatted_predict_html)
 
-step_two_warning_html = html_warning_template.format('1) Preparing Data', 'return to the <b>Data</b> tab and <b>Save Current Configuration</b>')
+step_two_warning_html = html_warning_template.format('1) Preparing Data', '<b>Save Current Configuration</b>')
 step_two_warning = Div(text=step_two_warning_html, width=200, height=200, visible=False)
 
-step_three_warning_html = html_warning_template.format('2) Train', '<b>Run</b> current <b>ML Algorithm</b>')
+step_three_warning_html = html_warning_template.format('2) Train', '<b>Train</b> current <b>ML Algorithm</b>')
 step_three_warning = Div(text=step_three_warning_html, width=200, height=200, visible=False)
 
-steps_four_five_warning_html = html_warning_template.format('2) Train', 'return to <b>Train and Validate</b> and <b>Run</b> at least one <b>ML Algorithm</b>')
+steps_four_five_warning_html = html_warning_template.format('2) Train', 'return to <b>Train and Validate</b> and <b>Train</b> at least one <b>ML Algorithm</b>')
 step_four_warning = Div(text=steps_four_five_warning_html, width=200, height=200, visible=False)
 step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200, visible=False)
 
@@ -602,8 +604,8 @@ width=200, height=20)
 
 export_asterisk = Div(text='''<div>**Values are separated by "/", not ","</div>''', width=200, height = 20)
 
-data_tab_table_title = Div(text='<b>Table: First 15 items in dataset with selected features</b>')
-test_table_title = Div(text='<b>Table: 15 random tested cases with prediction type</b>')
+data_tab_table_title = Div(text='<b>Table: First 15 items in dataset with current selected features</b>')
+test_table_title = Div(text='<b>Table: 5 tested cases with prediction type</b>')
 
 # --------------- UPDATE INSTRUCTIONS COLORS --------------- #
 def update_color():
@@ -722,9 +724,9 @@ all_cols = [cols1, cols2, cols3, cols4]
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
-data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 600, height = 300, autosize_mode = "none")
+data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 500, height = 250, autosize_mode = "none")
 
-data_select = Select(title="Select Features:", value = 'Molecular Properties', options=data_opts, width = 200)
+data_select = Select(title="Select Features:", value = 'Molecular Properties', options=data_opts, width = 197)
 
 data_initialization_end = datetime.now()                                    # ----------- TIMER CODE
 elapsed_time = data_initialization_end - total_data_section_timer_start     # ----------- TIMER CODE
@@ -766,7 +768,7 @@ split_list = [50, 25, 25] #0-train, 1-val, 2-test
 
 # helper function to produce string
 def update_split_text(train_percentage, val_percentage, test_percentage):
-    split_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+    split_display.text = f"""<div style='width:250px; background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
     Train: {train_percentage}% || Validate: {val_percentage}% || Test: {test_percentage}%
     </div>"""
 
@@ -808,12 +810,12 @@ callback = CustomJS(args = dict(),
             )
 
 # creating widgets
-tvt_slider = RangeSlider(title= 'Split Data', value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False, width = 195)
+tvt_slider = RangeSlider(title= 'Split Data', value=(50, 75), start=0, end=100, step=5, tooltips = False, show_value = False, width = 197)
 tvt_slider.bar_color = '#FAFAFA' # may change later, just so that the segments of the bar look the same
 split_display = Div(text="""
-                    <div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+                    <div style='width:250px; background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
                     Train: 50% || Validate: 25% || Test: 25%
-                    </div>""", width = 250)
+                    </div>""")
 
 # range slider on change
 tvt_slider.js_on_change('value', callback)
@@ -922,7 +924,7 @@ source = ColumnDataSource(data=dict(
 histogram = figure(title=f"Histogram of {default_hist_column} with Class Color Coding",
            x_axis_label=default_hist_column, y_axis_label='Frequency',
            tools="save",
-           width=600, height=300)
+           width=600, height=250)
 
 # Add class 0 bars
 bars_class_0 = histogram.vbar(x=dodge('hist_centers', -dodge_val, range=histogram.x_range), top='top_class_0', width=0.3*(hist_centers[1] - hist_centers[0]),
@@ -1072,7 +1074,7 @@ learning_curve.legend.location = 'bottom_right'
 my_alg = 'Decision Tree'
 
 # Create select button
-alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"], width=200)
+alg_select = Select(title="Select ML Algorithm:", value="Decision Tree", options=["Decision Tree", "K-Nearest Neighbor", "Logistic Regression"], width=250)
 
 # define to be default: decision tree
 hyperparam_list = [2, "random"]
@@ -1098,13 +1100,13 @@ hp_slider = Slider(
     end = 15,
     value = 2,
     step = 1,
-    width=200
+    width=250
 )
 hp_select = Select(
     title = "Splitter strategy:",
     value = "random",
     options = ["random", "best"],
-    width= 200
+    width= 250
 )
 hp_toggle = Checkbox(
     label = "None",
@@ -1413,7 +1415,7 @@ tune_button.on_click(load_tuned_config)
 ########################################
 
 # making select to choose save num to display/use
-delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 200)
+delete_multiselect = MultiSelect(title = "Choose saves to delete:", options = [], margin=(5, 40, 5, 5), width = 250)
 test_save_select = Select(title = "Choose a save to test:", options = [], margin=(5, 40, 5, 5), width = 200, height = 40)
 
 def update_test_message(attr, old, new):
@@ -1726,7 +1728,7 @@ test_table_data = {'Index': indices,
             'Prediction Type': tfpn}
 tested_source = ColumnDataSource(data=test_table_data)
 abridg_source = ColumnDataSource(data=test_table_data)
-test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height_policy = 'auto', autosize_mode = "none", index_position=None)
+test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height = 150, autosize_mode = "none", index_position=None)
 
 
 # Testing model, and updating confusion matrix and table
@@ -1816,12 +1818,12 @@ def train_test_model():
                 'Actual Class': actual,
                 'Prediction Type': tfpn}
     
-    abridg_test_table_data = {'Index': indices[:15],
-                'Substance Name': tested_names[:15],
-                'SMILES': tested_smiles[:15], 
-                'Predicted Class': predicted[:15],
-                'Actual Class': actual[:15],
-                'Prediction Type': tfpn[:15]}
+    abridg_test_table_data = {'Index': indices[:5],
+                'Substance Name': tested_names[:5],
+                'SMILES': tested_smiles[:5], 
+                'Predicted Class': predicted[:5],
+                'Actual Class': actual[:5],
+                'Prediction Type': tfpn[:5]}
 
     tested_source.data=full_test_table_data
     abridg_source.data=abridg_test_table_data
@@ -2096,7 +2098,7 @@ smiles_select.on_change('value', update_predict_status)
 
 # ---------------- VISIBILITY --------------
 
-hugest_height_spacer = Spacer(height=80)
+# hugest_height_spacer = Spacer(height=80)
 
 # Histogram
 histogram.visible = False
@@ -2104,7 +2106,7 @@ hist_x_select.visible = False
 datavis_help.visible = False
 data_tab_table.visible = False
 data_tab_table_title.visible = False
-hugest_height_spacer.visible = True
+# hugest_height_spacer.visible = True
 
 js_toggle_data_exp_vis = CustomJS(args=dict(histogram=histogram,
                                             hist_x_select=hist_x_select,
@@ -2114,13 +2116,14 @@ js_toggle_data_exp_vis = CustomJS(args=dict(histogram=histogram,
                                             data_exp_visibility_button=data_exp_visibility_button,
                                             down_arrow=down_arrow,
                                             up_arrow=up_arrow,
-                                            hugest_height_spacer=hugest_height_spacer), code='''
+                                            # hugest_height_spacer=hugest_height_spacer
+                                            ), code='''
 histogram.visible = !histogram.visible
 hist_x_select.visible = !hist_x_select.visible
 datavis_help.visible = !datavis_help.visible
 data_tab_table.visible = !data_tab_table.visible
 data_tab_table_title.visible = !data_tab_table_title.visible
-hugest_height_spacer.visible = !hugest_height_spacer.visible
+/*hugest_height_spacer.visible = !hugest_height_spacer.visible*/
 if (!histogram.visible) {
     data_exp_visibility_button.label = "Show Data Exploration"
     data_exp_visibility_button.icon = down_arrow
@@ -2198,6 +2201,7 @@ def toggle_step_two_warn():
         step_five_warning.visible = False
 
     else:
+        train_status_message.styles = not_updated
         train_status_message.visible = False
         step_two_warning.visible = True
         warning_spacer_1.visible = False
@@ -2220,7 +2224,7 @@ def toggle_step_three_warn():
     update_color()
 
 tune_button.on_click(toggle_step_three_warn)
-train_button.on_click(toggle_step_three_warn)
+# train_button.on_click(toggle_step_three_warn)
 
 saves_exist = False
 def toggle_step_four_warn():
@@ -2272,11 +2276,11 @@ small_med_height_spacer = Spacer(height = 23)
 med_height_spacer = Spacer(height = 30)
 large_height_spacer = Spacer(height = 45)
 ginormous_height_spacer = Spacer(height = 60)
-# hugest_height_spacer = Spacer(height = 80) #used instead of warning spacers under data section
+hugest_height_spacer = Spacer(height = 80) #used instead of warning spacers under data section
 button_spacer = Spacer(height = 30, width = 54)
 top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
-med_left_spacer = Spacer(width = 40)
+med_left_spacer = Spacer(width = 47)
 large_left_page_spacer = Spacer(width = 90)
 
 # creating widget layouts
@@ -2295,12 +2299,12 @@ data_table_layout = layout(
     [data_tab_table]
 )
 histogram_layout = layout(
-    [hist_x_select, column(input_help_height_spacer, datavis_help)],
+    [med_left_spacer, hist_x_select, column(input_help_height_spacer, datavis_help)],
     [histogram]
 )
 
 data_exp_layout = layout(
-    [data_exp_visibility_button],
+    [med_left_spacer, data_exp_visibility_button],
     [histogram_layout, data_table_layout]
 )
 
@@ -2309,6 +2313,7 @@ data_exp_layout = layout(
 train_layout = layout(
     [step_two],
     [alg_select],
+    [tiny_height_spacer],
     [train_button, train_help],
     [train_status_message],
     [step_two_warning]
@@ -2318,7 +2323,9 @@ hyperparam_layout = layout(
     [step_three],
     [hp_slider],
     [hp_toggle],
+    [tiny_height_spacer],
     [hp_select],
+    [tiny_height_spacer],
     [tune_button, tune_help],
     [tune_status_message],
     [step_three_warning]
@@ -2337,6 +2344,7 @@ val_display_layout = layout(
 
 delete_layout = layout(
     [delete_multiselect],
+    [tiny_height_spacer],
     [delete_button],
     [delete_status_message]
 )
@@ -2344,8 +2352,8 @@ delete_layout = layout(
 tab1_layout = layout(
     [top_page_spacer],
     [left_page_spacer, step_one],
-    [left_page_spacer, data_config_layout, large_left_page_spacer, data_exp_layout],
-    [hugest_height_spacer],
+    [left_page_spacer, column(data_config_layout, hugest_height_spacer), large_left_page_spacer, data_exp_layout],
+    # [hugest_height_spacer],
     [left_page_spacer, step_two_three_layout, large_left_page_spacer, val_display_layout],
     [warning_spacer_2],
     [left_page_spacer, delete_layout, large_left_page_spacer, saved_data_table]
@@ -2368,13 +2376,20 @@ export_layout = layout(
     [export_asterisk]
 )
 
-tab3_temp = layout(
+test_layout = layout(
     [column(test_button_layout, warning_spacer_3, export_layout), large_left_page_spacer, bubble],
     [small_med_height_spacer],
     [column(test_table_title, test_table)]
 )
 
-tab3_layout = column(top_page_spacer, row(left_page_spacer, tab3_temp, row(left_page_spacer, column(small_med_height_spacer, test_acc_display))))
+tab3_layout = layout(
+    [top_page_spacer],
+    [left_page_spacer, test_layout],
+    [small_med_height_spacer],
+    [left_page_spacer, test_acc_display]
+)
+
+# tab3_layout = column(top_page_spacer, row(left_page_spacer, test_layout, row(left_page_spacer, column(small_med_height_spacer, test_acc_display))))
 
 predict_button_layout = layout(
     [top_page_spacer],
@@ -2393,7 +2408,7 @@ tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer,
 
 tabs = Tabs(tabs = [
                     # TabPanel(child = tab0_layout, title = 'Steps'),
-                    TabPanel(child = tab1_layout, title = 'Data'),
+                    TabPanel(child = tab1_layout, title = 'Train and Validate'),
                     # TabPanel(child = tab2_layout, title = 'Train and Validate'),
                     TabPanel(child = tab3_layout, title = 'Test'),
                     TabPanel(child = tab4_layout, title = 'Predict')
