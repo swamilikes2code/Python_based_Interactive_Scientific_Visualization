@@ -16,7 +16,7 @@ from bokeh.plotting import figure, show
 from bokeh.transform import dodge
 import pubchempy
 from rdkit import Chem, RDLogger
-from rdkit.Chem import DataStructs, Descriptors, AllChem
+from rdkit.Chem import DataStructs, Descriptors, AllChem, rdFingerprintGenerator
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
@@ -31,6 +31,7 @@ from datetime import datetime
 start_time = datetime.now()
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
 warnings.simplefilter(action='ignore', category=ConvergenceWarning)
+RDLogger.DisableLog('rdApp.*') #ignoring hydrogen warning
 
 
 # --------------- MESSAGE STYLES --------------- #
@@ -317,7 +318,10 @@ html_predict_template = """
             <p>{}</p>
             <h2>Actual Class</h2>
             <p>{}</p>
-        </div>
+            <h2>Similarity</h2>
+            <p>{}</p>
+            <h2>Accuracy</h2>
+            <p>{}</p>
     </div>
 </body>
 </html>
@@ -517,7 +521,7 @@ val_acc_display = Div(text=formatted_val_html)
 formatted_test_html = html_test_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 test_acc_display = Div(text=formatted_test_html)
 
-formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A')
+formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 predict_display = Div(text=formatted_predict_html)
 
 step_two_warning_html = html_warning_template.format('1) Preparing Data', 'return to the <b>Data</b> tab and <b>Save Current Configuration</b>')
@@ -664,7 +668,7 @@ read_csv_start = datetime.now()                                         # ------
 
 # toggle whether you are testing here or running from server
 master = True
-# master = False
+master = False
 
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
@@ -1756,24 +1760,24 @@ def train_test_model():
 
     split_data(temp_split[0], temp_split[1], temp_split[2],temp_data_index)
 
-    global model
-    model = model_list[save_index]
+    # global model
+    t_model = model_list[save_index]
     if temp_alg == 'DT':
         # model = model_list[0]
-        model.max_depth = temp_hyperparams[0]
-        model.splitter = temp_hyperparams[1]
+        t_model.max_depth = temp_hyperparams[0]
+        t_model.splitter = temp_hyperparams[1]
     elif temp_alg == 'KNN':
         # model = model_list[1]
-        model.n_neighbors = temp_hyperparams[0]
-        model.weights = temp_hyperparams[1]
+        t_model.n_neighbors = temp_hyperparams[0]
+        t_model.weights = temp_hyperparams[1]
     elif temp_alg == 'LR':
         # model = model_list[2]
-        model.C = temp_hyperparams[0]
-        model.solver = temp_hyperparams[1]
+        t_model.C = temp_hyperparams[0]
+        t_model.solver = temp_hyperparams[1]
 
-    model.fit(X_train, y_train)
+    t_model.fit(X_train, y_train)
 
-    y_test_pred = model.predict(X_test)
+    y_test_pred = t_model.predict(X_test)
 
     indices = list(X_test.index)
     predicted = list(y_test_pred)
@@ -1932,49 +1936,102 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=150, heigh
 # test in dataset C=C(C)C(=O)O
 
 def molecule_to_descriptors(mol):
+    global similarity, p_accuracy
+    similarity = '-'
+    p_accuracy = '-'
     desc = Descriptors.CalcMolDescriptors(mol)
     desc_df = pd.DataFrame([desc])
     X_pred = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
+mfpg = rdFingerprintGenerator.GetMorganGenerator(radius=1, fpSize=2048)
 # from 2016 rdkit ugm github
 def molecule_to_morgan(mol):
     a = np.zeros(2048)
-    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1), a)
+    fp = mfpg.GetFingerprint(mol)
+    store_acc(fp, [mfpg.GetFingerprint(Chem.MolFromSmiles(m)) for m in df['SMILES']])
+    DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
+ecfpg = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 def molecule_to_ecfp(mol):
     a = np.zeros(2048)
-    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2), a)
+    fp = ecfpg.GetFingerprint(mol)
+    store_acc(fp, [ecfpg.GetFingerprint(Chem.MolFromSmiles(m)) for m in df['SMILES']])
+    DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
 def molecule_to_pathfp(mol):
     a = np.zeros(2048)
-    DataStructs.ConvertToNumpyArray(Chem.RDKFingerprint(mol, maxPath=2), a)
+    fp = Chem.RDKFingerprint(mol, maxPath=2)
+    store_acc(fp, [Chem.RDKFingerprint(Chem.MolFromSmiles(m), maxPath=2) for m in df['SMILES']])
+    DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
-def predict_biodegrad():
-    global model
-#     temp_tvt_list = new_train_val_test_split.split("/")
-#     temp_train = int(temp_tvt_list[0])
-#     temp_val = int(temp_tvt_list[1])
-#     temp_test = int(temp_tvt_list[2])
-#     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
+def calc_pred_acc(similarity):
+    if similarity >= 0.9:
+        accuracy = 0.886
+    elif 0.8 <= similarity <= 0.9:
+        accuracy = 0.827
+    elif 0.7 <= similarity <= 0.8:
+        accuracy = 0.862
+    elif 0.6 <= similarity <= 0.7:
+        accuracy = 0.800
+    elif 0.5 <= similarity <= 0.6:
+        accuracy = 0.732
+    else:
+        accuracy = '-'
+    return accuracy
 
-#     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
+def store_acc(fp, model_fp):
+    global similarity, p_accuracy
+    similarities = DataStructs.BulkTanimotoSimilarity(fp, model_fp)
+    similarities.sort()
+    similarity = round(similarities[-1], 2)
+    p_accuracy = calc_pred_acc(similarity)
+    # print(similarity)
+    # print(p_accuracy)
+
+def predict_biodegrad():
     if predict_select.value == '':
         predict_status_message.text = 'Error: please select a Save'
         predict_status_message.styles = not_updated
         return
-    save_index = predict_select.options.index(predict_select.value)
-    model = model_list[save_index]
+    
+    pred_index = predict_select.options.index(predict_select.value)
+
+    temp_split = [int(split) for split in save_source.data['train_val_test_split'][pred_index].split("/")]
+    temp_data_choice = save_source.data['saved_data_choice'][pred_index]
+    temp_data_index = data_opts.index(temp_data_choice)
+    temp_alg = save_source.data['saved_algorithm'][pred_index]
+    temp_hyperparams = eval(save_source.data['saved_hyperparams'][pred_index])
+
+    split_data(temp_split[0], temp_split[1], temp_split[2],temp_data_index)
+
+    np.random.seed(123)
+
+    global p_model
+    p_model = model_list[pred_index]
+    if temp_alg == 'DT':
+        p_model.max_depth = temp_hyperparams[0]
+        p_model.splitter = temp_hyperparams[1]
+    elif temp_alg == 'KNN':
+        # model = model_list[1]
+        p_model.n_neighbors = temp_hyperparams[0]
+        p_model.weights = temp_hyperparams[1]
+    elif temp_alg == 'LR':
+        # model = model_list[2]
+        p_model.C = temp_hyperparams[0]
+        p_model.solver = temp_hyperparams[1]
+
+    p_model.fit(X_train, y_train)
 
     if smiles_select.value != "Custom":
         user_smiles = smiles_select.value
@@ -1989,13 +2046,13 @@ def predict_biodegrad():
             return
    
 
-    if save_source.data['saved_data_choice'][save_index] == data_opts[0]:
+    if save_source.data['saved_data_choice'][pred_index] == data_opts[0]:
         y_pred = molecule_to_descriptors(user_molec)
-    elif save_source.data['saved_data_choice'][save_index] == data_opts[1]:
+    elif save_source.data['saved_data_choice'][pred_index] == data_opts[1]:
         y_pred = molecule_to_morgan(user_molec)
-    elif save_source.data['saved_data_choice'][save_index] == data_opts[2]:
+    elif save_source.data['saved_data_choice'][pred_index] == data_opts[2]:
         y_pred = molecule_to_ecfp(user_molec)
-    elif save_source.data['saved_data_choice'][save_index] == data_opts[3]:
+    elif save_source.data['saved_data_choice'][pred_index] == data_opts[3]:
         y_pred = molecule_to_pathfp(user_molec)
         
     condition = df['SMILES'].str.contains(user_smiles, na=False, regex=False)
@@ -2014,7 +2071,8 @@ def predict_biodegrad():
 
     update_color()
 
-    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred[0], actual_class)
+    global similarity, p_accuracy
+    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred[0], actual_class, similarity, p_accuracy)
     predict_display.text = new_formatted_predict_html
 
     return
