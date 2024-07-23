@@ -2098,7 +2098,6 @@ smiles_select.on_change('value', update_predict_status)
 
 # ---------------- VISIBILITY --------------
 
-# hugest_height_spacer = Spacer(height=80)
 
 # Histogram
 histogram.visible = False
@@ -2106,7 +2105,6 @@ hist_x_select.visible = False
 datavis_help.visible = False
 data_tab_table.visible = False
 data_tab_table_title.visible = False
-# hugest_height_spacer.visible = True
 
 js_toggle_data_exp_vis = CustomJS(args=dict(histogram=histogram,
                                             hist_x_select=hist_x_select,
@@ -2116,14 +2114,12 @@ js_toggle_data_exp_vis = CustomJS(args=dict(histogram=histogram,
                                             data_exp_visibility_button=data_exp_visibility_button,
                                             down_arrow=down_arrow,
                                             up_arrow=up_arrow,
-                                            # hugest_height_spacer=hugest_height_spacer
                                             ), code='''
 histogram.visible = !histogram.visible
 hist_x_select.visible = !hist_x_select.visible
 datavis_help.visible = !datavis_help.visible
 data_tab_table.visible = !data_tab_table.visible
 data_tab_table_title.visible = !data_tab_table_title.visible
-/*hugest_height_spacer.visible = !hugest_height_spacer.visible*/
 if (!histogram.visible) {
     data_exp_visibility_button.label = "Show Data Exploration"
     data_exp_visibility_button.icon = down_arrow
@@ -2353,7 +2349,6 @@ tab1_layout = layout(
     [top_page_spacer],
     [left_page_spacer, step_one],
     [left_page_spacer, column(data_config_layout, hugest_height_spacer), large_left_page_spacer, data_exp_layout],
-    # [hugest_height_spacer],
     [left_page_spacer, step_two_three_layout, large_left_page_spacer, val_display_layout],
     [warning_spacer_2],
     [left_page_spacer, delete_layout, large_left_page_spacer, saved_data_table]
