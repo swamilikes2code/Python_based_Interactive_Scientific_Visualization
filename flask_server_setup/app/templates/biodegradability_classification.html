@@ -59,6 +59,52 @@ body {
   }
 }
 
+.container3 {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.home_picture_col {
+float: left;
+width: 29.3%;
+padding-right: 4%;
+}
+
+.step_row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.step_tab_col_1, .step_tab_col_23, .step_col {
+    padding-left:10px; padding-right:10px;
+    text-align: center;
+    background-color: #fff;
+    border-left: 5px solid #b2e3f4;
+    border-right: 5px solid #b2e3f4;
+}
+
+.step_tab_col_1 {
+    flex: 1 1 53.4%;
+}
+
+.step_tab_col_23 {
+    flex: 1 1 13.4%;
+}
+
+.step_col {
+    flex: 1 1 14.4%;
+    background-color: #ddd;
+}
+
+@media screen and (max-width: 800px) {
+    .step_tab_col_1, .step_tab_col_23, .step_col {
+        flex: 1 1 100%;
+    }
+}
+
+
 .caption {
   float: none;
   font-size: 12px;
@@ -341,7 +387,7 @@ body {
     color: black;
     font-family: "work sans", sans-serif;
     font-weight: 200;
-    font-size: 1.3vw;
+    font-size: calc(12px + 1.3vw);
     text-align: center;
     background-color: #fff;
 
@@ -538,25 +584,103 @@ body {
       <div class="flexwrap1">
         <div id="Introduction" class="tabcontent">
           <h3>Welcome to Biodegradability Classification</h3>
-          <div class="column_2">
-            <p>We aim to demonstrate how A.I. can be utilized to predict molecular properties through an engaging, individualized learning experience. </p>
+          <div class="row">
+            <div class="column_2">
+              <p>We aim to demonstrate how A.I. can be utilized to predict molecular properties through an engaging, individualized learning experience. </p>
 
-            <p>Specifically, our module uses a subtopic of artificial intelligence called machine learning to extract knowledge and find patterns hidden in the data to predict the property of 
-              <span class="tooltip"><b>biodegradability</b>
-                <span class="tooltiptext">how capable a molecule is of being broken down</span>
-              </span>
-              in organic compounds. </p>
+              <p>Specifically, our module uses a subtopic of artificial intelligence called machine learning to extract knowledge and find patterns hidden in the data to predict the property of 
+                <span class="tooltip"><b>biodegradability</b>
+                  <span class="tooltiptext">how capable a molecule is of being broken down</span>
+                </span>
+                in organic compounds. </p>
 
-            <p>Our learning module walks students with zero coding or machine learning experience through the process of creating their own machine learning model, which once created can be used to predict the biodegradability of unseen instances of compounds.</p>
+              <p>Our learning module walks students with zero coding or machine learning experience through the process of creating their own machine learning model, which once created can be used to predict the biodegradability of unseen instances of compounds.</p>
 
-            <p>We hope that after exploring our module, other STEM students or professionals can be inspired to utilize machine learning to predict other molecular properties, speeding up research times and leading to new innovations.</p>
+              <p>We hope that after exploring our module, other STEM students or professionals can be inspired to utilize machine learning to predict other molecular properties, speeding up research times and leading to new innovations.</p>
+            </div>
+            
 
-            <p><b>PUT STEPS TAB INFO HERE:</b></p>
-
-            <p><b>NOTE:</b> If the module below is not appearing, try opening this page in a private/incognito window. We suggest that mobile users view this page in landscape mode. </p>
+            <div class="home_picture_col">
+              <p><b>PUT PICUTRE HERE:</b></p>
+            </div>
           </div>
-          <div class="column_2" style="justify-items: center;display: grid;padding: 30px 0 0 0;">
-            <a href="#jump" class="button1">Jump to Module</a><br>
+
+          <div class="row">
+            <h3>Procedure:</h3>
+          </div>
+
+          <div class="container3">
+
+            <div class="step_row">
+              <div class="step_tab_col_1">
+                <p><b>Train and Validate</b></p>
+              </div>
+
+              <div class="step_tab_col_23">
+                <p><b>Test</b></p>
+              </div>
+
+              <div class="step_tab_col_23">
+                <p><b>Predict</b></p>
+              </div>
+            </div>
+
+            <div class="step_row">
+
+              <div class="step_col">
+                <p><b>1) PREPARING DATA:</b></p>
+                <p>Choose which 
+                  <span class="tooltip"><b>feature group</b>
+                    <span class="tooltiptext">For more info on the specific 
+                    feature groups used in our model, visit <b><i>Dataset</i></b>.</span>
+                    </span>
+                  to train the module with, and split the data into 
+                  
+                  <span class="tooltip"><b>training, validation, and testing.</b>
+                    <span class="tooltiptext">For more info on data splitting, visit <b><i>Dataset</i></b> and <b><i>Overfitting</i></b>.</span>
+                  </span>       
+                  Press <b><i>Save Configuration</i></b>.</p>
+              </div>
+
+              <div class="step_col">
+                <p><b>2) TRAIN:</b></p>
+                <p>Choose which 
+                  <span class="tooltip"><b>supervised learning algorithm</b>
+                    <span class="tooltiptext">For more info on each machine learning algorithm, visit <b><i>Algorithms</i></b>.</span>
+                  </span> 
+                  to train your model with, and press Train.</p>
+              </div>
+
+              <div class="step_col">
+                <p><b>3) VALIDATE:</b></p>
+                <p>Tune the 
+                  <span class="tooltip"><b>hyperparameters</b>
+                    <span class="tooltiptext">For more info on each machine learning algorithm's hyperparameters, visit <b><i>Algorithms</i></b>.</span>
+                  </span> 
+                  of your chosen algorithm, and press Validate.</p>
+              </div>
+
+              <div class="step_col">
+                <p><b>4) TEST:</b></p>
+                <p>Choose any of your previous saves to run a final test of your model, and press Test.</p>
+              </div>
+
+              <div class="step_col">
+                <p><b>5) PREDICT:</b></p>
+                <p>Predict the biodegradability of any of your previous saves by inputting its 
+                  <span class="tooltip"><b>SMILES string</b>
+                    <span class="tooltiptext">Simplified Molecular-Input Line-Entry System String: a computer-friendly string representation of a molecule's 
+                      three-dimensional structure. On the Predict tab, you will find some randomly-selected SMILES strings of molecules from the dataset,
+                      or the option to create your own SMILES string with an online SMILES-generator.</span>
+                  </span>
+                  and press Predict.
+                  You have now successfully created a machine learning model that can predict whether molecules are readily biodegradable!</p>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="justify-items: center;display: grid;padding: 30px 0 0 0;">
+            <p><b>NOTE:</b> If the module below is not appearing, try opening this page in a private/incognito window. We suggest that mobile users view this page in landscape mode. </p>
+            <p><a href="#jump" class="button1">Jump to Module</a></p><br>
           </div>
         </div>
       
