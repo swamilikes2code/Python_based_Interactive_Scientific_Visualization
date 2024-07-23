@@ -16,7 +16,7 @@ from bokeh.plotting import figure, show
 from bokeh.transform import dodge
 import pubchempy
 from rdkit import Chem, RDLogger
-from rdkit.Chem import DataStructs, Descriptors, AllChem
+from rdkit.Chem import DataStructs, Descriptors, AllChem, rdFingerprintGenerator
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.model_selection import train_test_split
@@ -31,6 +31,7 @@ from datetime import datetime
 start_time = datetime.now()
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
 warnings.simplefilter(action='ignore', category=ConvergenceWarning)
+RDLogger.DisableLog('rdApp.*') #ignoring hydrogen warning
 
 
 # --------------- MESSAGE STYLES --------------- #
@@ -74,7 +75,7 @@ up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"
 down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" /></svg>''')
 
 # still calling it data exploration for now instead of "Show Histogram" as it's less descriptive
-hist_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
+data_exp_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
 export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
 export_csv = Button(label="Download Full Table to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
@@ -317,7 +318,10 @@ html_predict_template = """
             <p>{}</p>
             <h2>Actual Class</h2>
             <p>{}</p>
-        </div>
+            <h2>Similarity</h2>
+            <p>{}</p>
+            <h2>Accuracy</h2>
+            <p>{}</p>
     </div>
 </body>
 </html>
@@ -517,7 +521,7 @@ val_acc_display = Div(text=formatted_val_html)
 formatted_test_html = html_test_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 test_acc_display = Div(text=formatted_test_html)
 
-formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A')
+formatted_predict_html = html_predict_template.format('N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A')
 predict_display = Div(text=formatted_predict_html)
 
 step_two_warning_html = html_warning_template.format('1) Preparing Data', 'return to the <b>Data</b> tab and <b>Save Current Configuration</b>')
@@ -536,7 +540,7 @@ splitter_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
                  <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>"""), position="right"))
 
-datatable_help = HelpButton(tooltip=Tooltip(content=HTML("""
+data_select_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div style='padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Select whether to use <b>features</b> or a <b>molecular fingerprint</b> to train model.</div>
                                                         <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>
@@ -664,7 +668,7 @@ read_csv_start = datetime.now()                                         # ------
 
 # toggle whether you are testing here or running from server
 master = True
-# master = False
+master = False
 
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
@@ -718,7 +722,7 @@ all_cols = [cols1, cols2, cols3, cols4]
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
-data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
+data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 600, height = 300, autosize_mode = "none")
 
 data_select = Select(title="Select Features:", value = 'Molecular Properties', options=data_opts, width = 200)
 
@@ -1756,24 +1760,24 @@ def train_test_model():
 
     split_data(temp_split[0], temp_split[1], temp_split[2],temp_data_index)
 
-    global model
-    model = model_list[save_index]
+    # global model
+    t_model = model_list[save_index]
     if temp_alg == 'DT':
         # model = model_list[0]
-        model.max_depth = temp_hyperparams[0]
-        model.splitter = temp_hyperparams[1]
+        t_model.max_depth = temp_hyperparams[0]
+        t_model.splitter = temp_hyperparams[1]
     elif temp_alg == 'KNN':
         # model = model_list[1]
-        model.n_neighbors = temp_hyperparams[0]
-        model.weights = temp_hyperparams[1]
+        t_model.n_neighbors = temp_hyperparams[0]
+        t_model.weights = temp_hyperparams[1]
     elif temp_alg == 'LR':
         # model = model_list[2]
-        model.C = temp_hyperparams[0]
-        model.solver = temp_hyperparams[1]
+        t_model.C = temp_hyperparams[0]
+        t_model.solver = temp_hyperparams[1]
 
-    model.fit(X_train, y_train)
+    t_model.fit(X_train, y_train)
 
-    y_test_pred = model.predict(X_test)
+    y_test_pred = t_model.predict(X_test)
 
     indices = list(X_test.index)
     predicted = list(y_test_pred)
@@ -1932,49 +1936,102 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=150, heigh
 # test in dataset C=C(C)C(=O)O
 
 def molecule_to_descriptors(mol):
+    global similarity, p_accuracy
+    similarity = '-'
+    p_accuracy = '-'
     desc = Descriptors.CalcMolDescriptors(mol)
     desc_df = pd.DataFrame([desc])
     X_pred = desc_df.drop(columns=['MaxPartialCharge', 'MaxAbsPartialCharge', 'Ipc', 'MinPartialCharge', 'MinAbsPartialCharge', 'BCUT2D_MWHI', 'BCUT2D_MWLOW', 'BCUT2D_CHGHI', 'BCUT2D_CHGLO', 'BCUT2D_LOGPHI', 'BCUT2D_LOGPLOW', 'BCUT2D_MRHI', 'BCUT2D_MRLOW'])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
+mfpg = rdFingerprintGenerator.GetMorganGenerator(radius=1, fpSize=2048)
 # from 2016 rdkit ugm github
 def molecule_to_morgan(mol):
     a = np.zeros(2048)
-    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=1), a)
+    fp = mfpg.GetFingerprint(mol)
+    store_acc(fp, [mfpg.GetFingerprint(Chem.MolFromSmiles(m)) for m in df['SMILES']])
+    DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
+ecfpg = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 def molecule_to_ecfp(mol):
     a = np.zeros(2048)
-    DataStructs.ConvertToNumpyArray(AllChem.GetMorganFingerprintAsBitVect(mol, radius=2), a)
+    fp = ecfpg.GetFingerprint(mol)
+    store_acc(fp, [ecfpg.GetFingerprint(Chem.MolFromSmiles(m)) for m in df['SMILES']])
+    DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
 def molecule_to_pathfp(mol):
     a = np.zeros(2048)
-    DataStructs.ConvertToNumpyArray(Chem.RDKFingerprint(mol, maxPath=2), a)
+    fp = Chem.RDKFingerprint(mol, maxPath=2)
+    store_acc(fp, [Chem.RDKFingerprint(Chem.MolFromSmiles(m), maxPath=2) for m in df['SMILES']])
+    DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
-    y_pred = model.predict(X_pred)
+    y_pred = p_model.predict(X_pred)
     return y_pred
 
-def predict_biodegrad():
-    global model
-#     temp_tvt_list = new_train_val_test_split.split("/")
-#     temp_train = int(temp_tvt_list[0])
-#     temp_val = int(temp_tvt_list[1])
-#     temp_test = int(temp_tvt_list[2])
-#     temp_columns = save_source.data['saved_columns'][int(predict_select.value)-1]
+def calc_pred_acc(similarity):
+    if similarity >= 0.9:
+        accuracy = 0.886
+    elif 0.8 <= similarity <= 0.9:
+        accuracy = 0.827
+    elif 0.7 <= similarity <= 0.8:
+        accuracy = 0.862
+    elif 0.6 <= similarity <= 0.7:
+        accuracy = 0.800
+    elif 0.5 <= similarity <= 0.6:
+        accuracy = 0.732
+    else:
+        accuracy = '-'
+    return accuracy
 
-#     train_validate_model(temp_train,temp_val,temp_test, temp_columns)
+def store_acc(fp, model_fp):
+    global similarity, p_accuracy
+    similarities = DataStructs.BulkTanimotoSimilarity(fp, model_fp)
+    similarities.sort()
+    similarity = round(similarities[-1], 2)
+    p_accuracy = calc_pred_acc(similarity)
+    # print(similarity)
+    # print(p_accuracy)
+
+def predict_biodegrad():
     if predict_select.value == '':
         predict_status_message.text = 'Error: please select a Save'
         predict_status_message.styles = not_updated
         return
-    save_index = predict_select.options.index(predict_select.value)
-    model = model_list[save_index]
+    
+    pred_index = predict_select.options.index(predict_select.value)
+
+    temp_split = [int(split) for split in save_source.data['train_val_test_split'][pred_index].split("/")]
+    temp_data_choice = save_source.data['saved_data_choice'][pred_index]
+    temp_data_index = data_opts.index(temp_data_choice)
+    temp_alg = save_source.data['saved_algorithm'][pred_index]
+    temp_hyperparams = eval(save_source.data['saved_hyperparams'][pred_index])
+
+    split_data(temp_split[0], temp_split[1], temp_split[2],temp_data_index)
+
+    np.random.seed(123)
+
+    global p_model
+    p_model = model_list[pred_index]
+    if temp_alg == 'DT':
+        p_model.max_depth = temp_hyperparams[0]
+        p_model.splitter = temp_hyperparams[1]
+    elif temp_alg == 'KNN':
+        # model = model_list[1]
+        p_model.n_neighbors = temp_hyperparams[0]
+        p_model.weights = temp_hyperparams[1]
+    elif temp_alg == 'LR':
+        # model = model_list[2]
+        p_model.C = temp_hyperparams[0]
+        p_model.solver = temp_hyperparams[1]
+
+    p_model.fit(X_train, y_train)
 
     if smiles_select.value != "Custom":
         user_smiles = smiles_select.value
@@ -1989,13 +2046,13 @@ def predict_biodegrad():
             return
    
 
-    if save_source.data['saved_data_choice'][save_index] == data_opts[0]:
+    if save_source.data['saved_data_choice'][pred_index] == data_opts[0]:
         y_pred = molecule_to_descriptors(user_molec)
-    elif save_source.data['saved_data_choice'][save_index] == data_opts[1]:
+    elif save_source.data['saved_data_choice'][pred_index] == data_opts[1]:
         y_pred = molecule_to_morgan(user_molec)
-    elif save_source.data['saved_data_choice'][save_index] == data_opts[2]:
+    elif save_source.data['saved_data_choice'][pred_index] == data_opts[2]:
         y_pred = molecule_to_ecfp(user_molec)
-    elif save_source.data['saved_data_choice'][save_index] == data_opts[3]:
+    elif save_source.data['saved_data_choice'][pred_index] == data_opts[3]:
         y_pred = molecule_to_pathfp(user_molec)
         
     condition = df['SMILES'].str.contains(user_smiles, na=False, regex=False)
@@ -2014,7 +2071,8 @@ def predict_biodegrad():
 
     update_color()
 
-    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred[0], actual_class)
+    global similarity, p_accuracy
+    new_formatted_predict_html = html_predict_template.format(user_name, user_smiles, y_pred[0], actual_class, similarity, p_accuracy)
     predict_display.text = new_formatted_predict_html
 
     return
@@ -2038,19 +2096,51 @@ smiles_select.on_change('value', update_predict_status)
 
 # ---------------- VISIBILITY --------------
 
+hugest_height_spacer = Spacer(height=80)
+
 # Histogram
 histogram.visible = False
 hist_x_select.visible = False
 datavis_help.visible = False
+data_tab_table.visible = False
+data_tab_table_title.visible = False
+hugest_height_spacer.visible = True
 
-def toggle_hist_visibility():
+js_toggle_data_exp_vis = CustomJS(args=dict(histogram=histogram,
+                                            hist_x_select=hist_x_select,
+                                            datavis_help=datavis_help,
+                                            data_tab_table=data_tab_table,
+                                            data_tab_table_title=data_tab_table_title,
+                                            data_exp_visibility_button=data_exp_visibility_button,
+                                            down_arrow=down_arrow,
+                                            up_arrow=up_arrow,
+                                            hugest_height_spacer=hugest_height_spacer), code='''
+histogram.visible = !histogram.visible
+hist_x_select.visible = !hist_x_select.visible
+datavis_help.visible = !datavis_help.visible
+data_tab_table.visible = !data_tab_table.visible
+data_tab_table_title.visible = !data_tab_table_title.visible
+hugest_height_spacer.visible = !hugest_height_spacer.visible
+if (!histogram.visible) {
+    data_exp_visibility_button.label = "Show Data Exploration"
+    data_exp_visibility_button.icon = down_arrow
+} else {
+    data_exp_visibility_button.label = "Hide Data Exploration"
+    data_exp_visibility_button.icon = up_arrow
+}
+''')
+
+def toggle_data_exp_visibility():
     histogram.visible = not histogram.visible
     hist_x_select.visible = not hist_x_select.visible
     datavis_help.visible = not datavis_help.visible
-    hist_visibility_button.label = "Show Data Exploration" if not histogram.visible else "Hide Data Exploration"
-    hist_visibility_button.icon = down_arrow if not histogram.visible else up_arrow
+    data_tab_table_title.visible = not data_tab_table_title.visible
+    data_tab_table.visible = not data_tab_table.visible
+    data_exp_visibility_button.label = "Show Data Exploration" if not histogram.visible else "Hide Data Exploration"
+    data_exp_visibility_button.icon = down_arrow if not histogram.visible else up_arrow
 
-hist_visibility_button.on_click(toggle_hist_visibility)
+# data_exp_visibility_button.on_click(toggle_data_exp_visibility)
+data_exp_visibility_button.js_on_click(js_toggle_data_exp_vis)
 
 
 # Custom SMILES String input
@@ -2182,29 +2272,39 @@ small_med_height_spacer = Spacer(height = 23)
 med_height_spacer = Spacer(height = 30)
 large_height_spacer = Spacer(height = 45)
 ginormous_height_spacer = Spacer(height = 60)
+# hugest_height_spacer = Spacer(height = 80) #used instead of warning spacers under data section
 button_spacer = Spacer(height = 30, width = 54)
 top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
+med_left_spacer = Spacer(width = 40)
 large_left_page_spacer = Spacer(width = 90)
 
 # creating widget layouts
 tab0_layout = row(children=[column(top_page_spacer, intro_instr, js_div)])
 
 data_config_layout = layout(
-    [data_select, column(input_help_height_spacer, datatable_help)],
+    [data_select, column(input_help_height_spacer, data_select_help)],
     [tiny_height_spacer],
     [column(row(tvt_slider, column(input_help_height_spacer, splitter_help)), split_display)],
     [tiny_height_spacer],
     [column(save_config_button, save_config_message)]
 )
 
+data_table_layout = layout(
+    [data_tab_table_title],
+    [data_tab_table]
+)
 histogram_layout = layout(
-    [hist_visibility_button],
     [hist_x_select, column(input_help_height_spacer, datavis_help)],
     [histogram]
 )
 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), column(data_tab_table_title, data_tab_table)), tiny_height_spacer, histogram_layout))
+data_exp_layout = layout(
+    [data_exp_visibility_button],
+    [histogram_layout, data_table_layout]
+)
+
+# tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), column(data_tab_table_title, data_tab_table)), tiny_height_spacer, histogram_layout))
 
 train_layout = layout(
     [step_two],
@@ -2224,13 +2324,34 @@ hyperparam_layout = layout(
     [step_three_warning]
 )
 
+step_two_three_layout = layout(
+    [train_layout],
+    [warning_spacer_1],
+    [hyperparam_layout]
+)
+
+val_display_layout = layout(
+    [med_left_spacer, val_acc_display],
+    [learning_curve]
+)
+
 delete_layout = layout(
     [delete_multiselect],
     [delete_button],
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, train_layout, warning_spacer_1, hyperparam_layout, warning_spacer_2, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
+tab1_layout = layout(
+    [top_page_spacer],
+    [left_page_spacer, step_one],
+    [left_page_spacer, data_config_layout, large_left_page_spacer, data_exp_layout],
+    [hugest_height_spacer],
+    [left_page_spacer, step_two_three_layout, large_left_page_spacer, val_display_layout],
+    [warning_spacer_2],
+    [left_page_spacer, delete_layout, large_left_page_spacer, saved_data_table]
+)
+
+# tab2_layout = row(left_page_spacer, column(top_page_spacer, train_layout, warning_spacer_1, hyperparam_layout, warning_spacer_2, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 test_button_layout = layout(
     [step_four],
@@ -2270,9 +2391,10 @@ predict_button_layout = layout(
 
 tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer, column(top_page_spacer, predict_display)), row(left_page_spacer, column(top_page_spacer, smiles_gen)))
 
-tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Steps'),
+tabs = Tabs(tabs = [
+                    # TabPanel(child = tab0_layout, title = 'Steps'),
                     TabPanel(child = tab1_layout, title = 'Data'),
-                    TabPanel(child = tab2_layout, title = 'Train and Validate'),
+                    # TabPanel(child = tab2_layout, title = 'Train and Validate'),
                     TabPanel(child = tab3_layout, title = 'Test'),
                     TabPanel(child = tab4_layout, title = 'Predict')
                 ])
