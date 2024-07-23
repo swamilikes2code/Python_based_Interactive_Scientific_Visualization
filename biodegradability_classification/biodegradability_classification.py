@@ -75,7 +75,7 @@ up_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"
 down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 9l6 6l6 -6" /></svg>''')
 
 # still calling it data exploration for now instead of "Show Histogram" as it's less descriptive
-hist_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
+data_exp_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
 export_excel = Button(label="Download Full Table to Excel (.xlsx)", width=200, height=31)
 export_csv = Button(label="Download Full Table to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
@@ -540,7 +540,7 @@ splitter_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
                  <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>"""), position="right"))
 
-datatable_help = HelpButton(tooltip=Tooltip(content=HTML("""
+data_select_help = HelpButton(tooltip=Tooltip(content=HTML("""
                  <div style='padding: 16px; font-family: Arial, sans-serif;'>
                  <div>Select whether to use <b>features</b> or a <b>molecular fingerprint</b> to train model.</div>
                                                         <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>
@@ -722,7 +722,7 @@ all_cols = [cols1, cols2, cols3, cols4]
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
-data_tab_table = DataTable(source=df1_tab_source, columns=data_tab_columns, width=1000, height_policy = 'auto', autosize_mode = "none")
+data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 600, height = 300, autosize_mode = "none")
 
 data_select = Select(title="Select Features:", value = 'Molecular Properties', options=data_opts, width = 200)
 
@@ -2096,19 +2096,51 @@ smiles_select.on_change('value', update_predict_status)
 
 # ---------------- VISIBILITY --------------
 
+hugest_height_spacer = Spacer(height=80)
+
 # Histogram
 histogram.visible = False
 hist_x_select.visible = False
 datavis_help.visible = False
+data_tab_table.visible = False
+data_tab_table_title.visible = False
+hugest_height_spacer.visible = True
 
-def toggle_hist_visibility():
+js_toggle_data_exp_vis = CustomJS(args=dict(histogram=histogram,
+                                            hist_x_select=hist_x_select,
+                                            datavis_help=datavis_help,
+                                            data_tab_table=data_tab_table,
+                                            data_tab_table_title=data_tab_table_title,
+                                            data_exp_visibility_button=data_exp_visibility_button,
+                                            down_arrow=down_arrow,
+                                            up_arrow=up_arrow,
+                                            hugest_height_spacer=hugest_height_spacer), code='''
+histogram.visible = !histogram.visible
+hist_x_select.visible = !hist_x_select.visible
+datavis_help.visible = !datavis_help.visible
+data_tab_table.visible = !data_tab_table.visible
+data_tab_table_title.visible = !data_tab_table_title.visible
+hugest_height_spacer.visible = !hugest_height_spacer.visible
+if (!histogram.visible) {
+    data_exp_visibility_button.label = "Show Data Exploration"
+    data_exp_visibility_button.icon = down_arrow
+} else {
+    data_exp_visibility_button.label = "Hide Data Exploration"
+    data_exp_visibility_button.icon = up_arrow
+}
+''')
+
+def toggle_data_exp_visibility():
     histogram.visible = not histogram.visible
     hist_x_select.visible = not hist_x_select.visible
     datavis_help.visible = not datavis_help.visible
-    hist_visibility_button.label = "Show Data Exploration" if not histogram.visible else "Hide Data Exploration"
-    hist_visibility_button.icon = down_arrow if not histogram.visible else up_arrow
+    data_tab_table_title.visible = not data_tab_table_title.visible
+    data_tab_table.visible = not data_tab_table.visible
+    data_exp_visibility_button.label = "Show Data Exploration" if not histogram.visible else "Hide Data Exploration"
+    data_exp_visibility_button.icon = down_arrow if not histogram.visible else up_arrow
 
-hist_visibility_button.on_click(toggle_hist_visibility)
+# data_exp_visibility_button.on_click(toggle_data_exp_visibility)
+data_exp_visibility_button.js_on_click(js_toggle_data_exp_vis)
 
 
 # Custom SMILES String input
@@ -2240,29 +2272,39 @@ small_med_height_spacer = Spacer(height = 23)
 med_height_spacer = Spacer(height = 30)
 large_height_spacer = Spacer(height = 45)
 ginormous_height_spacer = Spacer(height = 60)
+# hugest_height_spacer = Spacer(height = 80) #used instead of warning spacers under data section
 button_spacer = Spacer(height = 30, width = 54)
 top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
+med_left_spacer = Spacer(width = 40)
 large_left_page_spacer = Spacer(width = 90)
 
 # creating widget layouts
 tab0_layout = row(children=[column(top_page_spacer, intro_instr, js_div)])
 
 data_config_layout = layout(
-    [data_select, column(input_help_height_spacer, datatable_help)],
+    [data_select, column(input_help_height_spacer, data_select_help)],
     [tiny_height_spacer],
     [column(row(tvt_slider, column(input_help_height_spacer, splitter_help)), split_display)],
     [tiny_height_spacer],
     [column(save_config_button, save_config_message)]
 )
 
+data_table_layout = layout(
+    [data_tab_table_title],
+    [data_tab_table]
+)
 histogram_layout = layout(
-    [hist_visibility_button],
     [hist_x_select, column(input_help_height_spacer, datavis_help)],
     [histogram]
 )
 
-tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), column(data_tab_table_title, data_tab_table)), tiny_height_spacer, histogram_layout))
+data_exp_layout = layout(
+    [data_exp_visibility_button],
+    [histogram_layout, data_table_layout]
+)
+
+# tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), column(data_tab_table_title, data_tab_table)), tiny_height_spacer, histogram_layout))
 
 train_layout = layout(
     [step_two],
@@ -2282,13 +2324,34 @@ hyperparam_layout = layout(
     [step_three_warning]
 )
 
+step_two_three_layout = layout(
+    [train_layout],
+    [warning_spacer_1],
+    [hyperparam_layout]
+)
+
+val_display_layout = layout(
+    [med_left_spacer, val_acc_display],
+    [learning_curve]
+)
+
 delete_layout = layout(
     [delete_multiselect],
     [delete_button],
     [delete_status_message]
 )
 
-tab2_layout = row(left_page_spacer, column(top_page_spacer, train_layout, warning_spacer_1, hyperparam_layout, warning_spacer_2, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
+tab1_layout = layout(
+    [top_page_spacer],
+    [left_page_spacer, step_one],
+    [left_page_spacer, data_config_layout, large_left_page_spacer, data_exp_layout],
+    [hugest_height_spacer],
+    [left_page_spacer, step_two_three_layout, large_left_page_spacer, val_display_layout],
+    [warning_spacer_2],
+    [left_page_spacer, delete_layout, large_left_page_spacer, saved_data_table]
+)
+
+# tab2_layout = row(left_page_spacer, column(top_page_spacer, train_layout, warning_spacer_1, hyperparam_layout, warning_spacer_2, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 test_button_layout = layout(
     [step_four],
@@ -2328,9 +2391,10 @@ predict_button_layout = layout(
 
 tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer, column(top_page_spacer, predict_display)), row(left_page_spacer, column(top_page_spacer, smiles_gen)))
 
-tabs = Tabs(tabs = [TabPanel(child = tab0_layout, title = 'Steps'),
+tabs = Tabs(tabs = [
+                    # TabPanel(child = tab0_layout, title = 'Steps'),
                     TabPanel(child = tab1_layout, title = 'Data'),
-                    TabPanel(child = tab2_layout, title = 'Train and Validate'),
+                    # TabPanel(child = tab2_layout, title = 'Train and Validate'),
                     TabPanel(child = tab3_layout, title = 'Test'),
                     TabPanel(child = tab4_layout, title = 'Predict')
                 ])
