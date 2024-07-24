@@ -223,8 +223,11 @@
   .head2 {
       text-align: center;
       color: #fff;
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 600;
+      padding:30px;
+      /* margin-top: 30px; */
+      border-bottom: 2px solid #5c5c5c;
       /* font-family: 'Segoe UI'; */
   }
 
@@ -243,6 +246,7 @@
   .bio {
     content:"";
     display:inline-flex;
+    align-items: center;
     clear:both;
     width:19%
   }
@@ -251,6 +255,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 20px;
   }
 
   .row:after {
@@ -362,8 +367,8 @@
   .footerpic {
       width: 7vw;
       max-width: 200px;
-      height: 7vw;
-      padding: 0.65vw;
+      height: 110px;
+      padding: 10px;
       object-fit: cover;
   }
   
@@ -414,23 +419,23 @@
   
   } */
   .footerbutton {
-      margin: 5px 2px;
-      text-decoration: none;
-      font-family: "proxima nova";
-      font-weight: 200;
-      font-size:14px;
-      /* width: 20px; */
-      height:20px;
-      text-align:center;
-      background-color: #31A6FF;
-      color: #fff;
-  
-      border: solid 2px #31A6FF;
-      border-radius: 50px;
-      padding: 8px;
-  
-      /* -webkit-transition-duration: 300ms;
-      transition-duration:300ms; */
+    padding: 8px;
+    font-size: 14px;
+    height: 20px;
+    text-align:center;
+    text-decoration: none;
+    margin: 5px 2px;
+
+    font-family: "proxima nova";
+    font-weight: 200;
+    background: #31A6FF;
+    color: #fff;
+
+    border: solid 2px #31A6FF;
+    border-radius: 50px;
+
+    /* -webkit-transition-duration: 300ms;
+    transition-duration:300ms; */
   }
   .footerbutton:hover {
       color: #31A6FF;
@@ -438,24 +443,42 @@
   }
   .fa {
     padding: 8px;
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
     text-align: center;
     text-decoration: none;
     margin: 5px 2px;
     border-radius: 50%;
   }
-  .fa:hover {
-      opacity: 0.7;
+
+  .fa-button {
+    font-size: 14px;
+    border: solid 2px #31A6FF;
+    border-radius: 50px;
+    background: #31A6FF;
+    color: #fff;
+  }
+  .fa-button:hover {
+    color: #31A6FF;
+    background-color: #fff;
   }
   .fa-linkedin {
     background: #007bb5;
     color: white;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
   .fa-github {
-      border:0.195vw solid #521D91;
+    border:0.195vw solid #521D91;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   } 
+  .fa-linkedin:hover {
+    opacity: .7;
+  }
+  .fa-github:hover {
+    opacity: .7;
+  }
   
   @media all and (max-width: 608px) {
     header {
@@ -522,7 +545,7 @@
       <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic">
 
       <div class="column">
-        <p> <b>Prof. Srinivas Rangarajan</b> <br> Principal Investigator <br><br> <a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="footerbutton">Bio</a></p>
+        <p> <b>Prof. Srinivas Rangarajan</b> <br> Principal Investigator<br><br><a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="fa fa-button">Bio</a></p>
       </div>
     </div>
 
@@ -538,7 +561,7 @@
       <img src="{{url_for('static', filename='grassi1.jpg')}}" alt= "Dr. Grassi" class="footerpic">
       
       <div class="column">
-        <p> <b>Dr. Vincent Grassi</b> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="footerbutton">Memo</a></p>
+        <p> <b>Dr. Vincent Grassi</b> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="fa fa-button">Memo</a></p>
       </div>
     </div>
 
@@ -546,40 +569,211 @@
       <img src="{{url_for('static', filename='steve.jpg')}}" alt= "Steve" class="footerpic">
 
       <div class="column">
-          <p> <b>Steve Anthony</b> <br> Tech Assistant<br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p>
+          <p> <b>Steve Anthony</b> <br> Tech Assistant<br><br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p>
       </div>
     </div>
     
     <div class="bio">
           <img src="{{url_for('static', filename='Joseph_Menicucci.jpg')}}" alt="Joseph" class="footerpic">
         <div class="column">
-          <p><b>Dr. Joseph Menicucci</b> <br> External Advisor<br><br><a href="https://engineering.lehigh.edu/faculty/joseph-menicucci" class="footerbutton">Bio</a></p>
+          <p><b>Dr. Joseph Menicucci</b> <br> External Advisor<br><br><a href="https://engineering.lehigh.edu/faculty/joseph-menicucci" class="fa fa-button">Bio</a></p>
         </div>
     </div>
   </div>
 
   <h2 class="head2"> Developers:</h2>
 
-  <!-- <div class="row">
-    Anna, Brian, Alex O., Neel, Tim
+  <div class="row">
+    <!-- Anna, Brian, Alex O., Neel, Tim -->
     <div class="bio">
       <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic">
 
       <div class="column">
-        <p> <b>Anna Moragne</b> - Class of 2020 <br> Core Developer <br> <a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> <a href="https://github.com/annamoragne" class="fa fa-github"></a></p>
+        <p> 
+          <b>Anna Moragne</b> - Class of 2020 <br> 
+          Core Developer <br> 
+          <a href="https://www.linkedin.com/in/anna-moragne/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/annamoragne" class="fa fa-github"></a>
+        </p>
       </div>
     </div>
 
     <div class="bio">
-      <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
+      <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic">
 
       <div class="column">
-        <p> <b>Brian Lucas</b> - Class of 2020 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> <a href="https://github.com/cariocabrian" class="fa fa-github"></a></p>
+        <p>
+          <b>Brian Lucas</b> - Class of 2020 <br> 
+          Design, Implementation and UI/UX Developer <br> 
+          <a href="https://www.linkedin.com/in/brian-lucas-327196216/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/cariocabrian" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Alex.JPG')}}" alt= "Alex" class="footerpic">
+
+      <div class="column">
+        <p> 
+          <b>Alex Outkou</b> - Class of 2021 <br> 
+          UI/UX and HTML Developer <br> 
+          <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/ado323" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Neel.jpg')}}" alt= "Neel" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Neel Surya</b> - Class of 2021 <br>
+          Design, Implementation and UI/UX Developer <br>
+          <a href="https://www.linkedin.com/in/neel-surya-a6a4881b4/" class="fa fa-linkedin"></a>
+          <a href="https://github.com/Neel-Surya" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Timothy.jpg')}}" alt= "Timothy" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Timothy Odom</b> - Class of 2021 <br>
+          Core Developer <br>
+          <a href="https://www.linkedin.com/in/timothy-odom-831218216at3/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/too223" class="fa fa-github"></a>
+        </p>
       </div>
     </div>
   </div>
 
-  <div class="flexcol2">
+  <div class="row">
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Xu.jpg')}}" alt= "Xu" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Xu Chen</b> - Class of 2021 <br>
+          Core Developer <br>
+          <a href="https://www.linkedin.com/in/xu-chen-lu/" class="fa fa-linkedin"
+          ></a> 
+          <a href="https://github.com/xuc323" class="fa fa-github"
+          ></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Alex_Pellett.jpg')}}" alt="Alex Pellett" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Alex Pellett</b> - Class of 2023, 2024G <br>
+          Core Developer <br>
+          <a href="https://www.linkedin.com/in/alexandria-pellett/" class="fa fa-linkedin"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Alicia_Zhang.jpg')}}" alt="Alicia" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Alicia Zhang</b> - Class of 2025 <br>
+          Core Developer <br>
+          <a href="https://www.linkedin.com/in/alicia-zhang1/" class="fa fa-linkedin"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Madeline_Judd.jpg')}}" alt="Madeline" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Madeline Judd</b> - Class of 2025 <br>
+          Core Developer <br>
+          <a href="https://github.com/kr225" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}" alt="Tyreese" class="footerpic"/>
+
+      <div class="column">
+        <p>
+          <b>Tyreese Davidson</b> - Class of 2026 <br>
+          Core Developer <br>
+          <a href="https://www.linkedin.com/in/tyreese-davidson/" class="fa fa-linkedin"></a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="bio">
+      <img src="{{url_for('static', filename='Eric.jpg')}}" alt= "Eric" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Eric Burton</b> - Class of 2026 <br> 
+          Core Developer <br> 
+          <a href="https://www.linkedin.com/in/eric-burton-b28192273/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/ecb426" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Devin.jpg')}}" alt= "Devin" class="footerpic">
+
+      <div class="column">
+        <p> 
+          <b>Devin Pombo</b> - Class of 2026 <br> 
+          Core Developer <br> 
+          <a href="https://www.linkedin.com/in/devin-pombo/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/dep326" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Matt.jpg')}}" alt="Matt" class="footerpic">
+
+      <div class="column">
+        <p> 
+          <b>Mathurtion Rajendrackumaar</b> - Class of 2027 <br> 
+          Core Developer <br> 
+          <a href="https://www.linkedin.com/in/mathurtion-rajendrackumaar-4154b0299/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/mathution" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <img src="{{url_for('static', filename='Sophia.jpg')}}" alt= "Sophia" class="footerpic">
+
+      <div class="column">
+        <p>
+          <b>Sophia Pham</b> - Class of 2027 <br> 
+          Core Developer <br> 
+          <a href="https://www.linkedin.com/in/sophialpham/" class="fa fa-linkedin"></a> 
+          <a href="https://github.com/sophia-pham" class="fa fa-github"></a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- <div class="flexcol2">
     <div class="flexwrap">
       <div class="flexcol1">
         <img src="{{url_for('static', filename='Neel.jpg')}}" alt= "Neel" class="footerpic"> <br><br><br><br><br><br>
@@ -590,36 +784,36 @@
           alt="Alex Pellett"
           class="footerpic"
         />
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
         <img
           src="{{url_for('static', filename='Alicia_Zhang.jpg')}}"
           alt="Alicia"
           class="footerpic"
         />
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
       </div>
       <div class="flexcol1" style="float:left">
         <p> <b>Neel Surya</b> - Class of 2021 <br> Design, Implementation and UI/UX Developer <br> <a href="https://www.linkedin.com/in/neel-surya-a6a4881b4/" class="fa fa-linkedin"></a> <a href="https://github.com/Neel-Surya" class="fa fa-github"></a></p><br><br><br><br><br><br>
         <p> <b>Timothy Odom</b> - Class of 2021 <br> Core Developer <br> <a href="https://www.linkedin.com/in/timothy-odom-831218216at3/" class="fa fa-linkedin"></a> <a href="https://github.com/too223" class="fa fa-github"></a></p><br><br><br><br><br><br>
         <p> <b>Xu Chen</b> - Class of 2021 <br> Core Developer <br> <a href="https://www.linkedin.com/in/xu-chen-lu/" class="fa fa-linkedin"></a> <a href="https://github.com/xuc323" class="fa fa-github"></a></p><br><br><br><br><br><br>
         <p>
-          <b>Alex Pellett</b> - Class of 2023, 2024G <br />
-          Core Developer <br />
+          <b>Alex Pellett</b> - Class of 2023, 2024G <br>
+          Core Developer <br>
           <a
             href="https://www.linkedin.com/in/alexandria-pellett/"
             class="fa fa-linkedin"
           ></a>
         </p>
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
         <p>
-          <b>Alicia Zhang</b> - Class of 2025 <br />
-          Core Developer <br />
+          <b>Alicia Zhang</b> - Class of 2025 <br>
+          Core Developer <br>
           <a
             href="https://www.linkedin.com/in/alicia-zhang1/"
             class="fa fa-linkedin"
           ></a>
         </p>
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
       </div>
     </div>    
   </div>
@@ -636,31 +830,31 @@
           alt="Madeline"
           class="footerpic"
         />
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
         <img
           src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}"
           alt="Tyreese"
           class="footerpic"
         />
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
       </div>
       <div class="flexcol1" style="float:left">
         <p> <b>Alex Outkou</b> - Class of 2021 <br> UI/UX and HTML Developer <br> <a href="https://www.linkedin.com/in/alex-outkou/" class="fa fa-linkedin"></a> <a href="https://github.com/ado323" class="fa fa-github"></a></p><br><br><br><br><br><br>
         <p>
-          <b>Madeline Judd</b> - Class of 2025 <br />
-          Core Developer <br />
+          <b>Madeline Judd</b> - Class of 2025 <br>
+          Core Developer <br>
           <a href="https://github.com/kr225" class="fa fa-github"></a>
         </p>
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
         <p>
-          <b>Tyreese Davidson</b> - Class of 2026 <br />
-          Core Developer <br />
+          <b>Tyreese Davidson</b> - Class of 2026 <br>
+          Core Developer <br>
           <a
             href="https://www.linkedin.com/in/tyreese-davidson/"
             class="fa fa-linkedin"
           ></a>
         </p>
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
       </div>
     </div>
   </div>    
@@ -672,19 +866,19 @@
         <img src="{{url_for('static', filename='Sophia.jpg')}}" alt= "Sophia" class="footerpic"> <br><br><br><br><br><br>
         <img src="{{url_for('static', filename='Devin.jpg')}}" alt= "Brian" class="footerpic"> <br><br><br><br><br><br>
         <img src="{{url_for('static', filename='Matt.jpg')}}" alt="Matt" class="footerpic"/>
-        <br /><br /><br /><br /><br /><br />
+        <br><br><br><br><br><br>
       </div>
 
       <div class="flexcol1" style="float:left">
         <p> <b>Eric Burton</b> - Class of 2026 <br> Core Developer <br> <a href="https://www.linkedin.com/in/eric-burton-b28192273/" class="fa fa-linkedin"></a> <a href="https://github.com/ecb426" class="fa fa-github"></a></p><br><br><br><br><br><br>
         <p> <b>Sophia Pham</b> - Class of 2027 <br> Core Developer <br> <a href="https://www.linkedin.com/in/sophialpham/" class="fa fa-linkedin"></a> <a href="https://github.com/sophia-pham" class="fa fa-github"></a></p><br><br><br><br><br><br>
         <p> <b>Devin Pombo</b> - Class of 2026 <br> Core Developer <br> <a href="https://www.linkedin.com/in/devin-pombo/" class="fa fa-linkedin"></a> <a href="https://github.com/dep326" class="fa fa-github"></a></p><br><br><br><br><br><br>
-        <p> <b>Mathurtion Rajendrackumaar</b> - Class of 2027 <br> Core Developer <br> <a href="https://www.linkedin.com/in/mathurtion-rajendrackumaar-4154b0299/" class="fa fa-linkedin"></a> <a href="https://github.com/mathution" class="fa fa-github"></a></p><br /><br /><br /><br /><br /><br />
+        <p> <b>Mathurtion Rajendrackumaar</b> - Class of 2027 <br> Core Developer <br> <a href="https://www.linkedin.com/in/mathurtion-rajendrackumaar-4154b0299/" class="fa fa-linkedin"></a> <a href="https://github.com/mathution" class="fa fa-github"></a></p><br><br><br><br><br><br>
       </div>
     </div>
-    <br /><br /><br /><br /><br /><br />
-  </div>     -->
-</div>
+    <br><br><br><br><br><br>
+  </div>
+</div>      -->
 
 <body>
   <div class="flexwrap1">
