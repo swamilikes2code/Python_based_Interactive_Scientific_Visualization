@@ -213,6 +213,7 @@
 
   /* ------------------HEADER ENDS HERE------------------- */
   
+  /* -----------------------BIOS-------------------------- */
   .head1 {
       text-align: center;
       color: #000;
@@ -231,14 +232,14 @@
       /* font-family: 'Segoe UI'; */
   }
 
-  .column {
+  .biocolumn {
     float: left;
     width: 75%;
     padding: 10px;
     /* height: 300px */
   }
 
-  .column p{
+  .biocolumn p{
     font-size: 14px;
     color: #fff
   }
@@ -255,7 +256,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
   }
 
   .row:after {
@@ -263,6 +263,70 @@
     display: table;
     clear: both;
   }
+
+  /* .footerbutton {
+    padding: 8px;
+    font-size: 14px;
+    height: 20px;
+    text-align:center;
+    text-decoration: none;
+    margin: 5px 2px;
+
+    font-family: "proxima nova";
+    font-weight: 200;
+    background: #31A6FF;
+    color: #fff;
+
+    border: solid 2px #31A6FF;
+    border-radius: 50px;
+
+    -webkit-transition-duration: 300ms;
+    transition-duration:300ms;
+  }
+  .footerbutton:hover {
+      color: #31A6FF;
+      background-color: #fff;
+  } */
+  .fa {
+    padding: 8px;
+    text-align: center;
+    text-decoration: none;
+    margin: 5px 2px;
+    border-radius: 50%;
+  }
+
+  .fa-button {
+    font-size: 14px;
+    border: solid 2px #31A6FF;
+    border-radius: 50px;
+    background: #31A6FF;
+    color: #fff;
+  }
+  .fa-button:hover {
+    color: #31A6FF;
+    background-color: #fff;
+  }
+  .fa-linkedin {
+    background: #007bb5;
+    color: white;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+  .fa-github {
+    border:0.195vw solid #521D91;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  } 
+  .fa-linkedin:hover {
+    opacity: .7;
+  }
+  .fa-github:hover {
+    opacity: .7;
+  }
+
+  /*--------------FEEDBACK FORM--------------------*/
 
   .flexwrap {
       display:flex;
@@ -302,10 +366,10 @@
       line-height: 1.5;
   }
 
-  .questions {
+  /* .questions {
       width: auto;
       margin: auto;
-      /* font-family: 'Segoe UI'; */
+      font-family: 'Segoe UI';
       color:#484848;
       font-weight: 600;
       border:8px; 
@@ -318,12 +382,12 @@
       max-width: 85rem;
   }    
   .center {
-      /* display: block; */
+    display: block;
     margin-left: auto;
     margin-right: auto;
     width: 52.083vw;
     height: 29.297vw;
-  }
+  } */
   .content {
       margin: 0;
       list-style:none;
@@ -418,67 +482,6 @@
       position: relative;
   
   } */
-  .footerbutton {
-    padding: 8px;
-    font-size: 14px;
-    height: 20px;
-    text-align:center;
-    text-decoration: none;
-    margin: 5px 2px;
-
-    font-family: "proxima nova";
-    font-weight: 200;
-    background: #31A6FF;
-    color: #fff;
-
-    border: solid 2px #31A6FF;
-    border-radius: 50px;
-
-    /* -webkit-transition-duration: 300ms;
-    transition-duration:300ms; */
-  }
-  .footerbutton:hover {
-      color: #31A6FF;
-      background-color: #fff;
-  }
-  .fa {
-    padding: 8px;
-    text-align: center;
-    text-decoration: none;
-    margin: 5px 2px;
-    border-radius: 50%;
-  }
-
-  .fa-button {
-    font-size: 14px;
-    border: solid 2px #31A6FF;
-    border-radius: 50px;
-    background: #31A6FF;
-    color: #fff;
-  }
-  .fa-button:hover {
-    color: #31A6FF;
-    background-color: #fff;
-  }
-  .fa-linkedin {
-    background: #007bb5;
-    color: white;
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-  .fa-github {
-    border:0.195vw solid #521D91;
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  } 
-  .fa-linkedin:hover {
-    opacity: .7;
-  }
-  .fa-github:hover {
-    opacity: .7;
-  }
   
   @media all and (max-width: 608px) {
     header {
@@ -544,7 +547,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='rangarajan1.jpg')}}" alt= "Prof R" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p> <b>Prof. Srinivas Rangarajan</b> <br> Principal Investigator<br><br><a href="https://sites.google.com/lehigh.edu/rangarajan-group/" class="fa fa-button">Bio</a></p>
       </div>
     </div>
@@ -552,7 +555,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Raghu.jpg')}}" alt= "Raghu" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p> <b>Dr. Raghuram Thiagarajan</b> <br> Project Lead <br> <a href="https://www.linkedin.com/in/raghuramt/" class="fa fa-linkedin"></a> <a href="https://github.com/swamilikes2code" class="fa fa-github"></a></p>
       </div>
     </div>
@@ -560,7 +563,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='grassi1.jpg')}}" alt= "Dr. Grassi" class="footerpic">
       
-      <div class="column">
+      <div class="biocolumn">
         <p> <b>Dr. Vincent Grassi</b> <br> Assistant Lead <br><br> <a href="https://engineering.lehigh.edu/news/article/memoriam-vincent-g-grassi-chbe-professor-practice"class="fa fa-button">Memo</a></p>
       </div>
     </div>
@@ -568,14 +571,14 @@
     <div class="bio">
       <img src="{{url_for('static', filename='steve.jpg')}}" alt= "Steve" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
           <p> <b>Steve Anthony</b> <br> Tech Assistant<br><br> <a href="https://www.linkedin.com/in/steve-anthony-99a1b014/" class="fa fa-linkedin"></a></p>
       </div>
     </div>
     
     <div class="bio">
           <img src="{{url_for('static', filename='Joseph_Menicucci.jpg')}}" alt="Joseph" class="footerpic">
-        <div class="column">
+        <div class="biocolumn">
           <p><b>Dr. Joseph Menicucci</b> <br> External Advisor<br><br><a href="https://engineering.lehigh.edu/faculty/joseph-menicucci" class="fa fa-button">Bio</a></p>
         </div>
     </div>
@@ -588,7 +591,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='anna.JPG')}}" alt= "Anna" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p> 
           <b>Anna Moragne</b> - Class of 2020 <br> 
           Core Developer <br> 
@@ -601,7 +604,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='brian.JPG')}}" alt= "Brian" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Brian Lucas</b> - Class of 2020 <br> 
           Design, Implementation and UI/UX Developer <br> 
@@ -614,7 +617,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Alex.JPG')}}" alt= "Alex" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p> 
           <b>Alex Outkou</b> - Class of 2021 <br> 
           UI/UX and HTML Developer <br> 
@@ -627,7 +630,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Neel.jpg')}}" alt= "Neel" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Neel Surya</b> - Class of 2021 <br>
           Design, Implementation and UI/UX Developer <br>
@@ -640,7 +643,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Timothy.jpg')}}" alt= "Timothy" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Timothy Odom</b> - Class of 2021 <br>
           Core Developer <br>
@@ -656,7 +659,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Xu.jpg')}}" alt= "Xu" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Xu Chen</b> - Class of 2021 <br>
           Core Developer <br>
@@ -671,7 +674,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Alex_Pellett.jpg')}}" alt="Alex Pellett" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Alex Pellett</b> - Class of 2023, 2024G <br>
           Core Developer <br>
@@ -683,7 +686,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Alicia_Zhang.jpg')}}" alt="Alicia" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Alicia Zhang</b> - Class of 2025 <br>
           Core Developer <br>
@@ -695,7 +698,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Madeline_Judd.jpg')}}" alt="Madeline" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Madeline Judd</b> - Class of 2025 <br>
           Core Developer <br>
@@ -707,7 +710,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Tyreese_Davidson.jpg')}}" alt="Tyreese" class="footerpic"/>
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Tyreese Davidson</b> - Class of 2026 <br>
           Core Developer <br>
@@ -722,7 +725,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Eric.jpg')}}" alt= "Eric" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Eric Burton</b> - Class of 2026 <br> 
           Core Developer <br> 
@@ -735,7 +738,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Devin.jpg')}}" alt= "Devin" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p> 
           <b>Devin Pombo</b> - Class of 2026 <br> 
           Core Developer <br> 
@@ -748,7 +751,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Matt.jpg')}}" alt="Matt" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p> 
           <b>Mathurtion Rajendrackumaar</b> - Class of 2027 <br> 
           Core Developer <br> 
@@ -761,7 +764,7 @@
     <div class="bio">
       <img src="{{url_for('static', filename='Sophia.jpg')}}" alt= "Sophia" class="footerpic">
 
-      <div class="column">
+      <div class="biocolumn">
         <p>
           <b>Sophia Pham</b> - Class of 2027 <br> 
           Core Developer <br> 
