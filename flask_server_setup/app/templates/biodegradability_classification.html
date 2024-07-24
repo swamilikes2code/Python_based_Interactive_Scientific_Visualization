@@ -506,23 +506,27 @@ padding-right: 4%;
 .tooltip {
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1px;
+  text-decoration-color: #484848;
+  
 }
 
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 250px;
+  width: 130px;
   bottom: 100%;
   left: 50%;
-  margin-left: -125px;
-  background-color: black;
+  margin-left: -65px;
+  background-color: #262626;
   color: #fff;
+  font-size: 14px;
   text-align: center;
-  padding: 5px 0;
+  padding: 5px;
   border-radius: 6px;
- 
-  /* Position the tooltip text - see examples below! */
+  
   position: absolute;
   z-index: 1;
 }
@@ -535,7 +539,7 @@ padding-right: 4%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: black transparent transparent transparent;
+  border-color: #262626 transparent transparent transparent;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
@@ -702,16 +706,16 @@ padding-right: 4%;
               <p>
                 <ul>
                   <li>
-                    <span class="tooltip"><b>Non-ready</b>
+                    <span class="tooltip"><b>Non-ready biodegradability</b>
                       <span class="tooltiptext">< 60% biodegradation within 28 days</span>
                     </span>
-                    biodegradability = <b>0</b>
+                     = <b>0</b>
                   </li>
                   <li>
-                    <span class="tooltip"><b>Ready</b>
+                    <span class="tooltip"><b>Ready biodegradability</b>
                       <span class="tooltiptext">> 60% biodegradation within 28 days</span>
                     </span>
-                    biodegradability = <b>1</b>
+                     = <b>1</b>
                   </li>
                 </ul>
               </p>
@@ -1021,16 +1025,19 @@ padding-right: 4%;
         <div id="Questions" class="tabcontent">
           <h3>Supplemental Questions</h3>
           <div class = "row">
+            <p><b>NOTE:</b> It is recommended to run steps <b>1) PREPARE DATA</b> and <b>2) TRAIN</b> with all default parameters before answering any questions.
+            More detailed instructions on each step can be found on the <b><i>Introduction</i></b> tab in the above menu.</p>
+          </div>
+          <div class = "row">
             <div class = "column_3">
-              <p>For <b>questions 1-6,</b> let “optimal” be defined as producing the <b>highest validation accuracy,</b> without the learning curve showing signs of <b>underfitting</b> or <b>overfitting.</b></p> 
-              <p>It is recommended to run steps <b>1) PREPARE DATA</b> and <b>2) TRAIN</b> with all default parameters before answering any questions.</p>
+              <p>For <b>questions 1-6,</b> let “optimal” features, data splits, etc. be defined as producing the <b>highest validation accuracy,</b> without the learning curve showing signs of <b>underfitting</b> or <b>overfitting.</b></p> 
             </div>
             <div class = "column_3">
               <p></p>
             </div>
             <div class = "column_3">
-              <p>For <b>questions 7-9,</b> let your “most optimal save” be defined as whichever save yielded the <b>highest testing accuracy.</b></p>
-              <p>“Saves” refer to previously-run models and are displayed in the table in the <b>Train and Validate tab.</b></p>
+              <p>For <b>questions 7-9,</b> let your “most optimal save” be defined as whichever save yielded the <b>highest testing accuracy.</b>
+                “Saves” refer to previously-run models (displayed in the table on the <b><i>Train and Validate</i></b> tab).</p>
             </div>
           </div>
           <div class = "row">
@@ -1038,11 +1045,31 @@ padding-right: 4%;
               <h3>Data Split and Feature Selection:</h3>
                 <p>
                   <ol type="1">
-                    <li>Train the decision tree model using each of the four feature choices. 
+                    <li>Train the 
+                      <span class="tooltip"><b>decision tree model</b>
+                        <span class="tooltiptext">For more information about Decision Trees, as well as the other machine learning algorithms used in this module,
+                          see <b><i>Algorithms</i></b> in the above menu.</span>
+                      </span>
+                      using each of the  
+                      <span class="tooltip"><b>four feature choices.</b>
+                        <span class="tooltiptext">For this module, the feature choices are Molecular Properties, Morgan Fingerprint, ECFP2, and Path Fingerprint.
+                          For more information on each of these features, and the role of features in Machine Learning, see <b><i>Dataset</i></b> in the above menu.</span>
+                      </span>
                       Find the optimal features for training your decision tree model.</li>
-                    <li>Train the decision tree model using different data split percentages, ranging from 40% to 80% training. 
+                    <li>Train the decision tree model using different 
+                      <span class="tooltip"><b>data split percentages,</b>
+                        <span class="tooltiptext">The percentages of the given data that will be used for <i>training, validation,</i> and <i>testing.</i>
+                          For more information on these processes, see <b><i>Dataset</i></b> and <b><i>Overfitting</i></b> in the above menu.</span>
+                      </span> 
+                      ranging from 40% to 80% training. 
                       Find the optimal data split for your decision tree model, to the nearest 5%.</li>
-                    <li>Tune the decision tree model by modifying its hyperparameters.</li>
+                    <li>Tune the decision tree model by modifying its 
+                      <span class="tooltip"><b>hyperparameters</b>
+                        <span class="tooltiptext">For this module, the feature choices are Molecular Properties, Morgan Fingerprint, ECFP2, and Path Fingerprint.
+                          For more information on the hyperparameters of each machine learning algorithm, see <b><i>Algorithms</i></b> in the above menu.</span>
+                      </span>
+                    
+                    </li>
                     <ol type="a">
                       <li>How does increasing the max. depth of tree affect your model’s performance? </li>
                       <li>What about changing the splitter?</li>
@@ -1059,8 +1086,18 @@ padding-right: 4%;
                       Are the features and data split still the most optimal for this model? Why or why not?</li>
                     <li>Tune your chosen model by modifying its hyperparameters.</li>
                     <ol type="a">
-                      <li>How does increasing or decreasing your model's numerical hyperparameter affect its performance?</li>
-                      <li>What about changing its categorical hyperparameter?</li>
+                      <li>How does increasing or decreasing your model's 
+                        <span class="tooltip"><b>numerical hyperparameter</b>
+                          <span class="tooltiptext">In this module, the numerical hyperparameters are max depth of tree for DT,
+                            number of neighbors for KNN, and regularization parameter for LR.</span>
+                        </span>
+                         affect its performance?</li>
+                      <li>What about changing its 
+                        <span class="tooltip"><b>categorical hyperparameter?</b>
+                          <span class="tooltiptext">In this module, the categorical hyperparameters are splitter strategy for DT,
+                            weights for KNN, and solver for LR.</span>
+                        </span>
+                      </li>
                     </ol>
                     <li>Using your above findings, try to find an optimum combination of feature, data split, machine learning algorithm, and hyperparameters for this model.</li>
                   </ol>
@@ -1074,7 +1111,12 @@ padding-right: 4%;
                     <li>Test each of your saves and view their testing accuracies. 
                       Does highest validation accuracy always relate to highest testing accuracy? 
                       Why or why not? If not, which save ended up being most optimal?</li>
-                    <li>Choose your most optimal save to predict the biodegradability of each of the 3 randomly-selected SMILES strings from the dataset. 
+                    <li>Choose your most optimal save to predict the biodegradability of each of the 3 randomly-selected 
+                      <span class="tooltip"><b>SMILES strings</b>
+                        <span class="tooltiptext">Simplified Molecular-Input Line-Entry System String: a computer-friendly string representation of a molecule's 
+                          three-dimensional structure</span>
+                      </span>
+                      from the dataset. 
                       Did your model correctly predict all three of the randomly-selected molecules?</li>
                     <li>For further exploration:</li>
                     <ol type="a">

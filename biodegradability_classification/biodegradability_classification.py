@@ -199,12 +199,56 @@ html_test_template = """
             border-left: 5px solid #2196F3;
             padding: 2px 5px;
         }}
+        .tooltip {{
+        position: relative;
+        display: inline-block;
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-decoration-thickness: 1px;
+        text-decoration-color: #484848;
+        }}
+
+        .tooltip .tooltiptext {{
+        visibility: hidden;
+        width: 160px;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -80px;
+        background-color: #262626;
+        color: #fff;
+        font-size: 12px;
+        text-align: center;
+        padding: 5px;
+        border-radius: 6px;
+        
+        position: absolute;
+        z-index: 1;
+        }}
+
+        .tooltip .tooltiptext::after {{
+        content: " ";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #262626 transparent transparent transparent;
+        }}
+
+        .tooltip:hover .tooltiptext {{
+        visibility: visible;
+        }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="section">
-            <h2>Testing Accuracy:</h2>
+            <h2>
+                <span class="tooltip">Testing Accuracy:
+                    <span class="tooltiptext">average of the two (below) <b>Precision</b> values</span>
+                </span>
+            </h2>
             <p>{}</p>
         </div>
 
@@ -234,11 +278,21 @@ html_test_template = """
             <div class="row">
                 <h2>Precisions:</h2>
                 <div class="column_2">
-                    <h3>Ready Biodegradability:</h3>
+                    <h3>
+                        <span class="tooltip">Ready Biodegradability:
+                            <span class="tooltiptext">Precision for Ready Biodegradability = true positives/(true postives + false positives)--> 
+                            Percentage of predicted positives that were true (actual) positives.</span>
+                        </span>
+                    </h3>
                     <p>{}</p>
                 </div>
                 <div class="column_2">
-                    <h3>Non-ready Biodegradability:</h3>
+                    <h3>
+                        <span class="tooltip">Non-ready Biodegradability:
+                            <span class="tooltiptext">Precision for Non-ready Biodegradability = true negatives/(true negatives + false negatives)--> 
+                            Percentage of predicted negatives that were true (actual) negatives.</span>
+                        </span>
+                    </h3>
                     <p>{}</p>
                 </div>
             </div>
@@ -246,21 +300,15 @@ html_test_template = """
 
 
         <div class="row">
-            <h2>Performance:</h2>
+            <h2>
+                <span class="tooltip">Performance:
+                    <span class="tooltiptext">The industry standard for accuracy scores is between 70%-90%.
+                    Therefore, we consider <b>INEFFECTIVE</b> performance to be an accuracy score < 70%,
+                    and <b>EFFECTIVE</b> performance to be an accuracy score > 70%.</span>
+                </span>
+            </h2>
             <p>On average, your model was <b>{}</b> at classifying ready biodegradabiliy, and <b>{}</b> at classifying non-ready biodegradability,
             resulting in an overall <b>{}</b> performance.</p>
-        </div>
-
-        <div class="row">
-            <h2>NOTE:</h2>
-            <p><b>Precision for Ready Biodegradability:</b> true positives/(true postives + false positives)--> Percentage of predicted positives
-              that were true (actual) positives.</p>
-            <p><b>Precision for Non-ready Biodegradability:</b> true negatives/(true negatives + false negatives)--> Percentage of predicted negatives
-              that were true (actual) negatives.</p>
-            <p><b>Testing accuracy:</b> Average of the two precision values.</p>
-            <p><b>INEFFECTIVE</b> performance: accuracy score < 70%</p> 
-            <p><b>EFFECTIVE</b> performance: accuracy value > 70%</p> 
-            <p>The industry standard for accuracy scores is between 70%-90%.</p>
         </div>
     </div>
 </body>
