@@ -2440,7 +2440,23 @@ delete_layout = layout(
     [delete_status_message]
 )
 
-tab1_layout = layout(
+tab1_layout_portrait = layout(
+    [top_page_spacer],
+    [left_page_spacer, step_one],
+    [left_page_spacer, data_config_layout], 
+    [left_page_spacer, hugest_height_spacer], 
+    [left_page_spacer, data_exp_visibility_button], 
+    [left_page_spacer, histogram_layout],
+    [left_page_spacer, data_table_layout],
+    [left_page_spacer, val_acc_display],
+    [left_page_spacer, learning_curve],
+    [left_page_spacer, step_two_three_layout], 
+    [left_page_spacer, warning_spacer_2],
+    [left_page_spacer, saved_data_table],
+    [left_page_spacer, delete_layout]
+)
+
+tab1_layout_landscape = layout(
     [top_page_spacer],
     [left_page_spacer, step_one],
     [left_page_spacer, column(data_config_layout, hugest_height_spacer), large_left_page_spacer, data_exp_layout],
@@ -2498,7 +2514,8 @@ tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer,
 
 tabs = Tabs(tabs = [
                     # TabPanel(child = tab0_layout, title = 'Steps'),
-                    TabPanel(child = tab1_layout, title = 'Train and Validate'),
+                    TabPanel(child = tab1_layout_landscape, title = 'Train and Validate'),
+                    # TabPanel(child = tab1_layout_landscape, title = 'Train and Validate MOBILE TEST'),
                     # TabPanel(child = tab2_layout, title = 'Train and Validate'),
                     TabPanel(child = tab3_layout, title = 'Test'),
                     TabPanel(child = tab4_layout, title = 'Predict')
