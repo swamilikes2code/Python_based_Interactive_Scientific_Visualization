@@ -2515,11 +2515,14 @@ tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer,
 tabs = Tabs(tabs = [
                     # TabPanel(child = tab0_layout, title = 'Steps'),
                     TabPanel(child = tab1_layout_landscape, title = 'Train and Validate'),
-                    # TabPanel(child = tab1_layout_landscape, title = 'Train and Validate MOBILE TEST'),
+                    # TabPanel(child = tab1_layout_portrait, title = 'Train and Validate MOBILE TEST'),
                     # TabPanel(child = tab2_layout, title = 'Train and Validate'),
                     TabPanel(child = tab3_layout, title = 'Test'),
                     TabPanel(child = tab4_layout, title = 'Predict')
                 ])
+
+# To create a responsive layout with bokeh requires CustomJS. However, this should be doable. 
+# Will try to implement this tomorrow.
 
 curdoc().add_root(tabs)
 
