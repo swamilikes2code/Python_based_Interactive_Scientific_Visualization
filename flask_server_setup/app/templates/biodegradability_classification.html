@@ -820,6 +820,8 @@ body {
                   <li>Pros: Simple, handles numerical & categorical data</li>
                   <li>Cons: Small changes can largely impact data</li>
                 </ul>
+                <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
+                <div class="caption">Decision Tree</div>
             </div>
 
             <div class="column_3">
@@ -835,6 +837,8 @@ body {
                     </span>
                   </li>
                 </ul>
+                <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
+                <div class="caption">K-Nearest Neighbor</div>
             </div>
 
             <div class="column_3">
@@ -854,24 +858,9 @@ body {
                   </li>
                   <li>Cons: Limited to linear separation, can be oblivious to complex variable relationships</b></li>
                 </ul>
+                <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="center" style="width:90%; height: 90%; float: none">
+                <div class="caption">Logistic Regression</div>
             </div> 
-          </div>
-
-          <div class="row">
-            <div class="column_3">
-              <img src="{{url_for('static', filename='DT.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
-              <div class="caption">Decision Tree</div>
-            </div>
-
-            <div class="column_3">
-              <img src="{{url_for('static', filename='KNN.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
-              <div class="caption">K-Nearest Neighbor</div>
-            </div>
-
-            <div class="column_3">
-              <img src="{{url_for('static', filename='LR.png')}}" alt="Data Picture" class="left" style="width:90%; height: 90%; float: none">
-              <div class="caption">Logistic Regression</div>
-            </div>
           </div>
 
           <div class="row">
@@ -1025,21 +1014,11 @@ body {
             <p><b>NOTE:</b> It is recommended to run steps <b>1) PREPARE DATA</b> and <b>2) TRAIN</b> with all default parameters before answering any questions.
             More detailed instructions on each step can be found on the <b><i>Introduction</i></b> tab in the above menu.</p>
           </div>
+
           <div class = "row">
-            <div class = "column_3">
+            <div class = "column_2">
+              <h3>Training and Validation:</h3>
               <p>For <b>questions 1-6,</b> let “optimal” features, data splits, etc. be defined as producing the <b>highest validation accuracy,</b> without the learning curve showing signs of <b>underfitting</b> or <b>overfitting.</b></p> 
-            </div>
-            <div class = "column_3">
-              <p></p>
-            </div>
-            <div class = "column_3">
-              <p>For <b>questions 7-9,</b> let your “most optimal save” be defined as whichever save yielded the <b>highest testing accuracy.</b>
-                “Saves” refer to previously-run models (displayed in the table on the <b><i>Train and Validate</i></b> tab).</p>
-            </div>
-          </div>
-          <div class = "row">
-            <div class = "column_3">
-              <h3>Data Split and Feature Selection:</h3>
                 <p>
                   <ol type="1">
                     <li>Train the 
@@ -1068,17 +1047,9 @@ body {
                     
                     </li>
                     <ol type="a">
-                      <li>How does increasing the max. depth of tree affect your model’s performance? </li>
+                      <li>How does increasing the max. depth of tree affect your model's performance? </li>
                       <li>What about changing the splitter?</li>
                     </ol>
-                  </ol>
-                </p>
-            </div>
-
-            <div class = "column_3">
-              <h3>Algorithm Selection and Hyperparameter Tuning:</h3>
-                <p>
-                  <ol type="1" start="4">
                     <li>Train the model using a different machine learning algorithm (either KNN or LR). 
                       Are the features and data split still the most optimal for this model? Why or why not?</li>
                     <li>Tune your chosen model by modifying its hyperparameters.</li>
@@ -1101,8 +1072,10 @@ body {
                 </p>
             </div>
 
-            <div class = "column_3">
+            <div class = "column_2">
               <h3>Testing and Predicting:</h3>
+              <p>For <b>questions 7-9,</b> let your “most optimal save” be defined as whichever save yielded the <b>highest testing accuracy.</b>
+                “Saves” refer to previously-run models (displayed in the table on the <b><i>Train and Validate</i></b> tab).</p>
                 <p>
                   <ol type="1" start="7">
                     <li>Test each of your saves and view their testing accuracies. 
