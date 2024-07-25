@@ -46,6 +46,34 @@ body {
   }
 }
 
+.container4 {
+  display: flex;
+  flex-wrap:wrap;
+}
+
+.column_1_home, .column_2_home {
+    width: 45.9%;
+    padding-right: 4%;
+    }
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 800px) {
+
+  .column_1_home, .column_2_home{
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .column_1_home {
+    order: 2;
+  }
+
+  .column_2_home {
+    order: 1;
+  }
+
+}
+
 .column_3 {
     float: left;
     width: 29.3%;
@@ -586,8 +614,8 @@ body {
       <div class="flexwrap1">
         <div id="Introduction" class="tabcontent">
           <h3>Welcome to Biodegradability Classification</h3>
-          <div class="row">
-            <div class="column_2">
+          <div class="container4">
+            <div class="column_1_home">
               <p>We aim to demonstrate how A.I. can be utilized to predict molecular properties through an engaging, individualized learning experience. </p>
 
               <p>Specifically, our module uses a subtopic of artificial intelligence called machine learning to extract knowledge and find patterns hidden in the data to predict the property of 
@@ -602,9 +630,10 @@ body {
             </div>
             
 
-            <div class="column_2">
+            <div class="column_2_home">
               <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="left" style="width:100%; height: 100%; float: none">
             </div>
+
           </div>
 
           <div class="row">
