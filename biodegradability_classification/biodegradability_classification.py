@@ -99,7 +99,7 @@ html_val_template = """
         }}
         .container {{
             background-color: #ffffff;
-            width: 420px;
+            width: 293px;
         }}
         h1 {{
             text-align: center;
@@ -774,7 +774,7 @@ all_cols = [cols1, cols2, cols3, cols4]
 
 # Create figure
 data_tab_columns = [TableColumn(field=col, title=col, width=150) for col in (mandatory_columns+cols1[:7])]
-data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 500, height = 250, autosize_mode = "none")
+data_tab_table = DataTable(source = df1_tab_source, columns = data_tab_columns, width = 380, height = 200, autosize_mode = "none")
 
 data_select = Select(title="Select Features:", value = 'Molecular Properties', options=data_opts, width = 197)
 
@@ -976,7 +976,7 @@ source = ColumnDataSource(data=dict(
 histogram = figure(title=f"Histogram of {default_hist_column} with Class Color Coding",
            x_axis_label=default_hist_column, y_axis_label='Frequency',
            tools="save",
-           width=600, height=250)
+           width=380, height=200)
 
 # Add class 0 bars
 bars_class_0 = histogram.vbar(x=dodge('hist_centers', -dodge_val, range=histogram.x_range), top='top_class_0', width=0.3*(hist_centers[1] - hist_centers[0]),
@@ -1100,8 +1100,8 @@ learning_curve = figure(
     tools='wheel_zoom, box_zoom, reset, save',
     x_range=(0, 1),
     y_range=(0, 1),  # Set y-axis range from 0 to 1
-    width=500,
-    height=400
+    width=380,
+    height=300
 )
 
 curve1 = learning_curve.line('train_size', 'train_score', source=learning_curve_source, line_width=2, legend_label='Training Score', color='blue')
@@ -1514,19 +1514,19 @@ save_source = ColumnDataSource(saved_data)
 
 # Define table columns
 saved_columns = [
-    TableColumn(field="save_number", title="#", width = 25),
-    TableColumn(field="train_val_test_split", title="Train/Val/Test split", width = 260),
-    TableColumn(field="saved_data_choice", title="Data"),
-    TableColumn(field="saved_algorithm", title="Saved alg.", width = 140),
-    TableColumn(field="saved_hyperparams", title="Saved hp.", width = 220),
-    TableColumn(field="saved_val_acc", title="Pred. accuracy")
+    TableColumn(field="save_number", title="#", width=30),
+    TableColumn(field="saved_val_acc", title="Pred. accuracy", width=100),
+    TableColumn(field="train_val_test_split", title="Train/Val/Test split", width=125),
+    TableColumn(field="saved_data_choice", title="Data", width=125),
+    TableColumn(field="saved_algorithm", title="Saved alg.", width=75),
+    TableColumn(field="saved_hyperparams", title="Saved hp.", width=100)
 ]
 
 high_score = [-1, -1, 0]
 old_high_score = [-1, -1, 0]
 
 # Create a DataTable
-saved_data_table = DataTable(source=save_source, columns=saved_columns, width=600, height=280, index_position=None)
+saved_data_table = DataTable(source=save_source, columns=saved_columns, width=333, height=200, index_position=None, autosize_mode = "none")
 
 def save_model():
     global hyperparam_list
@@ -1924,7 +1924,7 @@ def load_test():
         test_status_message.styles = warning
         test_status_message.text = """
         <h1 style='font-size: 16px; color: #444'>Incomplete Step:</h1>
-        <p>Navigate to <b>2)</b> and <b>Train</b> at least one <b>ML Algorithm</b>before continuing.<p>
+        <p>Navigate to <b>2)</b> and <b>Train</b> at least one <b>ML Algorithm</b> before continuing.<p>
         """
     else:
         test_status_message.text = "Testing..."
@@ -2166,7 +2166,7 @@ def load_predict():
         predict_status_message.styles = warning
         predict_status_message.text = """
         <h1 style='font-size: 16px; color: #444'>Incomplete Step:</h1>
-        <p>Navigate to <b>2)</b> and <b>Train</b> at least one <b>ML Algorithm</b>before continuing.<p>
+        <p>Navigate to <b>2)</b> and <b>Train</b> at least one <b>ML Algorithm</b> before continuing.<p>
         """
     else:
         predict_status_message.text = 'Predicting...'
@@ -2396,7 +2396,7 @@ histogram_layout = layout(
 
 data_exp_layout = layout(
     [med_left_spacer, data_exp_visibility_button],
-    [histogram_layout, data_table_layout]
+    [histogram_layout, large_left_page_spacer, data_table_layout]
 )
 
 # tab1_layout = row(left_page_spacer, column(top_page_spacer, row(column(step_one, data_config_layout), column(data_tab_table_title, data_tab_table)), tiny_height_spacer, histogram_layout))
