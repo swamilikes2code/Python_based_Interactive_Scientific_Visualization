@@ -79,6 +79,8 @@ down_arrow = SVGIcon(svg = '''<svg  xmlns="http://www.w3.org/2000/svg"  width="2
 # still calling it data exploration for now instead of "Show Histogram" as it's less descriptive
 data_exp_visibility_button = Button(label="Show Data Exploration", button_type="primary", icon = down_arrow)
 
+precision_recall_visibility_button = Button(label="Show Precision Recall", button_type="primary", icon = down_arrow)
+
 export_excel = Button(label="Download Tested Cases to Excel (.xlsx)", width=200, height=31)
 export_csv = Button(label="Download Tested Cases to CSV** (.csv)", width=200, height=31, margin=(5, 5, -2, 5))
 
@@ -154,6 +156,7 @@ html_test_template = """
         }}
         .container {{
             background-color: #ffffff;
+            width: 333px;
         }}
         .column_4 {{
             float: left;
@@ -588,40 +591,40 @@ step_five_warning = Div(text=steps_four_five_warning_html, width=200, height=200
 
 
 splitter_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='padding: 16px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 16px; font-family: Arial, sans-serif; width: 180px;'>
                  <div>Use this <b>slider</b> to split the data into <i>train/validate/test</i> percentages.</div>
-                 <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>"""), position="right"))
+                 <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>"""), position="left"))
 
 data_select_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='padding: 16px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 16px; font-family: Arial, sans-serif; width: 180px;'>
                  <div>Select whether to use <b>features</b> or a <b>molecular fingerprint</b> to train model.</div>
                                                         <div>For more info, see the <i>Dataset</i> tab above the light blue menu area.</div>
-                 </div>""", ), position="right"))
+                 </div>""", ), position="left"))
 
 datavis_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='padding: 16px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 16px; font-family: Arial, sans-serif; width: 180px;'>
                  <div>Explore the data by viewing the distribution of certain molecular features across the dataset.</div>
-                 </div>""", ), position="right"))
+                 </div>""", ), position="left"))
 
 train_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                  <div style='padding: 20px; font-family: Arial, sans-serif;'>
+                  <div style='padding: 20px; font-family: Arial, sans-serif; width: 180px;'>
                   <div>Select one of the following <b>Machine Learning algorithms</b>.</div> 
                                                     <div>For more info, see the <i>Algorithms</i> tab above the light blue menu area.</div>
-                  </div>""", ), position="right"))
+                  </div>""", ), position="left"))
 
 tune_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                 <div style='padding: 20px; font-family: Arial, sans-serif;'>
+                 <div style='padding: 20px; font-family: Arial, sans-serif; width: 180px;'>
                  <div>Based on the ML algorithm chosen above, fine-tune its <b>hyperparameters</b> to improve the model's validation accuracy.
                                                    Use the <b>Learning Curve</b> to detect <b>Overfitting.</b></div>
                                                    <div>For more info, see the <i>Algorithms</i> and <i>Overfitting</i> tabs in the menu above.</div>
-                 </div>""", ), position="right"))
+                 </div>""", ), position="left"))
 
 test_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                <div style='padding: 20px; font-family: Arial, sans-serif;'>
+                <div style='padding: 20px; font-family: Arial, sans-serif; width: 180px;'>
                 <div>Select the save from the previous tab to test the model, and view its <b>confusion matrix</b> below.</div>
                 <div>‎</div>     
                 <div>NOTE: This should be considered the <b>final</b> test of your model, and is NOT intended for additional validation.</div>
-                </div>"""), position="right"))
+                </div>"""), position="left"))
 
 site_url = "https://pubchem.ncbi.nlm.nih.gov//edit3/index.html"
 
@@ -630,12 +633,12 @@ smiles_gen = Div(text=f"""
 """)
 
 smiles_help = HelpButton(tooltip=Tooltip(content=HTML("""
-                <div style='padding: 20px; font-family: Arial, sans-serif;'>
+                <div style='padding: 20px; font-family: Arial, sans-serif; width: 180px;'>
                     Use the molecule drawer to the right to generate a custom SMILES.<br />
                     Confused on how to generate a SMILES String?
                     <a href="https://pubchem.ncbi.nlm.nih.gov/sketch/sketchhelp.html" target="_blank">
                     (Instructions on 'Help' button)
-                </div>"""), position="right"))
+                </div>"""), position="left"))
 
 # predict_instr = Div(text=f"""
 #     <div style='background-color: #DEF2F1; padding: 20px; font-family: Arial, sans-serif;'>
@@ -655,6 +658,7 @@ width=200, height=20)
 export_asterisk = Div(text='''<div>**Values are separated by "/", not ","</div>''', width=200, height = 20)
 
 data_tab_table_title = Div(text='<b>Table: First 15 items in dataset with current selected features</b>')
+saved_data_table_title = Div(text='<b>Table: Saves</b>')
 test_table_title = Div(text='<b>Table: 5 tested cases with prediction type</b>')
 
 # --------------- UPDATE INSTRUCTIONS COLORS --------------- #
@@ -719,8 +723,8 @@ total_data_section_timer_start = datetime.now()                         # ------
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
 
 # toggle whether you are testing here or running from server
-master = True
-# master = False
+# master = True
+master = False
 
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
@@ -1726,7 +1730,7 @@ confus_d = {'T_range': ['Positive', 'Positive',
 confus_df = pd.DataFrame(data = confus_d)
 confus_source = ColumnDataSource(confus_df)
 bubble = figure(x_range = confus_df['T_range'].unique(), y_range = confus_df['Subject'].unique(), 
-                title = 'Confusion Matrix', width = 325, height = 300, tools='', toolbar_location = None)
+                title = 'Confusion Matrix', width = 343, height = 330, tools='', toolbar_location = None)
 
 # color_mapper = LinearColorMapper(palette = Viridis256, low = confus_df['count'].min(), high = confus_df['count'].max())
 # color_bar = ColorBar(color_mapper = color_mapper,
@@ -1799,7 +1803,7 @@ pr_source2 = ColumnDataSource()
 precision = [[nan], [nan]]
 recall = [[nan], [nan]]
 
-pr_curve = figure(x_range = (0.0, 1.0), y_range = (0.0, 1.0), title = 'Precision Recall Curve', tools='save', x_axis_label = "Recall", y_axis_label = "Precision", width = 500, height = 500)
+pr_curve = figure(x_range = (0.0, 1.0), y_range = (0.0, 1.0), title = 'Precision Recall Curve', tools='save', x_axis_label = "Recall", y_axis_label = "Precision", width = 380, height = 350)
 
 def set_pr_source():
     pr_source1.data = dict(
@@ -1889,7 +1893,7 @@ actual = []
 tfpn = []
 
 test_cols = ['Index', 'Substance Name', 'SMILES', 'Predicted Class', 'Actual Class', 'Prediction Type']
-test_tab_columns = [TableColumn(field=col, title=col, width=110) for col in test_cols]
+test_tab_columns = [TableColumn(field=col, title=col, width=100) for col in test_cols]
 
 test_table_data = {'Index': indices,
             'Substance Name': tested_names,
@@ -1899,7 +1903,7 @@ test_table_data = {'Index': indices,
             'Prediction Type': tfpn}
 tested_source = ColumnDataSource(data=test_table_data)
 abridg_source = ColumnDataSource(data=test_table_data)
-test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height = 150, autosize_mode = "none", index_position=None)
+test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 333, height = 150, autosize_mode = "none", index_position=None)
 
 def set_test_vals(save_index):
     # save_index = test_save_select.options.index(test_save_select.value)
@@ -2328,6 +2332,40 @@ def toggle_data_exp_visibility():
 data_exp_visibility_button.js_on_click(js_toggle_data_exp_vis)
 
 
+# Precision Recall
+pr_select1.visible = False
+pr_select2.visible = False
+pr_curve.visible = False
+
+js_toggle_pr_vis = CustomJS(args=dict(pr_select1=pr_select1,
+                                            pr_select2=pr_select2,
+                                            pr_curve=pr_curve,
+                                            precision_recall_visibility_button=precision_recall_visibility_button,
+                                            down_arrow=down_arrow,
+                                            up_arrow=up_arrow,
+                                            ), code='''
+pr_select1.visible = !pr_select1.visible
+pr_select2.visible = !pr_select2.visible
+pr_curve.visible = !pr_curve.visible
+if (!pr_curve.visible) {
+    precision_recall_visibility_button.label = "Show Precision Recall"
+    precision_recall_visibility_button.icon = down_arrow
+} else {
+    precision_recall_visibility_button.label = "Hide Precision Recall"
+    precision_recall_visibility_button.icon = up_arrow
+}
+''')
+
+def toggle_pr_visibility():
+    pr_select1.visible = not pr_select1.visible
+    pr_select2.visible = not pr_select2.visible
+    pr_curve.visible = not pr_curve.visible
+    precision_recall_visibility_button.label = "Show Precision Recall" if not pr_curve.visible else "Hide Precision Recall"
+    precision_recall_visibility_button.icon = down_arrow if not pr_curve.visible else up_arrow
+
+# data_exp_visibility_button.on_click(toggle_data_exp_visibility)
+precision_recall_visibility_button.js_on_click(js_toggle_pr_vis)
+
 # Custom SMILES String input
 user_smiles_input.visible = False
 # predict_instr.visible = False
@@ -2559,7 +2597,7 @@ tab1_layout = layout(
     [left_page_spacer, column(data_config_layout, hugest_height_spacer), large_left_page_spacer, data_exp_layout],
     [left_page_spacer, step_two_three_layout, large_left_page_spacer, val_display_layout],
     [warning_spacer_2],
-    [left_page_spacer, delete_layout, large_left_page_spacer, saved_data_table]
+    [left_page_spacer, delete_layout, large_left_page_spacer, column(saved_data_table_title, saved_data_table)]
 )
 
 # tab2_layout = row(left_page_spacer, column(top_page_spacer, train_layout, warning_spacer_1, hyperparam_layout, warning_spacer_2, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
@@ -2583,13 +2621,7 @@ pr_layout = layout(
     [pr_curve]
 )
 
-test_layout = layout(
-    [column(test_button_layout, warning_spacer_3, export_layout), large_left_page_spacer, bubble],
-    [small_med_height_spacer],
-    [column(test_table_title, test_table)],
-    [small_med_height_spacer],
-    [test_acc_display]
-)
+test_layout = row(column(test_button_layout, warning_spacer_3, small_height_spacer, test_acc_display), med_left_spacer, column(bubble, small_med_height_spacer, test_table_title, test_table, export_layout), left_page_spacer, column(row(med_left_spacer, precision_recall_visibility_button), pr_layout))
 
 # test_layout = layout(
 #     [top_page_spacer],
@@ -2602,7 +2634,7 @@ test_layout = layout(
 tab3_layout = layout(
     [top_page_spacer],
     [left_page_spacer, step_four],
-    [left_page_spacer, test_layout, large_left_page_spacer, pr_layout]
+    [left_page_spacer, test_layout]
 )
 
 # tab3_layout = column(top_page_spacer, row(left_page_spacer, test_layout, row(left_page_spacer, column(small_med_height_spacer, test_acc_display))))
