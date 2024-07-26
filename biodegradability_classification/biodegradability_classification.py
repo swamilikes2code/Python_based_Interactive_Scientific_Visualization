@@ -2621,7 +2621,7 @@ pr_layout = layout(
     [pr_curve]
 )
 
-test_layout = row(column(test_button_layout, warning_spacer_3, small_height_spacer, test_acc_display), med_left_spacer, column(bubble, small_med_height_spacer, test_table_title, test_table, export_layout), left_page_spacer, column(row(med_left_spacer, precision_recall_visibility_button), pr_layout))
+test_layout = row(column(test_button_layout, warning_spacer_3, small_height_spacer, test_acc_display), med_left_spacer, column(bubble, small_med_height_spacer, test_table_title, test_table, export_layout), large_left_page_spacer, column(row(med_left_spacer, precision_recall_visibility_button), pr_layout))
 
 # test_layout = layout(
 #     [top_page_spacer],
@@ -2652,7 +2652,7 @@ predict_button_layout = layout(
     [step_five_warning]
 )
 
-tab4_layout = row(left_page_spacer, predict_button_layout, row(left_page_spacer, column(top_page_spacer, predict_display)), row(left_page_spacer, column(top_page_spacer, smiles_gen)))
+tab4_layout = row(left_page_spacer, predict_button_layout, row(large_left_page_spacer, column(top_page_spacer, predict_display)), row(left_page_spacer, column(top_page_spacer, smiles_gen)))
 
 tabs = Tabs(tabs = [
                     # TabPanel(child = tab0_layout, title = 'Steps'),
