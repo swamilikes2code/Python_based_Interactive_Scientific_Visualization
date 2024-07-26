@@ -1647,6 +1647,13 @@ def delete_save():
         value = None
     )
 
+    pr_select1.update(
+        options = test_save_select.options
+    )
+    pr_select2.update(
+        options = test_save_select.options
+    )
+
     predict_select.update(
         options = opt.copy(),
         value = None
