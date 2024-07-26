@@ -8,7 +8,7 @@ from math import nan
 
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer, layout
-from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, Button, RangeSlider, Select, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool
+from bokeh.models import Div, ColumnDataSource, DataTable, TableColumn, Button, RangeSlider, Select, Slider, Checkbox, Tabs, TabPanel, TextInput, PreText, HelpButton, Tooltip, MultiSelect, HoverTool, Legend, LegendItem
 from bokeh.models.callbacks import CustomJS
 from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
@@ -18,7 +18,7 @@ import pubchempy
 from rdkit import Chem, RDLogger
 from rdkit.Chem import DataStructs, Descriptors, AllChem, rdFingerprintGenerator
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_curve
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -720,7 +720,7 @@ read_csv_start = datetime.now()                                         # ------
 
 # toggle whether you are testing here or running from server
 master = True
-# master = False
+master = False
 
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
@@ -1337,7 +1337,8 @@ def train_validate_model():
 
     val_accuracy.append(round(val_scores[-1], 3))
 
-    set_learning_curve()
+    set_lc_source()
+    # set_learning_curve()
     save_model()
     model_list.append(model)
 
@@ -1542,6 +1543,8 @@ def save_model():
     new_save_number += 1
 
     test_save_select.options.append(str(new_save_number))
+    pr_select1.options = test_save_select.options
+    pr_select2.options = test_save_select.options
     delete_multiselect.options.append(str(new_save_number))
     predict_select.options.append(str(new_save_number))
 
@@ -1670,9 +1673,9 @@ def del_multiselect_callback(attr, old, new):
 delete_button.on_click(load_delete_save)
 delete_multiselect.on_change('value', del_multiselect_callback)
 
-#############################################
-# --------------- TESTING --------------- #
-#############################################
+####################################################
+# --------------- CONFUSION MATRIX --------------- #
+####################################################
 
 true_pos = nan
 false_pos = nan
@@ -1777,9 +1780,99 @@ def update_cmatrix(attrname, old, new):
 
     # bubble.scatter(fill_color = transform('count', new_color_mapper)
 
-###################################################
-# --------------- NEW DATA TABLE --------------- #
-###################################################
+############################################
+# --------------- PR CURVE --------------- #
+############################################
+
+pr_select1 = Select(title="Choose a Save for Curve 1:", options=[])
+pr_select2 = Select(title="Choose a Save for Curve 2:", options=[])
+
+pr_source1 = ColumnDataSource()
+pr_source2 = ColumnDataSource()
+precision = [[nan], [nan]]
+recall = [[nan], [nan]]
+
+pr_curve = figure(x_range = (0.0, 1.0), y_range = (0.0, 1.0), title = 'Precision Recall Curve', tools='save', x_axis_label = "Recall", y_axis_label = "Precision", width = 500, height = 500)
+
+def set_pr_source():
+    pr_source1.data = dict(
+        precision = precision[0],
+        recall = recall[0]
+    )
+    pr_source2.data = dict(
+        precision = precision[1],
+        recall = recall[1]
+    )
+set_pr_source()
+
+pr_hover = HoverTool(tooltips=[
+    ("Recall", "@recall"),
+    ("Precision", "@precision")
+])
+pr_curve.add_tools(pr_hover)
+
+pr1 = pr_curve.line('recall', 'precision', source=pr_source1, line_width=2, legend_label='N/A', color='blue')
+pr1_dot = pr_curve.scatter('recall', 'precision', source=pr_source1, size=8, color='blue')
+
+pr2 = pr_curve.line('recall', 'precision', source=pr_source2, line_width=2, legend_label='N/A', color='orange')
+pr2_dot = pr_curve.scatter('recall', 'precision', source=pr_source2, size=8, color='orange')
+
+pr_legend = Legend(
+    items=[
+        LegendItem(label="N/A", renderers=[pr1]),
+        LegendItem(label="N/A", renderers=[pr2])],
+    location="top_right"
+)
+pr_curve.add_layout(pr_legend)
+
+
+def calc_pr_curve(save_num):
+    np.random.seed(123)
+
+    if save_num == '':
+        return
+
+    # print("select1:", pr_select1.value)
+
+    save_index = test_save_select.options.index(save_num)
+    pr_model = set_test_vals(save_index)
+
+    y_scores = pr_model.predict_proba(X_test)[:, 1]
+    temp_precision, temp_recall, thresholds = precision_recall_curve(y_test, y_scores)
+    # print(temp_precision, temp_recall)
+    # print(type(temp_precision))
+    # print(type(temp_precision.tolist()))
+    # print(type(precision[0]))
+    return temp_precision, temp_recall
+
+def set_pr1(attr, old, new):
+    temp_precision, temp_recall = calc_pr_curve(pr_select1.value)
+    precision[0] = temp_precision.tolist()
+    recall[0] = temp_recall.tolist()
+
+    # print(precision, recall)
+    # print(len(precision), len(recall))
+    pr_legend.items[0] = LegendItem(label=pr_select1.value, renderers=[pr1])
+    set_pr_source()
+
+def set_pr2(attr, old, new):
+    pr_legend.items = [LegendItem(label=pr_select1.value, renderers=[pr1]),
+                        LegendItem(label=pr_select2.value, renderers=[pr2])]
+
+    temp_precision, temp_recall = calc_pr_curve(pr_select2.value)
+    precision[1] = temp_precision.tolist()
+    recall[1] = temp_recall.tolist()
+    # print(temp_precision, temp_recall)
+    # print(precision, recall)
+    # print(len(precision[1]), len(recall[1]))
+    set_pr_source()
+
+pr_select1.on_change('value', set_pr1)
+pr_select2.on_change('value', set_pr2)
+
+###########################################
+# --------------- TESTING --------------- #
+###########################################
 
 indices = []
 tested_names = []
@@ -1800,6 +1893,34 @@ test_table_data = {'Index': indices,
 tested_source = ColumnDataSource(data=test_table_data)
 abridg_source = ColumnDataSource(data=test_table_data)
 test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 660, height = 150, autosize_mode = "none", index_position=None)
+
+def set_test_vals(save_index):
+    # save_index = test_save_select.options.index(test_save_select.value)
+    
+    temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
+    temp_data_choice = save_source.data['saved_data_choice'][save_index]
+    temp_data_index = data_opts.index(temp_data_choice)
+    temp_alg = save_source.data['saved_algorithm'][save_index]
+    temp_hyperparams = eval(save_source.data['saved_hyperparams'][save_index])
+
+    split_data(temp_split[0], temp_split[1], temp_split[2], temp_data_index)
+
+    # global model
+    t_model = model_list[save_index]
+    if temp_alg == 'DT':
+        # model = model_list[0]
+        t_model.max_depth = temp_hyperparams[0]
+        t_model.splitter = temp_hyperparams[1]
+    elif temp_alg == 'KNN':
+        # model = model_list[1]
+        t_model.n_neighbors = temp_hyperparams[0]
+        t_model.weights = temp_hyperparams[1]
+    elif temp_alg == 'LR':
+        # model = model_list[2]
+        t_model.C = temp_hyperparams[0]
+        t_model.solver = temp_hyperparams[1]
+    
+    return t_model
 
 
 # Testing model, and updating confusion matrix and table
@@ -1822,31 +1943,9 @@ def train_test_model():
         test_status_message.text = 'Error: please select a Save'
         test_status_message.styles = not_updated
         return
-        
-    save_index = test_save_select.options.index(test_save_select.value)
     
-    temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
-    temp_data_choice = save_source.data['saved_data_choice'][save_index]
-    temp_data_index = data_opts.index(temp_data_choice)
-    temp_alg = save_source.data['saved_algorithm'][save_index]
-    temp_hyperparams = eval(save_source.data['saved_hyperparams'][save_index])
-
-    split_data(temp_split[0], temp_split[1], temp_split[2],temp_data_index)
-
-    # global model
-    t_model = model_list[save_index]
-    if temp_alg == 'DT':
-        # model = model_list[0]
-        t_model.max_depth = temp_hyperparams[0]
-        t_model.splitter = temp_hyperparams[1]
-    elif temp_alg == 'KNN':
-        # model = model_list[1]
-        t_model.n_neighbors = temp_hyperparams[0]
-        t_model.weights = temp_hyperparams[1]
-    elif temp_alg == 'LR':
-        # model = model_list[2]
-        t_model.C = temp_hyperparams[0]
-        t_model.solver = temp_hyperparams[1]
+    save_index = test_save_select.options.index(test_save_select.value)
+    t_model = set_test_vals(save_index)
 
     t_model.fit(X_train, y_train)
 
@@ -1935,7 +2034,7 @@ def load_test():
 
 test_button.on_click(load_test)
 
-# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (80% of this is courtesy of ChatGPT) --------------- #
+# --------------- EXPORTING FULL TABLE TO XLSX OR CSV (30% of this is courtesy of ChatGPT) --------------- #
 js_div = Div(text = ' ', visible = False)
 b64_excel_data = ''
 def helper():
@@ -1995,17 +2094,8 @@ js_xlsx = CustomJS(args={'b64_excel_data':b64_excel_data}, code="""
 export_excel.on_click(helper)
 js_div.js_on_change('text', js_xlsx)
 
-# Create a CustomJS object with the JavaScript code
-# b64 = export_excel.on_click(download_xlsx)
-# export_excel.js_on_click(js_xlsx)
-
-# export_excel.js_on_click(xlsx_custom_js)
-
-
 #from the bokeh export csv demo
 export_csv.js_on_click(CustomJS(args=dict(source=tested_source), code=open(os.path.join(os.path.dirname(__file__),"csv_download.js")).read()))
-
-# export_csv.on_click(download_csv)
 
 ##############################################
 # --------------- PREDICTING --------------- #
@@ -2468,7 +2558,6 @@ tab1_layout_landscape = layout(
 # tab2_layout = row(left_page_spacer, column(top_page_spacer, train_layout, warning_spacer_1, hyperparam_layout, warning_spacer_2, delete_layout), large_left_page_spacer, column(top_page_spacer, learning_curve, saved_data_table), column(top_page_spacer, val_acc_display))
 
 test_button_layout = layout(
-    [step_four],
     [test_save_select],
     [asterisk],
     [test_button, test_help],
@@ -2482,17 +2571,31 @@ export_layout = layout(
     [export_asterisk]
 )
 
+pr_layout = layout(
+    [med_left_spacer, pr_select1, pr_select2],
+    [pr_curve]
+)
+
 test_layout = layout(
     [column(test_button_layout, warning_spacer_3, export_layout), large_left_page_spacer, bubble],
     [small_med_height_spacer],
-    [column(test_table_title, test_table)]
+    [column(test_table_title, test_table)],
+    [small_med_height_spacer],
+    [test_acc_display]
 )
+
+# test_layout = layout(
+#     [top_page_spacer],
+#     [left_page_spacer, step_four]
+#     [left_page_spacer, test1_layout],
+#     [small_med_height_spacer],
+#     [left_page_spacer, test_acc_display]
+# )
 
 tab3_layout = layout(
     [top_page_spacer],
-    [left_page_spacer, test_layout],
-    [small_med_height_spacer],
-    [left_page_spacer, test_acc_display]
+    [left_page_spacer, step_four],
+    [left_page_spacer, test_layout, large_left_page_spacer, pr_layout]
 )
 
 # tab3_layout = column(top_page_spacer, row(left_page_spacer, test_layout, row(left_page_spacer, column(small_med_height_spacer, test_acc_display))))
