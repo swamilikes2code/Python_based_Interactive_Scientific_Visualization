@@ -723,8 +723,8 @@ total_data_section_timer_start = datetime.now()                         # ------
 read_csv_start = datetime.now()                                         # ----------- TIMER CODE
 
 # toggle whether you are testing here or running from server
-# master = True
-master = False
+master = True
+# master = False
 
 ####################################################################################################
 # Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
