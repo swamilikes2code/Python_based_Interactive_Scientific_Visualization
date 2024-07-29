@@ -235,14 +235,17 @@ header {
 
   /* -------------------------ROWS AND COLUMNS------------------------- */
 
-  .column_1_home, .column_2_home {
-        flex: 1; /* Allow both columns to grow and shrink */
-        padding-right: 2%;
-        box-sizing: border-box;
+  .home_container {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2%;
+      align-items: stretch;
     }
 
   .column_1_home {
-      flex: 2; /* Allow the text column to be twice as wide as the image column */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
   .column_2_home img {
@@ -277,6 +280,10 @@ header {
 
   /* Responsive layout */
 @media screen and (max-width: 800px) {
+  .home_container {
+    grid-template-columns: 1fr;
+  }
+
   .column_1_home, .column_2_home{
     width: 100%;
     padding-right: 0;
@@ -473,12 +480,6 @@ header {
   font-size: 32px;
   font-weight: bold;
   font-family: 'Arial', sans-serif;
-}
-
-.home_container {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
 }
 
     </style>
