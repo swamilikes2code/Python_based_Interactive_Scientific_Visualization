@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Biodegradability Classification</title>
     <style>
+
+/* -------------------------BODY------------------------- */
+
 body {
     margin: 0;
     background: #fff;
@@ -12,146 +15,11 @@ body {
     font-weight: 400;
 }
 
-.container {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    flex-wrap: nowrap;
-    padding: 10px;
-}
 
-.column_4 {
-    float: left;
-    width: 20.9%;
-    padding-right: 4%;
-    }
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-  .column_4 {
-    width: 100%;
-  }
-}
-
-.column_2 {
-    float: left;
-    width: 45.9%;
-    padding-right: 4%;
-    }
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-  .column_2 {
-    width: 100%;
-  }
-}
-
-.container4 {
-  display: flex;
-  flex-wrap:wrap;
-}
-
-.column_1_home, .column_2_home {
-    width: 45.9%;
-    padding-right: 4%;
-    }
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-
-  .column_1_home, .column_2_home{
-    width: 100%;
-    padding-right: 0;
-  }
-
-  .column_1_home {
-    order: 2;
-  }
-
-  .column_2_home {
-    order: 1;
-  }
-
-}
-
-.column_3 {
-    float: left;
-    width: 29.3%;
-    padding-right: 4%;
-    }
-
-/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 800px) {
-  .column_3 {
-    width: 100%;
-  }
-}
-
-.container3 {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.step_section {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 20px; /* Adjust spacing between sections as needed */
-}
-
-.step_tab_col, .step_col {
-    padding-left:10px; 
-    padding-right:10px;
-    text-align: center;
-    background-color: #fff;
-    border-left: 7px solid #b2e3f4;
-    border-right: 7px solid #b2e3f4;
-}
-
-.step_tab_col {
-    flex: 1 1 100%;
-    background-color: #f5f5f5; /* Different background for headers */
-}
-
-.step_col {
-    flex: 2 2 10%;
-    background-color: #ddd;
-}
-
-@media screen and (max-width: 570px) {
-    .step_section {
-        flex-direction: column;
-    }
-    
-    .step_tab_col, .step_col {
-        flex: 1 1 100%;
-    }
-}
-
-.caption {
-  font-size: 12px;
-  justify-items: center;
-  display: grid;
-}
-
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-    }
-
-.scrollable-container {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-    }
-
-  /* ------------------------- FOR THE HEADER -------------------------*/
+/* ------------------------- HEADER -------------------------*/
 
   
-  header {
+header {
       background: #262626;
       height: 80px;
       /* display: flex; */
@@ -224,7 +92,7 @@ body {
   }
   
   .header-text {
-      font-size: 16px; /* Adjust the font size as desired */
+      font-size: 16px;
   }
 
   @media all and (max-width: 608px) {
@@ -250,13 +118,11 @@ body {
   }
   }
   
-  /* The container <div> - needed to position the dropdown content */
   .dropdown {
     float:left;
     overflow:hidden;
   }
   
-  /* Dropdown Button */
   .dropdown .dropbtn {
     padding: 0;
     font-size: 16px;
@@ -316,10 +182,219 @@ body {
   li:hover .dropdown-content {display: block;}
 
 
-  /* ------------------HEADER ENDS HERE------------------- */
+  /* -------------------------TABS------------------------- */
+
+  .flexwrap1 {
+      display: flex;
+      width: auto;
+      height: auto;
+      font-family: 'Arial', sans-serif;
+      color:#484848;
+      font-weight: 600;
+      font-size: 16px;
+      padding-left:5px;
+      padding-right:10px;
+      padding-bottom:10px;
+      background:#b2e3f4;
+      gap: 2.083vw;
+      line-height: 1.5;
+      margin: auto;
+    }
+  .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+
+  /* Style the buttons inside the tab */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+  }
+
+  /* -------------------------ROWS AND COLUMNS------------------------- */
+
+  .column_1_home, .column_2_home {
+      width: 45.9%;
+      padding-right: 4%;
+    }
+
+  .column_2 {
+      float: left;
+      width: 45.9%;
+      padding-right: 4%;
+    }
+
+  .column_3 {
+      float: left;
+      width: 29.3%;
+      padding-right: 4%;
+    }
+
+  .column_4 {
+      float: left;
+      width: 20.9%;
+      padding-right: 4%;
+    }
+
+  .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+  /* Responsive layout */
+@media screen and (max-width: 800px) {
+  .column_1_home, .column_2_home{
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .column_1_home {
+    order: 2;
+  }
+
+  .column_2_home {
+    order: 1;
+  }
+  
+  .column_2 {
+    width: 100%;
+  }
+
+  .column_3 {
+    width: 100%;
+  }
+  
+  .column_4 {
+    width: 100%;
+  }
+}
+
+/* -------------------------STEP TAB------------------------- */
+.step_container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+.step_section {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.step_tab_col, .step_col {
+      padding-left:10px; 
+      padding-right:10px;
+      text-align: center;
+      background-color: #fff;
+      border-left: 7px solid #b2e3f4;
+      border-right: 7px solid #b2e3f4;
+    }
+
+.step_tab_col {
+      flex: 1 1 100%;
+      background-color: #f5f5f5;
+    }
+
+.step_col {
+      flex: 2 2 10%;
+      background-color: #ddd;
+    }
+
+@media screen and (max-width: 570px) {
+  .step_section {
+      flex-direction: column;
+  }
+    
+  .step_tab_col, .step_col {
+      flex: 1 1 100%;
+  }
+}
 
 
-  /*-------------------FOR THE FOOTER--------------------- */
+/*-------------------TOOLTIPS--------------------- */
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-decoration-color: #484848;
+    
+  }
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 130px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -65px;
+    background-color: #262626;
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    
+    position: absolute;
+    z-index: 1;
+  }
+
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #262626 transparent transparent transparent;
+  }
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+
+
+
+
+  /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+
+  /*-------------------FOOTER--------------------- */
   .footer1 {
     margin: 0;
     padding: none;
@@ -341,69 +416,9 @@ body {
     flex-wrap: nowrap;
     padding: 10px;
 }
-  /*-------------------FOOTER ENDS HERE-------------------- */
 
-@media (max-width: 680px) {
-  .container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
 
-.flexwrap {
-    display:flex;
-    width: auto;
-    margin: auto;
-    font-family: 'Arial', sans-serif;
-    max-width: 90rem;
-}
-.flexwrap1 {
-  display: flex;
-  width: auto;
-  height: auto;
-  font-family: 'Arial', sans-serif;
-  color:#484848;
-  font-weight: 600;
-  font-size: 16px;
-  padding-left:5px;
-  padding-right:10px;
-  padding-bottom:10px;
-  background:#b2e3f4;
-  gap: 2.083vw;
-  line-height: 1.5;
-  margin: auto;
-}
-.flexcol {
-    color:#484848;
-    font-weight: 600;
-    border:0.1953vw; 
-    font-size: 1.354vw;
-    border-style:solid; 
-    border-color:#000; 
-    padding: 0.651vw;
-    width: 50%;
-    background: #E8E8E8;
-    border-radius: 30px;
-    margin: 0 3.125vw;
-    line-height: 1.5;
-}
-
-.head1 {
-    text-align: center;
-    background-color: #fff;
-    color: #000;
-    font-size: 32px;
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-}
-.head2 {
-    text-align: center;
-    color: #000;
-    font-size: 2.604vw;
-    font-weight: 600;
-    font-family: 'Arial', sans-serif;
-}
-
+/* -------------------MISC------------------- */
 .button1 {
     margin: 0;
     position:relative;
@@ -425,153 +440,33 @@ body {
     transition-duration: 300ms;
   }
 
-.questions {
-    width: auto;
-    margin: auto;
-    font-family: 'Arial', sans-serif;
-    color:#484848;
-    font-weight: 600;
-    border:8px; 
-    font-size: 16px;
-    border-style:solid; 
-    border-color:#000; 
-    padding: 8px;
-    background: #E8E8E8;
-    border-radius: 30px;
-    max-width: 85rem;
-}    
+.caption {
+    font-size: 12px;
+    justify-items: center;
+    display: grid;
+  }
+
 .center {
     display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 52.083vw;
-  height: 29.297vw;
-}
+    margin-left: auto;
+    margin-right: auto;
+    width: 52.083vw;
+    height: 29.297vw;
+  }
 
-.flexcol1 {
-    position: relative;
-    color: #ddd;
-    padding: 0.65vw;
-    width: 50%;
-    background: #262626;
-    height:auto;
+.head1 {
+    text-align: center;
+    background-color: #fff;
+    color: #000;
+    font-size: 32px;
+    font-weight: bold;
     font-family: 'Arial', sans-serif;
-    font-size: 1.042vw;
-}
-.flexcol1 p{
-    position:absolute;
-    left:0;
-}
-.flexcol1 img{
-    position:absolute;
-    right:0;
-}
+  }
 
-.flexcol2 {
-    width: 28%;
-    height:auto;
-    margin: 112px 0 0 0;
-}
-.flexcol4 {
-    width: 32%;
-    height: auto;
-    margin: 230px 0 0 0;
-}
-.flexcol3 {
-    width:40%;
-    height: auto;
-    margin: 230px 0 0 0;
-    padding-right: 1.3vw;
-}
-.flexcol5 {
-    width: 45%;
-    position: relative;
-    height: auto;
-    padding-left: 5.21vw;
-}
-.flexcol6 {
-    width: 75%;
-    position: relative;
-
-}
-
-.tab {
-        overflow: hidden;
-        border: 1px solid #ccc;
-        background-color: #f1f1f1;
-      }
-
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  font-size: 17px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #ccc;
-}
-
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: 6px 12px;
-}
-
-/* Tooltip container */
-.tooltip {
-  position: relative;
-  display: inline-block;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-decoration-thickness: 1px;
-  text-decoration-color: #484848;
-  
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 130px;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -65px;
-  background-color: #262626;
-  color: #fff;
-  font-size: 14px;
-  text-align: center;
-  padding: 5px;
-  border-radius: 6px;
-  
-  position: absolute;
-  z-index: 1;
-}
-
-.tooltip .tooltiptext::after {
-  content: " ";
-  position: absolute;
-  top: 100%; /* At the bottom of the tooltip */
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #262626 transparent transparent transparent;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
+.home_container {
+    display: flex;
+    flex-wrap:wrap;
+  }
 
     </style>
 </head>
@@ -614,7 +509,7 @@ body {
       <div class="flexwrap1">
         <div id="Introduction" class="tabcontent">
           <h3>Welcome to Biodegradability Classification</h3>
-          <div class="container4">
+          <div class="home_container">
             <div class="column_1_home">
               <p>We aim to demonstrate how A.I. can be utilized to predict molecular properties through an engaging, individualized learning experience. </p>
 
@@ -640,7 +535,7 @@ body {
             <h3>Procedure:</h3>
           </div>
 
-          <div class="container3">
+          <div class="step_container">
             <div class="step_section">
                 <div class="step_tab_col">
                     <p><b>Train and Validate</b></p>
@@ -1166,7 +1061,6 @@ tablinks[currentTab].click();
 });
 
   </script>
-     <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
     <div class="scrollable-container">
       {{bokeh_script_biodegradability_classification|safe}}
     </div>
