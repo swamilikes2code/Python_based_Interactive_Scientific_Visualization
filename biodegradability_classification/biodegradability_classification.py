@@ -1297,6 +1297,7 @@ def run_ML():
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
+    np.random.seed(123)
 
     temp_df = all_df[data_index]
     temp_cols = all_cols[data_index]    
@@ -1846,9 +1847,12 @@ def calc_pr_curve(save_num):
     # print("select1:", pr_select1.value)
 
     save_index = test_save_select.options.index(save_num)
+    print(save_index)
     pr_model = set_test_vals(save_index)
+    print(pr_model)
 
     y_scores = pr_model.predict_proba(X_test)[:, 1]
+    print(y_scores)
     temp_precision, temp_recall, thresholds = precision_recall_curve(y_test, y_scores)
     # print(temp_precision, temp_recall)
     # print(type(temp_precision))
@@ -1857,6 +1861,9 @@ def calc_pr_curve(save_num):
     return temp_precision, temp_recall
 
 def set_pr1(attr, old, new):
+    np.random.seed(123)
+    precision[0] = [nan]
+    recall[0] = [nan]
     temp_precision, temp_recall = calc_pr_curve(pr_select1.value)
     precision[0] = temp_precision.tolist()
     recall[0] = temp_recall.tolist()
@@ -1865,8 +1872,13 @@ def set_pr1(attr, old, new):
     # print(len(precision), len(recall))
     pr_legend.items[0] = LegendItem(label=pr_select1.value, renderers=[pr1])
     set_pr_source()
+    # print(len(precision))
+    # print(len(recall))
 
 def set_pr2(attr, old, new):
+    np.random.seed(123)
+    precision[1] = [nan]
+    recall[1] = [nan]
     pr_legend.items = [LegendItem(label=pr_select1.value, renderers=[pr1]),
                         LegendItem(label=pr_select2.value, renderers=[pr2])]
 
@@ -1877,6 +1889,8 @@ def set_pr2(attr, old, new):
     # print(precision, recall)
     # print(len(precision[1]), len(recall[1]))
     set_pr_source()
+    # print(len(precision))
+    # print(len(recall))
 
 pr_select1.on_change('value', set_pr1)
 pr_select2.on_change('value', set_pr2)
@@ -1907,7 +1921,8 @@ test_table = DataTable(source=abridg_source, columns=test_tab_columns, width = 3
 
 def set_test_vals(save_index):
     # save_index = test_save_select.options.index(test_save_select.value)
-    
+    print(save_source.data)
+
     temp_split = [int(split) for split in save_source.data['train_val_test_split'][save_index].split("/")]
     temp_data_choice = save_source.data['saved_data_choice'][save_index]
     temp_data_index = data_opts.index(temp_data_choice)
