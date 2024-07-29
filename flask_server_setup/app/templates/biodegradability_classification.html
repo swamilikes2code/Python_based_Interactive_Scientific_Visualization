@@ -235,9 +235,29 @@ header {
 
   /* -------------------------ROWS AND COLUMNS------------------------- */
 
-  .column_1_home, .column_2_home {
-      width: 45.9%;
-      padding-right: 4%;
+  .home_container {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75%;
+      align-items: stretch;
+    }
+
+  .column_1_home {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+  .column_2_home {
+      display: flex;
+      align-items: stretch;
+    }
+
+  .column_2_home img {
+      width: auto;
+      max-width: 92%;
+      height: 100%;
+      object-fit: cover;
     }
 
   .column_2 {
@@ -265,7 +285,22 @@ header {
     }
 
   /* Responsive layout */
+
+@media screen and (max-width: 1200px) {
+
+  .column_2_home{
+    width: 100%;
+    height: auto;
+  }
+
+}
+
 @media screen and (max-width: 800px) {
+
+  .home_container {
+    grid-template-columns: 1fr;
+  }
+
   .column_1_home, .column_2_home{
     width: 100%;
     padding-right: 0;
@@ -278,10 +313,15 @@ header {
   .column_2_home {
     order: 1;
   }
-  
+
+  .column_2_home img{
+    max-width: 100%;
+  }
+
   .column_2 {
     width: 100%;
   }
+  
 
   .column_3 {
     width: 100%;
@@ -442,32 +482,27 @@ header {
   }
 
 .caption {
-    font-size: 12px;
-    justify-items: center;
-    display: grid;
-  }
+  font-size: 12px;
+  justify-items: center;
+  display: grid;
+}
 
 .center {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 52.083vw;
-    height: 29.297vw;
-  }
+  margin-left: auto;
+  margin-right: auto;
+  width: 52.083vw;
+  height: 29.297vw;
+}
 
 .head1 {
-    text-align: center;
-    background-color: #fff;
-    color: #000;
-    font-size: 32px;
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-  }
-
-.home_container {
-    display: flex;
-    flex-wrap:wrap;
-  }
+  text-align: center;
+  background-color: #fff;
+  color: #000;
+  font-size: 32px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+}
 
     </style>
 </head>
@@ -527,7 +562,7 @@ header {
             
 
             <div class="column_2_home">
-              <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="right" style="width: auto; height: 100%; float: none">
+              <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="right" style="width:100%; height: auto;">
             </div>
 
           </div>
