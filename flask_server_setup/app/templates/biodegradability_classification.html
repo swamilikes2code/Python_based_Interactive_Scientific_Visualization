@@ -237,7 +237,7 @@ header {
 
   .home_container {
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: 1fr auto;
       gap: 2%;
       align-items: stretch;
     }
@@ -250,11 +250,12 @@ header {
 
   .column_2_home {
       display: flex;
+      align-items: stretch;
     }
 
   .column_2_home img {
-      width: 100%;
-      height: auto;
+      width: auto;
+      height: 100%;
       object-fit: cover;
     }
 
@@ -300,10 +301,16 @@ header {
   .column_2_home {
     order: 1;
   }
+
+  .column_2_home img {
+        width: 100%;
+        height: auto; /* Reset height for small screens */
+    }
   
   .column_2 {
     width: 100%;
   }
+  
 
   .column_3 {
     width: 100%;
