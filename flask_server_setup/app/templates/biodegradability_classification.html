@@ -236,11 +236,16 @@ header {
   /* -------------------------ROWS AND COLUMNS------------------------- */
 
   .column_1_home, .column_2_home {
-      padding-right: 4%;
-      box-sizing: border-box;
+        flex: 1; /* Allow both columns to grow and shrink */
+        padding-right: 2%;
+        box-sizing: border-box;
     }
 
-    .column_2_home img {
+  .column_1_home {
+      flex: 2; /* Allow the text column to be twice as wide as the image column */
+    }
+
+  .column_2_home img {
       width: 100%;
       height: 100%;
       object-fit: cover;
