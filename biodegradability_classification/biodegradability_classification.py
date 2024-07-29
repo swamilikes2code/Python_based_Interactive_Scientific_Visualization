@@ -1847,12 +1847,13 @@ def calc_pr_curve(save_num):
     # print("select1:", pr_select1.value)
 
     save_index = test_save_select.options.index(save_num)
-    print(save_index)
+    # print(save_index)
     pr_model = set_test_vals(save_index)
-    print(pr_model)
+    # print(pr_model)
+    pr_model.fit(X_train, y_train)
 
     y_scores = pr_model.predict_proba(X_test)[:, 1]
-    print(y_scores)
+    # print(y_scores)
     temp_precision, temp_recall, thresholds = precision_recall_curve(y_test, y_scores)
     # print(temp_precision, temp_recall)
     # print(type(temp_precision))
