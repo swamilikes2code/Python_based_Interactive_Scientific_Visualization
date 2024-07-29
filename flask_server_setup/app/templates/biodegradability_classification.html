@@ -235,19 +235,13 @@ header {
 
   .column_1_home, .column_2_home {
       flex: 1;
-      padding: 10px;
+      padding: 5px;
     }
 
   .column_2_home {
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-  .column_2_home img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain; /* Ensures the image maintains its aspect ratio */
     }
 
   .column_2 {
@@ -471,9 +465,8 @@ header {
   }
 
 .home_container {
-    display: flex;
-    align-items: stretch;
-    height: 100vh; /* Adjust this height as needed */
+  display: flex;
+  align-items: stretch;
   }
 
 
@@ -536,7 +529,7 @@ header {
             
 
             <div class="column_2_home">
-              <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage">
+              <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="center" style="width:auto; height: 100%; float: none">
             </div>
 
           </div>
