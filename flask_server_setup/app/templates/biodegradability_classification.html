@@ -255,7 +255,7 @@ header {
 
   .column_2_home img {
       width: auto;
-      max-width: 100%;
+      max-width: 80%;
       height: 100%;
       object-fit: cover;
     }
@@ -285,7 +285,8 @@ header {
     }
 
   /* Responsive layout */
-@media screen and (max-width: 800px) {
+
+@media screen and (max-width: 1165px) {
   .home_container {
     grid-template-columns: 1fr;
   }
@@ -302,6 +303,9 @@ header {
   .column_2_home {
     order: 1;
   }
+}
+
+@media screen and (max-width: 800px) {
   
   .column_2 {
     width: 100%;
