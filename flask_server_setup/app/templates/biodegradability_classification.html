@@ -15,8 +15,10 @@ body {
     font-weight: 400;
 }
 
+
 /* ------------------------- HEADER -------------------------*/
 
+  
 header {
       background: #262626;
       height: 80px;
@@ -234,19 +236,8 @@ header {
   /* -------------------------ROWS AND COLUMNS------------------------- */
 
   .column_1_home, .column_2_home {
-      flex: 1;
-      padding: 5px;
-    }
-
-  .column_1_home {
-      display: flex;
-      height: 100%;
-    }
-
-  .column_2_home {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 45.9%;
+      padding-right: 4%;
     }
 
   .column_2 {
@@ -393,12 +384,15 @@ header {
   }
 
 
+
+
   /*-------------------BOKEH SECTION--------------------- */
   .scrollable-container {
         width: 100%;
         max-width: 100%;
         overflow-x: auto;
     }
+
 
   /*-------------------FOOTER--------------------- */
   .footer1 {
@@ -425,6 +419,7 @@ header {
 
 
 /* -------------------MISC------------------- */
+
 .button1 {
     margin: 0;
     position:relative;
@@ -470,11 +465,9 @@ header {
   }
 
 .home_container {
-  display: flex;
-  align-items: stretch;
+    display: flex;
+    flex-wrap:wrap;
   }
-
-
 
     </style>
 </head>
@@ -534,7 +527,7 @@ header {
             
 
             <div class="column_2_home">
-              <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="center" style="width:auto; height: 100%; float: none">
+              <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="right" style="width: auto; height: 100%; float: none">
             </div>
 
           </div>
