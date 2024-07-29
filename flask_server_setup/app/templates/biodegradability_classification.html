@@ -286,7 +286,25 @@ header {
 
   /* Responsive layout */
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
+  .home_container {
+    grid-template-columns: 1fr;
+  }
+
+  .column_1_home{
+    width: 40%;
+    padding-right: 0;
+  }
+
+  .column_2_home{
+    width: 60%;
+    padding-right: 0;
+  }
+
+}
+
+@media screen and (max-width: 800px) {
+
   .home_container {
     grid-template-columns: 1fr;
   }
@@ -307,10 +325,7 @@ header {
   .column_2_home img{
     max-width: 100%;
   }
-}
 
-@media screen and (max-width: 800px) {
-  
   .column_2 {
     width: 100%;
   }
