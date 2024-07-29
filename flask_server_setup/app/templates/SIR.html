@@ -13,7 +13,7 @@
         body {
      margin: 0;
      background: #fff;
-     font-family: 'Work Sans', sans-serif;
+     font-family: 'Arial', sans-serif;
      font-weight: 400;
         }
         .container {
@@ -203,7 +203,7 @@ header {
     background-color: #262626;
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     margin-bottom: -4.883vw;
 }
 
@@ -219,17 +219,17 @@ header {
  .head1 {
     text-align: center;
     color: #000;
-    font-size: 3.125vw;
+    font-size: 32px;
     font-weight: bold;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
  }
  .flexwrap1 {
 display: flex;
 width: auto;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 color:#484848;
 font-weight: 600;
-font-size: 1.354vw;
+font-size: 16px;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:20px;
@@ -248,7 +248,7 @@ align-items: flex-start;
     color:#484848;
     font-weight: 600;
     border:0.1953vw; 
-    font-size: 1.354vw;
+    font-size: 16px;
     border-style:solid; 
     border-color:#000; 
     padding: 0.651vw;
@@ -266,7 +266,7 @@ align-items: flex-start;
 .flexwrap {
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
 }
 .footer {
     margin: 0;
@@ -279,7 +279,7 @@ align-items: flex-start;
     background-color: #262626;
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     margin-top: -180px;
 }
 
@@ -290,8 +290,8 @@ align-items: flex-start;
     width: 50%;
     background: #262626;
     height:auto;
-    font-family: 'work sans', sans-serif;
-    font-size: 1.042vw;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
 }
 .flexcol1 p{
     position:absolute;
@@ -336,6 +336,13 @@ align-items: flex-start;
     border-radius: 17px;
 }
 }
+
+  /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
  
      </style>
 </head>
@@ -380,8 +387,9 @@ align-items: flex-start;
         </ol></p>
     </div>
       </div>
+      <div class="scrollable-container">
         {{bokeh_script_SIR|safe}}
-        
+      </div>
         <br>
         <br>
 </body>

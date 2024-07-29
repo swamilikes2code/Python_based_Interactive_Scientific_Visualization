@@ -8,7 +8,7 @@
        body {
     margin: 0;
     background: #fff;
-    font-family: 'Work Sans', sans-serif;
+    font-family: 'Arial', sans-serif;
     font-weight: 400;
        }
       .container {
@@ -198,7 +198,7 @@ header {
     background-color: #262626;
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     margin-bottom: -4.883vw;
 }
 
@@ -215,16 +215,16 @@ header {
     display:flex;
     width: auto;
     margin: auto;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     max-width: 90rem;
 }
 .flexwrap1 {
 display: flex;
 width: auto;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 color:#484848;
 font-weight: 600;
-font-size: 1.354vw;
+font-size: 16px;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:10px;
@@ -237,7 +237,7 @@ margin: auto;
     color:#484848;
     font-weight: 600;
     border:0.1953vw; 
-    font-size: 1.354vw;
+    font-size: 16px;
     border-style:solid; 
     border-color:#000; 
     padding: 0.651vw;
@@ -251,25 +251,25 @@ margin: auto;
 .head1 {
     text-align: center;
     color: #000;
-    font-size: 3.125vw;
+    font-size: 32px;
     font-weight: bold;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
 }
 .head2 {
     text-align: center;
     color: #000;
-    font-size: 2.604vw;
+    font-size: 24px;
     font-weight: 600;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
 }
 .questions {
     width: auto;
     margin: auto;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     color:#484848;
     font-weight: 600;
     border:0.1953vw; 
-    font-size: 1.354vw;;
+    font-size: 16px;
     border-style:solid; 
     border-color:#000; 
     padding: 0.651vw;
@@ -295,7 +295,7 @@ margin: auto;
     background-color: #262626;
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     margin-top: -180px;
 }
 
@@ -306,8 +306,8 @@ margin: auto;
     width: 50%;
     background: #262626;
     height:auto;
-    font-family: 'work sans', sans-serif;
-    font-size: 1.042vw;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
 }
 .flexcol1 p{
     position:absolute;
@@ -384,6 +384,13 @@ margin: auto;
         display: none;
         padding: 6px 12px;
       }
+
+        /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
     </style>
 </head>
 
@@ -491,7 +498,10 @@ tablinks[currentTab].click();
   </script>
      <!--<p> Chemical kinetics is the branch of chemistry concerned with the rate that reactions take place. You measure the rate of reaction by looking at the change in concentration per unit time, that occurs with reactants and products.</p>-->
 
-    {{bokeh_script_sliders_reaction_kinetics|safe}}
+     <div class="scrollable-container">
+      {{bokeh_script_sliders_reaction_kinetics|safe}}
+    </div>
+    
     <br>
     <br>
 </body>

@@ -18,7 +18,7 @@
 body {
   margin: 0;
   background: #fff;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Arial', sans-serif;
   font-weight: 400;
      }
       .container {
@@ -214,7 +214,7 @@ header {
     background-color: #262626;
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     margin-bottom: -4.883vw;
 }
 
@@ -230,25 +230,25 @@ header {
 .head1 {
 text-align: center;
 color: #000;
-font-size: 3.125vw;
+font-size: 32px;
 font-weight: bold;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 }
 
 .head2 {
   text-align: center;
   color: #000;
-  font-size: 2.125vw;
+  font-size: 24px;
   font-weight: bold;
-  font-family: 'Segoe UI';
+  font-family: 'Arial', sans-serif;
   }
 
 .flexwrap1 {
 width: auto;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 color:#484848;
 font-weight: 600;
-font-size: 1.354vw;
+font-size: 16px;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:10px;
@@ -261,10 +261,10 @@ margin: auto;
 .flexwrap2 {
 display: flex;
 width: auto;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 color:#484848;
 font-weight: 600;
-font-size: 1.354vw;
+font-size: 16px;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:10px;
@@ -277,7 +277,7 @@ margin: auto;
 .flexwrap {
 display:flex;
 width: 100%;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 }
 .flexcol {
 width: 100%;
@@ -293,18 +293,18 @@ margin-right: 1.302vw;
 .head2 {
 text-align: center;
 color: #000;
-font-size: 2.604vw;
+font-size: 16px;
 font-weight: 600;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 }
 .questions {
 width: auto;
 margin: auto;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 color:#484848;
 font-weight: 600;
 border: 0.1953vw;
-font-size: 1.354vw;
+font-size: 16px;
 border-style:solid;
 border-color:#000;
 padding: 0.651vw;
@@ -337,7 +337,7 @@ box-sizing: border-box;
 background-color: #262626;
 display:flex;
 width: 100%;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 margin-top: -180px;
 }
 
@@ -348,8 +348,8 @@ padding: 0.65vw;
 width: 50%;
 background: #262626;
 height:auto;
-font-family: 'work sans', sans-serif;
-font-size: 1.042vw;
+font-family: 'Arial', sans-serif;
+font-size: 16px;
 }
 .flexcol1 p{
 position:absolute;
@@ -436,6 +436,13 @@ height: auto;
   width: 52.083vw;
   height: 29.2969vw;
 }
+
+  /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
 
 </style>
 <!-- Starting adding elements to the page -->
@@ -563,8 +570,10 @@ document.addEventListener('keydown', (event) => {
       </div>
     </section> -->
 
-  {{bokeh_script_DACModel|safe}}
-
+  
+  <div class="scrollable-container">
+    {{bokeh_script_DACModel|safe}}
+  </div>
 
 </body>
 </body>

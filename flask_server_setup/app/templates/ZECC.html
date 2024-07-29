@@ -14,7 +14,7 @@
     body {
         margin: 0;
         background: #fff;
-        font-family: 'Work Sans', sans-serif;
+        font-family: 'Arial', sans-serif;
         font-weight: 400;
            }
             .container {
@@ -210,7 +210,7 @@ header {
     background-color: #262626;
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     margin-bottom: -4.883vw;
 }
 
@@ -227,17 +227,17 @@ header {
 .head1 {
     text-align: center;
     color: #000;
-    font-size: 3.125vw;
+    font-size: 32px;
     font-weight: bold;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
 }
 
 .flexwrap1 {
 width: auto;
-font-family: 'Segoe UI';
+font-family: 'Arial', sans-serif;
 color:#484848;
 font-weight: 600;
-font-size: 1.354vw;
+font-size: 16px;
 padding-left:10px;
 padding-right:10px;
 padding-bottom:10px;
@@ -249,31 +249,44 @@ margin: auto;
 .flexwrap {
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
 }
-.grid-container {
+/* .grid-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+} */
+
+.column_3 {
+      float: left;
+      width: 29.3%;
+      padding-right: 4%;
+    }
+
+@media screen and (max-width: 800px) {
+  .column_3 {
+    width: 100%;
+  }
 }
+
 .flexcol {
   padding: 20px;
 }
 .head2 {
     text-align: center;
     color: #000;
-    font-size: 2.604vw;
+    font-size: 24px;
     font-weight: 600;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
 }
 .questions {
     width: auto;
     margin: auto;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     color:#484848;
     font-weight: 600;
     border: 0.1953vw; 
-    font-size: 1.354vw;
+    font-size: 16px;
     border-style:solid; 
     border-color:#000; 
     padding: 0.651vw;
@@ -306,7 +319,7 @@ li{
     background-color: #262626;
     display:flex;
     width: 100%;
-    font-family: 'Segoe UI';
+    font-family: 'Arial', sans-serif;
     margin-top: -180px;
 }
 
@@ -317,8 +330,8 @@ li{
     width: 50%;
     background: #262626;
     height:auto;
-    font-family: 'work sans', sans-serif;
-    font-size: 1.042vw;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
 }
 .flexcol1 p{
     position:absolute;
@@ -405,6 +418,13 @@ li{
   height: 29.2969vw;
 }
 
+ /*-------------------BOKEH SECTION--------------------- */
+ .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
 </style>
 </head>
     
@@ -445,16 +465,14 @@ li{
           <div class="flexwrap1">
           <div id="About" class="tabcontent">
             <h3>About</h3>
-            <div class="grid-container">
-            <div class="flexcol">
+            <div class="column_3">
             <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
-        </div>
-      <div class="flexcol"> <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
-    </div> 
-    <div class="flexcol">
-        <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
-    </div>
-    </div>
+          </div>
+            <div class="column_3"> <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
+          </div> 
+          <div class="column_3">
+              <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
+          </div>
               <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center" style="width:800px; border:5px solid black">
            </div>
           </div>
@@ -516,7 +534,10 @@ document.addEventListener('keydown', (event) => {
           </script>
         <br>
     <br>
-        {{bokeh_script_ZECC|safe}}
+    <div class="scrollable-container">
+      {{bokeh_script_ZECC|safe}}
+    </div>
+        
 
     <!--<div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
 
