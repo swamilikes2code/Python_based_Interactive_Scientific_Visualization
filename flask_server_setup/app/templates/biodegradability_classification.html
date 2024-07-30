@@ -235,24 +235,14 @@ header {
 
   /* -------------------------ROWS AND COLUMNS------------------------- */
 
-  .center_wrapper {
-        display: flex;
-        justify-content: center; /* Center horizontally */
-        align-items: center; /* Center vertically if needed */
-        min-height: 100vh; /* Ensure the wrapper takes at least the full viewport height */
-        padding: 20px; /* Optional: add some padding for better spacing */
-        box-sizing: border-box; /* Include padding in the width calculation */
-      }
-
   .home_container {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 0.75%;
       align-items: stretch;
-      max-width: 1250px;
-      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 0 20px;
-      box-sizing: border-box;
     }
 
   .column_1_home {
@@ -268,7 +258,7 @@ header {
 
   .column_2_home img {
       width: auto;
-      max-width: 100%;
+      max-width: 92%;
       height: 100%;
       object-fit: cover;
     }
@@ -554,29 +544,28 @@ header {
       <div class="flexwrap1">
         <div id="Introduction" class="tabcontent">
           <h3>Welcome to Biodegradability Classification</h3>
-          <div class="center_wrapper">
-            <div class="home_container">
-              <div class="column_1_home">
-                <p>We aim to demonstrate how A.I. can be utilized to predict molecular properties through an engaging, individualized learning experience. </p>
+          <div class="home_container">
+            <div class="column_1_home">
+              <p>We aim to demonstrate how A.I. can be utilized to predict molecular properties through an engaging, individualized learning experience. </p>
 
-                <p>Specifically, our module uses a subtopic of artificial intelligence called machine learning to extract knowledge and find patterns hidden in the data to predict the property of 
-                  <span class="tooltip"><b>biodegradability</b>
-                    <span class="tooltiptext">how capable a molecule is of being broken down</span>
-                  </span>
-                  in organic compounds. </p>
+              <p>Specifically, our module uses a subtopic of artificial intelligence called machine learning to extract knowledge and find patterns hidden in the data to predict the property of 
+                <span class="tooltip"><b>biodegradability</b>
+                  <span class="tooltiptext">how capable a molecule is of being broken down</span>
+                </span>
+                in organic compounds. </p>
 
-                <p>Our learning module walks students with zero coding or machine learning experience through the process of creating their own machine learning model, which once created can be used to predict the biodegradability of unseen instances of compounds.</p>
+              <p>Our learning module walks students with zero coding or machine learning experience through the process of creating their own machine learning model, which once created can be used to predict the biodegradability of unseen instances of compounds.</p>
 
-                <p>We hope that after exploring our module, other STEM students or professionals can be inspired to utilize machine learning to predict other molecular properties, speeding up research times and leading to new innovations.</p>
-              </div>
-              
-
-              <div class="column_2_home">
-                <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="right" style="width:100%; height: auto;">
-              </div>
-
+              <p>We hope that after exploring our module, other STEM students or professionals can be inspired to utilize machine learning to predict other molecular properties, speeding up research times and leading to new innovations.</p>
             </div>
+            
+
+            <div class="column_2_home">
+              <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Collage" class="right" style="width:100%; height: auto;">
+            </div>
+
           </div>
+
           <div class="row">
             <h3>Procedure:</h3>
           </div>
