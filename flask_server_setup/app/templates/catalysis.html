@@ -267,7 +267,7 @@ header {
 
   .column_2_home img {
       width: auto;
-      max-width: 60%; /* ADJUST AS NECESSARY FOR DIFFERENT PICTURE WIDTHS*/
+      max-width: 90%;
       height: 100%;
       object-fit: contain;
     }
@@ -275,19 +275,22 @@ header {
   .column_2 {
       float: left;
       width: 45.9%;
-      padding-right: 4%;
+      padding-left: 2%;
+      padding-right: 2%;
     }
 
   .column_3 {
       float: left;
       width: 29.3%;
-      padding-right: 4%;
+      padding-left: 2%;
+      padding-right: 2%;
     }
 
   .column_4 {
       float: left;
       width: 20.9%;
-      padding-right: 4%;
+      padding-left: 2%;
+      padding-right: 2%;
     }
 
   .row:after {
@@ -330,7 +333,6 @@ header {
   .column_2 {
     width: 100%;
   }
-  
 
   .column_3 {
     width: 100%;
@@ -458,14 +460,14 @@ header {
                 
     
                 <div class="column_2_home">
-                  <img src="{{url_for('static', filename='data science.jpg')}}" alt="Data Picture" class="right" style="width:100%; height: auto;">
+                  <img src="{{url_for('static', filename='data science.jpg')}}" alt="Data Picture" class="right" style="width:70%; height: auto;">
                 </div>
               </div>
             </div>
 
             <div id="Questions" class="tabcontent">
               <div class="text_row">
-                  <div class="text_column">
+                  <div class="column_2">
               <h3>Supplemental Questions</h3>
               <p><strong>Introductory Questions</strong> 
                 <ol> 
@@ -480,7 +482,7 @@ header {
                     <li>  Is there any overfitting occurring in the regression model?</li>
                     </ol> </p>
                     </div>
-                  <div class="text_column">
+                  <div class="column_2">
                     <p> <strong>Unsupervised Learning Section</strong> 
                     <ol> 
                     <li> Is there a trend that can be noticed about the amount of variance explained by each principal component? How many principal components does it take to have at least 80 percent variance explained?</li>
