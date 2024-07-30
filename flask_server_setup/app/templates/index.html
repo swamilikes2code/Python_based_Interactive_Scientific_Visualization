@@ -195,7 +195,7 @@ body {
         font-size: 16px;
         color: #555;
         font-weight: 600;
-        margin: 0 auto;
+        margin: 0 0 40px;
         background-color: #ffffff;
       }
       .head1 {
@@ -214,7 +214,7 @@ body {
         width: 50%;
       }
       .video iframe {
-        width: 41.67vw;
+        width: 100%;
         height: 21.354vw;
       }
       .note {
@@ -234,10 +234,10 @@ body {
         padding: 10px;
         width: 50%;
         background: #b2e3f4;
-        height: 14.97vw;
+        /* height: 14.97vw; */
         font-size: 16px;
       }
-      #catalysis.flexcol {
+      /* #catalysis.flexcol {
         position: relative;
         height: 15.625vw;
       }
@@ -258,7 +258,7 @@ body {
       #biodegrad.flexcol {
         position: relative;
         height: 15.625vw;
-      }
+      } */
       .head2 {
         font-size: 24px;
         color: rgb(24, 24, 24);
@@ -266,18 +266,21 @@ body {
         text-align: center;
       }
       .container2 {
-        height: 7.8125vw;
+        /* height: 25vw; */
         position: relative;
         background-color: #b2e3f4;
+        text-align: center;
+        align-content: center;
+        padding: 30px;
       }
-      .container3 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: nowrap;
-    padding: 10px;
-}
-      .head12 {
+      /* .container3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        padding: 10px;
+      } */
+      /* .head12 {
         color: #000;
         font-family: 'Arial', sans-serif;
         font-size: 32px;
@@ -287,8 +290,8 @@ body {
         left: 50%;
         margin-right: -50%;
         transform: translate(-50%, -50%);
-      }
-      .dark {
+      } */
+      /* .dark {
         text-align: center;
         font-family: 'Arial', sans-serif;
         font-size: 16px;
@@ -303,14 +306,10 @@ body {
         position: absolute;
         left: 7%;
         margin: -25px 0 0 -25px;
-      }
+      } */
 
       .button {
         margin: 0;
-        position: absolute;
-        top: 70%;
-        left: 41%;
-        margin: -25px 0 0 -25px;
         text-decoration: none;
         color: black;
         font-family: 'Arial', sans-serif;
@@ -326,7 +325,12 @@ body {
         -webkit-transition-duration: 300ms;
         transition-duration: 300ms;
       }
-      .button1 {
+
+      .buttoncontainer {
+        display:flex;
+        justify-content: center;
+      }
+      /* .button1 {
         margin: 0;
         position: absolute;
         top: 84%;
@@ -346,8 +350,8 @@ body {
 
         -webkit-transition-duration: 300ms;
         transition-duration: 300ms;
-      }
-      .button4 {
+      } */
+      /* .button4 {
         margin: 0;
         position: absolute;
         top: 84%;
@@ -367,15 +371,15 @@ body {
 
         -webkit-transition-duration: 300ms;
         transition-duration: 300ms;
-      }
-      .button1:hover {
+      } */
+      /* .button1:hover {
         background-color: #31a6ff;
         color: #fff;
-      }
-      .button4:hover {
+      } */
+      /* .button4:hover {
         background-color: #31a6ff;
         color: #fff;
-      }
+      } */
       .button:hover {
         background-color: #31a6ff;
         color: #fff;
@@ -395,7 +399,7 @@ body {
       margin-bottom: -4.883vw;
       }
 
-      #reaction.flexcol h2 {
+      /* #reaction.flexcol h2 {
         position: absolute;
         left: 33%;
         top: 14%;
@@ -454,27 +458,19 @@ body {
         left: 6%;
         top: 38%;
         margin: -25px 0 0 -25px;
-      }
+      } */
 
       @media all and (max-width: 960px) {
-        .tile {
-          font-family: 'Arial', sans-serif;
-          font-size: 16px;
-          color: #555;
-          font-weight: 600;
-          margin: 0 auto;
-          background-color: #ffffff;
-        }
-        .test h2 {
+        /* .test h2 {
           padding-top: 13px;
           padding-left: 2px;
-        }
-        .button {
+        } */
+        /* .button {
           position: absolute;
           top: 90%;
           left: 43%;
-        }
-        #reaction.flexcol h2 {
+        } */
+        /* #reaction.flexcol h2 {
           position: absolute;
           left: 37%;
           top: 25%;
@@ -530,7 +526,7 @@ body {
           padding: 0 15px;
           left: 8%;
           top: 50%;
-        }
+        } */
       }
     </style>
   </head>
@@ -608,32 +604,31 @@ body {
         
     </div>-->
 
-    <br /><br /><!--INCLUDE TWO SPACE BREAKS IN BETWEEN EVERY PARAGRAPH BOX-->
 
     <!-------MODELS------------------------------------------------------>
 
     <div class="container2">
-      <h1 class="head12" style="text-decoration: underline">Models</h1>
-      <!--THIS IS THE TITLE FOR THE MODELS-->
-    </div>
-    <div class="dark">
-      <div class="test">
-        <h2>
-          The Github repository containing all code and documentation related to
-          this project can be found below:
-        </h2>
-      </div>
+      <h1 style="text-decoration: underline">Models</h1>
 
-      <a
+      <h2 style="margin-bottom: 40px;">
+        The Github repository containing all code and documentation related to
+        this project can be found below:
+      </h2>
+
+      <p class="buttoncontainer">
+        <a
         href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization"
         class="button"
-        >Github Repository</a
-      >
+        >Github Repository</a>
+      </p>
+      <!--THIS IS THE TITLE FOR THE MODELS-->
     </div>
+
     <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
+    <!--each flexwrap is a row-->
     <div class="flexwrap">
       <!--REACTION KINETICS DIVISION-->
-      <div class="flexcol" id="reaction">
+      <div class="flexcol">
         <h2 class="head2">Reaction Kinetics:</h2>
 
         <p>
@@ -643,13 +638,15 @@ body {
           you to see the change in A, B, and C concentrations as you change the
           orders and initial k-constants.
         </p>
-        <a href="sliders_reaction_kinetics" class="button4"
-          >Reaction Kinetics Model</a
-        >
+        <p class="buttoncontainer">
+          <a href="sliders_reaction_kinetics" class="button"
+            >Reaction Kinetics Model</a
+          >
+        </p>
       </div>
 
       <!--ZECC DIVISION-->
-      <div class="flexcol" id="ZECC">
+      <div class="flexcol">
         <h2 class="head2">Zero Energy Cooling Chamber:</h2>
 
         <p>
@@ -661,14 +658,15 @@ body {
           to see more information.
         </p>
 
-        <a href="ZECC" class="button1">ZECC Model</a>
+        <p class="buttoncontainer">
+          <a href="ZECC" class="button">ZECC Model</a></p>
       </div>
     </div>
+
     <div class="flexwrap">
       <!--SIR DIVISION-->
-      <div class="flexcol" id="SIR">
+      <div class="flexcol">
         <h2 class="head2">Infectious Disease Model:</h2>
-        <br /><br />
 
         <p>
           The SIR Model (Susceptible-Exposed-Infected-Recovered) is an
@@ -676,39 +674,46 @@ body {
           set of ordinary differential equations.
         </p>
 
-        <a href="SIR" class="button1">SIR Model</a>
+        <p class="buttoncontainer">
+          <a href="SIR" class="button">SIR Model</a></p>
       </div>
 
       <!--Catalysis DIVISION-->
-      <div class="flexcol" id="catalysis">
-        <div class="test">
-          <h2 class="head2">Catalysis Data Science Model:</h2>
+      <div class="flexcol">
+        <h2 class="head2">Catalysis Data Science Model:</h2>
 
-          <p>
-            Ever wonder how your email is classified as spam? How about how
-            forecasting is done in fields such as business, medicine, and many
-            others? The answer is data science and machine learning concepts.
-            Data science and machine learning are emerging fields which are
-            increasingly being used in the real world. Our module will introduce
-            many of the basic key concepts of data science and machine learning
-            which are used in many real world applications.
-          </p>
-        </div>
-        <a href="catalysis_data_interactive_visualization" class="button1"
-          >Catalysis Model</a
-        >
+        <p>
+          Ever wonder how your email is classified as spam? How about how
+          forecasting is done in fields such as business, medicine, and many
+          others? The answer is data science and machine learning concepts.
+          Data science and machine learning are emerging fields which are
+          increasingly being used in the real world. Our module will introduce
+          many of the basic key concepts of data science and machine learning
+          which are used in many real world applications.
+        </p>
+        <p class="buttoncontainer">
+          <a href="catalysis_data_interactive_visualization" class="button"
+            >Catalysis Model</a
+          >
+        </p>
       </div>
     </div>
+
     <div class="flexwrap">
-      <!--DAV-->
-      <div class="flexcol" id="catalysis">
+      <!--DAC DIVISION-->
+      <div class="flexcol">
         <h2 class="head2">DAC Model:</h2>
 
         <p>DESCRIPTION OF DAC Model</p>
-        <a href="DAC" class="button1">DAC Model</a>
+
+        <p class="buttoncontainer">
+          <a href="DAC" class="button">DAC Model</a></p>
       </div>
-      <div class="flexcol" id="DLT">
+
+      <!--DLT DIVISION-->
+      <div class="flexcol">
         <h2 class="head2">Digital Lab Twin:</h2>
+
         <p>
           Want to delve into machine learning? Interested in expediting your
           experiments? The digital laboratory twin allows you to do both, by
@@ -718,12 +723,17 @@ body {
           photobioreactor, adjusting initial conditions to perform 'experiments'
           and maximize valuable bioproducts.
         </p>
-        <a href="DLT" class="button1">DLT Model</a>
+
+        <p class="buttoncontainer">
+          <a href="DLT" class="button">DLT Model</a></p>
       </div>
     </div>
+
     <div class="flexwrap">
-      <div class="flexcol" id="biodegrad">
+      <!--BIODEGRAD CLASSIFICATION DIVISION-->
+      <div class="flexcol">
         <h2 class="head2">Biodegradability Classification:</h2>
+
         <p>
           Are you new to machine learning? Our module enables you to experiment
           with one of three simple machine learning algorithms. We provide the tools needed
@@ -731,24 +741,26 @@ body {
           model in a Chemical Engineering setting. Specifically, your model will be trained to 
           predict the biodegradability of organic chemicals.
         </p>
-        <a href="biodegradability_classification" class="button1"
-        >Biodegradability Classification Model</a>
+
+        <p class="buttoncontainer">
+          <a href="biodegradability_classification" class="button"
+          >Biodegradability Classification Model</a>
+        </p>
       </div>
     
-      <div class="flexcol" id="biodegrad">
+      <!--FUTURE MODULE-->
+      <div class="flexcol">
         <h2 class="head2"> </h2>
-        <p>
-          </p>
+
+        <p></p>
+
       </div>
     </div>
 
-    <br /><br />
   </body>
 
   <div class="footer1">
-    <div class="container3">
-        <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo";>
-    </div>
+    <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo";>
   </div>
   <!---------------------------------------------------------------------------------->
 
