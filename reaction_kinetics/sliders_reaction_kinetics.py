@@ -67,7 +67,7 @@ source_vbar = ColumnDataSource(data=dict(specie_names=specie_names, vbar_top=vba
 
 # Set up plot for concentrations
 TOOLTIPS = [("Time (s)","@vec_time"), ("A","@int_vec_A{0,0.000}"), ("B","@int_vec_B{0,0.000}"), ("C","@int_vec_C{0,0.000}")]
-TOOLS = "pan,undo,redo,reset,save,wheel_zoom,box_zoom"
+TOOLS = "undo,redo,reset,save,box_zoom"
 plot_conc = figure(height=450, width=550, tools=TOOLS, tooltips=TOOLTIPS,
               title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
 plot_conc.line('vec_time', 'int_vec_A', source=source, line_width=3, line_alpha=0.6, line_color="darkgray",
@@ -156,8 +156,8 @@ inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider
 inputs_time = column(animate_button, slider_time )
 
 tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
-tab2 =TabPanel(child=column(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=475)), title="Mobile")
-tabs = Tabs(tabs = [tab1, tab2])
+
+tabs = Tabs(tabs = [tab1])
 
 curdoc().add_root(tabs)
 
