@@ -493,16 +493,16 @@ def button_updates(): #when calculate button is pressed, this function re-calcul
     
     
 #Information that will appear as text paragraphs 
-p_Heat=Paragraph(text="Note:    Heat per Time: Displays the heat transferred (from evaporation or conduction) per unit time. The heat conducted refers to the heat transferred from the inner chamber to the water. The evaporative cooling rate refers to the rate of heat leaving the system through evaporation. Water Used: Displays the water needed to keep the system running properly, based off the amount of water evaporating at a given time. A system at steady state needs to release the same amount of what it takes in.", 
-                 margin=(20, 10, 20, 10), width=700)
-p_ZECC=Paragraph(text="Zero Energy Cooling: By using the principles behind perspiration, there is a way to create an eco friendly chamber for storing food in harsh conditions. The two chamber cooling system consists of two nested chambers, with sand filling the space in between. Water is set to flow in the sand layer. ", 
-                 margin=(20, 10, 20, 10), width=700)
-p_HT=Paragraph(text="Heat Transfer in the ZECC: The heat transfer that occurs in the zero energy cooling chamber, is a combination of all three of the heat transfer methods. The radiation from solar energy heats the chamber and the surrounding area. The ground also radiates heat. The fluid flow and the conduction of the water is what helps to cool the chamber down.",
-               margin=(20, 10, 20, 10), width=700)
-p_LHV=Paragraph(text="Latent Heat of Vaporization: When one mole of a substance at atmospheric pressure goes from the liquid phase to the gaseous phase, there is energy required to bring the substance to a boil and make the phase change occur. Bringing a substance to its boiling point is not enough since there is still energy required to make phase change occur. This energy required is the latent heat of vaporization. Temperature changes can’t occur without phase changes.",
-                margin=(20, 10, 20, 10), width=700)
-p_dp=Paragraph(text="Note:    Dew-Point temperature is critically dependent on both the design of the chamber and inputed values. If the temperature of the outer wall of the chamber becomes too low then water will begin to condense on the surface and no evaporation will occur, halting the cooling process of the inner chamber.", 
-               margin=(20, 10, 20, 10), width=700)
+#p_Heat=Paragraph(text="Note:    Heat per Time: Displays the heat transferred (from evaporation or conduction) per unit time. The heat conducted refers to the heat transferred from the inner chamber to the water. The evaporative cooling rate refers to the rate of heat leaving the system through evaporation. Water Used: Displays the water needed to keep the system running properly, based off the amount of water evaporating at a given time. A system at steady state needs to release the same amount of what it takes in.", 
+#                 margin=(20, 10, 20, 10), width=700)
+#p_ZECC=Paragraph(text="Zero Energy Cooling: By using the principles behind perspiration, there is a way to create an eco friendly chamber for storing food in harsh conditions. The two chamber cooling system consists of two nested chambers, with sand filling the space in between. Water is set to flow in the sand layer. ", 
+#                 margin=(20, 10, 20, 10), width=700)
+#p_HT=Paragraph(text="Heat Transfer in the ZECC: The heat transfer that occurs in the zero energy cooling chamber, is a combination of all three of the heat transfer methods. The radiation from solar energy heats the chamber and the surrounding area. The ground also radiates heat. The fluid flow and the conduction of the water is what helps to cool the chamber down.",
+#               margin=(20, 10, 20, 10), width=700)
+#p_LHV=Paragraph(text="Latent Heat of Vaporization: When one mole of a substance at atmospheric pressure goes from the liquid phase to the gaseous phase, there is energy required to bring the substance to a boil and make the phase change occur. Bringing a substance to its boiling point is not enough since there is still energy required to make phase change occur. This energy required is the latent heat of vaporization. Temperature changes can’t occur without phase changes.",
+#                margin=(20, 10, 20, 10), width=700)
+#p_dp=Paragraph(text="Note:    Dew-Point temperature is critically dependent on both the design of the chamber and inputed values. If the temperature of the outer wall of the chamber becomes too low then water will begin to condense on the surface and no evaporation will occur, halting the cooling process of the inner chamber.", 
+#               margin=(20, 10, 20, 10), width=700)
 
 #organizing display
 widgets=column(location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp, calculate_button)
