@@ -10,19 +10,17 @@
 
     <title>Infectious Disease Model</title>
     <style>
-        body {
-     margin: 0;
-     background: #fff;
-     font-family: 'Arial', sans-serif;
-     font-weight: 400;
-        }
-        .container {
-    width: 85vw;
-    margin: 0 auto;
-    position: relative;
+/* -------------------------BODY------------------------- */
+
+body {
+    margin: 0;
+    background: #fff;
+    font-family: 'Arial', sans-serif;
+    font-weight: 400;
 }
 
-/* ------------------------- FOR THE HEADER -------------------------*/
+
+/* ------------------------- HEADER -------------------------*/
 
   
 header {
@@ -98,7 +96,7 @@ header {
   }
   
   .header-text {
-      font-size: 16px; /* Adjust the font size as desired */
+      font-size: 16px;
   }
 
   @media all and (max-width: 608px) {
@@ -124,13 +122,11 @@ header {
   }
   }
   
-  /* The container <div> - needed to position the dropdown content */
   .dropdown {
     float:left;
     overflow:hidden;
   }
   
-  /* Dropdown Button */
   .dropdown .dropbtn {
     padding: 0;
     font-size: 16px;
@@ -190,10 +186,173 @@ header {
   li:hover .dropdown-content {display: block;}
 
 
-  /* ------------------HEADER ENDS HERE------------------- */
+  /* -------------------------TABS------------------------- */
 
-    /*-------------------FOR THE FOOTER--------------------- */
-    .footer1 {
+  .flexwrap1 {
+      display: flex;
+      width: auto;
+      height: auto;
+      font-family: 'Arial', sans-serif;
+      color:#484848;
+      font-weight: 600;
+      font-size: 16px;
+      padding-left:5px;
+      padding-right:5px;
+      padding-bottom:10px;
+      background:#b2e3f4;
+      gap: 2.083vw;
+      line-height: 1.5;
+      margin: auto;
+      justify-content: center;
+    }
+  .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+
+  /* Style the buttons inside the tab */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+  }
+
+  /* -------------------------ROWS AND COLUMNS------------------------- */
+
+  .home_container {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75%;
+      margin-left: auto;
+      margin-right: auto;
+      align-items: stretch;
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+  .column_1_home {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+  .column_2_home {
+      display: flex;
+      align-items: stretch;
+      align-items: first baseline;
+    }
+
+  .column_2_home img {
+      width: auto;
+      max-width: 800px; /* CHANGE AS NECESSARY FOR NEW PHOTO WIDTHS*/
+      height: 100%;
+      object-fit: contain;
+    }
+
+  .column_2 {
+      float: left;
+      width: 45.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_3 {
+      float: left;
+      width: 29.3%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_4 {
+      float: left;
+      width: 20.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+  /* Responsive layouts */
+
+@media screen and (max-width: 1100px) {
+
+  .home_container {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .column_1_home, .column_2_home{
+    width: 100%;
+  }
+
+  .column_1_home {
+    order: 2;
+  }
+
+  .column_2_home {
+    order: 1;
+  }
+
+  .column_2_home img{
+    max-width: 800px;
+  }
+
+}
+
+@media screen and (max-width: 800px) {
+
+  .column_2 {
+    width: 100%;
+  }
+
+  .column_3 {
+    width: 100%;
+  }
+  
+  .column_4 {
+    width: 100%;
+  }
+}
+
+  /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+
+  /*-------------------FOOTER--------------------- */
+  .footer1 {
     margin: 0;
     padding: none;
     list-style:none;
@@ -214,48 +373,31 @@ header {
     flex-wrap: nowrap;
     padding: 10px;
 }
-  /*-------------------FOOTER ENDS HERE-------------------- */
- 
- .head1 {
-    text-align: center;
-    color: #000;
-    font-size: 32px;
-    font-weight: bold;
+
+
+/* -------------------MISC------------------- */
+
+.button1 {
+    margin: 0;
+    position:relative;
+    justify-self: center;
+    margin: -25px 0 0 -25px;
+    text-decoration: none;
+    color: black;
     font-family: 'Arial', sans-serif;
- }
- .flexwrap1 {
-display: flex;
-width: auto;
-font-family: 'Arial', sans-serif;
-color:#484848;
-font-weight: 600;
-font-size: 16px;
-padding-left:10px;
-padding-right:10px;
-padding-bottom:20px;
-background: #b2e3f4;
-line-height: 1.5;
-margin: auto;
-flex-wrap: wrap;
-justify-content: center;
-align-items: flex-start;
-}
-.text-container {
-  flex: 1 1 50%;
-  padding-left: 40px;
-}
-.flexcol {
-    color:#484848;
-    font-weight: 600;
-    border:0.1953vw; 
-    font-size: 16px;
-    border-style:solid; 
-    border-color:#000; 
-    padding: 0.651vw;
-    width: 50%;
-    background: #E8E8E8;
-    border-radius: 30px;
-}
+    font-weight: 200;
+    font-size: calc(12px + 1.3vw);
+    text-align: center;
+    background-color: #fff;
+
+    border: solid 2px black;
+    border-radius: 50px;
+    padding: 0.651vw 5.208vw;
+
+    -webkit-transition-duration: 300ms;
+    transition-duration: 300ms;
+  }
+
 .center {
     display: block;
   margin-left: auto;
@@ -263,86 +405,15 @@ align-items: flex-start;
   width: 52.083vw;
   height: 29.297vw;
 }
-.flexwrap {
-    display:flex;
-    width: 100%;
-    font-family: 'Arial', sans-serif;
-}
-.footer {
-    margin: 0;
-    padding: 0;
-    list-style:none;
-    text-decoration: none;
-    overflow: hidden;
-    padding: 1.953vw 0;
-    box-sizing: border-box;
-    background-color: #262626;
-    display:flex;
-    width: 100%;
-    font-family: 'Arial', sans-serif;
-    margin-top: -180px;
-}
 
-.flexcol1 {
-    position: relative;
-    color: #ddd;
-    padding: 0.65vw;
-    width: 50%;
-    background: #262626;
-    height:auto;
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
+.head1 {
+  text-align: center;
+  background-color: #fff;
+  color: #000;
+  font-size: 32px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
 }
-.flexcol1 p{
-    position:absolute;
-    left:0;
-}
-.flexcol1 img{
-    position:absolute;
-    right:0;
-}
-
-.flexcol2 {
-    width: 28%;
-    height:auto;
-    margin: 112px 0 0 0;
-}
-.flexcol4 {
-    width: 32%;
-    height: auto;
-    margin: 230px 0 0 0;
-}
-.flexcol3 {
-    width:40%;
-    height: auto;
-    margin: 230px 0 0 0;
-    padding-right: 1.3vw;
-}
-.flexcol5 {
-    width: 45%;
-    position: relative;
-    height: auto;
-    padding-left: 5.21vw;
-}
-.flexcol6 {
-    width: 55%;
-    position: relative;
-    height: auto;
-}
-
-@media all and (max-width: 960px) {
-.flexwrap1 {
-    padding: 0 10px;
-    border-radius: 17px;
-}
-}
-
-  /*-------------------BOKEH SECTION--------------------- */
-  .scrollable-container {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-    }
  
      </style>
 </head>
@@ -375,17 +446,24 @@ align-items: flex-start;
     </style>
     <h1 class="head1">SIR Infectious Disease Model</h1>
       <div class="flexwrap1">
-        <div class="text-container">
-            <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="center" style="width:500px; height:300px; float:right; margin-top: 20px">
-        <p style="line-height: 1.5;">Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
-        <p>
-            <b style="text-align: center;">How to use:</b>
-            <ol>
-            <li>Use play button to watch the spread of disease over time.</li>
-            <li>Place the slider at a specific time to see the spread of disease at a specific time.</li>
-            <li>Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.</li>
-        </ol></p>
-    </div>
+        <h3>Welcome to SIR Infectious Disease</h3>
+              <div class="home_container">
+                <div class="column_1_home">
+                  <p>Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
+                  <p><b>How to use:</b>
+                  <ol>
+                    <li>Use play button to watch the spread of disease over time.</li>
+                    <li>Place the slider at a specific time to see the spread of disease at a specific time.</li>
+                    <li>Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.</li>
+                  </ol>
+                  </p>
+                </div>
+                
+    
+                <div class="column_2_home">
+                  <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="right" style="width:100%; height: auto;">
+                </div>
+              </div>
       </div>
       <div class="scrollable-container">
         {{bokeh_script_SIR|safe}}
