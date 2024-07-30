@@ -272,27 +272,6 @@ header {
       object-fit: contain;
     }
 
-  .column_2 {
-      float: left;
-      width: 45.9%;
-      padding-left: 2%;
-      padding-right: 2%;
-    }
-
-  .column_3 {
-      float: left;
-      width: 29.3%;
-      padding-left: 2%;
-      padding-right: 2%;
-    }
-
-  .column_4 {
-      float: left;
-      width: 20.9%;
-      padding-left: 2%;
-      padding-right: 2%;
-    }
-
   .row:after {
       content: "";
       display: table;
@@ -326,21 +305,6 @@ header {
     max-width: 800px;
   }
 
-}
-
-@media screen and (max-width: 800px) {
-
-  .column_2 {
-    width: 100%;
-  }
-
-  .column_3 {
-    width: 100%;
-  }
-  
-  .column_4 {
-    width: 100%;
-  }
 }
 
   /*-------------------BOKEH SECTION--------------------- */
@@ -438,7 +402,7 @@ header {
             </li>
             <li><a href="about" class="header-text">ABOUT</a></li>
         </div>
-      </header>
+    </header>
     <style>
         .text-size {
             font-size: 16px; /* Adjust the font size as desired */
@@ -447,23 +411,22 @@ header {
     <h1 class="head1">SIR Infectious Disease Model</h1>
       <div class="flexwrap1">
         <h3>Welcome to SIR Infectious Disease</h3>
-              <div class="home_container">
-                <div class="column_1_home">
-                  <p>Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
-                  <p><b>How to use:</b>
-                  <ol>
-                    <li>Use play button to watch the spread of disease over time.</li>
-                    <li>Place the slider at a specific time to see the spread of disease at a specific time.</li>
-                    <li>Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.</li>
-                  </ol>
-                  </p>
-                </div>
-                
-    
-                <div class="column_2_home">
-                  <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="right" style="width:100%; height: auto;">
-                </div>
-              </div>
+        <div class="home_container">
+          <div class="column_1_home">
+            <p>Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
+            <p><b>How to use:</b>
+            <ol>
+              <li>Use play button to watch the spread of disease over time.</li>
+              <li>Place the slider at a specific time to see the spread of disease at a specific time.</li>
+              <li>Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.</li>
+            </ol>
+            </p>
+          </div>
+
+          <div class="column_2_home">
+            <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="right" style="width:100%; height: auto;">
+          </div>
+        </div>
       </div>
       <div class="scrollable-container">
         {{bokeh_script_SIR|safe}}
