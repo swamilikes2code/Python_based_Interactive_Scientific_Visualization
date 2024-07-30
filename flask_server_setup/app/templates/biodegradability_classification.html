@@ -235,11 +235,14 @@ header {
 
   /* -------------------------ROWS AND COLUMNS------------------------- */
 
-  .outer_container {
-            width: 100%;
-            display: flex;
-            justify-content: center; /* Center the .home_container */
-        }
+  .center_wrapper {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically if needed */
+        min-height: 100vh; /* Ensure the wrapper takes at least the full viewport height */
+        padding: 20px; /* Optional: add some padding for better spacing */
+        box-sizing: border-box; /* Include padding in the width calculation */
+      }
 
   .home_container {
       display: grid;
@@ -551,7 +554,7 @@ header {
       <div class="flexwrap1">
         <div id="Introduction" class="tabcontent">
           <h3>Welcome to Biodegradability Classification</h3>
-          <div class="outer_container">
+          <div class="center_wrapper">
             <div class="home_container">
               <div class="column_1_home">
                 <p>We aim to demonstrate how A.I. can be utilized to predict molecular properties through an engaging, individualized learning experience. </p>
