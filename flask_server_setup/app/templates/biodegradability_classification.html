@@ -13,8 +13,6 @@ body {
     background: #fff;
     font-family: 'Arial', sans-serif;
     font-weight: 400;
-    justify-content: center;
-    align-items: center;
 }
 
 
@@ -201,6 +199,7 @@ header {
       gap: 2.083vw;
       line-height: 1.5;
       margin: auto;
+      justify-content: center;
     }
   .tab {
       overflow: hidden;
@@ -246,6 +245,8 @@ header {
       width: 100%;
       padding: 0 20px;
       box-sizing: border-box;
+      border: #000;
+      border-style: dashed;
     }
 
   .column_1_home {
@@ -292,7 +293,7 @@ header {
 
   /* Responsive layout */
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 800px) {
 
   .home_container {
     grid-template-columns: 1fr;
@@ -347,6 +348,8 @@ header {
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 20px;
+    border: #000;
+    border-style: dashed;
 }
 
 .step_tab_col, .step_col {
@@ -553,7 +556,7 @@ header {
 
               <p>Specifically, our module uses a subtopic of artificial intelligence called machine learning to extract knowledge and find patterns hidden in the data to predict the property of 
                 <span class="tooltip"><b>biodegradability</b>
-                  <span class="tooltiptext">how capable a molecule is of being broken down</span>
+                  <span class="tooltiptext">how capable a molecule is of being naturally broken down by microorganisms</span>
                 </span>
                 in organic compounds. </p>
 
@@ -659,7 +662,7 @@ header {
                 </span>  
                 is the value the model is trained to determine. It is a binary representation of 
                 <span class="tooltip"><b>biodegradability,</b>
-                  <span class="tooltiptext">how capable a molecule is of being broken down</span>
+                  <span class="tooltiptext">how capable a molecule is of being naturally broken down by microorganisms</span>
                 </span>
               where...</p>
               <p>
