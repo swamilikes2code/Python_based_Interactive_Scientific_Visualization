@@ -193,12 +193,13 @@ header {
       font-weight: 600;
       font-size: 16px;
       padding-left:5px;
-      padding-right:10px;
+      padding-right:5px;
       padding-bottom:10px;
       background:#b2e3f4;
       gap: 2.083vw;
       line-height: 1.5;
       margin: auto;
+      justify-content: center;
     }
   .tab {
       overflow: hidden;
@@ -239,7 +240,13 @@ header {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 0.75%;
+      margin-left: auto;
+      margin-right: auto;
       align-items: stretch;
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 20px;
+      box-sizing: border-box;
     }
 
   .column_1_home {
@@ -251,13 +258,14 @@ header {
   .column_2_home {
       display: flex;
       align-items: stretch;
+      align-items: first baseline;
     }
 
   .column_2_home img {
       width: auto;
-      max-width: 92%;
+      max-width: 90%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
     }
 
   .column_2 {
@@ -284,17 +292,19 @@ header {
       clear: both;
     }
 
-  /* Responsive layout */
+  /* Responsive layouts */
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1100px) {
 
   .home_container {
     grid-template-columns: 1fr;
+    max-width: 600px;
+    align-items: center;
+    justify-items: center;
   }
 
   .column_1_home, .column_2_home{
     width: 100%;
-    padding-right: 0;
   }
 
   .column_1_home {
@@ -330,7 +340,7 @@ header {
 /* -------------------------STEP TAB------------------------- */
 .step_container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 800px;
     margin: 0 auto;
   }
 
@@ -546,7 +556,7 @@ header {
 
               <p>Specifically, our module uses a subtopic of artificial intelligence called machine learning to extract knowledge and find patterns hidden in the data to predict the property of 
                 <span class="tooltip"><b>biodegradability</b>
-                  <span class="tooltiptext">how capable a molecule is of being broken down</span>
+                  <span class="tooltiptext">how capable a molecule is of being naturally broken down by microorganisms</span>
                 </span>
                 in organic compounds. </p>
 
@@ -652,7 +662,7 @@ header {
                 </span>  
                 is the value the model is trained to determine. It is a binary representation of 
                 <span class="tooltip"><b>biodegradability,</b>
-                  <span class="tooltiptext">how capable a molecule is of being broken down</span>
+                  <span class="tooltiptext">how capable a molecule is of being naturally broken down by microorganisms</span>
                 </span>
               where...</p>
               <p>
