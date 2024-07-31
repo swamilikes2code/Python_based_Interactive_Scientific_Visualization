@@ -455,10 +455,43 @@ header {
         </div>
 
         <div id="Model Description" class="tabcontent">
-            <h3>Working With the Dataset</h3>
-            <p>Test</p>
+            <h3>CURRENT DESCRIPTION FROM BOKEH GOES HERE</h3>
         </div>
       </div>
+
+      <script>
+        function openTab(evt, tabName) {
+          var i, tabcontent, tablinks;
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+          document.getElementById(tabName).style.display = "block";
+          evt.currentTarget.className += " active";
+        }
+        // Get the element with id="defaultOpen" and click on it
+    document.getElementById("defaultOpen").click();
+    // Keyboard navigation
+    document.addEventListener('keydown', (event) => {
+    const tablinks = document.querySelectorAll('.tablinks');
+    let currentTab = Array.from(tablinks).findIndex((tab) => tab.classList.contains('active'));
+    
+    if (event.key === 'ArrowRight') {
+    currentTab = (currentTab + 1) % tablinks.length;
+    } else if (event.key === 'ArrowLeft') {
+    currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+    } else {
+    return;
+    }
+    
+    tablinks[currentTab].click();
+    });
+    
+      </script>
 
       <div class="scrollable-container">
         {{bokeh_script_SIR|safe}}
