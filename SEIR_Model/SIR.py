@@ -95,8 +95,9 @@ S, E, Ia_uk, Ia_k, Is_nh, Is_h, R, D = ret.y #solving the system of ODEs
 sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, Is_nh=Is_nh, Is_h=Is_h, R=R, D=D, hc=([health_capacity]*365)))
 #hover_line=HoverTool(names=["S_line", "E_line"])
 #creating a graph with lines for the different classes of the model
-pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, height=450, width=600, margin=(10, 20, 10, 40))
-pops.title.text_font_size='14pt'
+# pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, height=450, width=600, margin=(10, 20, 10, 40))
+pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, height=450, width=600)
+# pops.title.text_font_size='14pt'
 #adding a line for each of the 8 different class populations
 l1=pops.line('time', 'S', source=sourcePops, legend_label="Susceptible", line_width=2, color=Colorblind8[0], name="S_line")
 l2=pops.line('time', 'E', source=sourcePops, legend_label="Exposed", line_width=2, color=Colorblind8[1], name="E_line")
@@ -113,8 +114,9 @@ pops.legend.location='top_left'
 pops.legend.background_fill_alpha=0.5
 
 #creating a graph that only displays the 4 different types of infecteds
-infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=450, width=600, margin=(10, 20, 10, 40))
-infecteds.title.text_font_size='14pt'
+# infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=450, width=600, margin=(10, 20, 10, 40))
+infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=450, width=600)
+# infecteds.title.text_font_size='14pt'
 la=infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2], line_width=2)
 lb=infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color=Colorblind8[3], line_dash='dashed')
 lc=infecteds.line('time', 'Is_nh', source=sourcePops, legend_label="Non-Hospitalized Symptomatic", line_width=2, color=Colorblind8[4])
@@ -154,7 +156,8 @@ rate_values=[nat_birth, nat_death, N, beta_A_uk, beta_A_k, beta_S_nh, beta_S_h, 
 rate_names=["Natural Birth Rate", "Natural Death Rate", "Starting Population", "Rate unknown asymptomatics infect suscpetibles", "Rate known asymptomatics infect suscpetibles", "Rate non-hospitalized symptomatics infect suscpetibles", "Rate hospitalized symptomatics infect suscpetibles", "Rate of recovered losing immunity", "Rate of exposed class becoming asymptomatic infected", "Rate of exposed class becoming symptomatic infected", "Rate of testing", "Rate symptomatic infected become hospitalized", "Rate of recovery", "Rate of hospitalized recovery", "Death rate for non-hospitalized symptomatic infected", "Death rate for hospitalized infected", "Rate of vaccination once introduced", "Social Distancing Rate"]
 data_for_table=ColumnDataSource(data=dict(names=rate_names, values=rate_values))
 columnsT=[TableColumn(field='names', title="Parameter Name"), TableColumn(field='values', title="Current Value")]
-data_table=DataTable(source=data_for_table, columns=columnsT, margin=(20, 10, 10, 20), width=500, height=800)
+# data_table=DataTable(source=data_for_table, columns=columnsT, margin=(20, 10, 10, 20), width=500, height=800)
+data_table=DataTable(source=data_for_table, columns=columnsT, width=500, height=800)
 
 def update_data(attr, old, new): #when slider values are adjusted this function will be called and then update the data appropriately 
     #retrieving the current value of all of the sliders
@@ -184,7 +187,6 @@ for u in updates:
 
 #Creating visual layout for the program 
 widgets=column(A_infection_rate_slide, A_k_infection_rate_slide, S_infection_rate_slide, social_distancing, recovery_slider, death_rate_slide, testing_rate, vaccine_slide, vaccination_rate_slider,hosp_space_slide, return_rate_slide)
-tabB=TabPanel(child=row(column(pops, infecteds), column(widgets, data_table)), title="Adjustable SEIR Model")
 
 
 #########################################################################################
@@ -205,7 +207,7 @@ plot = Plot(height=350, width=350, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 # plot.title.text_font_size='14pt'
 # graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
-graph_renderer = from_networkx(G, nx.circular_layout, scale=1.5, center=(0,0))
+graph_renderer = from_networkx(G, nx.circular_layout, scale=0.20, center=(0,0))
 
 #creating the nodes/circles for the network graph
 graph_renderer.node_renderer.data_source.add(Colorblind8, 'color')
@@ -341,6 +343,9 @@ large_left_page_spacer = Spacer(width = 20)
 # display=row(column(plot, time_slider, button, note1, note2), column(bargraph, note3, n_S, n_E, n_Iuk, n_Ik, n_Inh, n_Ih, n_R, n_D))
 display=row(large_left_page_spacer, column(top_page_spacer, plot, time_slider, button, note1, note2), left_page_spacer, column(top_page_spacer, bargraph))
 tabA=TabPanel(child=display, title="General Outbreak") #first panel
+
+
+tabB=TabPanel(child=row(left_page_spacer, column(top_page_spacer, pops, infecteds), column(top_page_spacer, widgets, data_table)), title="Adjustable SEIR Model")
 
 
 ##################################################################################
