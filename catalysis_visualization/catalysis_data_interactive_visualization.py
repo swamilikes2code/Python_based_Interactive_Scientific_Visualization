@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, gridplot
-from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, TabPanel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn
+from bokeh.models import ColumnDataSource, Select, Slider, BoxSelectTool, LassoSelectTool, Tabs, TabPanel, LinearColorMapper, ColorBar, BasicTicker, PrintfTickFormatter, MultiSelect, DataTable, TableColumn, Spacer
 from bokeh.plotting import figure, curdoc
 from bokeh.palettes import viridis, gray, cividis, Category20
 from bokeh.transform import factor_cmap
@@ -257,7 +257,6 @@ def update_histogram(attr, old, new):
     # vh2.data_source.data["right"] = -vhist2
 
 
-visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 ###########################################################################
 
 
@@ -472,9 +471,6 @@ reg_tab1 = TabPanel(child=reg_training_layout, title="Training Dataset")
 reg_tab2 = TabPanel(child=reg_testing_layout, title="Testing Dataset")
 reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
 
-regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both")
-
 
 def update_regression():
     # get selected values from selectors
@@ -677,12 +673,7 @@ unsuper_loading_table = DataTable(source=unsuper_loading_source,
                                   header_row=True, index_position=None)
 
 # layout
-unsuper_learn_layout = column(row(unsuper_learn_inputs,
-                                  column(unsuper_learn_k_cluster_model,
-                                         unsuper_learn_elbow_model),
-                                  column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
-                              unsuper_loading_table,
-                              sizing_mode="scale_both")
+
 
 
 def kmean_preset():
@@ -829,12 +820,7 @@ class_scores_column = [
 class_scores_table = DataTable(source=class_scores_source, columns=class_scores_column,
                                header_row=False, index_position=None, width=400)
 
-svm_layout = column([row(svm_inputs, classification_svm_model,
-                    column(
-                        Div(text="<b>Confusion Matrix</b>"),
-                        class_cm_data_table,
-                        Div(text="<b>Evaluation Metrics</b>"),
-                        class_scores_table))], sizing_mode="scale_both")
+
 
 
 def update_classification():
@@ -898,9 +884,32 @@ def update_classification():
 
 ###########################################################################
 
+# Spacers
+top_page_spacer = Spacer(height = 20)
+left_page_spacer = Spacer(width = 20)
+
+# Layouts
+visualization_layout = row(left_page_spacer, column(top_page_spacer, [row(inputs, layout)], sizing_mode="scale_both"))
+correlation_layout = row(left_page_spacer, column(top_page_spacer, select_color, c_corr))
+regression_layout = row(left_page_spacer, column(top_page_spacer,
+    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both"))
+unsuper_learn_layout = row(left_page_spacer, column(top_page_spacer, row(unsuper_learn_inputs,
+                                  column(unsuper_learn_k_cluster_model,
+                                         unsuper_learn_elbow_model),
+                                  column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
+                              unsuper_loading_table,
+                              sizing_mode="scale_both"))
+svm_layout = row(left_page_spacer, column(top_page_spacer, [row(svm_inputs, classification_svm_model,
+                    column(
+                        Div(text="<b>Confusion Matrix</b>"),
+                        class_cm_data_table,
+                        Div(text="<b>Evaluation Metrics</b>"),
+                        class_scores_table))], sizing_mode="scale_both"))
+
+
 # organizing TabPanels of display
 tab1 = TabPanel(child=visualization_layout, title="Data Exploration")
-tab2 = TabPanel(child=column(select_color, c_corr), title="Correlation Matrix")
+tab2 = TabPanel(child=correlation_layout, title="Correlation Matrix")
 tab3 = TabPanel(child=regression_layout, title="Multivariable Regression")
 tab4 = TabPanel(child=unsuper_learn_layout, title="Unsupervised Learning")
 tab5 = TabPanel(child=svm_layout, title="Classification Methods")
