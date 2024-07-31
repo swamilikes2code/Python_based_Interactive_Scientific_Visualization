@@ -203,8 +203,9 @@ G.add_edges_from(needed_edges)
 
 plot = Plot(height=350, width=350, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
-plot.title.text_font_size='14pt'
-graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
+# plot.title.text_font_size='14pt'
+# graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
+graph_renderer = from_networkx(G, nx.circular_layout, scale=2, center=(0,0))
 
 #creating the nodes/circles for the network graph
 graph_renderer.node_renderer.data_source.add(Colorblind8, 'color')
@@ -257,7 +258,7 @@ bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names, c
 # bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=600, margin=(15, 10, 10, 10))
 bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=520)
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
-bargraph.title.text_font_size='14pt'
+# bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
 bar_hover=HoverTool(tooltips=[("Current Proportion", "@tall")])
 bargraph.add_tools(bar_hover)
@@ -317,8 +318,8 @@ button = Button(label='► Play', width=120)
 button.on_click(animate)
 
 #adding descriptive info
-note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=400)
-note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=400)
+note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=350)
+note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=350)
 # note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
 # note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
 # note3=Div(text="Definition of each of the 8 classes", margin=(20, 0, 10, 10))
