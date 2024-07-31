@@ -161,10 +161,10 @@ left_page_spacer = Spacer(width = 20)
 # inputs_reaction = row(left_page_spacer, column(top_page_spacer, text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
 # inputs_time = column(animate_button, slider_time)
 
-inputs_reaction = row(left_page_spacer, column(top_page_spacer, text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
+inputs_reaction = row(left_page_spacer, column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
 inputs_time = row(left_page_spacer, column(animate_button, slider_time))
 
-tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time)), title="Reaction Kinetics")
+tab1 =TabPanel(child=column(top_page_spacer, row(inputs_reaction, left_page_spacer, plot_conc, left_page_spacer, column(plot_vbar, inputs_time))), title="Reaction Kinetics")
 
 tabs = Tabs(tabs = [tab1])
 
