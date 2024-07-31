@@ -482,10 +482,10 @@ reverse_slider = (column (slider_reverse_time, T_in_desorp_slider , volumetric_f
 reverse_button = (row(reverse_animate_button))
 reverse_process =(column(reverse_slider, reverse_animate_button, plot_desorption_co2))
 
-column1 = column(constant_slider, inputs, plot_q)
-column2 = column(plot_co2, plot_temperature)
-column3 = column(reverse_process)
-column4 = column(plot_q_reverse, plot_temperature_reverse)
+column1 = row(left_page_spacer, column(top_page_spacer, constant_slider, inputs, plot_q))
+column2 = row(left_page_spacer, column(top_page_spacer, plot_co2, plot_temperature))
+column3 = row(left_page_spacer, column(top_page_spacer, reverse_process))
+column4 = row(left_page_spacer, column(plot_q_reverse, plot_temperature_reverse))
 grid = gridplot([[column1, column2, column3, column4]])
 # grid = gridplot([[constant_slider, inputs, plot_q], [plot_co2, plot_temperature], [reverse_process]])
 
