@@ -16,8 +16,8 @@ from sklearn.svm import SVC
 from sklearn.decomposition import PCA
 
 ######################### prepare dataset #########################
-# master=True
-master=False
+master=True
+# master=False
 
 if master:
     # Import dataset
@@ -652,14 +652,14 @@ unsuper_learn_inputs = column(*unsuper_learn_controls, width=200)
 # k clustering plot
 COLORS = Category20[11]
 unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
-unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
+unsuper_learn_k_cluster_model = figure(height=350, width=400, toolbar_location="right", tools="box_zoom,reset,undo,redo,save",
                                        title="Visualizing Clustering")
 unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,
                                      fill_alpha=0.5, line_color=None, size=8, color="c")
 
 # elbow method plot
 unsuper_learn_elbow_source = ColumnDataSource(data=dict(x=[], y=[]))
-unsuper_learn_elbow_model = figure(height=400, width=500, toolbar_location="above",
+unsuper_learn_elbow_model = figure(height=350, width=400, toolbar_location="right", tools="box_zoom,reset,undo,redo,save",
                                    title="Elbow Method")
 unsuper_learn_elbow_model.line(x="x", y="y", source=unsuper_learn_elbow_source)
 unsuper_learn_elbow_model.xaxis.axis_label = "Number of Clusters, k"
@@ -667,7 +667,7 @@ unsuper_learn_elbow_model.yaxis.axis_label = "Error"
 
 # PCA plot
 unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
-unsuper_learn_PCA_model = figure(height=400, width=500, toolbar_location="above",
+unsuper_learn_PCA_model = figure(height=350, width=400, toolbar_location="right", tools="box_zoom,reset,undo,redo,save",
                                  title="Principal Component Analysis")
 unsuper_learn_PCA_model.scatter(x="x", y="y", fill_alpha=0.5, line_color=None,
                                size=5, source=unsuper_learn_PCA_source, color="c")
@@ -677,7 +677,7 @@ unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
 # histogram
 unsuper_learn_PCA_hist_source = ColumnDataSource(
     data=dict(top=[], left=[], right=[]))
-unsuper_learn_PCA_hist_model = figure(height=400, width=500, toolbar_location="above",
+unsuper_learn_PCA_hist_model = figure(height=350, width=400, toolbar_location="right", tools="box_zoom,reset,undo,redo,save",
                                       title="PCA Histogram")
 unsuper_learn_PCA_hist_model.y_range.start = 0
 unsuper_learn_PCA_hist_model.quad(top="top", left="left", right="right",
@@ -688,15 +688,10 @@ unsuper_learn_PCA_hist_model.yaxis.axis_label = "Variance %"
 # loading table
 unsuper_loading_source = ColumnDataSource(data=dict())
 unsuper_loading_table = DataTable(source=unsuper_loading_source,
-                                  header_row=True, index_position=None)
+                                  header_row=True, index_position=None, width = 360, autosize_mode = "none")
 
 # layout
-unsuper_learn_layout = column(row(unsuper_learn_inputs,
-                                  column(unsuper_learn_k_cluster_model,
-                                         unsuper_learn_elbow_model),
-                                  column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
-                              unsuper_loading_table,
-                              sizing_mode="scale_both")
+
 
 
 def kmean_preset():
@@ -824,10 +819,10 @@ class_cm_column = [
     TableColumn(field="y", title="Actual C2s under 40")
 ]
 class_cm_data_table = DataTable(source=class_cm_source, columns=class_cm_column, height=100,
-                                header_row=True, width=400, index_position=None)
+                                header_row=True, width=380, index_position=None)
 
 classification_svm_source = ColumnDataSource(data=dict(x=[], y=[], color=[]))
-classification_svm_model = figure(height=500, width=600, toolbar_location="above",
+classification_svm_model = figure(height=350, width=400, toolbar_location="right", tools="box_zoom,reset,undo,redo,save",
                                   title="SVM")
 classification_svm_model.scatter(x="x", y="y", color="color",
                                  source=classification_svm_source)
@@ -841,14 +836,7 @@ class_scores_column = [
     TableColumn(field="data")
 ]
 class_scores_table = DataTable(source=class_scores_source, columns=class_scores_column,
-                               header_row=False, index_position=None, width=400)
-
-svm_layout = column([row(svm_inputs, classification_svm_model,
-                    column(
-                        Div(text="<b>Confusion Matrix</b>"),
-                        class_cm_data_table,
-                        Div(text="<b>Evaluation Metrics</b>"),
-                        class_scores_table))], sizing_mode="scale_both")
+                               header_row=False, index_position=None, width=380)
 
 
 def update_classification():
@@ -914,11 +902,25 @@ def update_classification():
 # Spacers and Layouts
 top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
+large_left_page_spacer = Spacer(width = 50)
 
 visualization_layout = row(inputs, layout)
 
 regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), left_page_spacer, reg_tabs, left_page_spacer, reg_coeff_data_table)])
+    [row(column(reg_inputs, reg_RMSE_data_table), large_left_page_spacer, reg_tabs, left_page_spacer, reg_coeff_data_table)])
+
+unsuper_learn_layout = row(column(unsuper_learn_inputs, unsuper_loading_table), left_page_spacer,
+                                  column(unsuper_learn_k_cluster_model,
+                                         unsuper_learn_elbow_model),
+                                  column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model))
+
+
+svm_layout = row(svm_inputs, classification_svm_model, left_page_spacer,
+                    column(
+                        Div(text="<b>Confusion Matrix</b>"),
+                        class_cm_data_table,
+                        Div(text="<b>Evaluation Metrics</b>"),
+                        class_scores_table))
 
 # organizing TabPanels of display
 tab1 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, visualization_layout)), title="Data Exploration")
