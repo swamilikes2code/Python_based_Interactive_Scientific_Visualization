@@ -105,7 +105,7 @@ slider_order_BC = Slider(title="order_BC"+" (initial: "+str(k_BC_start)+")", val
 start_time = 0.0
 end_time = 8.0
 time_step = 0.1
-slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step, width=500)
+slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step, width=400)
 
 def animate_update():
     current_time = slider_time.value + time_step
@@ -160,7 +160,7 @@ left_page_spacer = Spacer(width = 20)
 inputs_reaction = row(left_page_spacer, column(top_page_spacer, text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
 inputs_time = column(animate_button, slider_time)
 
-tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Reaction Kinetics")
+tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time)), title="Reaction Kinetics")
 
 tabs = Tabs(tabs = [tab1])
 
