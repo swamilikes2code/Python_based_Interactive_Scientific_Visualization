@@ -484,9 +484,10 @@ column4 = column(plot_q_reverse, plot_temperature_reverse)
 grid = gridplot([[column1, column2, column3, column4]])
 # grid = gridplot([[constant_slider, inputs, plot_q], [plot_co2, plot_temperature], [reverse_process]])
 
-tab1 =TabPanel(child= grid, title="Desktop")
-tab2 =TabPanel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
-tabs = Tabs(tabs = [tab1, tab2])
+tab1 =TabPanel(child= grid, title="Direct Air Capture")
+# tab1 =TabPanel(child= grid, title="Desktop")
+# tab2 =TabPanel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
+tabs = Tabs(tabs = tab1)
 
 
 curdoc().add_root(tabs)
