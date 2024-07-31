@@ -157,7 +157,7 @@ rate_names=["Natural Birth Rate", "Natural Death Rate", "Starting Population", "
 data_for_table=ColumnDataSource(data=dict(names=rate_names, values=rate_values))
 columnsT=[TableColumn(field='names', title="Parameter Name"), TableColumn(field='values', title="Current Value")]
 # data_table=DataTable(source=data_for_table, columns=columnsT, margin=(20, 10, 10, 20), width=500, height=800)
-data_table=DataTable(source=data_for_table, columns=columnsT, width=400, height=800, index_position=None)
+data_table=DataTable(source=data_for_table, columns=columnsT, width=350, height=800, index_position=None)
 
 def update_data(attr, old, new): #when slider values are adjusted this function will be called and then update the data appropriately 
     #retrieving the current value of all of the sliders
@@ -335,6 +335,7 @@ note2=Div(text="The outbreak modeled is based on the initial conditions of the i
 
 # Spacers
 top_page_spacer = Spacer(height = 20)
+large_top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
 large_left_page_spacer = Spacer(width = 20)
 
@@ -344,7 +345,7 @@ display=row(large_left_page_spacer, column(top_page_spacer, plot, time_slider, b
 tabA=TabPanel(child=display, title="General Outbreak") #first panel
 
 
-tabB=TabPanel(child=row(left_page_spacer, column(top_page_spacer, pops, infecteds), column(top_page_spacer, widgets, data_table)), title="Adjustable SEIR Model")
+tabB=TabPanel(child=row(large_left_page_spacer, column(top_page_spacer, pops, large_top_page_spacer, infecteds), left_page_spacer, column(top_page_spacer, widgets, data_table)), title="Adjustable SEIR Model")
 
 
 ##################################################################################
