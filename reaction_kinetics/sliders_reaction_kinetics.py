@@ -68,7 +68,8 @@ source_vbar = ColumnDataSource(data=dict(specie_names=specie_names, vbar_top=vba
 # Set up plot for concentrations
 TOOLTIPS = [("Time (s)","@vec_time"), ("A","@int_vec_A{0,0.000}"), ("B","@int_vec_B{0,0.000}"), ("C","@int_vec_C{0,0.000}")]
 TOOLS = "undo,redo,reset,save,box_zoom"
-plot_conc = figure(height=450, width=550, tools=TOOLS, tooltips=TOOLTIPS,
+# original height: 450, width: 550
+plot_conc = figure(height=300, width=380, tools=TOOLS, tooltips=TOOLTIPS,
               title="Sequential reactions involving A, B and C", x_range=[t_start, t_end], y_range=[-0.05, 1.05])
 plot_conc.line('vec_time', 'int_vec_A', source=source, line_width=3, line_alpha=0.6, line_color="darkgray",
                legend_label="A Concentration")
@@ -85,7 +86,7 @@ plot_conc.grid.grid_line_color = "silver"
 
 # Set up vertical bar plot for concentrations at a certain time
 TOOLTIPS_vbar = [("Specie_Name","@specie_names"), ("Concentration","@vbar_top{0,0.000}")]
-plot_vbar = figure(height=450, width=550, tools=TOOLS, tooltips=TOOLTIPS_vbar, x_range=specie_names,
+plot_vbar = figure(height=300, width=380, tools=TOOLS, tooltips=TOOLTIPS_vbar, x_range=specie_names,
                    y_range=[-0.05, 1.05], title="Concentration A, B and C at time specified by time slider")
 plot_vbar.vbar(x='specie_names', top='vbar_top', source=source_vbar, bottom=0.0, width=0.5, alpha=0.6, color="color",
                legend_field="specie_names")
@@ -105,7 +106,7 @@ slider_order_BC = Slider(title="order_BC"+" (initial: "+str(k_BC_start)+")", val
 start_time = 0.0
 end_time = 8.0
 time_step = 0.1
-slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step, width=500)
+slider_time = Slider(title="Time Slider (s)", value=start_time, start=start_time, end=end_time, step=time_step)
 
 def animate_update():
     current_time = slider_time.value + time_step
@@ -157,10 +158,13 @@ top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
 
 # Set up layouts and add to document
+# inputs_reaction = row(left_page_spacer, column(top_page_spacer, text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
+# inputs_time = column(animate_button, slider_time)
+
 inputs_reaction = row(left_page_spacer, column(top_page_spacer, text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
 inputs_time = column(animate_button, slider_time)
 
-tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Reaction Kinetics")
+tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time)), title="Reaction Kinetics")
 
 tabs = Tabs(tabs = [tab1])
 
