@@ -115,10 +115,6 @@ body {
     align-items: center;
   }
 
-  .logo {
-    float: none;
-  }
-
   nav {
     float: none;
   }
@@ -407,6 +403,12 @@ body {
       font-family: 'Arial', sans-serif;
       }
 
+      @media all and (max-width: 700px) {
+        .footer {
+          flex-direction: column;
+        }
+      }
+
       /* #reaction.flexcol h2 {
         position: absolute;
         left: 33%;
@@ -468,74 +470,6 @@ body {
         margin: -25px 0 0 -25px;
       } */
 
-      @media all and (max-width: 960px) {
-        /* .test h2 {
-          padding-top: 13px;
-          padding-left: 2px;
-        } */
-        /* .button {
-          position: absolute;
-          top: 90%;
-          left: 43%;
-        } */
-        /* #reaction.flexcol h2 {
-          position: absolute;
-          left: 37%;
-          top: 25%;
-        }
-        #reaction.flexcol p {
-          padding: 0 15px;
-          left: 8%;
-          top: 50%;
-        }
-        .button4 {
-          top: 94%;
-          left: 31%;
-        }
-        #ZECC.flexcol h2 {
-          left: 28%;
-          top: 25%;
-        }
-        #ZECC.flexcol p {
-          padding: 0 15px;
-          left: 8%;
-          top: 50%;
-        }
-        .button1 {
-          top: 94%;
-          left: 41%;
-        }
-        #SIR.flexcol h2 {
-          left: 30%;
-          top: 25%;
-        }
-        #SIR.flexcol p {
-          padding: 0 15px;
-          left: 8%;
-          top: 50%;
-        }
-        #catalysis.flexcol p {
-          padding: 0 15px;
-        }
-        #DLT.flexcol h2 {
-          left: 28%;
-          top: 20%;
-        }
-        #DLT.flexcol p {
-          padding: 0 15px;
-          left: 8%;
-          top: 50%;
-        }
-        #biodegrad.flexcol h2 {
-          left: 28%;
-          top: 20%;
-        }
-        #biodegrad.flexcol p {
-          padding: 0 15px;
-          left: 8%;
-          top: 50%;
-        } */
-      }
     </style>
   </head>
 

@@ -121,10 +121,6 @@ header {
     align-items: center;
   }
 
-  .logo {
-    float: none;
-  }
-
   nav {
     float: none;
   }
@@ -380,6 +376,12 @@ header {
     width: 100%;
     font-family: 'Arial', sans-serif;
 }
+
+@media all and (max-width: 700px) {
+    .footer {
+      flex-direction: column;
+    }
+  }
 
 .container2 {
     display: flex;
