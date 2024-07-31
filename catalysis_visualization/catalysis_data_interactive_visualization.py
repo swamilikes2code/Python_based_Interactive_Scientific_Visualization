@@ -16,8 +16,8 @@ from sklearn.svm import SVC
 from sklearn.decomposition import PCA
 
 ######################### prepare dataset #########################
-master=True
-# master=False
+# master=True
+master=False
 
 if master:
     # Import dataset
@@ -114,7 +114,7 @@ TOOLS = "wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
-p = figure(height=300, width=260, title="Data Exploration", tools=TOOLS,
+p = figure(height=300, width=280, title="Data Exploration", tools=TOOLS,
            toolbar_location="left", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).continuous = False
 p.select(LassoSelectTool).continuous = False
@@ -142,8 +142,8 @@ hzeros = np.zeros(len(hedges)-1)
 
 LINE_ARGS = dict(color="#3A5785", line_color=None)
 
-ph = figure(toolbar_location=None, width=p.width, height=100, x_range=p.x_range,
-            y_range=(0, (max(hhist)*1.1)), min_border=10, min_border_left=50, y_axis_location="right")
+ph = figure(toolbar_location=None, width=(p.width + 19), height=100, x_range=p.x_range,
+            y_range=(0, (max(hhist)*1.1)), min_border_left=73, y_axis_location="right")
 ph.xgrid.grid_line_color = None
 ph.yaxis.major_label_orientation = np.pi/4
 # ph.background_fill_color = "#fafafa"
@@ -263,11 +263,26 @@ def update_histogram(attr, old, new):
 
 ######################### correlation matrix #########################
 # Copy x-axis values into new df
-df_corr = df_catalysis_dataset[
+df_corr_0 = df_catalysis_dataset[
     ["CT", "Ar_flow", "CH4_flow", "O2_flow", "Total_flow", "Support_ID", "Temp",
      "M2_mol", "M3_mol", "M1_atom_number", "M2_atom_number", "M3_atom_number",
      "M1_mol_percentage", "M2_mol_percentage", "M3_mol_percentage"]
 ]
+
+df_corr = df_corr_0.rename(columns={"M1_mol_percentage": "M1 mol %",
+                                    "M2_mol_percentage": "M2 mol %",
+                                    "M3_mol_percentage": "M3 mol %",
+                                    "M1_atom_number": "M1 atom #",
+                                    "M2_atom_number": "M2 atom #",
+                                    "M3_atom_number": "M3 atom #",
+                                    "M3_mol": "M3 mol",
+                                    "M2_mol": "M2 mol",
+                                    "Support_ID": "Support ID",
+                                    "Total_flow": "Total flow",
+                                    "O2_flow": "O2 flow",
+                                    "CH4_flow": "CH4 flow",
+                                    "Ar_flow": "Ar flow"})
+
 corr_matrix = df_corr.corr()
 
 # AXIS LABELS FOR PLOT
@@ -275,6 +290,7 @@ df_corr = pd.DataFrame(corr_matrix)
 df_corr = df_corr.set_index(df_corr.columns).rename_axis('parameters', axis=1)
 df_corr.index.name = 'level_0'
 common_axes_val = list(df_corr.index)
+
 df_corr = pd.DataFrame(df_corr.stack(), columns=['correlation']).reset_index()
 source_corr = ColumnDataSource(df_corr)
 
@@ -299,7 +315,7 @@ mapper = LinearColorMapper(palette=cividis(no_of_colors),
 
 # SETTING UP THE PLOT
 c_corr = figure(title="Correlation Matrix", x_range=common_axes_val, y_range=list((common_axes_val)), x_axis_location="below", toolbar_location=None,
-                width=700, height=600, tools='hover', tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
+                width=360, height=350, tools='hover', tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
 
 
 # SETTING UP PLOT PROPERTIES
@@ -348,6 +364,7 @@ reg_x_choices = {
     "O2 flow": "O2_flow",
     "CT": "CT"
 }
+
 reg_y_choices = {
     "CarbonMonoOxide_y": "COy",
     "CH4_conv": "CH4_conv",
@@ -385,7 +402,7 @@ reg_RMSE_column = [
     TableColumn(field="data")
 ]
 reg_RMSE_data_table = DataTable(source=reg_RMSE_source, columns=reg_RMSE_column,
-                                header_row=False, index_position=None, width=200)
+                                header_row=False, index_position=None, width=250)
 
 # Table to display coefficients
 reg_coeff_source = ColumnDataSource(
@@ -399,7 +416,7 @@ reg_coeff_data_table = DataTable(source=reg_coeff_source, columns=reg_coeff_colu
 
 # Create figure to display the scatter plot for training set
 reg_training_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
-reg_training = figure(height=600, width=700, toolbar_location="above",
+reg_training = figure(height=400, width=400, toolbar_location="above", tools="box_zoom,reset,undo,redo,save",
                       title="Actual vs. Predicted")
 reg_training.scatter(x="y_actual", y="y_predict", source=reg_training_source)
 reg_training.xaxis.axis_label = "Actual"
@@ -407,7 +424,7 @@ reg_training.yaxis.axis_label = "Predicted"
 
 # Histogram for training set
 reg_training_hist = figure(toolbar_location=None, tools='', width=reg_training.width, title="Error Histogram",
-                           height=250, min_border=10, y_axis_location="right")
+                           height=200, min_border=10, y_axis_location="right")
 reg_training_hist.y_range.start = 0
 reg_training_hist.xgrid.grid_line_color = None
 reg_training_hist.yaxis.major_label_orientation = "horizontal"
@@ -421,7 +438,7 @@ reg_training_layout = column(reg_training, reg_training_hist)
 
 # Create figure to display the scatter plot for testing set
 reg_testing_source = ColumnDataSource(data=dict(y_actual=[], y_predict=[]))
-reg_testing = figure(height=600, width=700, toolbar_location="above",
+reg_testing = figure(height=400, width=400, toolbar_location="above", tools="box_zoom,reset,undo,redo,save",
                      title="Actual vs. Predicted")
 reg_testing.scatter(x="y_actual", y="y_predict", source=reg_testing_source)
 reg_testing.xaxis.axis_label = "Actual"
@@ -429,7 +446,7 @@ reg_testing.yaxis.axis_label = "Predicted"
 
 # Histogram for testing set
 reg_testing_hist = figure(toolbar_location=None, width=reg_testing.width, title="Error Histogram",
-                          height=250, min_border=10, y_axis_location="right")
+                          height=200, min_border=10, y_axis_location="right")
 reg_testing_hist.y_range.start = 0
 reg_testing_hist.xgrid.grid_line_color = None
 reg_testing_hist.yaxis.major_label_orientation = "horizontal"
@@ -901,7 +918,7 @@ left_page_spacer = Spacer(width = 20)
 visualization_layout = row(inputs, layout)
 
 regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)])
+    [row(column(reg_inputs, reg_RMSE_data_table), left_page_spacer, reg_tabs, left_page_spacer, reg_coeff_data_table)])
 
 # organizing TabPanels of display
 tab1 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, visualization_layout)), title="Data Exploration")
