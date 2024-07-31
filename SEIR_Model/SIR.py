@@ -314,36 +314,38 @@ button.on_click(animate)
 #adding descriptive info
 note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
 note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
-note3=Div(text="Definition of each of the 8 classes", margin=(20, 0, 10, 10))
-n_S=Div(text="<b>Susceptible:</b> A person who is in the susceptible class is susceptible to contracting the disease and becoming infected. Everyone initially starts out in the susceptible class.", width=600, margin=(2, 0, 2, 10))
-n_E=Div(text="<b>Exposed:</b> Someone who is in the exposed class has contracted the disease but is not infected yet, which also means they are not able to infect any susceptibles while in the exposed class. This is what is known as a 'latency period'.", width=600, margin=(2, 0, 2, 10))
-n_Iuk=Div(text="<b>Unknown Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. In this class they are also unaware that they are infected.", width=600, margin=(2, 0, 2, 10))
-n_Ik=Div(text="<b>Known Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. However, in this class they are aware they are infected. This would happen if an individual were able to be tested for the disease and their results showed up as positive", width=600, margin=(2, 0, 2, 10))
-n_Inh=Div(text="<b>Non-Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms of the disease. In this class the individual's symptoms are not bad enough to warrant being hospitalized (however, someone can move from this class to the hospitalized class).", width=600, margin=(2, 0, 2, 10))
-n_Ih=Div(text="<b>Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms. Their symptoms are bad enough that they need medical care and are hospitalized. Someone moves into this class from the non-hospitalized symptomatic infected class.", width=600, margin=(2, 0, 2, 10))
-n_R=Div(text="<b>Recovered:</b> A person in this class was previously infected with the disease and has now recovered. While in the recovered class, a person is considered immune to the disease (although immunity can ware off an an individual can return to the susceptible class) so an individual in this class cannot spread the disease nor contract the disease. Once an individual enters the recovered class they can only move to the susceptible class (if they loose their immunity) or the dead class (if they die of natural causes).", width=600, margin=(2, 0, 2, 10))
-n_D=Div(text="<b>Dead:</b> This class represents everyone who has died. It includes people who have died from the disease or from other natural causes. Once an individual enters this class they remain in this class.", width=600, margin=(2, 0, 2, 10))
+# note3=Div(text="Definition of each of the 8 classes", margin=(20, 0, 10, 10))
+# n_S=Div(text="<b>Susceptible:</b> A person who is in the susceptible class is susceptible to contracting the disease and becoming infected. Everyone initially starts out in the susceptible class.", width=600, margin=(2, 0, 2, 10))
+# n_E=Div(text="<b>Exposed:</b> Someone who is in the exposed class has contracted the disease but is not infected yet, which also means they are not able to infect any susceptibles while in the exposed class. This is what is known as a 'latency period'.", width=600, margin=(2, 0, 2, 10))
+# n_Iuk=Div(text="<b>Unknown Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. In this class they are also unaware that they are infected.", width=600, margin=(2, 0, 2, 10))
+# n_Ik=Div(text="<b>Known Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. However, in this class they are aware they are infected. This would happen if an individual were able to be tested for the disease and their results showed up as positive", width=600, margin=(2, 0, 2, 10))
+# n_Inh=Div(text="<b>Non-Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms of the disease. In this class the individual's symptoms are not bad enough to warrant being hospitalized (however, someone can move from this class to the hospitalized class).", width=600, margin=(2, 0, 2, 10))
+# n_Ih=Div(text="<b>Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms. Their symptoms are bad enough that they need medical care and are hospitalized. Someone moves into this class from the non-hospitalized symptomatic infected class.", width=600, margin=(2, 0, 2, 10))
+# n_R=Div(text="<b>Recovered:</b> A person in this class was previously infected with the disease and has now recovered. While in the recovered class, a person is considered immune to the disease (although immunity can ware off an an individual can return to the susceptible class) so an individual in this class cannot spread the disease nor contract the disease. Once an individual enters the recovered class they can only move to the susceptible class (if they loose their immunity) or the dead class (if they die of natural causes).", width=600, margin=(2, 0, 2, 10))
+# n_D=Div(text="<b>Dead:</b> This class represents everyone who has died. It includes people who have died from the disease or from other natural causes. Once an individual enters this class they remain in this class.", width=600, margin=(2, 0, 2, 10))
 #latout for this tab
-display=row(column(plot, time_slider, button, note1, note2), column(bargraph, note3, n_S, n_E, n_Iuk, n_Ik, n_Inh, n_Ih, n_R, n_D))
+# display=row(column(plot, time_slider, button, note1, note2), column(bargraph, note3, n_S, n_E, n_Iuk, n_Ik, n_Inh, n_Ih, n_R, n_D))
+display=row(column(plot, time_slider, button, note1, note2), bargraph)
 tabA=TabPanel(child=display, title="General Outbreak") #first panel
 
 
 ##################################################################################
 
 # Text Description of the Model 
-div1=Div(text="The general SEIR model displays the populations of 8 different classes of individuals in an infectious disease outbreak; Susceptible, Exposed, Unknown Asymptomatic Infected, Known Symptomatic Infected, Non-Hospitalized Symptomatic Infected, Hospitalized Symptomatic Infected, Recovered, and Dead. The current model displays an initial population of 1,000 individuals over 160 days.", margin=(20, 20, 10, 20), width=750)
-div2=Div(text="The Exposed class is for individuals who have been infected but are not yet showing symptoms and are not yet able to infect others. They then become either asymptomatic or symptomatic infected. Individuals can become Known Asymptomatic through testing. Testing is assumed to be available through a function of 0.001*t but the user can increase this rate through one of the available sliders.", margin=(10, 20, 10, 20), width=750)
-div3=Div(text="Symptomatic Infecteds become hospitalized at a rate of 0.1 and hospitalized individuals have a longer recovery time and higher death rate because their cases are more severe.", margin=(10, 20, 10, 20), width=750)
-div4=Div(text="Once a vaccine is introduced, individuals can move directly from the susceptible class to the recovered class. The vaccine is assumed to be 98% effective and be distributed at a rate of 0.01 once it is introduced. <br> The inclusion of social distancing will reduce the rate of infection.", margin=(10, 20, 10, 20), width=750)
-div5=Div(text="By adding hospital beds and ventilators, the health capacity of the population increases. If the amount of hospitalized symptomatic individuals surpasses the health capacity then hospitalized deaths will increase and recovery rate will decrease due to the health system being overwhelmed.", margin=(10, 20, 10, 20), width=750)
-div6=Div(text="There is assumed to be a natural birth rate of .001 and a natural death rate of 0.0002. This accounts for individuals entering and exiting the system, for causes unrelated to the outbreak.", margin=(10, 20, 10, 20), width=750)
-text_descriptions=column(div1, div2, div3, div4, div5, div6)
+# div1=Div(text="The general SEIR model displays the populations of 8 different classes of individuals in an infectious disease outbreak; Susceptible, Exposed, Unknown Asymptomatic Infected, Known Symptomatic Infected, Non-Hospitalized Symptomatic Infected, Hospitalized Symptomatic Infected, Recovered, and Dead. The current model displays an initial population of 1,000 individuals over 160 days.", margin=(20, 20, 10, 20), width=750)
+# div2=Div(text="The Exposed class is for individuals who have been infected but are not yet showing symptoms and are not yet able to infect others. They then become either asymptomatic or symptomatic infected. Individuals can become Known Asymptomatic through testing. Testing is assumed to be available through a function of 0.001*t but the user can increase this rate through one of the available sliders.", margin=(10, 20, 10, 20), width=750)
+# div3=Div(text="Symptomatic Infecteds become hospitalized at a rate of 0.1 and hospitalized individuals have a longer recovery time and higher death rate because their cases are more severe.", margin=(10, 20, 10, 20), width=750)
+# div4=Div(text="Once a vaccine is introduced, individuals can move directly from the susceptible class to the recovered class. The vaccine is assumed to be 98% effective and be distributed at a rate of 0.01 once it is introduced. <br> The inclusion of social distancing will reduce the rate of infection.", margin=(10, 20, 10, 20), width=750)
+# div5=Div(text="By adding hospital beds and ventilators, the health capacity of the population increases. If the amount of hospitalized symptomatic individuals surpasses the health capacity then hospitalized deaths will increase and recovery rate will decrease due to the health system being overwhelmed.", margin=(10, 20, 10, 20), width=750)
+# div6=Div(text="There is assumed to be a natural birth rate of .001 and a natural death rate of 0.0002. This accounts for individuals entering and exiting the system, for causes unrelated to the outbreak.", margin=(10, 20, 10, 20), width=750)
+# text_descriptions=column(div1, div2, div3, div4, div5, div6)
 
-tabC=TabPanel(child=text_descriptions, title="Model Description") #third panel
+# tabC=TabPanel(child=text_descriptions, title="Model Description") #third panel
 
 ##########################
 
 # Putting it all together for final output
-tabs=Tabs(tabs=[tabA, tabB, tabC])
+# tabs=Tabs(tabs=[tabA, tabB, tabC])
+tabs=Tabs(tabs=[tabA, tabB])
 curdoc().add_root(tabs)
 curdoc().title="Modeling Infectious Disease Outbreaks"

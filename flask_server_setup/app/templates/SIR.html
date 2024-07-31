@@ -272,6 +272,27 @@ header {
       object-fit: contain;
     }
 
+    .column_2 {
+      float: left;
+      width: 45.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_3 {
+      float: left;
+      width: 29.3%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_4 {
+      float: left;
+      width: 20.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
   .row:after {
       content: "";
       display: table;
@@ -305,6 +326,22 @@ header {
     max-width: 800px;
   }
 
+}
+
+@media screen and (max-width: 800px) {
+
+.column_2 {
+  width: 100%;
+}
+
+
+.column_3 {
+  width: 100%;
+}
+
+.column_4 {
+  width: 100%;
+}
 }
 
   /*-------------------BOKEH SECTION--------------------- */
@@ -411,6 +448,7 @@ header {
     <h1 class="head1">SIR Infectious Disease Model</h1>
     <div class="tab">
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Class Definitions')">Class Definitions</button>
         <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Model Description')">Model Description</button>
       </div>
 
@@ -433,29 +471,66 @@ header {
               <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="right" style="width:100%; height: auto;">
             </div>
           </div>
+        </div>
 
+        <div id="Class Definitions" class="tabcontent">
+          <h3>Definition of each of the 8 classes:</h3>
           <div class="row">
-            <h3>Definition of each of the 8 classes:</h3>
-            <p><b>Susceptible:</b> A person who is in the susceptible class is susceptible to contracting the disease and becoming infected. 
-              Everyone initially starts out in the susceptible class.</p>
-            <p><b>Exposed:</b> Someone who is in the exposed class has contracted the disease but is not infected yet, which also means they are not able to infect any susceptibles while in the exposed class. 
-              This is what is known as a 'latency period'.</p>
-            <p><b>Unknown Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. In this class they are also unaware that they are infected.</p>
-            <p><b>Known Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. However, in this class they are aware they are infected. 
-              This would happen if an individual were able to be tested for the disease and their results showed up as positive</p>
-            <p><b>Non-Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms of the disease. 
-              In this class the individual's symptoms are not bad enough to warrant being hospitalized (however, someone can move from this class to the hospitalized class).</p>
-            <p><b>Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms. Their symptoms are bad enough that they need medical care and are hospitalized. 
-              Someone moves into this class from the non-hospitalized symptomatic infected class.</p>
-            <p><b>Recovered:</b> A person in this class was previously infected with the disease and has now recovered. 
+            <div class="column_4">
+              <h3>Susceptible:</h3>
+              <p>A person who is in the susceptible class is susceptible to contracting the disease and becoming infected. 
+                Everyone initially starts out in the susceptible class.</p>
+              <br>
+              <h3>Exposed:</h3>
+              <p>Someone who is in the exposed class has contracted the disease but is not infected yet, which also means they are not able to infect any susceptibles while in the exposed class. 
+                This is what is known as a 'latency period'.</p>
+            </div>
+            <div class="column_4">
+              <h3>Unknown Asymptomatic Infected:</h3>
+              <p>Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. In this class they are also unaware that they are infected.</p>
+              <br>
+              <h3>Known Asymptomatic Infected:</h3>
+              <p>Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. However, in this class they are aware they are infected. 
+                This would happen if an individual were able to be tested for the disease and their results showed up as positive</p>
+            </div>
+            <div class="column_4">
+              <h3>Non-Hospitalized Symptomatic Infected:</h3>
+              <p>An individual in this class is infected and shows symptoms of the disease. 
+                In this class the individual's symptoms are not bad enough to warrant being hospitalized (however, someone can move from this class to the hospitalized class).</p>
+              <br>
+              <h3>Hospitalized Symptomatic Infected:</h3>
+              <p>An individual in this class is infected and shows symptoms. Their symptoms are bad enough that they need medical care and are hospitalized. 
+                Someone moves into this class from the non-hospitalized symptomatic infected class.</p>
+            </div>
+            <div class="column_4">
+              <h3>Recovered:</h3>
+              <p>A person in this class was previously infected with the disease and has now recovered. 
               While in the recovered class, a person is considered immune to the disease (although immunity can ware off an an individual can return to the susceptible class) so an individual in this class cannot spread the disease nor contract the disease. 
               Once an individual enters the recovered class they can only move to the susceptible class (if they loose their immunity) or the dead class (if they die of natural causes).</p>
-            <p><b>Dead:</b> This class represents everyone who has died. It includes people who have died from the disease or from other natural causes. Once an individual enters this class they remain in this class.</p>
+              <br>
+              <h3>Dead:</h3>
+              <p>This class represents everyone who has died. It includes people who have died from the disease or from other natural causes. Once an individual enters this class they remain in this class.</p>
+            </div>
           </div>
         </div>
 
         <div id="Model Description" class="tabcontent">
-            <h3>CURRENT DESCRIPTION FROM BOKEH GOES HERE</h3>
+            <h3>Model Description</h3>
+            <p>The general SEIR model displays the populations of 8 different classes of individuals in an infectious disease outbreak; 
+              Susceptible, Exposed, Unknown Asymptomatic Infected, Known Symptomatic Infected, Non-Hospitalized Symptomatic Infected, Hospitalized Symptomatic Infected, Recovered, and Dead. 
+              The current model displays an initial population of 1,000 individuals over 160 days.</p>
+            <p>The Exposed class is for individuals who have been infected but are not yet showing symptoms and are not yet able to infect others. 
+              They then become either asymptomatic or symptomatic infected. 
+              Individuals can become Known Asymptomatic through testing. 
+              Testing is assumed to be available through a function of 0.001*t but the user can increase this rate through one of the available sliders</p>
+            <p>Symptomatic Infecteds become hospitalized at a rate of 0.1 and hospitalized individuals have a longer recovery time and higher death rate because their cases are more severe.</p>
+            <p>Once a vaccine is introduced, individuals can move directly from the susceptible class to the recovered class. 
+              The vaccine is assumed to be 98% effective and be distributed at a rate of 0.01 once it is introduced.
+              The inclusion of social distancing will reduce the rate of infection.</p>
+            <p>By adding hospital beds and ventilators, the health capacity of the population increases. 
+              If the amount of hospitalized symptomatic individuals surpasses the health capacity then hospitalized deaths will increase and recovery rate will decrease due to the health system being overwhelmed.</p>
+            <p>There is assumed to be a natural birth rate of .001 and a natural death rate of 0.0002. 
+              This accounts for individuals entering and exiting the system, for causes unrelated to the outbreak.</p>
         </div>
       </div>
 
