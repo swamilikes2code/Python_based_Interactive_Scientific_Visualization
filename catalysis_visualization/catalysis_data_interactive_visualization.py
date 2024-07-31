@@ -114,8 +114,8 @@ TOOLS = "wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
-p = figure(height=250, width=250, title="Data Exploration", tools=TOOLS,
-           toolbar_location="above", tooltips=TOOLTIPS)
+p = figure(height=300, width=260, title="Data Exploration", tools=TOOLS,
+           toolbar_location="left", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).continuous = False
 p.select(LassoSelectTool).continuous = False
 r = p.scatter(x="x", y="y", source=source, size=7,
