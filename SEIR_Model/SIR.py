@@ -201,7 +201,7 @@ G.add_edges_from(needed_edges)
 # plot = Plot(height=450, width=450, margin=(10, 5, 5, 20),
 #             x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 
-plot = Plot(height=400, width=420, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
+plot = Plot(height=350, width=350, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 plot.title.text_font_size='14pt'
 graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
@@ -239,7 +239,7 @@ Sb, Eb, Ia_ukb, Ia_kb, Is_nhb, Is_hb, Rb, Db = ret.y
 
 #creating slider for the time
 # time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=500, margin=(10, 10, 10, 20))
-time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=400)
+time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=350)
 start_vals=[Sb[0]/2.3, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2.3, Db[0]]
 current_source=ColumnDataSource(data=dict(sizes=start_vals))
 #updating the node sizes
@@ -317,8 +317,8 @@ button = Button(label='► Play', width=120)
 button.on_click(animate)
 
 #adding descriptive info
-note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=500)
-note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=500)
+note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=400)
+note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=400)
 # note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
 # note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
 # note3=Div(text="Definition of each of the 8 classes", margin=(20, 0, 10, 10))
