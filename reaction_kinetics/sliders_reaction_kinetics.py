@@ -156,13 +156,14 @@ animate_button.on_event('button_click', animate)
 # Spacers
 top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
+large_left_page_spacer = Spacer(width = 50)
 
 # Set up layouts and add to document
 # inputs_reaction = row(left_page_spacer, column(top_page_spacer, text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
 # inputs_time = column(animate_button, slider_time)
 
 inputs_reaction = row(left_page_spacer, column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
-inputs_time = row(left_page_spacer, column(animate_button, slider_time))
+inputs_time = row(large_left_page_spacer, column(animate_button, slider_time))
 
 tab1 =TabPanel(child=column(top_page_spacer, row(inputs_reaction, left_page_spacer, plot_conc, left_page_spacer, column(plot_vbar, inputs_time))), title="Reaction Kinetics")
 
