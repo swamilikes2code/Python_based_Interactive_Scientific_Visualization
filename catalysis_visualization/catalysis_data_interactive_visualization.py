@@ -16,9 +16,17 @@ from sklearn.svm import SVC
 from sklearn.decomposition import PCA
 
 ######################### prepare dataset #########################
-# Import dataset
-df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
-                                   index_col=0, header=0)
+master=True
+# master=False
+
+if master:
+    # Import dataset
+    df_catalysis_dataset = pd.read_csv("catalysis_visualization/data/OCM-data.csv",
+                                    index_col=0, header=0)
+else:
+    df_catalysis_dataset = pd.read_csv("./data/OCM-data.csv",
+                                    index_col=0, header=0)
+
 
 # Removing the Blank names from the data
 df_catalysis_dataset.set_index(df_catalysis_dataset.index)
@@ -108,7 +116,7 @@ p = figure(height=600, width=700, title="Data Exploration", tools=TOOLS,
            toolbar_location="above", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).continuous = False
 p.select(LassoSelectTool).continuous = False
-r = p.circle(x="x", y="y", source=source, size=7,
+r = p.scatter(x="x", y="y", source=source, size=7,
              color='mediumblue', line_color=None, fill_alpha=0.6)
 
 
@@ -167,7 +175,8 @@ vh1 = pv.quad(
 vh2 = pv.quad(
     left=0, bottom=vedges[:-1], top=vedges[1:], right=vzeros, alpha=0.1, **LINE_ARGS)
 
-layout = gridplot([[p, pv], [ph, None]], merge_tools=True)
+# layout = gridplot([[p, pv], [ph, None]])
+layout = column(row(p, pv), ph)
 
 
 # Brought in update for the histogram selections attempt
@@ -290,7 +299,7 @@ mapper = LinearColorMapper(palette=cividis(no_of_colors),
 
 # SETTING UP THE PLOT
 c_corr = figure(title="Correlation Matrix", x_range=common_axes_val, y_range=list((common_axes_val)), x_axis_location="below", toolbar_location=None,
-                width=700, height=600, tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
+                width=700, height=600, tools='hover', tooltips=[('Parameters', '@level_0 - @parameters'), ('Correlation', '@correlation')])
 
 
 # SETTING UP PLOT PROPERTIES
@@ -397,7 +406,7 @@ reg_training.xaxis.axis_label = "Actual"
 reg_training.yaxis.axis_label = "Predicted"
 
 # Histogram for training set
-reg_training_hist = figure(toolbar_location=None, width=reg_training.width, title="Error Histogram",
+reg_training_hist = figure(toolbar_location=None, tools='', width=reg_training.width, title="Error Histogram",
                            height=250, min_border=10, y_axis_location="right")
 reg_training_hist.y_range.start = 0
 reg_training_hist.xgrid.grid_line_color = None
@@ -631,7 +640,7 @@ COLORS = Category20[11]
 unsuper_learn_k_cluster_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
 unsuper_learn_k_cluster_model = figure(height=400, width=500, toolbar_location="above",
                                        title="Visualizing Clustering")
-unsuper_learn_k_cluster_model.circle(x="x", y="y", source=unsuper_learn_k_cluster_source,
+unsuper_learn_k_cluster_model.scatter(x="x", y="y", source=unsuper_learn_k_cluster_source,
                                      fill_alpha=0.5, line_color=None, size=8, color="c")
 
 # elbow method plot
@@ -646,7 +655,7 @@ unsuper_learn_elbow_model.yaxis.axis_label = "Error"
 unsuper_learn_PCA_source = ColumnDataSource(data=dict(x=[], y=[], c=[]))
 unsuper_learn_PCA_model = figure(height=400, width=500, toolbar_location="above",
                                  title="Principal Component Analysis")
-unsuper_learn_PCA_model.circle(x="x", y="y", fill_alpha=0.5, line_color=None,
+unsuper_learn_PCA_model.scatter(x="x", y="y", fill_alpha=0.5, line_color=None,
                                size=5, source=unsuper_learn_PCA_source, color="c")
 unsuper_learn_PCA_model.xaxis.axis_label = "Principal Component 1"
 unsuper_learn_PCA_model.yaxis.axis_label = "Principal Component 2"
@@ -683,7 +692,8 @@ def kmean_preset():
         kmeans = KMeans(n_clusters=i)
         kmeans.fit(unsuper_learn_std_df)
         Error.append(kmeans.inertia_)
-    unsuper_learn_elbow_source.data = dict(x=range(1, 11), y=Error)
+    temp = [j for j in range(1, 11)]
+    unsuper_learn_elbow_source.data = dict(x=temp, y=Error)
 
 
 def update_unsuper_learning():
