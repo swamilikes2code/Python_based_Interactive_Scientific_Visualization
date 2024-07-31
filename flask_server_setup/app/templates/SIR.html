@@ -270,7 +270,7 @@
 
   .column_2_home img {
       width: auto;
-      max-width: 800px; /* CHANGE AS NECESSARY FOR NEW PHOTO WIDTHS*/
+      max-width: 700px;
       height: 100%;
       object-fit: contain;
     }
@@ -323,10 +323,6 @@
 
     .column_2_home {
       order: 1;
-    }
-
-    .column_2_home img{
-      max-width: 800px;
     }
 
   }
@@ -391,14 +387,12 @@
 
   .button1 {
     margin: 0;
-    position:relative;
     justify-self: center;
-    margin: -25px 0 0 -25px;
     text-decoration: none;
     color: black;
     font-family: 'Arial', sans-serif;
     font-weight: 200;
-    font-size: calc(12px + 1.3vw);
+    font-size: 28px;
     text-align: center;
     background-color: #fff;
 
@@ -482,6 +476,10 @@
               <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="right" style="width:100%; height: auto;">
             </div>
           </div>
+          <div class="row" style="justify-items: center;display: grid;padding: 30px 0 0 0;">
+            <p><a href="#jump" class="button1">Jump to Module</a></p><br>
+          </div>
+
         </div>
 
         <div id="Class Definitions" class="tabcontent">
@@ -544,6 +542,8 @@
               This accounts for individuals entering and exiting the system, for causes unrelated to the outbreak.</p>
         </div>
       </div>
+
+      <h3 id="jump" style="margin:5px;"> </h3>
 
       <script>
         function openTab(evt, tabName) {

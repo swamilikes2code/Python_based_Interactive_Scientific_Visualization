@@ -271,7 +271,7 @@
 
   .column_2_home img {
       width: auto;
-      max-width: 800px; /* CHANGE AS NECESSARY FOR NEW PHOTO WIDTHS*/
+      max-width: 700px;
       height: 100%;
       object-fit: contain;
     }
@@ -326,9 +326,6 @@
       order: 1;
     }
 
-    .column_2_home img{
-      max-width: 800px;
-    }
 
   }
 
@@ -390,14 +387,12 @@
 
   .button1 {
     margin: 0;
-    position:relative;
     justify-self: center;
-    margin: -25px 0 0 -25px;
     text-decoration: none;
     color: black;
     font-family: 'Arial', sans-serif;
     font-weight: 200;
-    font-size: calc(12px + 1.3vw);
+    font-size: 28px;
     text-align: center;
     background-color: #fff;
 
@@ -496,22 +491,25 @@
     <div class="flexwrap1">
       <div id="About" class="tabcontent">
         <h3>Welcome to Digital Lab Twin</h3>
-              <div class="home_container">
-                <div class="column_1_home">
-                  <p>
-                    This module will dive into the creation, analysis, and optimization of
-                    a data-driven model. Neural networks are powerful, statistical models
-                    that, over the course of analysing past data, can learn to predict new
-                    outputs. We'll be using one to predict the outputs of a
-                    photobioreactor over a week's experimentation.</p>
-                </div>
+          <div class="home_container">
+            <div class="column_1_home">
+              <p>
+                This module will dive into the creation, analysis, and optimization of
+                a data-driven model. Neural networks are powerful, statistical models
+                that, over the course of analysing past data, can learn to predict new
+                outputs. We'll be using one to predict the outputs of a
+                photobioreactor over a week's experimentation.</p>
+            </div>
 
-                <div class="column_2_home">
-                  <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="Example of a Photobioreactor" class="right" style="width:100%; height: auto;">
-                </div>
-              </div>
+            <div class="column_2_home">
+              <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="Example of a Photobioreactor" class="right" style="width:100%; height: auto;">
+            </div>
+          </div>
 
-        
+          <div class="row" style="justify-items: center;display: grid;padding: 30px 0 0 0;">
+            <p><a href="#jump" class="button1">Jump to Module</a></p><br>
+          </div>
+    
       </div>
 
       <div id="Photobioreactor Info" class="tabcontent">
@@ -734,6 +732,9 @@ Determine how many times the network will read over the training data. This heav
       </div>
       </div>
     </div>
+
+    <h3 id="jump" style="margin:5px;"> </h3>
+
     <script>
       function openTab(evt, tabName) {
         var i, tabcontent, tablinks;
