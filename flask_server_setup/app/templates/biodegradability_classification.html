@@ -33,10 +33,17 @@ header {
   }
   
   .logo {
-    padding-top:10px;
-    padding-left:10px;
+    padding:10px;
     float:left;
     width:300px;
+  }
+
+  .sq-logo {
+    padding: 10px;
+    float:left;
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
   }
   
   nav {
@@ -443,18 +450,19 @@ header {
 
 
   /*-------------------FOOTER--------------------- */
-  .footer1 {
+  .footer {
     margin: 0;
-    padding: none;
+    padding: 10px 0 10px 0;
     list-style:none;
     text-decoration: none;
     overflow: hidden;
     box-sizing: border-box;
     background-color: #262626;
     display:flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     font-family: 'Arial', sans-serif;
-    margin-bottom: -4.883vw;
 }
 
 .container2 {
@@ -517,7 +525,7 @@ header {
 
 <body>
   <header>
-    <div><img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo"></div>
+    <div><a href="/app"><img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo"></a></div>
     <nav>
         <li><a href="/app" class="header-text">HOME</a></li>
         <li><div class="dropdown">
@@ -1112,9 +1120,11 @@ tablinks[currentTab].click();
     <br>
 </body>
 
-<div class="footer1">
-  <div class="container2">
-      <img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo";>
-  </div>
+<div class="footer">
+  <a href="https://cache.org/"><img src="{{url_for('static', filename='cache_logo.png')}}" alt="cache" class="sq-logo";></a>
+  <a href="https://www.nsf.gov/"><img src="{{url_for('static', filename='nsf_logo.png')}}" alt="nsf" class="sq-logo";></a>
+  <a href="/app"><img src="{{url_for('static', filename='Logo2.JPG')}}" alt="logo" class="logo";></a>
+  <a href="https://engineering.lehigh.edu/chbe"><img src="{{url_for('static', filename='chbe_logo.png')}}" alt="chbe" class="sq-logo";></a>
+  <a href="https://creativeinquiry.lehigh.edu/"><img src="{{url_for('static', filename='creative_inquiry_logo.png')}}" alt="ci" class="sq-logo";></a>
 </div>
 </html>
