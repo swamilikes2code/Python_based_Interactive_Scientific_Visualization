@@ -205,7 +205,7 @@ plot = Plot(height=350, width=350, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 # plot.title.text_font_size='14pt'
 # graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
-graph_renderer = from_networkx(G, nx.circular_layout, scale=2, center=(0,0))
+graph_renderer = from_networkx(G, nx.circular_layout, scale=0.5, center=(0,0))
 
 #creating the nodes/circles for the network graph
 graph_renderer.node_renderer.data_source.add(Colorblind8, 'color')
@@ -240,7 +240,7 @@ Sb, Eb, Ia_ukb, Ia_kb, Is_nhb, Is_hb, Rb, Db = ret.y
 
 #creating slider for the time
 # time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=500, margin=(10, 10, 10, 20))
-time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=350)
+time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=320)
 start_vals=[Sb[0]/2.3, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2.3, Db[0]]
 current_source=ColumnDataSource(data=dict(sizes=start_vals))
 #updating the node sizes
