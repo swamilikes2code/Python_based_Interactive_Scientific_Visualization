@@ -11,7 +11,7 @@ import numpy as np
 from scipy.integrate import odeint
 
 from bokeh.io import curdoc
-from bokeh.layouts import row, column, gridplot
+from bokeh.layouts import row, column, gridplot, Spacer
 from bokeh.models import ColumnDataSource, ColorBar, LinearColorMapper, Slider, Div, HoverTool, TabPanel, Tabs, Grid, LinearAxis, Button
 from bokeh.plotting import figure
 from bokeh.palettes import Blues8
@@ -151,11 +151,16 @@ def animate():
 animate_button = Button(label='► Play', width=50)
 animate_button.on_event('button_click', animate)
 
-# Set up layouts and add to document
-inputs_reaction = column(text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC)
-inputs_time = column(animate_button, slider_time )
 
-tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Desktop")
+# Spacers
+top_page_spacer = Spacer(height = 20)
+left_page_spacer = Spacer(width = 20)
+
+# Set up layouts and add to document
+inputs_reaction = row(left_page_spacer, column(top_page_spacer, text, slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC))
+inputs_time = column(animate_button, slider_time)
+
+tab1 =TabPanel(child=row(inputs_reaction, plot_conc, column(plot_vbar, inputs_time, height=450)), title="Reaction Kinetics")
 
 tabs = Tabs(tabs = [tab1])
 
