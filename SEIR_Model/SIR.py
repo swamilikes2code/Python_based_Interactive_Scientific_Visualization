@@ -205,7 +205,7 @@ plot = Plot(height=350, width=350, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 # plot.title.text_font_size='14pt'
 # graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
-graph_renderer = from_networkx(G, nx.circular_layout, scale=0.5, center=(0,0))
+graph_renderer = from_networkx(G, nx.circular_layout, scale=1.5, center=(0,0))
 
 #creating the nodes/circles for the network graph
 graph_renderer.node_renderer.data_source.add(Colorblind8, 'color')
