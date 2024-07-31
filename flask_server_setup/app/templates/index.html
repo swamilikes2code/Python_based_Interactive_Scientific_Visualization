@@ -197,14 +197,32 @@
     font-size: 16px;
     color: #555;
     font-weight: 600;
-    margin: 0 0 40px;
+    margin: 0 0 50px;
     background-color: #ffffff;
   }
-  .head1 {
+  .top-head1 {
+    margin-top: 30px;
     text-align: center;
     color: #000;
     font-size: 32px;
     padding: 1.04vw;
+  }
+
+  .top-head2 {
+    font-weight: normal;
+    width: 400px;
+    font-size: 24px;
+    text-align: center;
+    margin-top:0px;
+    margin-bottom:20px;
+  }
+
+  .top-flexcol {
+    width: 50%;
+    padding: 10px;
+    display:flex;
+    justify-content: center;
+    box-sizing: border-box;
   }
 
   .para1 {
@@ -238,6 +256,7 @@
     background: #b2e3f4;
     /* height: 14.97vw; */
     font-size: 16px;
+    box-sizing: border-box;
   }
 
   .head2 {
@@ -301,6 +320,15 @@
     .footer {
       flex-direction: column;
     }
+    .flexwrap {
+      flex-direction: column;
+    }
+    .flexcol {
+      width: 100%;
+    }
+    .top-flexcol {
+      width: 100%;
+    }
   }
   </style>
   </head>
@@ -334,10 +362,14 @@
     <!--THIS IS THE OPENING PARAGRAPH/TITLE, DON'T USE THIS PARAGRAPH FOR FORMATTING-->
 
     <div class="tile">
-      <h1 class="head1">Welcome!</h1>
-      <div class="flexwrap">
-        <div class="para1">
-          <p>
+      <h1 class="top-head1">Welcome to STEM Visualizations!</h1>
+      <div style="display:flex; justify-content: center;">
+        <h2 class="top-head2"> Introducing accessible, inquiry-based learning technologies into the college classroom.</h2>
+      </div>
+      <hr style="height:1px; width:150px; background-color: black;">
+      <div class="flexwrap" style="margin-top:70px;">
+        <div class="top-flexcol">
+          <p style="margin-top:0; width:80%;">
             This site was designed to help students learn conceptually complex
             STEM problems by giving them a more interactive way of engaging with
             course material. <br /><br />
@@ -351,11 +383,12 @@
           </p>
         </div>
 
-        <div class="video">
+        <div class="top-flexcol" style="flex-direction: column;">
           <iframe
             src="https://player.vimeo.com/video/447232810"
             frameborder="0"
             allow="autoplay; fullscreen"
+            style="height:300px;"
           ></iframe>
           <p class="note">
             <a href="https://vimeo.com/447232810"
@@ -384,7 +417,7 @@
     <div class="container2">
       <h1 style="text-decoration: underline">Models</h1>
 
-      <h2 style="margin-bottom: 40px;">
+      <h2 style="margin-bottom: 40px; font-weight: normal;">
         The Github repository containing all code and documentation related to
         this project can be found below:
       </h2>
