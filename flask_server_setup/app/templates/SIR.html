@@ -409,25 +409,57 @@ header {
         }
     </style>
     <h1 class="head1">SIR Infectious Disease Model</h1>
+    <div class="tab">
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Model Description')">Model Description</button>
+      </div>
+
       <div class="flexwrap1">
-        <h3>Welcome to SIR Infectious Disease</h3>
-        <div class="home_container">
-          <div class="column_1_home">
-            <p>Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
-            <p><b>How to use:</b>
-            <ol>
-              <li>Use play button to watch the spread of disease over time.</li>
-              <li>Place the slider at a specific time to see the spread of disease at a specific time.</li>
-              <li>Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.</li>
-            </ol>
-            </p>
+        <div id="About" class="tabcontent">
+          <h3>Welcome to SIR Infectious Disease</h3>
+          <div class="home_container">
+            <div class="column_1_home">
+              <p>Our model uses Ordinary Differential Equations to predict the spread of infectious diseases. This model is known as the Susceptible-Exposed-Infected-Recovered Model. With this we have allowed you to simulate your own outbreak with different conditions. This will let you to compare the efficacy of mitigating strategies for infectious disease spread. </p>
+              <p><b>How to use:</b>
+              <ol>
+                <li>Use play button to watch the spread of disease over time.</li>
+                <li>Place the slider at a specific time to see the spread of disease at a specific time.</li>
+                <li>Click the 'Adjustable SEIR Model' tab to see an adjustable version of the model, that operates with sliders.</li>
+              </ol>
+              </p>
+            </div>
+
+            <div class="column_2_home">
+              <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="right" style="width:100%; height: auto;">
+            </div>
           </div>
 
-          <div class="column_2_home">
-            <img src="{{url_for('static', filename='virus.jpg')}}" alt="Virus Example" class="right" style="width:100%; height: auto;">
+          <div class="row">
+            <h3>Definition of each of the 8 classes:</h3>
+            <p><b>Susceptible:</b> A person who is in the susceptible class is susceptible to contracting the disease and becoming infected. 
+              Everyone initially starts out in the susceptible class.</p>
+            <p><b>Exposed:</b> Someone who is in the exposed class has contracted the disease but is not infected yet, which also means they are not able to infect any susceptibles while in the exposed class. 
+              This is what is known as a 'latency period'.</p>
+            <p><b>Unknown Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. In this class they are also unaware that they are infected.</p>
+            <p><b>Known Asymptomatic Infected:</b> Someone in this class is an asymptomatic infected, meaning they show no symptoms of the disease. However, in this class they are aware they are infected. 
+              This would happen if an individual were able to be tested for the disease and their results showed up as positive</p>
+            <p><b>Non-Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms of the disease. 
+              In this class the individual's symptoms are not bad enough to warrant being hospitalized (however, someone can move from this class to the hospitalized class).</p>
+            <p><b>Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms. Their symptoms are bad enough that they need medical care and are hospitalized. 
+              Someone moves into this class from the non-hospitalized symptomatic infected class.</p>
+            <p><b>Recovered:</b> A person in this class was previously infected with the disease and has now recovered. 
+              While in the recovered class, a person is considered immune to the disease (although immunity can ware off an an individual can return to the susceptible class) so an individual in this class cannot spread the disease nor contract the disease. 
+              Once an individual enters the recovered class they can only move to the susceptible class (if they loose their immunity) or the dead class (if they die of natural causes).</p>
+            <p><b>Dead:</b> This class represents everyone who has died. It includes people who have died from the disease or from other natural causes. Once an individual enters this class they remain in this class.</p>
           </div>
         </div>
+
+        <div id="Model Description" class="tabcontent">
+            <h3>Working With the Dataset</h3>
+            <p>Test</p>
+        </div>
       </div>
+
       <div class="scrollable-container">
         {{bokeh_script_SIR|safe}}
       </div>
