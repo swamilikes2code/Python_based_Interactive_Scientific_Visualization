@@ -255,7 +255,7 @@ plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0]/1000, Is_hb[0]/1000, Rb[0]/1000, Db[0]/1000]
 bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names, colors=Colorblind8))
 # bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=600, margin=(15, 10, 10, 10))
-bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=400, width=520)
+bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=520)
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
 bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
