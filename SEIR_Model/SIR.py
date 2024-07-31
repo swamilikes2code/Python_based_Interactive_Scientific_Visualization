@@ -96,7 +96,7 @@ sourcePops=ColumnDataSource(data=dict(time=t, S=S, E=E, Ia_uk=Ia_uk, Ia_k=Ia_k, 
 #hover_line=HoverTool(names=["S_line", "E_line"])
 #creating a graph with lines for the different classes of the model
 # pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, height=450, width=600, margin=(10, 20, 10, 40))
-pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, height=450, width=600)
+pops=figure(title="SEIR Model Class Populations", x_axis_label="Time (in days)", y_axis_label="Proportion of people in each class", tools=TOOLS, aspect_ratio=4/3, height=350, width=350)
 # pops.title.text_font_size='14pt'
 #adding a line for each of the 8 different class populations
 l1=pops.line('time', 'S', source=sourcePops, legend_label="Susceptible", line_width=2, color=Colorblind8[0], name="S_line")
@@ -115,7 +115,7 @@ pops.legend.background_fill_alpha=0.5
 
 #creating a graph that only displays the 4 different types of infecteds
 # infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=450, width=600, margin=(10, 20, 10, 40))
-infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=450, width=600)
+infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=350, width=350)
 # infecteds.title.text_font_size='14pt'
 la=infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2], line_width=2)
 lb=infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color=Colorblind8[3], line_dash='dashed')
@@ -206,8 +206,7 @@ G.add_edges_from(needed_edges)
 plot = Plot(height=350, width=350, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 # plot.title.text_font_size='14pt'
-# graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
-graph_renderer = from_networkx(G, nx.circular_layout, scale=0.20, center=(0,0))
+graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
 
 #creating the nodes/circles for the network graph
 graph_renderer.node_renderer.data_source.add(Colorblind8, 'color')
