@@ -389,14 +389,12 @@
 
   .button1 {
       margin: 0;
-      position:relative;
       justify-self: center;
-      margin: -25px 0 0 -25px;
       text-decoration: none;
       color: black;
       font-family: 'Arial', sans-serif;
       font-weight: 200;
-      font-size: calc(12px + 1.3vw);
+      font-size: 28px;
       text-align: center;
       background-color: #fff;
 
@@ -474,6 +472,11 @@
                   <img src="{{url_for('static', filename='data science.jpg')}}" alt="Data Picture" class="right" style="width:100%; height: auto;">
                 </div>
               </div>
+
+              <div class="row" style="justify-items: center;display: grid;padding: 30px 0 0 0;">
+                <p><a href="#jump" class="button1">Jump to Module</a></p><br>
+              </div>
+    
             </div>
 
             <div id="Model Description" class="tabcontent">
@@ -527,6 +530,9 @@
               </div>
             </div>
           </div>
+          
+          <h3 id="jump"> </h3>
+
           <script>
             function openTab(evt, tabName) {
               var i, tabcontent, tablinks;
