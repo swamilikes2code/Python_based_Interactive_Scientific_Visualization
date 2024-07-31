@@ -486,7 +486,8 @@ column1 = row(left_page_spacer, column(top_page_spacer, constant_slider, inputs,
 column2 = row(left_page_spacer, column(top_page_spacer, plot_co2, plot_temperature))
 column3 = row(left_page_spacer, column(top_page_spacer, reverse_process))
 column4 = row(left_page_spacer, column(plot_q_reverse, plot_temperature_reverse))
-grid = gridplot([[column1, column2, column3, column4]])
+# grid = gridplot([[column1, column2, column3, column4]])
+grid = row(column1, column2, column3, column4)
 # grid = gridplot([[constant_slider, inputs, plot_q], [plot_co2, plot_temperature], [reverse_process]])
 
 tab1 =TabPanel(child= grid, title="Direct Air Capture")
