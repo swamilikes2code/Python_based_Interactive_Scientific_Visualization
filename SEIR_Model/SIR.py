@@ -12,7 +12,7 @@ from scipy.integrate import solve_ivp
 from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from bokeh.models import (ColumnDataSource, Slider, TableColumn, DataTable, Button, TabPanel, Tabs, GraphRenderer, Div, Arrow, OpenHead, 
-                          BoxSelectTool, Scatter, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool)
+                          BoxSelectTool, Scatter, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool, Spacer)
 from bokeh.plotting import figure, from_networkx
 from math import exp
 from bokeh.palettes import Spectral4, Colorblind8
@@ -198,8 +198,10 @@ practice_sizes=[5, 10, 15, 20, 25, 30, 35, 40] #temporary numbers just to set up
 G=nx.DiGraph()
 G.add_nodes_from(range(8), name=class_names)
 G.add_edges_from(needed_edges)
-plot = Plot(height=450, width=450, margin=(10, 5, 5, 20),
-            x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
+# plot = Plot(height=450, width=450, margin=(10, 5, 5, 20),
+#             x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
+
+plot = Plot(height=400, width=420, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 plot.title.text_font_size='14pt'
 graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
@@ -236,7 +238,8 @@ ret = solve_ivp(deriv, t_span=(0,365), y0=y0, t_eval=t, args=(N, vaccination_rat
 Sb, Eb, Ia_ukb, Ia_kb, Is_nhb, Is_hb, Rb, Db = ret.y
 
 #creating slider for the time
-time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=500, margin=(10, 10, 10, 20))
+# time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=500, margin=(10, 10, 10, 20))
+time_slider=Slider(start=0, end=365, value=0, step=1, title="Time (in Days)", width=500)
 start_vals=[Sb[0]/2.3, Eb[0], Ia_ukb[0], Ia_kb[0], Is_nhb[0], Is_hb[0], Rb[0]/2.3, Db[0]]
 current_source=ColumnDataSource(data=dict(sizes=start_vals))
 #updating the node sizes
@@ -251,7 +254,8 @@ plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 ####### Bar Graph
 proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0]/1000, Is_hb[0]/1000, Rb[0]/1000, Db[0]/1000]
 bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names, colors=Colorblind8))
-bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=600, margin=(15, 10, 10, 10))
+# bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=600, margin=(15, 10, 10, 10))
+bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=520)
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
 bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
@@ -308,12 +312,15 @@ for i in range(0, 17):
 
 #function called when button is pressed    
 time_slider.on_change('value', update_data_bubble)
-button = Button(label='► Play', width=120, margin=(1, 1, 1, 20))
+# button = Button(label='► Play', width=120, margin=(1, 1, 1, 20))
+button = Button(label='► Play', width=120)
 button.on_click(animate)
 
 #adding descriptive info
-note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
-note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
+note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600)
+note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600)
+# note1=Div(text="Note that the size of all circles are proportional to their population size, except for the Susceptible and Recovered classes, which are shown at half capacity for ease of visualization", width=600, margin=(20, 1, 5, 20))
+# note2=Div(text="The outbreak modeled is based on the initial conditions of the infection rate for unknown asymptomatic infected being 0.35, for known asymptomatic infecteds being 0.18, for non-hospitalized symptomatic infected being 0.14, and for hospitalized infecteds being 0.001. The recovery rate is assumed to be 0.02. The Death rate is assumed to be 0.004 for those not hospitalized and 0.008 for those hospitalized. The rate at which people lose their immunity is 0.0002. There is no vaccine in this simulation", width=600, margin=(5, 1, 5, 20))
 # note3=Div(text="Definition of each of the 8 classes", margin=(20, 0, 10, 10))
 # n_S=Div(text="<b>Susceptible:</b> A person who is in the susceptible class is susceptible to contracting the disease and becoming infected. Everyone initially starts out in the susceptible class.", width=600, margin=(2, 0, 2, 10))
 # n_E=Div(text="<b>Exposed:</b> Someone who is in the exposed class has contracted the disease but is not infected yet, which also means they are not able to infect any susceptibles while in the exposed class. This is what is known as a 'latency period'.", width=600, margin=(2, 0, 2, 10))
@@ -323,9 +330,14 @@ note2=Div(text="The outbreak modeled is based on the initial conditions of the i
 # n_Ih=Div(text="<b>Hospitalized Symptomatic Infected:</b> An individual in this class is infected and shows symptoms. Their symptoms are bad enough that they need medical care and are hospitalized. Someone moves into this class from the non-hospitalized symptomatic infected class.", width=600, margin=(2, 0, 2, 10))
 # n_R=Div(text="<b>Recovered:</b> A person in this class was previously infected with the disease and has now recovered. While in the recovered class, a person is considered immune to the disease (although immunity can ware off an an individual can return to the susceptible class) so an individual in this class cannot spread the disease nor contract the disease. Once an individual enters the recovered class they can only move to the susceptible class (if they loose their immunity) or the dead class (if they die of natural causes).", width=600, margin=(2, 0, 2, 10))
 # n_D=Div(text="<b>Dead:</b> This class represents everyone who has died. It includes people who have died from the disease or from other natural causes. Once an individual enters this class they remain in this class.", width=600, margin=(2, 0, 2, 10))
-#latout for this tab
+
+# Spacers
+top_page_spacer = Spacer(height = 20)
+left_page_spacer = Spacer(width = 20)
+
+#layout for this tab
 # display=row(column(plot, time_slider, button, note1, note2), column(bargraph, note3, n_S, n_E, n_Iuk, n_Ik, n_Inh, n_Ih, n_R, n_D))
-display=row(column(plot, time_slider, button, note1, note2), bargraph)
+display=row(left_page_spacer, column(top_page_spacer, plot, time_slider, button, note1, note2), left_page_spacer, column(top_page_spacer, bargraph))
 tabA=TabPanel(child=display, title="General Outbreak") #first panel
 
 
