@@ -204,9 +204,8 @@ Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
 
 source_temperature = ColumnDataSource(data=dict(temp_x=vec_Z, temp_y=temp_df.iloc[1]))
 plot_temperature = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
-              tools= Tools
- #             x_range=[0, L], y_range=[292, 299]
-              )
+              tools= Tools,
+              x_range=[0, L], y_range=[292, 299])
 plot_temperature.line('temp_x', 'temp_y',  line_width=3, source = source_temperature, line_alpha=0.6, color = "navy")
 plot_temperature.xaxis.axis_label = "L (m)"
 plot_temperature.yaxis.axis_label = "Temperature (K)"
@@ -486,7 +485,7 @@ grid = gridplot([[column1, column2, column3, column4]])
 # grid = gridplot([[constant_slider, inputs, plot_q], [plot_co2, plot_temperature], [reverse_process]])
 
 # tab1 =TabPanel(child= grid, title="Desktop")
-tab1 =TabPanel(child= grid, title="Direct Air Capture")
+tab1 =TabPanel(child= grid, title="Direct Air Captures")
 # tab2 =TabPanel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
 # tabs = Tabs(tabs = [tab1, tab2])
 
