@@ -201,7 +201,7 @@ G.add_edges_from(needed_edges)
 # plot = Plot(height=450, width=450, margin=(10, 5, 5, 20),
 #             x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 
-plot = Plot(height=450, width=450, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
+plot = Plot(height=400, width=420, x_range=Range1d(-1.3,2.7), y_range=Range1d(-1.6,1.2))
 plot.title.text = "Class Populations for Infectious Disease Outbreak"
 plot.title.text_font_size='14pt'
 graph_renderer = from_networkx(G, nx.circular_layout, scale=1, center=(0,0))
@@ -254,7 +254,8 @@ plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 ####### Bar Graph
 proportion_pops=[Sb[0]/1000, Eb[0]/1000, Ia_ukb[0]/1000, Ia_kb[0]/1000, Is_nhb[0]/1000, Is_hb[0]/1000, Rb[0]/1000, Db[0]/1000]
 bar_source=ColumnDataSource(data=dict(tall=proportion_pops, names=class_names, colors=Colorblind8))
-bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=600, margin=(15, 10, 10, 10))
+# bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=450, width=600, margin=(15, 10, 10, 10))
+bargraph=figure(x_range=class_names, y_range=Range1d(0, 1.04), title="Proportion of Population in Each Class", tools=("reset, box_zoom"), height=400, width=520)
 bargraph.vbar(x='names', top='tall', color='colors', source=bar_source, width=0.5)
 bargraph.title.text_font_size='14pt'
 bargraph.xaxis.major_label_orientation=45
@@ -336,7 +337,7 @@ left_page_spacer = Spacer(width = 20)
 
 #layout for this tab
 # display=row(column(plot, time_slider, button, note1, note2), column(bargraph, note3, n_S, n_E, n_Iuk, n_Ik, n_Inh, n_Ih, n_R, n_D))
-display=row(left_page_spacer, column(left_page_spacer, plot, time_slider, button, note1, note2), left_page_spacer, column(top_page_spacer, bargraph))
+display=row(left_page_spacer, column(top_page_spacer, plot, time_slider, button, note1, note2), left_page_spacer, column(top_page_spacer, bargraph))
 tabA=TabPanel(child=display, title="General Outbreak") #first panel
 
 
