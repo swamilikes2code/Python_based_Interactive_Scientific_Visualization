@@ -114,7 +114,7 @@ TOOLS = "wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
-p = figure(height=300, width=400, title="Data Exploration", tools=TOOLS,
+p = figure(height=250, width=250, title="Data Exploration", tools=TOOLS,
            toolbar_location="above", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).continuous = False
 p.select(LassoSelectTool).continuous = False
@@ -471,9 +471,6 @@ reg_testing.legend.background_fill_alpha = 0.5
 reg_tab1 = TabPanel(child=reg_training_layout, title="Training Dataset")
 reg_tab2 = TabPanel(child=reg_testing_layout, title="Testing Dataset")
 reg_tabs = Tabs(tabs=[reg_tab1, reg_tab2])
-
-regression_layout = column(
-    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both")
 
 
 def update_regression():
@@ -902,6 +899,9 @@ top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
 
 visualization_layout = row(inputs, layout)
+
+regression_layout = column(
+    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)])
 
 # organizing TabPanels of display
 tab1 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, visualization_layout)), title="Data Exploration")
