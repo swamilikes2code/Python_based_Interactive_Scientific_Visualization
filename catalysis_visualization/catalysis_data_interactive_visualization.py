@@ -903,11 +903,11 @@ left_page_spacer = Spacer(width = 20)
 
 
 # organizing TabPanels of display
-tab1 = TabPanel(child=visualization_layout, title="Data Exploration")
-tab2 = TabPanel(child=column(select_color, c_corr), title="Correlation Matrix")
-tab3 = TabPanel(child=regression_layout, title="Multivariable Regression")
-tab4 = TabPanel(child=unsuper_learn_layout, title="Unsupervised Learning")
-tab5 = TabPanel(child=svm_layout, title="Classification Methods")
+tab1 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, visualization_layout)), title="Data Exploration")
+tab2 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, select_color, c_corr)), title="Correlation Matrix")
+tab3 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, regression_layout)), title="Multivariable Regression")
+tab4 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, unsuper_learn_layout)), title="Unsupervised Learning")
+tab5 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, svm_layout)), title="Classification Methods")
 # tab6 = TabPanel(child=text_descriptions, title="Model Description")
 # tabs = Tabs(tabs=[tab6, tab1, tab2, tab3, tab4, tab5])
 tabs = Tabs(tabs=[tab1, tab2, tab3, tab4, tab5])
