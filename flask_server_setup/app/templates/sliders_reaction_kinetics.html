@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Reaction Kinetics</title>
-    <style>
+<style>
        body {
     margin: 0;
     background: #fff;
@@ -17,25 +17,25 @@
     position: relative;
 }
 
-/* -------------------------BODY------------------------- */
+  /* -------------------------BODY------------------------- */
 
-body {
-    margin: 0;
-    background: #fff;
-    font-family: 'Arial', sans-serif;
-    font-weight: 400;
-}
-
-
-/* ------------------------- HEADER -------------------------*/
-
-  
-header {
-      background: #262626;
-      height: 80px;
-      /* display: flex; */
-      /* align-items: center; */
+  body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Arial', sans-serif;
+      font-weight: 400;
   }
+
+
+  /* ------------------------- HEADER -------------------------*/
+
+    
+  header {
+        background: #262626;
+        height: 80px;
+        /* display: flex; */
+        /* align-items: center; */
+    }
   
   header::after {
       content: '';
@@ -90,46 +90,46 @@ header {
   }
   
   nav a:hover {
-      color: #31A6FF;
+    color: #31A6FF;
   }
   
   nav a::before {
-      content: '';
-      display: block;
-      height:5px;
-      background-color: #31A6FF;
-  
-      position:absolute;
-      width: 0%;
-      top: 0;
-      transition: all ease-in-out 250ms;
+    content: '';
+    display: block;
+    height:5px;
+    background-color: #31A6FF;
+
+    position:absolute;
+    width: 0%;
+    top: 0;
+    transition: all ease-in-out 250ms;
   }
   
   nav a:hover::before {
-      width: 100%;
+    width: 100%;
   }
   
   .header-text {
-      font-size: 16px;
+    font-size: 16px;
   }
 
   @media all and (max-width: 608px) {
-  header {
-    height: 160px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    header {
+      height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  nav {
-    float: none;
-  }
+    nav {
+      float: none;
+    }
 
-  nav ul {
-    display: flex;
-    justify-content: center;
-    padding: 0;
-  }
+    nav ul {
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
   }
   
   .dropdown {
@@ -199,27 +199,27 @@ header {
   /* -------------------------TABS------------------------- */
 
   .flexwrap1 {
-      display: flex;
-      width: auto;
-      height: auto;
-      font-family: 'Arial', sans-serif;
-      color:#484848;
-      font-weight: 600;
-      font-size: 16px;
-      padding-left:5px;
-      padding-right:5px;
-      padding-bottom:10px;
-      background:#b2e3f4;
-      gap: 2.083vw;
-      line-height: 1.5;
-      margin: auto;
-      justify-content: center;
-    }
+    display: flex;
+    width: auto;
+    height: auto;
+    font-family: 'Arial', sans-serif;
+    color:#484848;
+    font-weight: 600;
+    font-size: 16px;
+    padding-left:5px;
+    padding-right:5px;
+    padding-bottom:10px;
+    background:#b2e3f4;
+    gap: 2.083vw;
+    line-height: 1.5;
+    margin: auto;
+    justify-content: center;
+  }
   .tab {
-      overflow: hidden;
-      border: 1px solid #ccc;
-      background-color: #f1f1f1;
-    }
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+  }
 
   /* Style the buttons inside the tab */
   .tab button {
@@ -251,107 +251,107 @@ header {
   /* -------------------------ROWS AND COLUMNS------------------------- */
 
   .home_container {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 0.75%;
-      margin-left: auto;
-      margin-right: auto;
-      align-items: stretch;
-      max-width: 1200px;
-      width: 100%;
-      padding: 0 20px;
-      box-sizing: border-box;
-    }
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.75%;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: stretch;
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
 
   .column_1_home {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 
   .column_2_home {
-      display: flex;
-      align-items: stretch;
-      align-items: first baseline;
-    }
+    display: flex;
+    align-items: stretch;
+    align-items: first baseline;
+  }
 
   .column_2_home img {
-      width: auto;
-      max-width: 800px; /* CHANGE AS NECESSARY FOR NEW PHOTO WIDTHS*/
-      height: 100%;
-      object-fit: contain;
-    }
+    width: auto;
+    max-width: 800px; /* CHANGE AS NECESSARY FOR NEW PHOTO WIDTHS*/
+    height: 100%;
+    object-fit: contain;
+  }
 
   .column_2 {
-      float: left;
-      width: 45.9%;
-      padding-left: 2%;
-      padding-right: 2%;
-    }
+    float: left;
+    width: 45.9%;
+    padding-left: 2%;
+    padding-right: 2%;
+  }
 
   .column_3 {
-      float: left;
-      width: 29.3%;
-      padding-left: 2%;
-      padding-right: 2%;
-    }
+    float: left;
+    width: 29.3%;
+    padding-left: 2%;
+    padding-right: 2%;
+  }
 
   .column_4 {
-      float: left;
-      width: 20.9%;
-      padding-left: 2%;
-      padding-right: 2%;
-    }
+    float: left;
+    width: 20.9%;
+    padding-left: 2%;
+    padding-right: 2%;
+  }
 
   .row:after {
-      content: "";
-      display: table;
-      clear: both;
-    }
+    content: "";
+    display: table;
+    clear: both;
+  }
 
   /* Responsive layouts */
 
-@media screen and (max-width: 1100px) {
+  @media screen and (max-width: 1100px) {
 
-  .home_container {
-    grid-template-columns: 1fr;
-    max-width: 600px;
-    align-items: center;
-    justify-items: center;
+    .home_container {
+      grid-template-columns: 1fr;
+      max-width: 600px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .column_1_home, .column_2_home{
+      width: 100%;
+    }
+
+    .column_1_home {
+      order: 2;
+    }
+
+    .column_2_home {
+      order: 1;
+    }
+
+    .column_2_home img{
+      max-width: 800px;
+    }
+
   }
 
-  .column_1_home, .column_2_home{
-    width: 100%;
-  }
+  @media screen and (max-width: 800px) {
 
-  .column_1_home {
-    order: 2;
-  }
+    .column_2 {
+      width: 100%;
+    }
 
-  .column_2_home {
-    order: 1;
+    .column_3 {
+      width: 100%;
+    }
+    
+    .column_4 {
+      width: 100%;
+    }
   }
-
-  .column_2_home img{
-    max-width: 800px;
-  }
-
-}
-
-@media screen and (max-width: 800px) {
-
-  .column_2 {
-    width: 100%;
-  }
-
-  .column_3 {
-    width: 100%;
-  }
-  
-  .column_4 {
-    width: 100%;
-  }
-}
 
   /*-------------------BOKEH SECTION--------------------- */
   .scrollable-container {
@@ -375,26 +375,26 @@ header {
     align-items: center;
     width: 100%;
     font-family: 'Arial', sans-serif;
-}
-
-@media all and (max-width: 700px) {
-    .footer {
-      flex-direction: column;
-    }
   }
 
-.container2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: nowrap;
-    padding: 10px;
-}
+  @media all and (max-width: 700px) {
+      .footer {
+        flex-direction: column;
+      }
+    }
+
+  .container2 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+      padding: 10px;
+  }
 
 
-/* -------------------MISC------------------- */
+  /* -------------------MISC------------------- */
 
-.button1 {
+  .button1 {
     margin: 0;
     position:relative;
     justify-self: center;
@@ -415,23 +415,23 @@ header {
     transition-duration: 300ms;
   }
 
-.center {
+  .center {
     display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 52.083vw;
-  height: 29.297vw;
-}
+    margin-left: auto;
+    margin-right: auto;
+    width: 52.083vw;
+    height: 29.297vw;
+  }
 
-.head1 {
-  text-align: center;
-  background-color: #fff;
-  color: #000;
-  font-size: 32px;
-  font-weight: bold;
-  font-family: 'Arial', sans-serif;
-}
-    </style>
+  .head1 {
+    text-align: center;
+    background-color: #fff;
+    color: #000;
+    font-size: 32px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+  }
+</style>
 </head>
 
 <body>

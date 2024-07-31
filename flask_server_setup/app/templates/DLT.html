@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,27 +10,27 @@
     />
 
     <title>Digital Lab Twin</title>
-    <style>
-/* -------------------------BODY------------------------- */
+<style>
+  /* -------------------------BODY------------------------- */
 
-body {
-    margin: 0;
-    background: #fff;
-    font-family: 'Arial', sans-serif;
-    font-weight: 400;
-}
-
-
-/* ------------------------- HEADER -------------------------*/
-
-  
-header {
-      background: #262626;
-      height: 80px;
-      /* display: flex; */
-      /* align-items: center; */
+  body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Arial', sans-serif;
+      font-weight: 400;
   }
-  
+
+
+  /* ------------------------- HEADER -------------------------*/
+
+    
+  header {
+        background: #262626;
+        height: 80px;
+        /* display: flex; */
+        /* align-items: center; */
+    }
+    
   header::after {
       content: '';
       display: table;
@@ -108,22 +108,22 @@ header {
   }
 
   @media all and (max-width: 608px) {
-  header {
-    height: 160px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    header {
+      height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  nav {
-    float: none;
-  }
+    nav {
+      float: none;
+    }
 
-  nav ul {
-    display: flex;
-    justify-content: center;
-    padding: 0;
-  }
+    nav ul {
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
   }
   
   .dropdown {
@@ -305,47 +305,47 @@ header {
 
   /* Responsive layouts */
 
-@media screen and (max-width: 1100px) {
+  @media screen and (max-width: 1100px) {
 
-  .home_container {
-    grid-template-columns: 1fr;
-    max-width: 600px;
-    align-items: center;
-    justify-items: center;
+    .home_container {
+      grid-template-columns: 1fr;
+      max-width: 600px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .column_1_home, .column_2_home{
+      width: 100%;
+    }
+
+    .column_1_home {
+      order: 2;
+    }
+
+    .column_2_home {
+      order: 1;
+    }
+
+    .column_2_home img{
+      max-width: 800px;
+    }
+
   }
 
-  .column_1_home, .column_2_home{
-    width: 100%;
-  }
+  @media screen and (max-width: 800px) {
 
-  .column_1_home {
-    order: 2;
-  }
+    .column_2 {
+      width: 100%;
+    }
 
-  .column_2_home {
-    order: 1;
+    .column_3 {
+      width: 100%;
+    }
+    
+    .column_4 {
+      width: 100%;
+    }
   }
-
-  .column_2_home img{
-    max-width: 800px;
-  }
-
-}
-
-@media screen and (max-width: 800px) {
-
-  .column_2 {
-    width: 100%;
-  }
-
-  .column_3 {
-    width: 100%;
-  }
-  
-  .column_4 {
-    width: 100%;
-  }
-}
 
   /*-------------------BOKEH SECTION--------------------- */
   .scrollable-container {
@@ -369,26 +369,26 @@ header {
     align-items: center;
     width: 100%;
     font-family: 'Arial', sans-serif;
-}
-
-@media all and (max-width: 700px) {
-    .footer {
-      flex-direction: column;
-    }
   }
 
-.container2 {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: nowrap;
-    padding: 10px;
-}
+  @media all and (max-width: 700px) {
+      .footer {
+        flex-direction: column;
+      }
+    }
+
+  .container2 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+      padding: 10px;
+  }
 
 
-/* -------------------MISC------------------- */
+  /* -------------------MISC------------------- */
 
-.button1 {
+  .button1 {
     margin: 0;
     position:relative;
     justify-self: center;
@@ -409,24 +409,24 @@ header {
     transition-duration: 300ms;
   }
 
-.center {
-    display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 52.083vw;
-  height: 29.297vw;
-}
+  .center {
+      display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 52.083vw;
+    height: 29.297vw;
+  }
 
-.head1 {
-  text-align: center;
-  background-color: #fff;
-  color: #000;
-  font-size: 32px;
-  font-weight: bold;
-  font-family: 'Arial', sans-serif;
-}
+  .head1 {
+    text-align: center;
+    background-color: #fff;
+    color: #000;
+    font-size: 32px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+  }
 
-    </style>
+  </style>
   </head>
 
   <body>
