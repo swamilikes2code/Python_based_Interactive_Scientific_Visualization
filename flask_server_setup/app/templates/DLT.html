@@ -11,22 +11,20 @@
 
     <title>Digital Lab Twin</title>
     <style>
-      body {
-        margin: 0;
-        background: #fff;
-        font-family: 'Arial', sans-serif;
-        font-weight: 400;
-      }
-      .container {
-        width: 85vw;
-        margin: 0 auto;
-        position: relative;
-      }
+/* -------------------------BODY------------------------- */
 
-      /* ------------------------- FOR THE HEADER -------------------------*/
+body {
+    margin: 0;
+    background: #fff;
+    font-family: 'Arial', sans-serif;
+    font-weight: 400;
+}
+
+
+/* ------------------------- HEADER -------------------------*/
 
   
-  header {
+header {
       background: #262626;
       height: 80px;
       /* display: flex; */
@@ -99,7 +97,7 @@
   }
   
   .header-text {
-      font-size: 16px; /* Adjust the font size as desired */
+      font-size: 16px;
   }
 
   @media all and (max-width: 608px) {
@@ -125,13 +123,11 @@
   }
   }
   
-  /* The container <div> - needed to position the dropdown content */
   .dropdown {
     float:left;
     overflow:hidden;
   }
   
-  /* Dropdown Button */
   .dropdown .dropbtn {
     padding: 0;
     font-size: 16px;
@@ -191,10 +187,173 @@
   li:hover .dropdown-content {display: block;}
 
 
-  /* ------------------HEADER ENDS HERE------------------- */
+  /* -------------------------TABS------------------------- */
 
-    /*-------------------FOR THE FOOTER--------------------- */
-    .footer1 {
+  .flexwrap1 {
+      display: flex;
+      width: auto;
+      height: auto;
+      font-family: 'Arial', sans-serif;
+      color:#484848;
+      font-weight: 600;
+      font-size: 16px;
+      padding-left:5px;
+      padding-right:5px;
+      padding-bottom:10px;
+      background:#b2e3f4;
+      gap: 2.083vw;
+      line-height: 1.5;
+      margin: auto;
+      justify-content: center;
+    }
+  .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+
+  /* Style the buttons inside the tab */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+  }
+
+  /* -------------------------ROWS AND COLUMNS------------------------- */
+
+  .home_container {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75%;
+      margin-left: auto;
+      margin-right: auto;
+      align-items: stretch;
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+  .column_1_home {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+  .column_2_home {
+      display: flex;
+      align-items: stretch;
+      align-items: first baseline;
+    }
+
+  .column_2_home img {
+      width: auto;
+      max-width: 800px; /* CHANGE AS NECESSARY FOR NEW PHOTO WIDTHS*/
+      height: 100%;
+      object-fit: contain;
+    }
+
+  .column_2 {
+      float: left;
+      width: 45.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_3 {
+      float: left;
+      width: 29.3%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_4 {
+      float: left;
+      width: 20.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+  /* Responsive layouts */
+
+@media screen and (max-width: 1100px) {
+
+  .home_container {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .column_1_home, .column_2_home{
+    width: 100%;
+  }
+
+  .column_1_home {
+    order: 2;
+  }
+
+  .column_2_home {
+    order: 1;
+  }
+
+  .column_2_home img{
+    max-width: 800px;
+  }
+
+}
+
+@media screen and (max-width: 800px) {
+
+  .column_2 {
+    width: 100%;
+  }
+
+  .column_3 {
+    width: 100%;
+  }
+  
+  .column_4 {
+    width: 100%;
+  }
+}
+
+  /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+
+  /*-------------------FOOTER--------------------- */
+  .footer1 {
     margin: 0;
     padding: none;
     list-style:none;
@@ -215,234 +374,47 @@
     flex-wrap: nowrap;
     padding: 10px;
 }
-  /*-------------------FOOTER ENDS HERE-------------------- */
 
-      .head1 {
-        text-align: center;
-        color: #000;
-        font-size: 32px;
-        padding: 1.042vw;
-      }
 
-      .head1 {
-        text-align: center;
-        color: #000;
-        font-size: 32px;
-        font-weight: bold;
-        font-family: 'Arial', sans-serif;
-      }
-      .flexwrap {
-        display: flex;
-        width: auto;
-        margin: auto;
-        font-family: 'Arial', sans-serif;
-        max-width: 90rem;
-      }
-      .flexwrap1 {
-        display: flex;
-        width: auto;
-        font-family: 'Arial', sans-serif;
-        color: #484848;
-        font-weight: 600;
-        font-size: 16px;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-bottom: 10px;
-        background: #b2e3f4;
-        gap: 2.083vw;
-        line-height: 1.5;
-        margin: auto;
-      }
-      .flexcol {
-        color: #484848;
-        font-weight: 600;
-        border: 0.1953vw;
-        font-size: 16px;
-        border-style: solid;
-        border-color: #000;
-        padding: 0.651vw;
-        width: 50%;
-        background: #e8e8e8;
-        border-radius: 30px;
-        margin: 0 1.302vw;
-      }
-      .head2 {
-        text-align: center;
-        color: #000;
-        font-size: 24px;
-        font-weight: 600;
-        font-family: 'Arial', sans-serif;
-      }
-      .center {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 52.083vw;
-        height: 29.297vw;
-      }
-      .footer {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        text-decoration: none;
-        overflow: hidden;
-        padding: 1.953vw 0;
-        box-sizing: border-box;
-        background-color: #262626;
-        display: flex;
-        width: 100%;
-        font-family: 'Arial', sans-serif;
-        margin-top: -180px;
-      }
+/* -------------------MISC------------------- */
 
-      .flexcol1 {
-        position: relative;
-        color: #ddd;
-        padding: 0.65vw;
-        width: 50%;
-        background: #262626;
-        height: auto;
-        font-family: 'Arial', sans-serif;
-        font-size: 16px;
-      }
-      .flexcol1 p {
-        position: absolute;
-        left: 0;
-      }
-      .flexcol1 img {
-        position: absolute;
-        right: 0;
-      }
+.button1 {
+    margin: 0;
+    position:relative;
+    justify-self: center;
+    margin: -25px 0 0 -25px;
+    text-decoration: none;
+    color: black;
+    font-family: 'Arial', sans-serif;
+    font-weight: 200;
+    font-size: calc(12px + 1.3vw);
+    text-align: center;
+    background-color: #fff;
 
-      .flexcol2 {
-        width: 28%;
-        height: auto;
-        margin: 112px 0 0 0;
-      }
-      .flexcol4 {
-        width: 32%;
-        height: auto;
-        margin: 230px 0 0 0;
-      }
-      .flexcol3 {
-        width: 40%;
-        height: auto;
-        margin: 230px 0 0 0;
-        padding-right: 1.3vw;
-      }
-      .flexcol5 {
-        width: 45%;
-        position: relative;
-        height: auto;
-        padding-left: 5.21vw;
-      }
-      .flexcol6 {
-        width: 55%;
-        position: relative;
-        height: auto;
-      }
+    border: solid 2px black;
+    border-radius: 50px;
+    padding: 0.651vw 5.208vw;
 
-      @media all and (max-width: 960px) {
-        .flexcol {
-          padding: 0 10px;
-          border-radius: 17px;
-        }
+    -webkit-transition-duration: 300ms;
+    transition-duration: 300ms;
+  }
 
-        .tab {
-          overflow: hidden;
-          border: 1px solid #ccc;
-          background-color: #f1f1f1;
-        }
+.center {
+    display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 52.083vw;
+  height: 29.297vw;
+}
 
-        /* Style the buttons inside the tab */
-        .tab button {
-          background-color: inherit;
-          float: left;
-          border: none;
-          outline: none;
-          cursor: pointer;
-          padding: 14px 16px;
-          transition: 0.3s;
-          font-size: 17px;
-        }
-
-        /* Change background color of buttons on hover */
-        .tab button:hover {
-          background-color: #ddd;
-        }
-
-        /* Create an active/current tablink class */
-        .tab button.active {
-          background-color: #ccc;
-        }
-
-        /* Style the tab content */
-        .tabcontent {
-          display: none;
-          padding: 6px 12px;
-          border: 1px solid #ccc;
-          border-top: none;
-        }
-      }
-      .tab {
-        overflow: hidden;
-        border: 1px solid #ccc;
-        background-color: #f1f1f1;
-      }
-
-      /* Style the buttons inside the tab */
-      .tab button {
-        background-color: inherit;
-        float: left;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 14px 16px;
-        transition: 0.3s;
-        font-size: 17px;
-      }
-
-      /* Change background color of buttons on hover */
-      .tab button:hover {
-        background-color: #ddd;
-      }
-      /* Create an active/current tablink class */
-      .tab button.active {
-        background-color: #ccc;
-      }
-
-      /* Style the tab content */
-      .tabcontent {
-        display: none;
-        padding: 6px 12px;
-      }
-
-      /* Create two equal columns that floats next to each other */
-      .text_column {
-        float: left;
-        width: 50%;
-        padding: 10px;
-        box-sizing: border-box;
-      }
-
-      @media screen and (max-width: 800px) {
-        .text_column {
-          width: 100%;
-        }
-      }
-      /* Clear floats after the columns */
-      .text_row:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-
-        /*-------------------BOKEH SECTION--------------------- */
-  .scrollable-container {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-    }
+.head1 {
+  text-align: center;
+  background-color: #fff;
+  color: #000;
+  font-size: 32px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
+}
 
     </style>
   </head>
@@ -513,30 +485,25 @@
 
     <div class="flexwrap1">
       <div id="About" class="tabcontent">
-        <h3>About</h3>
+        <h3>Welcome to Digital Lab Twin</h3>
+              <div class="home_container">
+                <div class="column_1_home">
+                  <p>
+                    This module will dive into the creation, analysis, and optimization of
+                    a data-driven model. Neural networks are powerful, statistical models
+                    that, over the course of analysing past data, can learn to predict new
+                    outputs. We'll be using one to predict the outputs of a
+                    photobioreactor over a week's experimentation.</p>
+                </div>
 
-        <img
-          src="{{url_for('static', filename='PBR_image.jpg')}}"
-          alt="Example of a Photobioreactor"
-          class="center"
-          style="
-            float: right;
-            width: 600px;
-            height: 350px;
-            border: 5px solid black;
-          "
-        />
-        <p>
-          This module will dive into the creation, analysis, and optimization of
-          a data-driven model. Neural networks are powerful, statistical models
-          that, over the course of analysing past data, can learn to predict new
-          outputs. We'll be using one to predict the outputs of a
-          photobioreactor over a week's experimentation.
-        </p>
+                <div class="column_2_home">
+                  <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="Example of a Photobioreactor" class="right" style="width:100%; height: auto;">
+                </div>
+              </div>
+
+        
       </div>
-    </div>
 
-    <div class="flexwrap1">
       <div id="Photobioreactor Info" class="tabcontent">
             <h3>Photobioreactor Info</h3>
             <p>
@@ -585,9 +552,7 @@
              
             </p>
           </div>
-        </div>
 
-          <div class="flexwrap1">
             <div id="Neural Network Info" class="tabcontent">
                   <h3>Neural Network Info</h3>
             <p>
@@ -670,9 +635,7 @@
               </p>
             </p>
           </div>
-          </div>
 
-          <div class="flexwrap1">
             <div id="Tooltips" class="tabcontent">
                   <h3>Tooltips</h3>
                   <p>
@@ -715,9 +678,7 @@ Determine how many times the network will read over the training data. This heav
                     Choose an algorithm to measure the accuracy of your predictions. MSE judges by square loss, whereas MAE judges by absolute loss.
                   </p>
                 </div>
-              </div>
 
-    <div class="flexwrap1">
       <div id="Instructions" class="tabcontent">
         <h3>Instructions</h3>
         <p>
@@ -730,12 +691,10 @@ Determine how many times the network will read over the training data. This heav
           predictions to your local machine, hit "Export Data".
         </p>
       </div>
-    </div>
 
-    <div class="flexwrap1">
       <div id="Questions" class="tabcontent">
-        <div class="text_row">
-          <div class="text_column">
+        <div class="row">
+          <div class="column_2">
       <p><strong>Questions - Machine Learning</strong> 
         <ol> 
         <li> Run the model under default conditions, and take note of the lowest loss. Change the training split to 0.1, and run again. What happens to loss?<ul><li>Move to the evaluate tab. Are your predictions over time more or less accurate using less training data?</li></ul></li>
@@ -749,7 +708,7 @@ Determine how many times the network will read over the training data. This heav
       </ol></p>
             </div>
 
-          <div class="text_column">
+          <div class="column_2">
             <p> <strong>Questions - PBRs</strong> 
             <ol> 
               <li>Explore each of the inputs using the sliders. Which of these variables has the biggest effect on lutein production? Why might this be the case?</li>

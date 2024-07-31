@@ -11,25 +11,17 @@
     <title>Zero Energy Cooling Chamber</title>
    
     <style>
-    body {
-        margin: 0;
-        background: #fff;
-        font-family: 'Arial', sans-serif;
-        font-weight: 400;
-           }
-            .container {
-                width: 85vw;
-                margin: 0 auto;
-                position: relative;
-    }
-    
-    .container {
-    width: 85vw;
-    margin: 0 auto;
-    position: relative;
+/* -------------------------BODY------------------------- */
+
+body {
+    margin: 0;
+    background: #fff;
+    font-family: 'Arial', sans-serif;
+    font-weight: 400;
 }
 
-/* ------------------------- FOR THE HEADER -------------------------*/
+
+/* ------------------------- HEADER -------------------------*/
 
   
 header {
@@ -105,7 +97,7 @@ header {
   }
   
   .header-text {
-      font-size: 16px; /* Adjust the font size as desired */
+      font-size: 16px;
   }
 
   @media all and (max-width: 608px) {
@@ -131,13 +123,11 @@ header {
   }
   }
   
-  /* The container <div> - needed to position the dropdown content */
   .dropdown {
     float:left;
     overflow:hidden;
   }
   
-  /* Dropdown Button */
   .dropdown .dropbtn {
     padding: 0;
     font-size: 16px;
@@ -197,10 +187,173 @@ header {
   li:hover .dropdown-content {display: block;}
 
 
-  /* ------------------HEADER ENDS HERE------------------- */
+  /* -------------------------TABS------------------------- */
 
-    /*-------------------FOR THE FOOTER--------------------- */
-    .footer1 {
+  .flexwrap1 {
+      display: flex;
+      width: auto;
+      height: auto;
+      font-family: 'Arial', sans-serif;
+      color:#484848;
+      font-weight: 600;
+      font-size: 16px;
+      padding-left:5px;
+      padding-right:5px;
+      padding-bottom:10px;
+      background:#b2e3f4;
+      gap: 2.083vw;
+      line-height: 1.5;
+      margin: auto;
+      justify-content: center;
+    }
+  .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+
+  /* Style the buttons inside the tab */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+  }
+
+  /* -------------------------ROWS AND COLUMNS------------------------- */
+
+  .home_container {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75%;
+      margin-left: auto;
+      margin-right: auto;
+      align-items: stretch;
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+  .column_1_home {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+  .column_2_home {
+      display: flex;
+      align-items: stretch;
+      align-items: first baseline;
+    }
+
+  .column_2_home img {
+      width: auto;
+      max-width: 800px; /* CHANGE AS NECESSARY FOR NEW PHOTO WIDTHS*/
+      height: 100%;
+      object-fit: contain;
+    }
+
+  .column_2 {
+      float: left;
+      width: 45.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_3 {
+      float: left;
+      width: 29.3%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_4 {
+      float: left;
+      width: 20.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+  /* Responsive layouts */
+
+@media screen and (max-width: 1100px) {
+
+  .home_container {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .column_1_home, .column_2_home{
+    width: 100%;
+  }
+
+  .column_1_home {
+    order: 2;
+  }
+
+  .column_2_home {
+    order: 1;
+  }
+
+  .column_2_home img{
+    max-width: 800px;
+  }
+
+}
+
+@media screen and (max-width: 800px) {
+
+  .column_2 {
+    width: 100%;
+  }
+
+  .column_3 {
+    width: 100%;
+  }
+  
+  .column_4 {
+    width: 100%;
+  }
+}
+
+  /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+
+  /*-------------------FOOTER--------------------- */
+  .footer1 {
     margin: 0;
     padding: none;
     list-style:none;
@@ -221,82 +374,31 @@ header {
     flex-wrap: nowrap;
     padding: 10px;
 }
-  /*-------------------FOOTER ENDS HERE-------------------- */
 
 
-.head1 {
+/* -------------------MISC------------------- */
+
+.button1 {
+    margin: 0;
+    position:relative;
+    justify-self: center;
+    margin: -25px 0 0 -25px;
+    text-decoration: none;
+    color: black;
+    font-family: 'Arial', sans-serif;
+    font-weight: 200;
+    font-size: calc(12px + 1.3vw);
     text-align: center;
-    color: #000;
-    font-size: 32px;
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-}
+    background-color: #fff;
 
-.flexwrap1 {
-width: auto;
-font-family: 'Arial', sans-serif;
-color:#484848;
-font-weight: 600;
-font-size: 16px;
-padding-left:10px;
-padding-right:10px;
-padding-bottom:10px;
-background: #b2e3f4;
-gap: 2.083vw;
-line-height: 1.5;
-margin: auto;
-}
-.flexwrap {
-    display:flex;
-    width: 100%;
-    font-family: 'Arial', sans-serif;
-}
-/* .grid-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-} */
+    border: solid 2px black;
+    border-radius: 50px;
+    padding: 0.651vw 5.208vw;
 
-.column_3 {
-      float: left;
-      width: 29.3%;
-      padding-right: 4%;
-    }
-
-@media screen and (max-width: 800px) {
-  .column_3 {
-    width: 100%;
+    -webkit-transition-duration: 300ms;
+    transition-duration: 300ms;
   }
-}
 
-.flexcol {
-  padding: 20px;
-}
-.head2 {
-    text-align: center;
-    color: #000;
-    font-size: 24px;
-    font-weight: 600;
-    font-family: 'Arial', sans-serif;
-}
-.questions {
-    width: auto;
-    margin: auto;
-    font-family: 'Arial', sans-serif;
-    color:#484848;
-    font-weight: 600;
-    border: 0.1953vw; 
-    font-size: 16px;
-    border-style:solid; 
-    border-color:#000; 
-    padding: 0.651vw;
-    background: #E8E8E8;
-    border-radius: 30px;
-    max-width: 85rem;
-}
-li{
-  margin: 0.651vw 0;
-}
 .center {
     display: block;
   margin-left: auto;
@@ -305,104 +407,17 @@ li{
   height: 29.297vw;
 }
 
-.flexcol3 {
-    width: 50%;
-} 
-.footer {
-    margin: 0;
-    padding: 0;
-    list-style:none;
-    text-decoration: none;
-    overflow: hidden;
-    padding: 1.953vw 0;
-    box-sizing: border-box;
-    background-color: #262626;
-    display:flex;
-    width: 100%;
-    font-family: 'Arial', sans-serif;
-    margin-top: -180px;
+.head1 {
+  text-align: center;
+  background-color: #fff;
+  color: #000;
+  font-size: 32px;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
 }
-
-.flexcol1 {
-    position: relative;
-    color: #ddd;
-    padding: 0.65vw;
-    width: 50%;
-    background: #262626;
-    height:auto;
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
-}
-.flexcol1 p{
-    position:absolute;
-    left:0;
-}
-.flexcol1 img{
-    position:absolute;
-    right:0;
-}
-
-.flexcol2 {
-    width: 28%;
-    height:auto;
-    margin: 112px 0 0 0;
-}
-.flexcol4 {
-    width: 32%;
-    height: auto;
-    margin: 230px 0 0 0;
-}
-.flexcol3 {
-    width:40%;
-    height: auto;
-    margin: 230px 0 0 0;
-    padding-right: 1.3vw;
-}
-.flexcol5 {
-    width: 45%;
-    position: relative;
-    height: auto;
-    padding-left: 5.21vw;
-}
-.flexcol6 {
-    width: 55%;
-    position: relative;
-    height: auto;
-}
-
-.tab {
-        overflow: hidden;
-        border: 1px solid #ccc;
-        background-color: #f1f1f1;
-      }
-
-      /* Style the buttons inside the tab */
-      .tab button {
-        background-color: inherit;
-        float: left;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 14px 16px;
-        transition: 0.3s;
-        font-size: 17px;
-      }
-
-      /* Change background color of buttons on hover */
-      .tab button:hover {
-        background-color: #ddd;
-      }
-      /* Create an active/current tablink class */
-      .tab button.active {
-        background-color: #ccc;
-      }
-
-      /* Style the tab content */
-      .tabcontent {
-        display: none;
-        padding: 6px 12px;
-      }
-.slide-container {
+  
+  /*------------------SLIDES---------------------*/
+  .slide-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -417,13 +432,6 @@ li{
   width: 52.083vw;
   height: 29.2969vw;
 }
-
- /*-------------------BOKEH SECTION--------------------- */
- .scrollable-container {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: auto;
-    }
 
 </style>
 </head>
@@ -459,46 +467,53 @@ li{
         <div class="tab">
             <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
             <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Slides')">Slides</button>
-            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Points')">Points</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Information')">Information</button>
           </div>
       
           <div class="flexwrap1">
-          <div id="About" class="tabcontent">
-            <h3>About</h3>
-            <div class="column_3">
-            <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
-          </div>
-            <div class="column_3"> <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
-          </div> 
-          <div class="column_3">
-              <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
-          </div>
-              <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="center" style="width:800px; border:5px solid black">
-           </div>
-          </div>
-          
-          <div class="flexwrap1">
+            <div id="About" class="tabcontent">
+              <h3>Welcome to Zero Energy Cooling Chamber</h3>
+              <div class="home_container">
+                <div class="column_1_home">
+                  <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
+                  <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
+                  <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
+                </div>
+                
+    
+                <div class="column_2_home">
+                  <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="right" style="width:100%; height: auto;">
+                </div>
+              </div>
+            </div>
+
+
           <div id="Slides" class="tabcontent">
             <h3>ZECC Slides</h3>
             <div class="slide-container">
                 <iframe src="{{url_for('static', filename='ZECC ppt.pdf')}}" alt = "ZECC Slides" class="slide-iframe" >Loading…</iframe>
                 </div>
           </div>
-          </div>
+
       
-          <div class="flexwrap1">
-            <div id="Points" class="tabcontent">
-              <h3>Points</h3>
-              <p> <ul>
-                <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
-                <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
-                <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
-                <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
-                <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
-                <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
-            </ul></p>
-            </div>
-            </div>
+ 
+          <div id="Information" class="tabcontent">
+            <h3>Information</h3>
+            <ul>
+              <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
+              <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
+              <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
+              <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
+              <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
+              <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
+              <li>Heat per Time: Displays the heat transferred (from evaporation or conduction) per unit time. The heat conducted refers to the heat transferred from the inner chamber to the water. The evaporative cooling rate refers to the rate of heat leaving the system through evaporation. Water Used: Displays the water needed to keep the system running properly, based off the amount of water evaporating at a given time. A system at steady state needs to release the same amount of what it takes in.</li>
+              <li>Zero Energy Cooling: By using the principles behind perspiration, there is a way to create an eco friendly chamber for storing food in harsh conditions. The two chamber cooling system consists of two nested chambers, with sand filling the space in between. Water is set to flow in the sand layer.</li>
+              <li>Heat Transfer in the ZECC: The heat transfer that occurs in the zero energy cooling chamber, is a combination of all three of the heat transfer methods. The radiation from solar energy heats the chamber and the surrounding area. The ground also radiates heat. The fluid flow and the conduction of the water is what helps to cool the chamber down.</li>
+              <li>Latent Heat of Vaporization: When one mole of a substance at atmospheric pressure goes from the liquid phase to the gaseous phase, there is energy required to bring the substance to a boil and make the phase change occur. Bringing a substance to its boiling point is not enough since there is still energy required to make phase change occur. This energy required is the latent heat of vaporization. Temperature changes cannot occur without phase changes.</li>
+              <li>Dew-Point temperature is critically dependent on both the design of the chamber and inputed values. If the temperature of the outer wall of the chamber becomes too low then water will begin to condense on the surface and no evaporation will occur, halting the cooling process of the inner chamber.</li>
+            </ul>
+          </div>
+          </div>
             
           <script>
             function openTab(evt, tabName) {
@@ -537,27 +552,6 @@ document.addEventListener('keydown', (event) => {
     <div class="scrollable-container">
       {{bokeh_script_ZECC|safe}}
     </div>
-        
-
-    <!--<div style="border:3px; border-style:solid; border-color:#000000; padding: 1em;">
-
-        <h1 style="font-family:Arial; font-size:300%; text-decoration:underline;">Starting Point:</h1>
-
-
-        <dl>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the lowest price you can get the system to operate at?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the maximum storage capacity you can achieve?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the lowest water usage you can achieve?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What is the best inner temperature you should have it function at?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What are the key differences in materials?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- Which locations should the ZECC be used in?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What times of year is the ZECC likely to be used in?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- How could you turn a profit on the ZECC model?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- What kind of food would you want to include in order to turn a profit?</p>
-            <p style="font-size:200%; font-family:Helvetica;" align="justify">- Which constraints are the most important to focus on?</p>
-        </dl>
-    </div>-->
-
 </body>
 
 <div class="footer1">
