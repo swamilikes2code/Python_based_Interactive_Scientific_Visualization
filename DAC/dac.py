@@ -10,7 +10,7 @@ from scipy.integrate import solve_ivp, odeint
 from bokeh.io import save, curdoc
 from bokeh.layouts import column, row, gridplot
 from bokeh.model import Model
-from bokeh.models import CustomJS, Slider, Callback, HoverTool, Button, TabPanel, Tabs
+from bokeh.models import CustomJS, Slider, Callback, HoverTool, Button, TabPanel, Tabs, Spacer
 from bokeh.plotting import ColumnDataSource, figure, show
 import numpy as np
 import pandas as pd
@@ -467,6 +467,11 @@ animate_button = Button(label='► Play', width=80)
 animate_button.on_event('button_click', animate)
 
 ## --------------------  Set up gridplot layout ------------------------- ##
+top_page_spacer = Spacer(height = 20)
+left_page_spacer = Spacer(width = 20)
+
+
+
 constant_slider = (column (V_slider , episl_r_slider))
 inputs_reaction = (column(T_in_slider, c_co2_0_slider, volumetric_flow_slider, Tw_slider, slider_time,))
 inputs_button = row( animate_button, reset_button)
@@ -487,7 +492,7 @@ grid = gridplot([[column1, column2, column3, column4]])
 tab1 =TabPanel(child= grid, title="Direct Air Capture")
 # tab1 =TabPanel(child= grid, title="Desktop")
 # tab2 =TabPanel(child=column(plot_co2, inputs_button,  row( inputs_reaction, height=450)), title="Phone")
-tabs = Tabs(tabs = tab1)
+tabs = Tabs(tabs = [tab1])
 
 
 curdoc().add_root(tabs)
