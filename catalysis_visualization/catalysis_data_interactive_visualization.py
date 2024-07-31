@@ -889,27 +889,25 @@ top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
 
 # Layouts
-visualization_layout = row(left_page_spacer, column(top_page_spacer, [row(inputs, layout)], sizing_mode="scale_both"))
-correlation_layout = row(left_page_spacer, column(top_page_spacer, select_color, c_corr))
+visualization_layout = row(left_page_spacer, column(top_page_spacer, [row(inputs, layout)]))
 regression_layout = row(left_page_spacer, column(top_page_spacer,
-    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)], sizing_mode="scale_both"))
+    [row(column(reg_inputs, reg_RMSE_data_table), reg_tabs, reg_coeff_data_table)]))
 unsuper_learn_layout = row(left_page_spacer, column(top_page_spacer, row(unsuper_learn_inputs,
                                   column(unsuper_learn_k_cluster_model,
                                          unsuper_learn_elbow_model),
                                   column(unsuper_learn_PCA_model, unsuper_learn_PCA_hist_model)),
-                              unsuper_loading_table,
-                              sizing_mode="scale_both"))
+                              unsuper_loading_table))
 svm_layout = row(left_page_spacer, column(top_page_spacer, [row(svm_inputs, classification_svm_model,
                     column(
                         Div(text="<b>Confusion Matrix</b>"),
                         class_cm_data_table,
                         Div(text="<b>Evaluation Metrics</b>"),
-                        class_scores_table))], sizing_mode="scale_both"))
+                        class_scores_table))]))
 
 
 # organizing TabPanels of display
 tab1 = TabPanel(child=visualization_layout, title="Data Exploration")
-tab2 = TabPanel(child=correlation_layout, title="Correlation Matrix")
+tab2 = TabPanel(child=column(select_color, c_corr), title="Correlation Matrix")
 tab3 = TabPanel(child=regression_layout, title="Multivariable Regression")
 tab4 = TabPanel(child=unsuper_learn_layout, title="Unsupervised Learning")
 tab5 = TabPanel(child=svm_layout, title="Classification Methods")
