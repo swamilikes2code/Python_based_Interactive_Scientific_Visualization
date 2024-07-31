@@ -107,12 +107,14 @@ TOOLTIPS = [
 ]
 
 # tools in the toolbar
-TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
+# TOOLS = "pan,wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
+
+TOOLS = "wheel_zoom,box_select,lasso_select,reset,box_zoom,undo,redo"
 
 # Create Column Data Source that will be used by the plot
 source = ColumnDataSource(data=dict(x=[], y=[], M1=[], M2=[], M3=[], Name=[]))
 
-p = figure(height=600, width=700, title="Data Exploration", tools=TOOLS,
+p = figure(height=300, width=400, title="Data Exploration", tools=TOOLS,
            toolbar_location="above", tooltips=TOOLTIPS)
 p.select(BoxSelectTool).continuous = False
 p.select(LassoSelectTool).continuous = False
@@ -256,8 +258,6 @@ def update_histogram(attr, old, new):
     vh1.data_source.data["right"] = vhist1
     # vh2.data_source.data["right"] = -vhist2
 
-
-visualization_layout = column([row(inputs, layout)], sizing_mode="scale_both")
 ###########################################################################
 
 
@@ -901,6 +901,7 @@ def update_classification():
 top_page_spacer = Spacer(height = 20)
 left_page_spacer = Spacer(width = 20)
 
+visualization_layout = row(inputs, layout)
 
 # organizing TabPanels of display
 tab1 = TabPanel(child=row(left_page_spacer, column(top_page_spacer, visualization_layout)), title="Data Exploration")
