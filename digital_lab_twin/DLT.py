@@ -378,37 +378,38 @@ optimizer_options = ["ADAM", "SGD"]
 loss_options = ["MSE", "MAE"]
 
 #test = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Test Split:(0 - 1)")# 
+# changed direction of helpbuttons from right to left (better when viewed in portrait mode)
 
 train = NumericInput(value=0.6, high = 0.7, low = 0.1, mode = "float", title="Train Split:(0.1-0.7)", )# 
-train_tooltip = Tooltip(content=("""Determine as a percentage how much of the data will be used to teach the model. What is left out of training will be used to validate and test."""), position = "right")
+train_tooltip = Tooltip(content=("""Determine as a percentage how much of the data will be used to teach the model. What is left out of training will be used to validate and test."""), position = "left")
 train_help_button = HelpButton(tooltip=train_tooltip, button_type = "light", )
 
 #val_split = NumericInput(value=0.2, high = 100, low = 0, mode = "float", title="Val Split:(0 - 1)")# 
 
 neurons = Slider (start = 7, end = 50, value = 18, step = 1, title = "Number of Neurons")# 
-neurons_tooltip = Tooltip(content=("""Determine how dense each neural network layer is. The network contains 3 layers, with an activator function in between each. Denser networks are resource intensive, but thinner networks may compromise accuracy."""), position = "right")
+neurons_tooltip = Tooltip(content=("""Determine how dense each neural network layer is. The network contains 3 layers, with an activator function in between each. Denser networks are resource intensive, but thinner networks may compromise accuracy."""), position = "left")
 neurons_help_button = HelpButton(tooltip=neurons_tooltip, button_type = "light")
 
 epochs = Slider (start = 5, end = 30, value = 25, step = 5, title = "Epochs")# 
-epochs_tooltip = Tooltip(content=("""Determine how many times the network will read over the training data. This heavily impacts the model’s processing time."""), position = "right")
+epochs_tooltip = Tooltip(content=("""Determine how many times the network will read over the training data. This heavily impacts the model’s processing time."""), position = "left")
 epochs_help_button = HelpButton(tooltip=epochs_tooltip, button_type = "light")
     
 batch_Size = Slider (start = 25, end = 200, value = 25, step = 25, title = "Batch Size")# 
-batch_Size_tooltip = Tooltip(content=("""Determine how many datapoints to feed the network at one time. An ideal batch size will help optimize runtime and model accuracy."""), position = "right")
+batch_Size_tooltip = Tooltip(content=("""Determine how many datapoints to feed the network at one time. An ideal batch size will help optimize runtime and model accuracy."""), position = "left")
 batch_Size_help_button = HelpButton(tooltip=batch_Size_tooltip, button_type = "light")
 
 
 learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
-learning_rate_tooltip = Tooltip(content=("""Choose a maximum value by which the optimizer may adjust neuron weights. The lower this is, the smaller the changes any given epoch will have on the model."""), position = "right")
+learning_rate_tooltip = Tooltip(content=("""Choose a maximum value by which the optimizer may adjust neuron weights. The lower this is, the smaller the changes any given epoch will have on the model."""), position = "left")
 learning_rate_help_button = HelpButton(tooltip=learning_rate_tooltip, button_type = "light")
 
 
 loss_Fn = Select(title="Loss Function:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
-loss_Fn_tooltip = Tooltip(content=f"Choose an algorithm to measure the accuracy of your predictions. MSE judges by square loss, whereas MAE judges by absolute loss. ", position = "right") #{', '.join(loss_options)}
+loss_Fn_tooltip = Tooltip(content=f"Choose an algorithm to measure the accuracy of your predictions. MSE judges by square loss, whereas MAE judges by absolute loss. ", position = "left") #{', '.join(loss_options)}
 loss_Fn_help_button = HelpButton(tooltip=loss_Fn_tooltip, button_type = "light")
 
 optimizer = Select(title="Optimizer:", value="ADAM", options= optimizer_options, height = 60, width = 300)# Student chooses the optimizer 
-O_tooltip = Tooltip(content=f"Choose an algorithm by which the neural network will adjust it’s inner neurons. Both choices can be efficient, but may require further tuning of other parameters.", position="right") # {', '.join(optimizer_options)}
+O_tooltip = Tooltip(content=f"Choose an algorithm by which the neural network will adjust it’s inner neurons. Both choices can be efficient, but may require further tuning of other parameters.", position="left") # {', '.join(optimizer_options)}
 optimizer_help_button = HelpButton(tooltip=O_tooltip, button_type = "light")
 
 #Mean Square Error / Root Mean Square Error section--------------------------------------------------------------------------------------------------------------------
@@ -647,7 +648,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 # loss_datas = pandas.read_csv(loss_data)
 # loss_source = ColumnDataSource(loss_datas)
 #Loss Graph section ---------------------------------------------------------------------------------------------------------------------
-p2 = figure(title = "Loss Graph (Training)", x_axis_label = "Epochs", y_axis_label = "Loss (percentage)", )
+p2 = figure(title = "Loss Graph (Training)", x_axis_label = "Epochs", y_axis_label = "Loss (percentage)", width=400, height=380)
 
 def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
@@ -899,7 +900,7 @@ sizeAccess.on_change('value', font_size_callback)
 columns = [TableColumn(field=column_name, title=column_name,) for column_name in pastRuns.columns]
 
 # Create the DataTable
-chart_table = DataTable(source=charts, columns=columns, width=800, height=200)
+chart_table = DataTable(source=charts, columns=columns, width=390, height=200, autosize_mode = "none")
 
 
 
