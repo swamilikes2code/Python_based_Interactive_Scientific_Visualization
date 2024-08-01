@@ -45,6 +45,13 @@ if master == 'y':z
 else:
     master = False"""
 
+# ------- STATUS MESSAGES --------
+not_updated = {'color': 'red', 'font-size': '14px'}
+loading = {'color': 'orange', 'font-size': '14px'}
+updated = {'color': 'green', 'font-size': '14px'}
+run_button_status_message = Div(text='Not running', styles=not_updated)
+run_button_edit_tab_status_message = Div(text='Not running', styles=not_updated)
+
 intro = Div(text="""
        
         <h3>Simple Photobioreactor Summary</h3>
@@ -369,6 +376,15 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
     plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
     export_button.js_on_event("button_click", CustomJS(args=dict(source=sourceS),
                             code=open(join(dirname(__file__), "download.js")).read()))
+    run_button_status_message.text = 'Configuration Loaded'
+    run_button_status_message.styles = updated
+    
+
+def load_runbutton_function():
+    run_button_status_message.text = 'Loading configuration...'
+    run_button_status_message.styles = loading
+    runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con,)
+
 run_button.on_click(runbutton_function)
 
 
