@@ -932,7 +932,7 @@ batch = row(batch_Size, batch_Size_help_button)
 learning = row(learning_rate, learning_rate_help_button)
 optimizers = row(optimizer, optimizer_help_button)
 losses_help = row(loss_Fn, loss_Fn_help_button)
-ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_button_edit_tab, reset_button_edit_tab ) #test,val_split,
+ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_button_edit_tab, reset_button_edit_tab, run_button_edit_tab_status_message) #test,val_split,
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error,)
 lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss, chart_table)
@@ -941,7 +941,7 @@ evaluate = row(left_page_spacer, column(top_page_spacer, row(p4,p3, means)))
 choose = row (fontAccess, sizeAccess)
 test = column(choose, intro)
 tab1 = TabPanel(child=bs, title="Train")
-tab3 = TabPanel(child= row(left_page_spacer, column(top_page_spacer, row(p,column(reset_button, slides, export_button, run_button)))), title="Optimize")
+tab3 = TabPanel(child= row(left_page_spacer, column(top_page_spacer, row(p,column(reset_button, slides, export_button, run_button, run_button_edit_tab_status_message)))), title="Optimize")
 tab2 = TabPanel(child = evaluate, title = "Evaluate")
 # tab4 = TabPanel(child = test, title = "Instruction")
 
