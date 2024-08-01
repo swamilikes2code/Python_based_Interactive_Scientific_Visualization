@@ -18,27 +18,35 @@ mapp = figure(x_range=(-14000000, 7000000), y_range=(-4000000, 6060000), # range
            x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=4/3, height=300, width=400)
 mapp.add_tile("CartoDB Positron", retina=True)
 #adding each location to the map
-mapp.circle(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.7, legend_label="Bethlehem, PA")
-mapp.circle(x=-8931102.469623, y=2972160.043550, size=10, fill_color='darkred', fill_alpha=.7, legend_label="Miami, FL")
-mapp.circle(x=-9290844.007714, y=953484.087498, size=10, fill_color='darkgreen', fill_alpha=0.7, legend_label="Puerto Jiménez, Costa Rica")
-mapp.circle(x=-8741967.501084, y=-22993.039835, size=10, fill_color='peru', fill_alpha=0.7, legend_label="Quito, Ecuador")
-mapp.circle(x=4105174.772925, y=-145162.620135, size=10, fill_color='mediumpurple', fill_alpha=0.7, legend_label="Nairobi, Kenya")
-mapp.circle(x=3564845.194234, y=-948229.994036, size=10, fill_color='navy', fill_alpha=0.7, legend_label="Lusaka, Zambia")
+mapp.scatter(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.7, legend_label="Bethlehem, PA")
+mapp.scatter(x=-8931102.469623, y=2972160.043550, size=10, fill_color='darkred', fill_alpha=.7, legend_label="Miami, FL")
+mapp.scatter(x=-9290844.007714, y=953484.087498, size=10, fill_color='darkgreen', fill_alpha=0.7, legend_label="Puerto Jiménez, Costa Rica")
+mapp.scatter(x=-8741967.501084, y=-22993.039835, size=10, fill_color='peru', fill_alpha=0.7, legend_label="Quito, Ecuador")
+mapp.scatter(x=4105174.772925, y=-145162.620135, size=10, fill_color='mediumpurple', fill_alpha=0.7, legend_label="Nairobi, Kenya")
+mapp.scatter(x=3564845.194234, y=-948229.994036, size=10, fill_color='navy', fill_alpha=0.7, legend_label="Lusaka, Zambia")
 mapp.legend.background_fill_alpha=0.5
 #if you add more locations to the spreadsheets then you will need to manually add another point on the map here
 
+master = True
+master = False
 
-#Creating a Pandas data frame for data stored in csv files that are found in the same folder as the program is stored
-yearly_temps_df=pd.read_csv("ZECC_Model/Yearly_Temps.csv", index_col=0, header=0) #reading in data for the monthly average temperatures for 6 different locations
-yearly_rh_df=pd.read_csv("ZECC_Model/Yearly_RH.csv", index_col=0, header=0) #reading in data for the monthly average of relative humidity for 6 different locations
-daily_temps_df=pd.read_csv("ZECC_Model/Hourly_Temps.csv", index_col=0, header=0) #reading in data for the hourly temperatures for one day in mid-June for 6 locations
-daily_rh=pd.read_csv("ZECC_Model/ZECC_Daily_rh.csv", index_col=0, header=0) #reading in data for the dailt relative humidity values for each location
+if master == True:
+    #Creating a Pandas data frame for data stored in csv files that are found in the same folder as the program is stored
+    yearly_temps_df=pd.read_csv("ZECC_Model/Yearly_Temps.csv", index_col=0, header=0) #reading in data for the monthly average temperatures for 6 different locations
+    yearly_rh_df=pd.read_csv("ZECC_Model/Yearly_RH.csv", index_col=0, header=0) #reading in data for the monthly average of relative humidity for 6 different locations
+    daily_temps_df=pd.read_csv("ZECC_Model/Hourly_Temps.csv", index_col=0, header=0) #reading in data for the hourly temperatures for one day in mid-June for 6 locations
+    daily_rh=pd.read_csv("ZECC_Model/ZECC_Daily_rh.csv", index_col=0, header=0) #reading in data for the dailt relative humidity values for each location
+else:
+    yearly_temps_df=pd.read_csv("./Yearly_Temps.csv", index_col=0, header=0) #reading in data for the monthly average temperatures for 6 different locations
+    yearly_rh_df=pd.read_csv("./Yearly_RH.csv", index_col=0, header=0) #reading in data for the monthly average of relative humidity for 6 different locations
+    daily_temps_df=pd.read_csv("./Hourly_Temps.csv", index_col=0, header=0) #reading in data for the hourly temperatures for one day in mid-June for 6 locations
+    daily_rh=pd.read_csv("./ZECC_Daily_rh.csv", index_col=0, header=0) #reading in data for the dailt relative humidity values for each location
 
 
-TOOLS = "pan,reset,save,box_zoom" #tools for the graphs
+TOOLS = "reset,save,box_zoom" #tools for the graphs
 #Creating Grpah to show average temps throught the year for each location
 diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, height=300, width=400)
-diff_temps.title.text_font_size='14pt'
+# diff_temps.title.text_font_size='14pt'
 diff_temps.xaxis.ticker = list(range(1, 13))
 diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
                                         7: "July", 8:'August', 9:'September', 10: 'October', 11: 'November', 12: 'December'} #makes x-axis have name labels instead of month numbers
@@ -46,11 +54,11 @@ diff_temps.xaxis.major_label_orientation=1
 
 #creating a graph to show the 6 locations temperatures throught one day 
 hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, height=300, width=400)
-hourly_temps.title.text_font_size='14pt'
+# hourly_temps.title.text_font_size='14pt'
 
 #Creating a graph to show the average humidity trends for each location throughout the year
 humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", x_range=diff_temps.x_range, tools=TOOLS, aspect_ratio=4/3, height=300, width=400)
-humid.title.text_font_size='14pt'
+# humid.title.text_font_size='14pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
                                         7: "July", 8:'August', 9:'September', 10: 'October', 11: 'November', 12: 'December'} #chaning x-axis to month names instead of numbers
@@ -114,7 +122,7 @@ gg1=g1.line('time', 'output', source=source, color="purple", legend_label="Heat 
 g1.y_range=Range1d(start1, end1)
 g1.legend.click_policy="hide"
 g1.legend.background_fill_alpha=0.5
-g1.title.text_font_size='14pt'
+# g1.title.text_font_size='14pt'
 g1.legend.location='top_left'
 
 location_options=[]
@@ -122,15 +130,15 @@ for x in range(0,len(yearly_temps_df.index)):
     location_options.append(yearly_temps_df.index[x])
     
 #adding sliders for adjustable dimensions of chamber and drop down menus for location, time interval, and material specifications
-slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=450, margin=(10, 0, 5, 30))
-slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5, width=450, margin=(5, 0, 5, 30))
-slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25, width=450, margin=(5, 0, 5, 30))
-slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=450, margin=(5, 0, 5, 30))
-select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=400, margin=(5, 0, 5, 20))
-slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=450, margin=(5, 5, 5, 30))
-location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=location_options, width=400, margin=(10, 5, 5, 20))
-time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=400, margin=(5, 5, 5, 20))
-calculate_button=Button(label="Calculate", button_type='success', width=450, margin=(5, 0, 5, 20)) #a button that will calculate cost and water needed when clicked
+slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=370, margin=(10, 0, 5, 30))
+slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5, width=370, margin=(5, 0, 5, 30))
+slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25, width=370, margin=(5, 0, 5, 30))
+slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=370, margin=(5, 0, 5, 30))
+select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=370, margin=(5, 0, 5, 20))
+slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=370, margin=(5, 5, 5, 30))
+location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=location_options, width=370, margin=(10, 5, 5, 20))
+time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=370, margin=(5, 5, 5, 20))
+calculate_button=Button(label="Calculate", button_type='success', width=370, margin=(5, 0, 5, 20)) #a button that will calculate cost and water needed when clicked
 
 def latent_heat(temp): #function to interpolate latent heat value
     #Interpolating the values for latent heat of evaporation
@@ -315,8 +323,8 @@ def dew_point_hourly(temps, rh, time): #calculating dew point of loction at spec
 dp_Costa=dew_point(yearly_temps_df.iloc[2], yearly_rh_df.iloc[2], range(0,12)) #dew point for initial Costa Rica ZECC
 
 #creating a graph that shows the ambient temp, outer wall temp, and dew point temp
-g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), height=300, width=400)
-g4.title.text_font_size='14pt'
+g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), height=300, width=370)
+# g4.title.text_font_size='14pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], dp=dp_Costa, T1=range(0,12)))
 gl1=g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
 gl2=g4.line('time', 'dp', source=sourceDP, color='darkblue', line_width=2, line_dash=[4,4], legend_label="Dew-Point Temperature")
