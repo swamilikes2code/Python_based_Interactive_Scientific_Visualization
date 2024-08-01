@@ -221,7 +221,7 @@ initial_data = pandas.read_csv(initial_csv1)
 initial_source = ColumnDataSource(initial_data)
 
 #Plotting Function Section ---------------------------------------------------------------------------------------------------------------------
-p = figure(title = "Change in concentrations over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", )
+p = figure(title = "Change in concentrations over time in a photobioreactor", x_axis_label = "Time(hours)", y_axis_label = "concentration", width=400, height=370)
 
 def plot_graph(sources):
     #Removes previous lines and hover tools
@@ -648,7 +648,7 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
 # loss_datas = pandas.read_csv(loss_data)
 # loss_source = ColumnDataSource(loss_datas)
 #Loss Graph section ---------------------------------------------------------------------------------------------------------------------
-p2 = figure(title = "Loss Graph (Training)", x_axis_label = "Epochs", y_axis_label = "Loss (percentage)", width=400, height=380)
+p2 = figure(title = "Loss Graph (Training)", x_axis_label = "Epochs", y_axis_label = "Loss (percentage)", width=400, height=370)
 
 def loss_graph(loss_data, p2): # function to plot the loss graph
     #Removes previous lines and hover tools
@@ -680,7 +680,7 @@ if master:
 loss_graph(lossInitPath, p2)
 
 #Parity Plot section ---------------------------------------------------------------------------------------------------------------------
-p3 = figure(title = "Parity Plot", x_axis_label = "Actual Concentration", y_axis_label = "Predicted Concentration", )
+p3 = figure(title = "Parity Plot", x_axis_label = "Actual Concentration", y_axis_label = "Predicted Concentration", width=400, height=370)
 def parity_plot(parity_data, p3): # function to plot the parity graph
     #Removes previous lines and hover tools
     p3.renderers = [] #removes previous lines
@@ -726,7 +726,7 @@ p3.legend.background_fill_color = "white"
 p3.legend.background_fill_alpha = 0.5
 
 #Predictions vs Actual Plot section ---------------------------------------------------------------------------------------------------------------------
-p4 = figure(title = "Prediction vs Actual Plot", x_axis_label = "Time", y_axis_label = "Concentration", )
+p4 = figure(title = "Prediction vs Actual Plot", x_axis_label = "Time", y_axis_label = "Concentration", width=400, height=370)
 def versus_plot(vs_data, p4): # function to plot the parity graph
     #Removes previous lines and hover tools
     p4.renderers = [] #removes previous lines
@@ -897,7 +897,7 @@ sizeAccess.on_change('value', font_size_callback)
 #make pandas data frame for the chart
 
 # Define the columns for the DataTable
-columns = [TableColumn(field=column_name, title=column_name,) for column_name in pastRuns.columns]
+columns = [TableColumn(field=column_name, title=column_name, width=80) for column_name in pastRuns.columns]
 
 # Create the DataTable
 chart_table = DataTable(source=charts, columns=columns, width=390, height=200, autosize_mode = "none")
