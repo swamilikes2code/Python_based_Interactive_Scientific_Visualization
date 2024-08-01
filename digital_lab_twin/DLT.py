@@ -919,12 +919,12 @@ ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error,)
 lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss, chart_table)
-bs = row(ls, rs, lowest_val_info)
-evaluate = row(p4,p3, means)
+bs = row(left_page_spacer, ls, rs, lowest_val_info)
+evaluate = row(left_page_spacer, p4,p3, means)
 choose = row (fontAccess, sizeAccess)
 test = column(choose, intro)
 tab1 = TabPanel(child=bs, title="Train")
-tab3 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
+tab3 = TabPanel(child= row(left_page_spacer, p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
 tab2 = TabPanel(child = evaluate, title = "Evaluate")
 # tab4 = TabPanel(child = test, title = "Instruction")
 
