@@ -304,8 +304,17 @@ def rest_button_callback():
     biomass_con.value = 0.5
     inlet_concentration.value = 10
     inlet_flow.value = 0.008
-    
-reset_button.on_click(rest_button_callback)
+    run_button_status_message.text = 'Configuration Reset'
+    run_button_status_message.styles = updated
+
+
+
+def load_rest_button_callback():
+    run_button_status_message.text = 'Resetting...'
+    run_button_status_message.styles = loading
+    rest_button_callback()
+
+reset_button.on_click(load_rest_button_callback)
 
 
 
@@ -376,16 +385,16 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
     plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
     export_button.js_on_event("button_click", CustomJS(args=dict(source=sourceS),
                             code=open(join(dirname(__file__), "download.js")).read()))
-    run_button_status_message.text = 'Configuration Loaded'
+    run_button_status_message.text = 'Configuration Ran'
     run_button_status_message.styles = updated
     
 
 def load_runbutton_function():
-    run_button_status_message.text = 'Loading configuration...'
+    run_button_status_message.text = 'Running...'
     run_button_status_message.styles = loading
     runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con,)
 
-run_button.on_click(runbutton_function)
+run_button.on_click(load_runbutton_function)
 
 
 #Edit Tab Section______________________________________________________________________________________________________________________________
@@ -479,7 +488,15 @@ def reset_button_edit_tab_function():
     lowest_mse_validation.value = str(100)
     epoch_of_lowest_loss.value = str('N/A')
     p2.renderers = []
-reset_button_edit_tab.on_click(reset_button_edit_tab_function)
+    run_button_edit_tab_status_message.text = 'Configuration Reset'
+    run_button_edit_tab_status_message.styles = updated
+
+def load_reset_button_edit_tab_function():
+    run_button_edit_tab_status_message.text = 'Resetting...'
+    run_button_edit_tab_status_message.styles = loading
+    reset_button_edit_tab_function()
+
+reset_button_edit_tab.on_click(load_reset_button_edit_tab_function)
     
 #Model Loop section for edit tab_____________________________________________________________________________________________________________________
 
@@ -811,10 +828,17 @@ run_button_edit_tab = Button(label = "Run", button_type = "primary", height = 60
 
 def first_clicked(p2 = p2):
     p2.renderers = []
-    run_button_edit_tab.label = "Running..."
-    run_button_edit_tab.button_type = "danger"
+    # run_button_edit_tab.label = "Running..."
+    # run_button_edit_tab.button_type = "danger"
+    run_button_edit_tab_status_message.text = "Configuration Ran"
+    run_button_edit_tab_status_message.styles = updated
+
+def load_first_clicked():
+    run_button_edit_tab_status_message.text = "Running..."
+    run_button_edit_tab_status_message.styles = loading
+    first_clicked(p2 = p2)
     
-run_button_edit_tab.on_click(first_clicked)
+run_button_edit_tab.on_click(load_first_clicked)
 
 
 #create dataframe to hold past runs, columns are LearnRate, lossFn, Optimizer, TrainSplit, Neurons, Epochs, BatchSize, LowestLoss, EpochofLowestLoss
@@ -865,15 +889,21 @@ def edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer
     #total time for function
     functionTime = functionEnd - functionStart
     print(f"Total time for function: {functionTime:0.4f} seconds")
+    run_button_edit_tab_status_message.text = "Configuration Ran"
+    run_button_edit_tab_status_message.styles = updated
     #TODO: use XDF to plot the actual vs predicted values
     #'Time' on X axis, then two lines per output (actual and predicted) on Y axis
     #C_X, C_N, C_L are model outputs, C_X_actual, C_N_actual, C_L_actual are actual values
 
 
     
+def load_edit_run_button_function():
+    run_button_edit_tab_status_message.text = "Running..."
+    run_button_edit_tab_status_message.styles = loading
+    edit_run_button_function(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options, p2 = p2, p3 = p3, mean = mean_squared_error, root_mean = root_mean_squared_error, p4 = p4, minValLoss = lowest_mse_validation, minValLossIndex = epoch_of_lowest_loss, charts = charts)
+
     
-    
-run_button_edit_tab.on_click(edit_run_button_function)
+run_button_edit_tab.on_click(load_edit_run_button_function)
 
 #Fonts Slection******************************************************************************************************************************
 font_options = ["Arial", "San Serif", "Times New Roman", ]
