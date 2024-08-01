@@ -172,7 +172,7 @@ def water_needed(dims, temp, SVP, rh): #function to calculate the amount of wate
         p_star.append(np.exp(A - B / (C + i + 273))) 
         # Antoine equation for vapor pressure at outside air
     for j in range(0, 12):
-        p_air.append(rh[j]*p_star[j])
+        p_air.append(rh.iloc[j]*p_star[j])
     #for j in p_star:
      #   p_air.append(rh*j) 
         # bulk pressure of air at t bulk
@@ -194,8 +194,8 @@ def water_needed_hourly(dims, temp, SVP, rh): #function to calculate the amount 
     for i in temp:
         p_star.append(np.exp(A - B / (C + i + 273))) 
         # Antoine equation for vapor pressure at outside air
-    for j in p_star:
-        p_air.append(rh*j) 
+    for j in range(0, 24):
+        p_air.append(rh.iloc[0]*p_star[j]) 
         # bulk pressure of air at t bulk 
     for x in range(0,24):
         yy=theta*SA*((p_star[x]-p_air[x])/760) #in L/hour
@@ -212,7 +212,7 @@ for p in yearly_temps_df.iloc[2]:
 
 #getting water for Costa Rica as that will be the initial display
 water_monthly=water_needed(initial_dims, yearly_temps_df.iloc[2], vap_init, yearly_rh_df.iloc[2])
-water_trial=water_needed_hourly(initial_dims, daily_temps_df.iloc[2], vap1_init, yearly_rh_df.iloc[2])
+water_trial=water_needed_hourly(initial_dims, daily_temps_df.iloc[2], vap1_init, daily_rh.iloc[2])
 sourceW=ColumnDataSource(data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], water=water_monthly))
 
 
@@ -307,8 +307,8 @@ def dew_point(temps, rh, time): #calculating dew point of location at speific ti
     a = 17.27
     b = 237.7
     for t in time:
-        alpha = b * (((a * temps[t]) / (b + temps[t])) + np.log(rh[t]))
-        gamma = a - (((a * temps[t]) / (b + temps[t])) + np.log(rh[t]))
+        alpha = b * (((a * temps.iloc[t]) / (b + temps.iloc[t])) + np.log(rh.iloc[t]))
+        gamma = a - (((a * temps.iloc[t]) / (b + temps.iloc[t])) + np.log(rh.iloc[t]))
         dp_out.append(alpha / gamma)
     return dp_out
 def dew_point_hourly(temps, rh, time): #calculating dew point of loction at specific time
@@ -316,8 +316,8 @@ def dew_point_hourly(temps, rh, time): #calculating dew point of loction at spec
     a = 17.27
     b = 237.7
     for t in time:
-        alpha = b * (((a * temps[t]) / (b + temps[t])) + np.log(rh))
-        gamma = a - (((a * temps[t]) / (b + temps[t])) + np.log(rh))
+        alpha = b * (((a * temps.iloc[t]) / (b + temps.iloc[t])) + np.log(rh))
+        gamma = a - (((a * temps.iloc[t]) / (b + temps.iloc[t])) + np.log(rh))
         dp_out.append(alpha / gamma)
     return dp_out
 dp_Costa=dew_point(yearly_temps_df.iloc[2], yearly_rh_df.iloc[2], range(0,12)) #dew point for initial Costa Rica ZECC
@@ -369,7 +369,7 @@ def T1_calc(dims, temps, wanted_temp, mat, time_range): #calculating outer wall 
     T2 = -((q * (L2 / (k_ws*A_sand))) - T3)
     T1=[]
     for i in time_range:
-        abc = (((L3 * h2 * T_bulk[i]) / k_brick) + T2) / (1 + (L3 * h2) / k_brick)
+        abc = (((L3 * h2 * T_bulk.iloc[i]) / k_brick) + T2) / (1 + (L3 * h2) / k_brick)
         T1.append(abc)
     #print(T1)
     return T1
