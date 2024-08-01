@@ -200,7 +200,8 @@ co2_df = pd.DataFrame(co2_array, tspan)
 q_df =  pd.DataFrame(q_array, tspan)
 
 ## --------------------  Start Plotting ------------------------- ##
-Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
+# Tools = "crosshair,pan,reset,undo,box_zoom, save,wheel_zoom",
+Tools = "crosshair,reset,undo,box_zoom, save,wheel_zoom",
 
 source_temperature = ColumnDataSource(data=dict(temp_x=vec_Z, temp_y=temp_df.iloc[1]))
 plot_temperature = figure(height=370, width=400, title="Axial Profile of Column Temperature ",
