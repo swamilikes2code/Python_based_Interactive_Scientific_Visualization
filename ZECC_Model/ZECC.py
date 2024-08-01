@@ -1,6 +1,6 @@
 from bokeh.io import curdoc
 import ast
-from bokeh.layouts import row, column
+from bokeh.layouts import row, column, Spacer
 from bokeh.models import ColumnDataSource, Slider, Select, Paragraph, TableColumn, DataTable, Button, TabPanel, Tabs, LinearAxis, Range1d, HoverTool
 from bokeh.plotting import figure
 import numpy as np
@@ -15,7 +15,7 @@ time_ranges=["12 Months", "24 Hours"] #possible time ranges
 
 #Creating a map of the world to show where each of the 6 possible locations are
 mapp = figure(x_range=(-14000000, 7000000), y_range=(-4000000, 6060000), # range bounds supplied in web mercator coordinates
-           x_axis_type="mercator", y_axis_type="mercator", margin=(0, 0, 0, 20), aspect_ratio=4/3, height=300, width=400)
+           x_axis_type="mercator", y_axis_type="mercator", aspect_ratio=4/3, height=300, width=400)
 mapp.add_tile("CartoDB Positron", retina=True)
 #adding each location to the map
 mapp.scatter(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.7, legend_label="Bethlehem, PA")
@@ -117,7 +117,7 @@ start1=np.min(source.data['output'])
 end1=np.max(source.data['output'])
 
 #creating a graph to show the heat conduction and evaporative cooling rate for desired ZECC
-g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS, margin=(20, 20, 20, 10), height=300, width=400)
+g1=figure(title="Heat per Time", x_axis_label="Time in Months", y_axis_label="Heat Conduction per Time", tools=TOOLS, height=300, width=400)
 gg1=g1.line('time', 'output', source=source, color="purple", legend_label="Heat Conduction", line_dash=[4,4], line_width=3)
 g1.y_range=Range1d(start1, end1)
 g1.legend.click_policy="hide"
@@ -130,15 +130,15 @@ for x in range(0,len(yearly_temps_df.index)):
     location_options.append(yearly_temps_df.index[x])
     
 #adding sliders for adjustable dimensions of chamber and drop down menus for location, time interval, and material specifications
-slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=370, margin=(10, 0, 5, 30))
-slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5, width=370, margin=(5, 0, 5, 30))
-slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25, width=370, margin=(5, 0, 5, 30))
-slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=370, margin=(5, 0, 5, 30))
-select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=370, margin=(5, 0, 5, 20))
-slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=370, margin=(5, 5, 5, 30))
-location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=location_options, width=370, margin=(10, 5, 5, 20))
-time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=370, margin=(5, 5, 5, 20))
-calculate_button=Button(label="Calculate", button_type='success', width=370, margin=(5, 0, 5, 20)) #a button that will calculate cost and water needed when clicked
+slide_length=Slider(title="Length of Chamber", value=initial_dims[0], start=0, end=12, step=0.5, width=370)
+slide_width=Slider(title="Width of Chamber", value=initial_dims[1], start=0, end=12, step=0.5, width=370)
+slide_height=Slider(title="Height of Chamber", value=initial_dims[2], start=0, end=5, step=0.25, width=370)
+slide_thick=Slider(title="Thickness of Sand Layer in Chamber Wall", value=initial_dims[3], start=0, end=1, step=0.001, width=370)
+select_material=Select(title="Choice of Material for Walls of the Chamber:", value="Brick", options=materials, width=370)
+slide_desired_temp=Slider(title="Desired Temperature for the Inner Chamber", value=20, start=2, end=50, step=0.5, width=370)
+location_select=Select(title="Location", value="Puerto Jiménez, Costa Rica", options=location_options, width=370)
+time_select=Select(title="Time Interval", value="12 Months", options=time_ranges, width=370)
+calculate_button=Button(label="Calculate", button_type='success', width=370) #a button that will calculate cost and water needed when clicked
 
 def latent_heat(temp): #function to interpolate latent heat value
     #Interpolating the values for latent heat of evaporation
@@ -300,7 +300,7 @@ sourceTable=ColumnDataSource(data=dict(name=tableName, time=tableTime, Year_Pric
 columnsT=[TableColumn(field='name', title='Location'), TableColumn(field='time', title='Time Interval'), TableColumn(field='space', title='Storage Volume Capacity (in m^3)'), 
           TableColumn(field='Day_Water', title='Daily Water Input (in Liters)'), TableColumn(field='Year_Water', title='Yearly Water Input (in L)'),
           TableColumn(field='Day_Price', title='Daily Cost in $'), TableColumn(field='Year_Price', title='Yearly Cost in $')]
-data_table=DataTable(source=sourceTable, columns=columnsT, width=750, margin=(5, 0, 0, 20))
+data_table=DataTable(source=sourceTable, columns=columnsT, width=750)
 
 def dew_point(temps, rh, time): #calculating dew point of location at speific time
     dp_out=[]
@@ -323,7 +323,7 @@ def dew_point_hourly(temps, rh, time): #calculating dew point of loction at spec
 dp_Costa=dew_point(yearly_temps_df.iloc[2], yearly_rh_df.iloc[2], range(0,12)) #dew point for initial Costa Rica ZECC
 
 #creating a graph that shows the ambient temp, outer wall temp, and dew point temp
-g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, margin=(20, 20, 20, 20), height=300, width=370)
+g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, height=300, width=370)
 # g4.title.text_font_size='14pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], dp=dp_Costa, T1=range(0,12)))
 gl1=g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
@@ -512,14 +512,19 @@ def button_updates(): #when calculate button is pressed, this function re-calcul
 #p_dp=Paragraph(text="Note:    Dew-Point temperature is critically dependent on both the design of the chamber and inputed values. If the temperature of the outer wall of the chamber becomes too low then water will begin to condense on the surface and no evaporation will occur, halting the cooling process of the inner chamber.", 
 #               margin=(20, 10, 20, 10), width=700)
 
+left_page_spacer = Spacer(width = 20)
+top_page_spacer = Spacer(height = 20)
+height1 = Spacer(height=20)
+height2 = Spacer(height=20)
+
 #organizing display
 widgets=column(location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp, calculate_button)
 selecters=column(location_select, time_select, select_material)
 sliders=column(slide_length, slide_height, slide_width, slide_thick, slide_desired_temp)
 
 #organizing panels of diaply
-tab2=TabPanel(child=column(row(diff_temps, hourly_temps), row(humid, mapp)), title="Climate Data")
-tab1=TabPanel(child=column(row(selecters, sliders), row(g4, g1), calculate_button, data_table), title="Heat Transfer & Essential Temps")
+tab2=TabPanel(child=row(left_page_spacer, column(top_page_spacer, row(diff_temps, left_page_spacer, hourly_temps), height1, row(humid, left_page_spacer, mapp))), title="Climate Data")
+tab1=TabPanel(child=row(left_page_spacer, column(top_page_spacer, row(selecters, left_page_spacer, sliders), height1, row(g4, left_page_spacer, g1), height2, calculate_button, data_table)), title="Heat Transfer & Essential Temps")
 tabs=Tabs(tabs=[tab1, tab2])
 
 updates=[location_select, time_select, select_material, slide_length, slide_height, slide_width, slide_thick, slide_desired_temp]
