@@ -28,7 +28,7 @@ mapp.legend.background_fill_alpha=0.5
 #if you add more locations to the spreadsheets then you will need to manually add another point on the map here
 
 master = True
-master = False
+# master = False
 
 if master == True:
     #Creating a Pandas data frame for data stored in csv files that are found in the same folder as the program is stored
