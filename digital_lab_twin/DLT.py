@@ -52,6 +52,12 @@ updated = {'color': 'green', 'font-size': '14px'}
 run_button_status_message = Div(text='Not running', styles=not_updated)
 run_button_edit_tab_status_message = Div(text='Not running', styles=not_updated)
 
+def reset_status_messages():
+    run_button_status_message.text = 'Not running'
+    run_button_status_message.styles = not_updated
+    run_button_edit_tab_status_message.text = 'Not running'
+    run_button_edit_tab_status_message.styles = not_updated
+
 intro = Div(text="""
        
         <h3>Simple Photobioreactor Summary</h3>
@@ -133,6 +139,12 @@ inlet_flow = Slider(start=0.001, end=0.015, value= 0.008, step=.0001, format = "
 inlet_concentration = Slider(start=5, end=15, value=10, step=.1, title="Inlet Concentration of Nitrates(g/L):(5 - 15)")
 nitrate_con = Slider(start=0.2, end=2, value=1, step=.05, title="Initial Nitrate Concentration(g/L):(0.2 - 2)")
 biomass_con = Slider(start=0.2, end=2, value=0.5, step=.05, title="Initial Biomass Concentration(g/L):(0.2 - 2)")
+
+light_intensity.on_change('value', reset_status_messages)
+inlet_flow.on_change('value', reset_status_messages)
+inlet_concentration.on_change('value', reset_status_messages)
+nitrate_con.on_change('value', reset_status_messages)
+biomass_con.on_change('value', reset_status_messages)
 
 
 #pytorch Preloop  section ---------------------------------------------------------------------------------------------------------------------
@@ -414,20 +426,22 @@ train_help_button = HelpButton(tooltip=train_tooltip, button_type = "light", )
 neurons = Slider (start = 7, end = 50, value = 18, step = 1, title = "Number of Neurons")# 
 neurons_tooltip = Tooltip(content=("""Determine how dense each neural network layer is. The network contains 3 layers, with an activator function in between each. Denser networks are resource intensive, but thinner networks may compromise accuracy."""), position = "left")
 neurons_help_button = HelpButton(tooltip=neurons_tooltip, button_type = "light")
+neurons.on_change('value', reset_status_messages)
 
 epochs = Slider (start = 5, end = 30, value = 25, step = 5, title = "Epochs")# 
 epochs_tooltip = Tooltip(content=("""Determine how many times the network will read over the training data. This heavily impacts the model’s processing time."""), position = "left")
 epochs_help_button = HelpButton(tooltip=epochs_tooltip, button_type = "light")
+epochs.on_change('value', reset_status_messages)
     
 batch_Size = Slider (start = 25, end = 200, value = 25, step = 25, title = "Batch Size")# 
 batch_Size_tooltip = Tooltip(content=("""Determine how many datapoints to feed the network at one time. An ideal batch size will help optimize runtime and model accuracy."""), position = "left")
 batch_Size_help_button = HelpButton(tooltip=batch_Size_tooltip, button_type = "light")
+batch_Size.on_change('value', reset_status_messages)
 
 
 learning_rate = NumericInput(value=0.001, high = 0.01, low = 0.0001, mode = "float", title="Learning Rate:(0.0001-0.01)")# Student chooses the learning rate
 learning_rate_tooltip = Tooltip(content=("""Choose a maximum value by which the optimizer may adjust neuron weights. The lower this is, the smaller the changes any given epoch will have on the model."""), position = "left")
 learning_rate_help_button = HelpButton(tooltip=learning_rate_tooltip, button_type = "light")
-
 
 loss_Fn = Select(title="Loss Function:", value="MAE", options= loss_options, height = 60, width = 300)# Student chooses the loss function
 loss_Fn_tooltip = Tooltip(content=f"Choose an algorithm to measure the accuracy of your predictions. MSE judges by square loss, whereas MAE judges by absolute loss. ", position = "left") #{', '.join(loss_options)}
