@@ -919,12 +919,12 @@ ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error,)
 lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss, chart_table)
-bs = column(top_page_spacer, row(left_page_spacer, ls, rs, lowest_val_info))
-evaluate = column(top_page_spacer, row(left_page_spacer, p4,p3, means))
+bs = row(left_page_spacer, column(top_page_spacer, row(ls, rs, lowest_val_info)))
+evaluate = row(left_page_spacer, column(top_page_spacer, row(p4,p3, means)))
 choose = row (fontAccess, sizeAccess)
 test = column(choose, intro)
 tab1 = TabPanel(child=bs, title="Train")
-tab3 = TabPanel(child= column(top_page_spacer, row(left_page_spacer, p,column(reset_button, slides, export_button, run_button) ), title="Optimize"))
+tab3 = TabPanel(child= row(left_page_spacer, column(top_page_spacer, row(p,column(reset_button, slides, export_button, run_button)))), title="Optimize")
 tab2 = TabPanel(child = evaluate, title = "Evaluate")
 # tab4 = TabPanel(child = test, title = "Instruction")
 
@@ -937,17 +937,17 @@ all_tabs = Tabs(tabs=[tab1,tab2,tab3])
 
 #Making the layout to show all of the information and the code ---------------------------------------------------------------------------------------------------------------------
 
-l = layout(
-    [
-        
-        [all_tabs],
-    ] 
-    # sizing_mode='scale_width' # ---- this might be a good idea to implement into the other modules, having the width scale
-)
+# l = layout(
+#    [
+#        
+#        [all_tabs],
+#    ] 
+#    sizing_mode='scale_width' # ---- this might be a good idea to implement into the other modules, having the width scale
+#)
 
 
-curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code on a bokeh server
-
+# curdoc().add_root(l) #use "bokeh serve --show bokeh_Module.py" to run the code on a bokeh server
+curdoc().add_root(all_tabs)
 
 
 #code report: is able to plot, but run button is not working, also you also still need to do the validation to ensure that the test, train, and validation split add up to 1 or 100% check notes for more info
