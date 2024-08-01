@@ -20,7 +20,7 @@ import os
 from bokeh.plotting import figure, show, curdoc
 from bokeh.layouts import row, column
 from bokeh.io import curdoc
-from bokeh.layouts import layout
+from bokeh.layouts import layout, Spacer
 from bokeh.io import export_svgs
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip, NumberFormatter
@@ -37,10 +37,10 @@ warnings.filterwarnings("ignore", category=UserWarning, message="X does not have
 prefix = 'digital_lab_twin/'
 #boolean for if on master or not--false will keep things presuming you are running from dlt folder, otherwise append prefix
 master = True
-#master = False
+# master = False
 #when running, ask user if they are running from master or not
 """master = input("Are you running from master? (y/n): ")
-if master == 'y':
+if master == 'y':z
     master = True
 else:
     master = False"""
@@ -904,6 +904,9 @@ chart_table = DataTable(source=charts, columns=columns, width=800, height=200)
 
 
 #Putting the Model together______________________________________________________________________________________________________________________________
+
+top_page_spacer = Spacer(height = 20)
+left_page_spacer = Spacer(width = 20)
 #Making Tabs and showing the Modles ---------------------------------------------------------------------------------------------------------------------
 trains = row(train,train_help_button)
 neuron = row(neurons, neurons_help_button)
@@ -916,20 +919,21 @@ ls = column(trains, neuron, epoch, batch, learning, optimizers, losses_help,run_
 rs = column(p2, )#Note that the p is just a place holder for the graph that will be shown,and the way i did the 2 p's didnt work
 means = column(mean_squared_error, root_mean_squared_error,)
 lowest_val_info = column(lowest_mse_validation, epoch_of_lowest_loss, chart_table)
-bs = row(ls, rs, lowest_val_info)
-evaluate = row(p4,p3, means)
+bs = column(top_page_spacer, row(left_page_spacer, ls, rs, lowest_val_info))
+evaluate = column(top_page_spacer, row(left_page_spacer, p4,p3, means))
 choose = row (fontAccess, sizeAccess)
 test = column(choose, intro)
+
 tab1 = TabPanel(child=bs, title="Train")
-tab3 = TabPanel(child= row(  p,column(reset_button, slides, export_button, run_button) ), title="Optimize")
+tab3 = TabPanel(child= column(top_page_spacer, row(left_page_spacer,  p,column(reset_button, slides, export_button, run_button) ), title="Optimize"))
 tab2 = TabPanel(child = evaluate, title = "Evaluate")
-tab4 = TabPanel(child = test, title = "Instruction")
+# tab4 = TabPanel(child = test, title = "Instruction")
 
 #TODO: add evaluate tab, parity plot, synth line versus model line and mse/rmse displayed here
 
 
   
-all_tabs = Tabs(tabs=[tab1,tab2,tab3,tab4])
+all_tabs = Tabs(tabs=[tab1,tab2,tab3])
 # show(all_tabs)
 
 #Making the layout to show all of the information and the code ---------------------------------------------------------------------------------------------------------------------
