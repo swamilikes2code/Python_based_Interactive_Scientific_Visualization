@@ -217,6 +217,15 @@
     margin-bottom:20px;
   }
 
+  .top-flexwrap{
+    display: flex;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff00;
+  }
+
   .top-flexcol {
     width: 50%;
     padding: 10px;
@@ -318,19 +327,7 @@
   } */
 
   .card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    border-radius: 5px; /* 5px rounded corners */
-    background-color: white;
-    display: flex;
-    width: 40%;
-    height: 100%;
-    padding: 20px;
-    margin: 20px;
-  }
-
-  .card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    display:flex;
   }
 
   .card-container {
@@ -348,6 +345,11 @@
     font-size: 14px;
   }
 
+  .card a{
+    text-decoration: none;
+    color: black;
+  }
+
   .flexwrap {
     display: flex;
     width: 100%;
@@ -357,6 +359,25 @@
     background: #ffffff00;
 
   }
+
+  .flexwrap a{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+    background-color: white;
+    display: flex;
+    width: 40%;
+    height: 100%;
+    padding: 20px;
+    margin: 20px;
+    text-decoration: none;
+    color:black;
+  }
+  .flexwrap a:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+
+
   .flexcol {
     color: #484848;
     border: 3px;
@@ -372,8 +393,8 @@
 
   .head2 {
     font-size: 20px;
-    color: rgb(24, 24, 24);
-    text-decoration: underline;
+    color: black;
+    /* text-decoration: underline; */
     text-align: center;
   }
   .container2 {
@@ -482,7 +503,7 @@
         <h2 class="top-head2"> Introducing accessible, inquiry-based learning technologies into the college classroom.</h2>
       </div>
       <hr style="height:1px; width:150px; background-color: black;">
-      <div class="flexwrap" style="margin-top:70px;">
+      <div class="top-flexwrap" style="margin-top:70px;">
         <div class="top-flexcol">
           <p style="margin-top:0; width:80%;">
             This site was designed to help students learn conceptually complex
@@ -532,18 +553,6 @@
     <div class="container2">
       <h1 style="text-decoration: underline">Modules</h1>
 
-      <h2 style="margin-bottom: 40px; font-weight: normal;">
-        The Github repository containing all code and documentation related to
-        this project can be found below:
-      </h2>
-
-      <p class="button-container">
-        <a
-        href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization"
-        class="button"
-        >Github Repository</a>
-      </p>
-
       <!-- <div class="container2">
         <div class="slideshow-container">
           <div class="mySlides fade">
@@ -578,137 +587,157 @@
 
     <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
     <!--each flexwrap is a row-->
+
+    <div class="flexwrap">
+        <!--GITHUB REPO DIVISION-->
+        <a href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization" style="text-decoration: none; color: black; width: 40%;">
+        <div class="card">
+            <div class="card-container">
+                <h2 class="head2">
+                  Github Repository
+                </h2>
+              <p>
+                The Github repository containing all code and documentation related to
+                this project can be found here.
+              </p>
+            </div>
+        </div>
+        </a>
+
+        <!--BIODEGRAD CLASSIFICATION DIVISION-->
+        <a href="biodegradability_classification">
+          <div class="card">
+            <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Biodegradability Classification">
+            <div class="card-container">
+                <h2 class="head2">Biodegradability Classification</h2>
+              <p>
+                Experiment with a simple classification problem, building your own model
+                to predict the biodegradability of organic compounds. View the implementation
+                and impact of machine learning in chemical engineering contexts.
+              </p>
+              <!-- <p class="button-container">
+                <a href="biodegradability_classification" class="button"
+                >Biodegradability Classification Model</a>
+              </p> -->
+            </div>
+          </div>
+        </a>
+    </div>
+
     <div class="flexwrap">
       <!--REACTION KINETICS DIVISION-->
-      <div class="card">
-        <img src="{{url_for('static', filename='reaction_kinetics.png')}}" alt="Reaction Kinetics">
-        <div class="card-container">
-          <a href="sliders_reaction_kinetics">
-            <h2 class="head2">Reaction Kinetics:</h2>
-          </a>
-          <p>
-            Explore reaction kinetics, the branch of chemistry concerned with the rate of 
-            transformation of reactant into product. Observe the progression of a reaction 
-            through customizable inputs and dynamic output displays.
-          </p>
-          <!-- <p class="button-container">
-            <a href="sliders_reaction_kinetics" class="button">Reaction Kinetics Model</a>
-          </p> -->
+      <a href="sliders_reaction_kinetics">
+        <div class="card">
+          <img src="{{url_for('static', filename='reaction_kinetics.png')}}" alt="Reaction Kinetics">
+          <div class="card-container">
+              <h2 class="head2">Reaction Kinetics</h2>
+            <p>
+              Explore reaction kinetics, the branch of chemistry concerned with the rate of
+              transformation of reactant into product. Observe the progression of a reaction
+              through customizable inputs and dynamic output displays.
+            </p>
+            <!-- <p class="button-container">
+              <a href="sliders_reaction_kinetics" class="button">Reaction Kinetics Model</a>
+            </p> -->
+          </div>
         </div>
-      </div>
+      </a>
 
       <!--ZECC DIVISION-->
-      <div class="card">
-        <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC">
-        <div class="card-container">
-          <a href="ZECC">
-            <h2 class="head2">Zero Energy Cooling Chamber:</h2>
-          </a>
-          <p>
-            Optimize a zero energy cool chamber (ZECC), a storage solution intended to preserve 
-            food in arid climates using passive evaporation. Evaluate the chamber's performance in 
-            different locations using the visualizations.
-          </p>
-            <!-- <p class="button-container">
-            <a href="ZECC" class="button">ZECC Model</a></p> -->
+      <a href="ZECC">
+        <div class="card">
+          <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC">
+          <div class="card-container">
+              <h2 class="head2">Zero Energy Cooling Chamber</h2>
+            <p>
+              Optimize a zero energy cool chamber (ZECC), a storage solution intended to preserve
+              food in arid climates using passive evaporation. Evaluate the chamber's performance in
+              different locations using the visualizations.
+            </p>
+              <!-- <p class="button-container">
+              <a href="ZECC" class="button">ZECC Model</a></p> -->
+          </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="flexwrap">
       <!--SIR DIVISION-->
-      <div class="card">
-        <img src="{{url_for('static', filename='virus.jpg')}}" alt="SEIR">
-        <div class="card-container">
-          <a href="SIR">
-            <h2 class="head2">Infectious Disease Model:</h2>
-          </a>
-          <p>
-            Follow the spread of infectious diseases through interactive visualizations of the 
-            Susceptible-Exposed-Infected-Recovered (SEIR) model. Adjust the characteristics 
-            of the outbreak to see the influence on infection.
-          </p>
-          <!-- <p class="button-container">
-            <a href="SIR" class="button">SIR Model</a></p> -->
+      <a href="SIR">
+        <div class="card">
+          <img src="{{url_for('static', filename='virus.jpg')}}" alt="SEIR">
+          <div class="card-container">
+              <h2 class="head2">Infectious Disease Model</h2>
+            <p>
+              Follow the spread of infectious diseases through interactive visualizations of the
+              Susceptible-Exposed-Infected-Recovered (SEIR) model. Adjust the characteristics
+              of the outbreak to see the influence on infection.
+            </p>
+            <!-- <p class="button-container">
+              <a href="SIR" class="button">SIR Model</a></p> -->
+          </div>
         </div>
-      </div>
+      </a>
 
       <!--Catalysis DIVISION-->
-      <div class="card">
-        <img src="{{url_for('static', filename='data_science.jpg')}}" alt="Catalysis">
-        <div class="card-container">
-          <a href="catalysis_data_interactive_visualization">
-            <h2 class="head2">Catalysis Data Science Model:</h2>
-          </a>
-          <p>
-            Discover trends within a large dataset of catalysts through exploration. Use various 
-            data science and machine learning methods, such as supervised and unsupervised learning, 
-            to gain a deeper understanding of the data.
-          </p>
-          <!-- <p class="button-container">
-            <a href="catalysis_data_interactive_visualization" class="button">Catalysis Model</a>
-          </p> -->
+      <a href="catalysis_data_interactive_visualization">
+        <div class="card">
+          <img src="{{url_for('static', filename='data_science.jpg')}}" alt="Catalysis">
+          <div class="card-container">
+              <h2 class="head2">Catalysis Data Science Model</h2>
+            <p>
+              Discover trends within a large dataset of catalysts through exploration. Use various
+              data science and machine learning methods, such as supervised and unsupervised learning,
+              to gain a deeper understanding of the data.
+            </p>
+            <!-- <p class="button-container">
+              <a href="catalysis_data_interactive_visualization" class="button">Catalysis Model</a>
+            </p> -->
+          </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="flexwrap">
       <!--DAC DIVISION-->
-      <div class="card">
-        <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC">
-        <div class="card-container">
-          <a href="DAC">
-            <h2 class="head2">DAC Model:</h2>
-          </a>
-          <p>
-            Develop a direct air capture (DAC) system, a climate solution that filters out carbon 
-            dioxide from any point in ambient air. Modify the DAC's characteristics, observe its 
-            performance, and optimize its configuration.
-          </p>
-          <!-- <p class="button-container">
-            <a href="DAC" class="button">DAC Model</a></p> -->
+      <a href="DAC">
+        <div class="card">
+          <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC">
+          <div class="card-container">
+              <h2 class="head2">DAC Model</h2>
+            <p>
+              Develop a direct air capture (DAC) system, a climate solution that filters out carbon
+              dioxide from any point in ambient air. Modify the DAC's characteristics, observe its
+              performance, and optimize its configuration.
+            </p>
+            <!-- <p class="button-container">
+              <a href="DAC" class="button">DAC Model</a></p> -->
+          </div>
         </div>
-      </div>
+      </a>
 
       <!--DLT DIVISION-->
-      <div class="card">
-        <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="DLT">
-        <div class="card-container">
-          <a href="DLT.html">
-            <h2 class="head2">Digital Lab Twin:</h2>
-          </a>
-          <p>
-            Delve into using a neural network to predict the outputs of a photobioreactor (PBR). 
-            Change the PBR's variables and the neural network's hyperparameters to create an 
-            optimized PBR system  and an accurate evaluation.
-          </p>
-          <!-- <p class="button-container">
-            <a href="DLT" class="button">DLT Model</a></p> -->
+      <a href="DLT">
+        <div class="card">
+          <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="DLT">
+          <div class="card-container">
+              <h2 class="head2">Digital Lab Twin</h2>
+            <p>
+              Delve into using a neural network to predict the outputs of a photobioreactor (PBR).
+              Change the PBR's variables and the neural network's hyperparameters to create an
+              optimized PBR system  and an accurate evaluation.
+            </p>
+            <!-- <p class="button-container">
+              <a href="DLT" class="button">DLT Model</a></p> -->
+          </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <div class="flexwrap">
-      <!--BIODEGRAD CLASSIFICATION DIVISION-->
-      <div class="card">
-        <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Biodegradability Classification">
-        <div class="card-container">
-          <a href="biodegradability_classification">
-            <h2 class="head2">Biodegradability Classification:</h2>
-          </a>
-          <p>
-            Experiment with a simple classification problem, building your own model 
-            to predict the biodegradability of organic compounds. View the implementation 
-            and impact of machine learning in chemical engineering contexts.
-          </p>
-          <!-- <p class="button-container">
-            <a href="biodegradability_classification" class="button"
-            >Biodegradability Classification Model</a>
-          </p> -->
-        </div>
-      </div>
+
     
-      <!--next module would go here-->
+      <!--next module goes here-->
 
     </div>
     </div>
