@@ -317,10 +317,41 @@
     to {opacity: 1}
   } */
 
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+    background-color: white;
+    display: flex;
+    width: 40%;
+    padding: 20px;
+    margin: 20px;
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+
+  .card-container {
+    padding: 2px 16px;
+  }
+
+  /* Add rounded corners to the top left and the top right corner of the image */
+  .card img {
+    border-radius: 5px 5px 0 0;
+  }
+  
+  .card p{
+    font-size: 14px;
+  }
+
   .flexwrap {
     display: flex;
     width: 100%;
     font-family: 'Arial', sans-serif;
+    justify-content: center;
+    background: #ffffff00;
+
   }
   .flexcol {
     color: #484848;
@@ -336,7 +367,7 @@
   }
 
   .head2 {
-    font-size: 24px;
+    font-size: 20px;
     color: rgb(24, 24, 24);
     text-decoration: underline;
     text-align: center;
@@ -488,10 +519,10 @@
     </div>-->
 
 
-    <!-------MODELS------------------------------------------------------>
+    <!-------MODULES------------------------------------------------------>
 
     <div class="container2">
-      <h1 style="text-decoration: underline">Models</h1>
+      <h1 style="text-decoration: underline">Modules</h1>
 
       <h2 style="margin-bottom: 40px; font-weight: normal;">
         The Github repository containing all code and documentation related to
@@ -504,7 +535,6 @@
         class="button"
         >Github Repository</a>
       </p>
-    </div>
 
       <!-- <div class="container2">
         <div class="slideshow-container">
@@ -542,136 +572,140 @@
     <!--each flexwrap is a row-->
     <div class="flexwrap">
       <!--REACTION KINETICS DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Reaction Kinetics:</h2>
-
-        <p>
-          Reaction kinetics is the branch of chemistry concerned with the rate
-          of transformation of reactant into product. Reaction rate is generally
-          expressed in terms of concentration per unit time. This program allows
-          you to see the change in A, B, and C concentrations as you change the
-          orders and initial k-constants.
-        </p>
-        <p class="button-container">
-          <a href="sliders_reaction_kinetics" class="button"
-            >Reaction Kinetics Model</a
-          >
-        </p>
+      <div class="card">
+        <img src="{{url_for('static', filename='reaction_kinetics.png')}}" alt="Reaction Kinetics" style="width:100%;">
+        <div class="card-container">
+          <a href="sliders_reaction_kinetics">
+            <h2 class="head2">Reaction Kinetics:</h2>
+          </a>
+          <p>
+            Reaction kinetics is the branch of chemistry concerned with the rate of
+            transformation of reactant into product. Observe the progression of a 
+            reaction through customizable inputs and interactive graphs.
+          </p>
+          <!-- <p class="button-container">
+            <a href="sliders_reaction_kinetics" class="button">Reaction Kinetics Model</a>
+          </p> -->
+        </div>
       </div>
 
       <!--ZECC DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Zero Energy Cooling Chamber:</h2>
-
-        <p>
-          This program allows you to create a Zero Energy Cooling Chamber with
-          your chosen specified dimensions, material and location for the
-          chamber. A Zero Energy Cooling Chamber is an eco-friendly and
-          cost-effective way of storing food. Usually used in hot climates, it
-          uses passive evaporation to cool down the food storage chamber. Click
-          to see more information.
-        </p>
-
-        <p class="button-container">
-          <a href="ZECC" class="button">ZECC Model</a></p>
+      <div class="card">
+        <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC" style="width:100%;">
+        <div class="card-container">
+          <a href="ZECC">
+            <h2 class="head2">Zero Energy Cooling Chamber:</h2>
+          </a>
+          <p>
+            Optimize a zero energy cool chamber (ZECC), a storage solution intended to 
+            preserve food in hot and arid climates by using passive evaporation. 
+            Evaluate the chamber's performance in different locations using the dynamic graphs.</p>
+          <!-- <p class="button-container">
+            <a href="ZECC" class="button">ZECC Model</a></p> -->
+        </div>
       </div>
     </div>
 
     <div class="flexwrap">
       <!--SIR DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Infectious Disease Model:</h2>
-
-        <p>
-          The SIR Model (Susceptible-Exposed-Infected-Recovered) is an
-          infectious disease model that relates different populations through a
-          set of ordinary differential equations.
-        </p>
-
-        <p class="button-container">
-          <a href="SIR" class="button">SIR Model</a></p>
+      <div class="card">
+        <img src="{{url_for('static', filename='virus.jpg')}}" alt="SEIR" style="width:100%;">
+        <div class="card-container">
+          <a href="SIR">
+            <h2 class="head2">Infectious Disease Model:</h2>
+          </a>
+          <p>
+            Follow the spread of infectious diseases through interactive visualizations of the
+            Susceptible-Exposed-Infected-Recovered (SEIR) model. Adjust the characteristics 
+            and mitigation strategies of the outbreak to see the effects on infection.
+          </p>
+          <!-- <p class="button-container">
+            <a href="SIR" class="button">SIR Model</a></p> -->
+        </div>
       </div>
 
       <!--Catalysis DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Catalysis Data Science Model:</h2>
-
-        <p>
-          Ever wonder how your email is classified as spam? How about how
-          forecasting is done in fields such as business, medicine, and many
-          others? The answer is data science and machine learning concepts.
-          Data science and machine learning are emerging fields which are
-          increasingly being used in the real world. Our module will introduce
-          many of the basic key concepts of data science and machine learning
-          which are used in many real world applications.
-        </p>
-        <p class="button-container">
-          <a href="catalysis_data_interactive_visualization" class="button"
-            >Catalysis Model</a
-          >
-        </p>
+      <div class="card">
+        <img src="{{url_for('static', filename='data_science.jpg')}}" alt="Catalysis" style="width:100%;">
+        <div class="card-container">
+          <a href="catalysis_data_interactive_visualization">
+            <h2 class="head2">Catalysis Data Science Model:</h2>
+          </a>
+          <p>
+            Discover trends within a large dataset of catalysts through experimentation. 
+            Use various data science and machine learning methods, such as supervised and 
+            unsupervised learning, to extract more from the data.
+          </p>
+          <!-- <p class="button-container">
+            <a href="catalysis_data_interactive_visualization" class="button">Catalysis Model</a>
+          </p> -->
+        </div>
       </div>
     </div>
 
     <div class="flexwrap">
       <!--DAC DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">DAC Model:</h2>
-
-        <p>Develop a direct air capture (DAC) system, a climate solution that removes CO2 from any point in the atmosphere. Modify the DAC’s characteristics, observe its performance, and optimize its configuration.</p>
-
-        <p class="button-container">
-          <a href="DAC" class="button">DAC Model</a></p>
+      <div class="card">
+        <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC" style="width:100%;">
+        <div class="card-container">
+          <a href="DAC">
+            <h2 class="head2">DAC Model:</h2>
+          </a>
+          <p>
+            Develop a direct air capture (DAC) system, a climate solution that removes CO2 from 
+            any point in the atmosphere. Modify the DAC's characteristics, observe its performance, 
+            and optimize its configuration.
+          </p>
+          <!-- <p class="button-container">
+            <a href="DAC" class="button">DAC Model</a></p> -->
+        </div>
       </div>
 
       <!--DLT DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Digital Lab Twin:</h2>
-
-        <p>
-          Want to delve into machine learning? Interested in expediting your
-          experiments? The digital laboratory twin allows you to do both, by
-          building your own neural network! Our system allows you to customize a
-          network and analyse it's capabilities in seconds. Models can then be
-          used to optimize the complex biochemical-engineering system called a
-          photobioreactor, adjusting initial conditions to perform 'experiments'
-          and maximize valuable bioproducts.
-        </p>
-
-        <p class="button-container">
-          <a href="DLT" class="button">DLT Model</a></p>
+      <div class="card">
+        <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="DLT" style="width:100%;">
+        <div class="card-container">
+          <a href="DLT.html">
+            <h2 class="head2">Digital Lab Twin:</h2>
+          </a>
+          <p>
+            Delve into using a neural network to predict the outputs of a photobioreactor (PBR). Change 
+            not only the PBR's variables, but also the evaluating neural network's hyperparameters to create 
+            an accurate evaluation and an optimized PBR system.
+          </p>
+          <!-- <p class="button-container">
+            <a href="DLT" class="button">DLT Model</a></p> -->
+        </div>
       </div>
     </div>
 
     <div class="flexwrap">
       <!--BIODEGRAD CLASSIFICATION DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Biodegradability Classification:</h2>
-
-        <p>
-          Are you new to machine learning? Our module enables you to experiment
-          with one of three simple machine learning algorithms. We provide the tools needed
-          to guide you through developing, optimizing, evaluating, and applying your
-          model in a Chemical Engineering setting. Specifically, your model will be trained to 
-          predict the biodegradability of organic chemicals.
-        </p>
-
-        <p class="button-container">
-          <a href="biodegradability_classification" class="button"
-          >Biodegradability Classification Model</a>
-        </p>
+      <div class="card">
+        <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Biodegradability Classification" style="width:100%;">
+        <div class="card-container">
+          <a href="biodegradability_classification">
+            <h2 class="head2">Biodegradability Classification:</h2>
+          </a>
+          <p>
+            Experiment with a simple classification problem, building your own model to predict the 
+            biodegradability of organic compounds. View the implementation and impact of machine 
+            learning in chemical engineering contexts.
+          </p>
+          <!-- <p class="button-container">
+            <a href="biodegradability_classification" class="button"
+            >Biodegradability Classification Model</a>
+          </p> -->
+        </div>
       </div>
     
-      <!--FUTURE MODULE-->
-      <div class="flexcol">
-        <h2 class="head2"> </h2>
+      <!--next module would go here-->
 
-        <p></p>
-
-      </div>
+    </div>
     </div>
 
-    <script>
+
+    <!-- <script>
       let slideIndex = 1;
       showSlides(slideIndex);
       
@@ -700,7 +734,7 @@
         slides[slideIndex-1].style.display = "block";
         dots[slideIndex-1].className += " active";
       }
-    </script>
+    </script> -->
 
   </body>
 
