@@ -301,8 +301,8 @@
   text-align: left; /* Ensure left alignment for MathML elements */
 }
 
-.column_3 mi, .column_3 mo, .column_3 msub {
-  display: inline; /* Ensure inline display for MathML sub-elements */
+  .column_3 mi, .column_3 mo, .column_3 msub {
+    display: inline; /* Ensure inline display for MathML sub-elements */
 }
 
   .column_4 {
@@ -316,6 +316,12 @@
     content: "";
     display: table;
     clear: both;
+  }
+
+  .row math{
+    padding: none;
+    margin-left: none;
+    margin-right: none;
   }
 
   /* Responsive layouts */
@@ -356,6 +362,17 @@
     .column_4 {
       width: 100%;
     }
+
+    .row math{
+      overflow-x: auto; /* Change to auto to avoid empty scrollbars */
+      overflow-y: hidden;
+      margin-left: 2%;
+      padding-left: 2%;
+      margin-right: 2%;
+      padding-right:2%;
+      max-width: 80%; /* Ensure it doesn't exceed container width */
+    }
+
   }
 
   /*-------------------BOKEH SECTION--------------------- */
@@ -607,6 +624,7 @@
                     <ul>
                       <li>Composite wall heat balance to find temperatures at each interface</li>
                     </ul>
+                  </p>
                     <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
                       <mi>q</mi>
                       <mo>=</mo>
