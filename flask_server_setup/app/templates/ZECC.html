@@ -285,10 +285,25 @@
 
   .column_3 {
     float: left;
+    text-align: left;
     width: 29.3%;
     padding-left: 2%;
     padding-right: 2%;
   }
+
+  .column_3 p {
+    margin: 0;
+  
+  }
+
+  .column_3 math {
+  display: inline; /* Ensure inline display for MathML elements */
+  text-align: left; /* Ensure left alignment for MathML elements */
+}
+
+.column_3 mi, .column_3 mo, .column_3 msub {
+  display: inline; /* Ensure inline display for MathML sub-elements */
+}
 
   .column_4 {
     float: left;
@@ -470,8 +485,8 @@
         <h1 class="head1">Zero Energy Cooling Chamber</h1>
         <div class="tab">
             <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
-            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Slides')">Slides</button>
-            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Information')">Information</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Variables')">Variables</button>
+            <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Equations')">Equations</button>
             <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
           </div>
       
@@ -481,15 +496,18 @@
               <div class="home_container">
                 <div class="column_1_home">
                   <p>Food waste is one of the leading causes of worldwide hunger. Agricultural output becomes unusable if there is little capacity to store food. “Much of the food being collected is either not consumed or never makes it to the market.” (NPR) Not only is the potential profit lost, but so are the lives of those suffering from food shortages.</p>
-                  <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate. It functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, the ZECC is cheaper and has a higher energy efficiency than your typical fridge. It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
+                  <p>The Zero Energy Cool Chamber (ZECC) is an eco-friendly storage system developed to preserve food in a hot, arid climate, where access to electricity is sparse. It is often used by small-scale farmers to reduce postharvest loss in developing countries.</p>
+                  <p>The ZECC functions similar to a conventional refrigerator in the sense that the chamber ‘pushes’ heat out. However, it is cheaper and has a higher energy efficiency than your typical fridge. 
+                    It requires no electrical energy whatsoever, just water to maintain function. The design consists of an inner chamber, a surrounding layer of wet sand, and another wall encasing it.</p>
                   <p>The center storage space is made cool by the principle of passive evaporative cooling. The liquid water molecules in the sand layer travel through the outer layer and evaporate due to the source of heat coming from the produce being stored, as well as the humidity difference between the sand layer and the outer air. This cooling process is similar to sweating.</p> 
                 </div>
                 
     
                 <div class="column_2_home">
-                  <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC Diagram" class="right" style="width:100%; height: auto;">
+                  <img src="{{url_for('static', filename='new_ZECC.jpg')}}" alt="ZECC" class="right" style="width:100%; height: auto;">
                 </div>
               </div>
+
               <div class="row" style="justify-items: center;display: grid;padding: 30px 0 0 0;">
                 <p><a href="#jump" class="button1">Jump to Module</a></p><br>
               </div>
@@ -497,36 +515,736 @@
             </div>
 
 
-            <div id="Slides" class="tabcontent">
-              <h3>ZECC Slides</h3>
-              <div class="slide-container">
-                <iframe src="{{url_for('static', filename='ZECC ppt.pdf')}}" alt = "ZECC Slides" class="slide-iframe" >Loading…</iframe>
+            <div id="Variables" class="tabcontent">
+              <h3>Setting up the experiment</h3>
+              <div class="row">
+                <div class="column_3">
+                  <h3>Assumptions:</h3>
+                  <p>
+                    <ul>
+                      <li>One metric ton of potatoes is being stored in the center of the inner chamber</li>
+                      <li>Sand remains saturated throughout the process</li>
+                      <li>Potatoes respirate, giving off a source of heat that drives the heat and mass transfer out of the
+                        system</li>
+                      <li>Water travels from the wet sand out through the brick, evaporating off of the surface of the outer
+                        brick wall, creating a cooling effect at each layer of the chamber (similar to sweat evaporating off
+                        skin to cool you down)</li>
+                    </ul>
+                  </p>
+                  <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="General ZECC diagram" class="left" style="width:100%; height: auto;">
+                  <img src="{{url_for('static', filename='ZECC_model.jpg')}}" alt="Our ZECC diagram" class="left" style="width:100%; height: auto;">
+                  
+                </div>
+
+                <div class="column_3">
+                  <h3>Independent Variables:</h3>
+                  <p>
+                    <ul>
+                      <li>Inner Chamber Temperature</li>
+                      <ul>
+                        <li>The desired inner temperature will dictate how much heat you need to be pushed out.</li> 
+                        <li>The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
+                      </ul>
+                      <li>Outer Air Temperature</li>
+                      <ul>
+                        <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
+                      </ul>
+                      <li>Outer Air Relative Humidity</li>
+                      <ul>
+                        <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all.</li> 
+                        <li>The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
+                      </ul>
+                      <li>Size of Inner Chamber (length and width varied, fixed height)</li>
+                      <ul>
+                        <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be.</li> 
+                        <li>The amount of food stored increases your profit, the operating budget.</li>
+                      </ul>
+                      <li>Size of Wet Sand Layer (thickness)</li>
+                    </ul>
+                  </p>
+                </div>
+
+                <div class="column_3">
+                  <h3>Dependent Variables (Calculated by the Model)</h3>
+                  <p>
+                    <ul>
+                      <li>Temperatures at each medium interface (HT)</li>
+                      <li>Dew Point Temperature at outer brick wall (HT)</li>
+                      <li>Diffusion of Water through the layers to the outer brick wall (MT)</li>
+                      <li>Evaporation of Water at outer brick surface (MT)</li>
+                      <li>Liters of Water needed to be added daily to replace lost water via MT</li>
+                      <li>Annual cost of design (both fixed and variable expenses)</li>
+                      <ul>
+                        <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
+                      </ul>
+                    </ul>
+                  </p>
+                  <p>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</p>
+                </div>
               </div>
+
             </div>
 
       
  
-            <div id="Information" class="tabcontent">
-              <h3>Information</h3>
-              <ul>
-                <li>The choice of materials affects the initial cost of the ZECC and the amount of heat that can be pushed out through conduction.</li>
-                <li>The humidity affects the evaporation rate, and whether or not the water will evaporate at all. The humidity will decide whether or not the dewpoint temperature will cause condensation, and if the chamber can work.</li>
-                <li>The dimensions will change how much heat is conducted to the water, how much food can be stored, and how much the initial cost will be. The amount of food stored increases your profit, the operating budget.</li>
-                <li>The desired inner temperature will dictate how much heat you need to be pushed out. The inner temperature will also dictate how much fruit you could sell and how useful the ZECC could be.</li>
-                <li>The ambient temperature (based on location) will decide whether or not the ZECC can function properly, and for what times of the year.</li>
-                <li>With this given information, optimize the ZECC as much as possible and create a self sufficient system.</li>
-                <li>Heat per Time: Displays the heat transferred (from evaporation or conduction) per unit time. The heat conducted refers to the heat transferred from the inner chamber to the water. The evaporative cooling rate refers to the rate of heat leaving the system through evaporation. Water Used: Displays the water needed to keep the system running properly, based off the amount of water evaporating at a given time. A system at steady state needs to release the same amount of what it takes in.</li>
-                <li>Zero Energy Cooling: By using the principles behind perspiration, there is a way to create an eco friendly chamber for storing food in harsh conditions. The two chamber cooling system consists of two nested chambers, with sand filling the space in between. Water is set to flow in the sand layer.</li>
-                <li>Heat Transfer in the ZECC: The heat transfer that occurs in the zero energy cooling chamber, is a combination of all three of the heat transfer methods. The radiation from solar energy heats the chamber and the surrounding area. The ground also radiates heat. The fluid flow and the conduction of the water is what helps to cool the chamber down.</li>
-                <li>Latent Heat of Vaporization: When one mole of a substance at atmospheric pressure goes from the liquid phase to the gaseous phase, there is energy required to bring the substance to a boil and make the phase change occur. Bringing a substance to its boiling point is not enough since there is still energy required to make phase change occur. This energy required is the latent heat of vaporization. Temperature changes cannot occur without phase changes.</li>
-                <li>Dew-Point temperature is critically dependent on both the design of the chamber and inputed values. If the temperature of the outer wall of the chamber becomes too low then water will begin to condense on the surface and no evaporation will occur, halting the cooling process of the inner chamber.</li>
-              </ul>
+            <div id="Equations" class="tabcontent">
+              <h3>Equations</h3>
+              <div class="row">
+                  <h3>General Balance:</h3>
+                  <p>
+                    <ul>
+                      <li>IN + GENERATION = OUT</li>
+                      <li>IN = water is added into the system to force heat transfer outward</li>
+                      <li>GENERATION = heat is generated by the potatoes in the center of the storage container</li>
+                      <li>OUT = heat conducted out, water evaporated out at brick surface</li>
+                    </ul>
+                  </p>
+              </div>
+
+              <div class="row">
+                  <h3>Heat Transfer:</h3>
+                  <p>
+                    <ul>
+                      <li>Composite wall heat balance to find temperatures at each interface</li>
+                    </ul>
+                    <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <mi>q</mi>
+                      <mo>=</mo>
+                      <mfrac>
+                          <mrow>
+                            <mi>(</mi>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>c</mi>
+                            </msub>
+                            <mo>&minus;</mo>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>4</mi>
+                            </msub>
+                            <mi>)</mi>
+                          </mrow>
+                          <mrow>
+                              <mfrac>
+                                <mi>1</mi>
+                                <mrow>
+                                  <msub>
+                                    <mi>h</mi>
+                                    <mi>c</mi>
+                                  </msub>
+                                  <mo>&times</mo>
+                                  <msub>
+                                    <mi>A</mi>
+                                    <mi>c</mi>
+                                  </msub>
+                                </mrow>
+                              </mfrac>
+                          </mrow>
+                      </mfrac>
+                      <mo>=</mo>
+                      <mfrac>
+                          <mrow>
+                            <mi>(</mi>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>4</mi>
+                            </msub>
+                            <mo>&minus;</mo>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>3</mi>
+                            </msub>
+                            <mi>)</mi>
+                          </mrow>
+                          <mrow>
+                              <mfrac>
+                                <msub>
+                                  <mi>L</mi>
+                                  <mi>inner brick</mi>
+                                </msub>
+                                <mrow>
+                                  <msub>
+                                    <mi>k</mi>
+                                    <mi>brick</mi>
+                                  </msub>
+                                  <mo>&times</mo>
+                                  <msub>
+                                    <mi>A</mi>
+                                    <mi>inner brick</mi>
+                                  </msub>
+                                </mrow>
+                              </mfrac>
+                          </mrow>
+                      </mfrac>
+                      <mo>=</mo>
+                      <mfrac>
+                          <mrow>
+                            <mi>(</mi>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>3</mi>
+                            </msub>
+                            <mo>&minus;</mo>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>2</mi>
+                            </msub>
+                            <mi>)</mi>
+                          </mrow>
+                          <mrow>
+                              <mfrac>
+                                <msub>
+                                  <mi>L</mi>
+                                  <mi>wet sand</mi>
+                                </msub>
+                                <mrow>
+                                  <msub>
+                                    <mi>k</mi>
+                                    <mi>wet sand</mi>
+                                  </msub>
+                                  <mo>&times</mo>
+                                  <msub>
+                                    <mi>A</mi>
+                                    <mi>wet sand</mi>
+                                  </msub>
+                                </mrow>
+                              </mfrac>
+                          </mrow>
+                      </mfrac>
+                      <mo>=</mo>
+                      <mfrac>
+                          <mrow>
+                            <mi>(</mi>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>2</mi>
+                            </msub>
+                            <mo>&minus;</mo>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>1</mi>
+                            </msub>
+                            <mi>)</mi>
+                          </mrow>
+                          <mrow>
+                              <mfrac>
+                                <msub>
+                                  <mi>L</mi>
+                                  <mi>outer brick</mi>
+                                </msub>
+                                <mrow>
+                                  <msub>
+                                    <mi>k</mi>
+                                    <mi>brick</mi>
+                                  </msub>
+                                  <mo>&times</mo>
+                                  <msub>
+                                    <mi>A</mi>
+                                    <mi>outer brick</mi>
+                                  </msub>
+                                </mrow>
+                              </mfrac>
+                          </mrow>
+                      </mfrac>
+                      <mo>=</mo>
+                      <mfrac>
+                          <mrow>
+                            <mi>(</mi>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>1</mi>
+                            </msub>
+                            <mo>&minus;</mo>
+                            <msub>
+                              <mi>T</mi>
+                              <mi>bulk</mi>
+                            </msub>
+                            <mi>)</mi>
+                          </mrow>
+                          <mrow>
+                              <mfrac>
+                                <mi>1</mi>
+                                <mrow>
+                                  <msub>
+                                    <mi>h</mi>
+                                    <mi>bulk</mi>
+                                  </msub>
+                                  <mo>&times</mo>
+                                  <msub>
+                                    <mi>A</mi>
+                                    <mi>bulk</mi>
+                                  </msub>
+                                </mrow>
+                              </mfrac>
+                          </mrow>
+                      </mfrac>
+                  </math></p>
+              </div>
+
+              <div class="row">
+                <div class="column_3">
+                  <p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <mi>q</mi>
+                      <mo>=</mo>
+                      <mi>Heat produced by potato respiration</mi>
+                    </math>
+                  </p>
+                  <p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <msub>
+                        <mi>h</mi>
+                        <mi>c</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <mi>Heat transfer coefficient inside the chamber</mi>
+                    </math>
+                  </p>
+                  <p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <msub>
+                        <mi>A</mi>
+                        <mi>c</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <mi>Area of inner chamber</mi>
+                    </math>
+                  </p>
+                  <p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <msub>
+                        <mi>L</mi>
+                        <mi>inner brick</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <mi>Length of the inner brick layer</mi>
+                    </math>
+                  </p>
+                  <p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <msub>
+                        <mi>k</mi>
+                        <mi>brick</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <mi>Thermal conductivity of brick</mi>
+                    </math>
+                  </p>
+                  <p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <msub>
+                        <mi>A</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <mi>Area outside of chamber</mi>
+                    </math>
+                  </p>
+                  <p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <msub>
+                        <mi>h</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <mi>Heat transfer coefficient of outdoor air</mi>
+                    </math>
+                  </p>
+                </div>
+
+                <div class="column_3">
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                    <msub>
+                      <mi>A</mi>
+                      <mi>inner brick</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Area of inner brick layer</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>L</mi>
+                      <mi>wet sand</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Length of wet sand layer</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>k</mi>
+                      <mi>wet sand</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Thermal conductivity of wet sand</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>A</mi>
+                      <mi>wet sand</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Area of wet sand layer</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>L</mi>
+                      <mi>outer brick</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Length of outer brick layer</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>A</mi>
+                      <mi>outer brick</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Area of outer brick layer</mi>
+                  </math></p>
+                </div>
+
+                <div class="column_3">
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                    <msub>
+                      <mi>T</mi>
+                      <mi>c</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Inner Chamber Temperature</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>T</mi>
+                      <mi>4</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Inner Chamber/Inner Brick Interface Temperature</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>T</mi>
+                      <mi>3</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Inner Brick/Wet Sand Interface Temperature</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>T</mi>
+                      <mi>2</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Wet Sand/Outer Brick Interface Temperature</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>T</mi>
+                      <mi>1</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Outer Brick/Bulk Air Interface Temperature</mi>
+                  </math></p>
+                  <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">  
+                    <msub>
+                      <mi>T</mi>
+                      <mi>bulk</mi>
+                    </msub>
+                    <mo>=</mo>
+                    <mi>Temperature of outdoor air</mi>
+                  </math></p>
+                </div>
+              </div>
+
+              <div class = "row">
+                    <ul>
+                      <li>Magnus Formula to find dew point temperature based on input value of bulk air temperature and
+                        relative humidity.</li>
+                    </ul>
+                  
+                    <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <msub>
+                        <mi>T</mi>
+                        <mi>dew point</mi>
+                      </msub>
+                      <mo>=</mo>
+                      <mfrac>
+                        <mrow>
+                          <mi>b</mi>
+                          <mo>&lbrack;</mo>
+                          <mfrac>
+                            <mrow>
+                              <mi>a</mi>
+                              <mo>&times</mo>
+                              <msub>
+                                <mi>T</mi>
+                                <mi>bulk</mi>
+                              </msub>
+                            </mrow>
+                            <mrow>
+                              <mi>b</mi>
+                              <mo>+</mo>
+                              <msub>
+                                <mi>T</mi>
+                                <mi>bulk</mi>
+                              </msub>
+                            </mrow>
+                          </mfrac>
+                          <mo>+</mo>
+                          <mi>ln(</mi>
+                          <mi>RH</mi>
+                          <mi>)</mi>
+                          <mo>&rbrack;</mo>
+                        </mrow>
+
+                        <mrow>
+                          <mi>a</mi>
+                          <mo>&minus;</mo>
+                          <mo>&lbrack;</mo>
+                          <mfrac>
+                            <mrow>
+                              <mi>a</mi>
+                              <mo>&times</mo>
+                              <msub>
+                                <mi>T</mi>
+                                <mi>bulk</mi>
+                              </msub>
+                            </mrow>
+                            <mrow>
+                              <mi>b</mi>
+                              <mo>+</mo>
+                              <msub>
+                                <mi>T</mi>
+                                <mi>bulk</mi>
+                              </msub>
+                            </mrow>
+                          </mfrac>
+                          <mo>+</mo>
+                          <mi>ln(</mi>
+                          <mi>RH</mi>
+                          <mi>)</mi>
+                          <mo>&rbrack;</mo>
+                        </mrow>
+                      </mfrac>
+                      <mi>, where</mi>
+                      <mo>‎</mo>
+                      <mi>a</mi>
+                      <mo>=</mo>
+                      <mi>17.27,</mi>
+                      <mo>‎</mo>
+                      <mi>b</mi>
+                      <mo>=</mo>
+                      <mi>237.7,</mi>
+                      <mo>‎</mo>
+                      <mi>RH</mi>
+                      <mo>=</mo>
+                      <mi>0</mi>
+                      <mo>&RightArrow;</mo>
+                      <mi>1</mi>
+                    </math></p>
+
+                    <ul>
+                      <li>Dew Point temperature is critically dependent on both the design of the chamber and inputted
+                        values. If the outer brick wall temperature becomes too low, water will begin to condense on the
+                        surface of the brick, and no evaporation will occur, halting the cooling of the inner chamber.</li>
+                    </ul></p>
+                      <p>The heat transfer that occurs in the zero energy cooling chamber is a combination of all three of the above heat transfer methods. 
+                        The radiation from solar energy heats the chamber and the surrounding area. The ground also radiates heat. 
+                        The fluid flow and the conduction of the water is what helps to cool the chamber down.
+                    </p>
+              </div>
+
+              <div class="row">
+                  <h3>Mass Transfer:</h3>
+                  <p>
+                    <ul>
+                      <li>Antoine equation to calculate pressure at a certain temperature</li>
+                    </ul></p>
+                    <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <mi>ln(</mi>
+                      <msup>
+                        <mi>P</mi>
+                        <mi>*</mi>
+                      </msup>
+                      <mi>)</mi>
+                      <mo>=</mo>
+                      <mi>A</mi>
+                      <mo>&minus;</mo>
+                      <mfrac>
+                        <mrow>
+                          <mi>B</mi>
+                        </mrow>
+                        <mrow>
+                          <mi>C</mi>
+                          <mo>+</mo>
+                          <mi>T</mi>
+                        </mrow>
+                      </mfrac>
+                      <mi>, where</mi>
+                      <mo>‎</mo>
+                      <mi>A</mi>
+                      <mo>=</mo>
+                      <mi>18.3036,</mi>
+                      <mo>‎</mo>
+                      <mi>B</mi>
+                      <mo>=</mo>
+                      <mi>3816.44,</mi>
+                      <mo>‎</mo>
+                      <mi>C</mi>
+                      <mo>=</mo>
+                      <mi>&minus;46.13</mi>
+                    </math></p>
+                    <p><ul>
+                      <li>Mass balance to calculate the outer mass transfer coefficient, <math xmlns="http://www.w3.org/1998/Math/MathML"> 
+                        <msub>
+                          <mi>k</mi>
+                          <mi>bulk</mi>
+                        </msub>
+                      </math> </li>
+                    </ul></p>
+                    <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <mi>q</mi>
+                      <mo>+</mo>
+                      <msub>
+                        <mi>h</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&times;</mo>
+                      <msub>
+                        <mi>A</mi>
+                        <mi>outer brick</mi>
+                      </msub>
+                      <mo>&times;</mo>
+                      <mo>(</mo>
+                      <msub>
+                        <mi>T</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&minus;</mo>
+                      <msub>
+                        <mi>T</mi>
+                        <mi>1</mi>
+                      </msub>
+                      <mo>)</mo>
+                      <mo>=</mo>
+                      <mi>&lambda;</mi>
+                      <mo>&times;</mo>
+                      <msub>
+                        <mi>k</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&times;</mo>
+                      <msub>
+                        <mi>A</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&lbrack;</mo>
+                      <msup>
+                        <mi>P</mi>
+                        <mi>*</mi>
+                      </msup>
+                      <mo>(</mo>
+                      <msub>
+                        <mi>T</mi>
+                        <mi>1</mi>
+                      </msub>
+                      <mo>)</mo>
+                      <mo>&minus;</mo>
+                      <msub>
+                        <mi>P</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&rbrack;</mo>
+                      <mi>,</mi>
+                    </math></p>
+                    <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <mi>where</mi>
+                      <mo>‎</mo>
+                      <mi>&lambda;</mi>
+                      <mo>=</mo>
+                      <mi>latent heat of evaporation,</mi>
+                      <mo>‎</mo>
+                      <mi>q</mi>
+                      <mo>=</mo>
+                      <mi>heat of respiration</mi>
+                    </math></p>
+                    <p><ul>
+                      <li>Finding the concentration of water moving from the sand through the outer brick</li>
+                    </ul></p>
+                    <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                      <mfrac>
+                        <mrow>
+                          <msub>
+                            <mi>&epsi;</mi>
+                            <mi>brick</mi>
+                          </msub>
+                          <mo>&times;</mo>\
+                          <msub>
+                            <mi>D</mi>
+                            <mi>wb</mi>
+                          </msub>
+                          <mo>&times;</mo>
+                          <msub>
+                            <mi>A</mi>
+                            <mi>outer brick</mi>
+                          </msub>
+                          <mo>(</mo>
+                          <msub>
+                            <mi>C</mi>
+                            <mi>sand</mi>
+                          </msub>
+                          <mo>&times;</mo>
+                          <msub>
+                            <mi>C</mi>
+                            <mi>outer brick</mi>
+                          </msub>
+                          <mo>)</mo>
+                        </mrow>
+                        <mrow>
+                          <msub>
+                            <mi>L</mi>
+                            <mi>outer brick</mi>
+                          </msub>
+                        </mrow>
+                      </mfrac>
+                      <mo>=</mo>
+                      <msub>
+                        <mi>k</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&times;</mo>
+                      <msub>
+                        <mi>A</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&lbrack;</mo>
+                      <msup>
+                        <mi>P</mi>
+                        <mi>*</mi>
+                      </msup>
+                      <mo>(</mo>
+                      <msub>
+                        <mi>T</mi>
+                        <mi>1</mi>
+                      </msub>
+                      <mo>)</mo>
+                      <mo>&minus;</mo>
+                      <msub>
+                        <mi>P</mi>
+                        <mi>bulk</mi>
+                      </msub>
+                      <mo>&rbrack;</mo>
+                    </math></p>
+                    <p>When one mole of a substance at atmospheric pressure goes from the liquid phase to the gaseous phase, 
+                        there is energy required to bring the substance to a boil and make the phase change occur. 
+                        Bringing a substance to its boiling point is not enough since there is still energy required to make phase change occur. 
+                        This energy required is the latent heat of vaporization. Temperature changes cannot occur without phase changes.</p>
+              </div>
             </div>
 
             <div id="Questions" class="tabcontent">
               <h3>Guiding Questions</h3>
               <p>
-                <ul>
+                <ol>
                   <li>Consider the region and time of year this would be implemented. How does that change the
                     outer air temperature and relative humidity values you will be inputting?</li>
                   <li>What is a normal refrigerator temperature? Do potatoes need to be stored at this temperature?</li>
@@ -536,7 +1254,7 @@
                     manipulate and why?</li>
                   <li>Is this design useful? Does it make sense to build a ZECC here at Lehigh, or would it be better
                     suited elsewhere? Can this be used year-round?</li>
-                </ul>
+                </ol>
               </p>
             </div>
           </div>
