@@ -276,6 +276,21 @@
       object-fit: contain;
     }
 
+    .column_3 {
+    float: left;
+    text-align: left;
+    width: 29.3%;
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+
+    .column_4 {
+    float: left;
+    width: 20.9%;
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+
   .row:after {
       content: "";
       display: table;
@@ -305,6 +320,27 @@
       order: 1;
     }
 
+  }
+
+  @media screen and (max-width: 800px) {
+
+    .column_3 {
+      width: 100%;
+    }
+
+    .column_4 {
+      width: 100%;
+    }
+
+    .row math{
+      overflow-x: auto; /* Change to auto to avoid empty scrollbars */
+      overflow-y: hidden;
+      margin-left: 2%;
+      padding-left: 2%;
+      margin-right: 2%;
+      padding-right:2%;
+      max-width: 80%; /* Ensure it doesn't exceed container width */
+    }
   }
 
   /*-------------------BOKEH SECTION--------------------- */
@@ -439,15 +475,41 @@
 
         <div class="tab">
           <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
-          <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Slides')">Slides</button>
+          <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Our Model')">Our Model</button>
+          <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Equations')">Equations</button>
+          <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
         </div>
-    
+
         <div class="flexwrap1">
           <div id="About" class="tabcontent">
             <h3>Welcome to Direct Air Captures</h3>
             <div class="home_container">
               <div class="column_1_home">
-                <p>Climate change is one of the most pressing issues in the world today. The rising temperatures caused by the increase of CO2 in the atmosphere has caused severe environmental catastrophes and can potentially get worse. Direct Air Capture, also known as DAC, is an important technology that allows for the removal  of carbon dioxide (CO2) from the atmosphere. This technology captures air from the atmosphere and removes CO2. We will be analyzing the rate of reaction, mass balance and the energy balance of the CO2 capture process in the reactor that will be demonstrated in the graphs below. Adjust the sliders for your desired input conditions and press the play button to see how it works.</p>
+                <!-- Original text: (this was taken from the original about page and the "where and why" slide) 
+
+                 <p>Climate change is one of the most pressing issues in the world today. 
+                  The rising temperatures caused by the increase of CO2 in the atmosphere has caused severe environmental catastrophes and can potentially get worse.</p>
+                <p>Direct Air Capture, also known as DAC, is an important technology that allows for the removal  of carbon dioxide (CO2) from the atmosphere. 
+                  This technology captures air from the atmosphere and removes CO2, and is often used on an industrial scale in order to reduce the impact of CO2 emissions in hopes of fighting global warming.</p> 
+                <p>It is possible to acquire a zero net carbon dioxide emissions with DAC, and the
+                  extracted carbon dioxide can be reallocated to create synthetic fuels or in the
+                  processing of foods, and materials that are consumed on a daily basis</p>
+                <p>The future of energy consumption and CO2 will be greatly affected by DAC, as the
+                  development of direct air capture technologies continue to advance in hopes of
+                  producing zero or negative net carbon dioxide emissions.</p>
+                <p>We will be analyzing the rate of reaction, mass balance and the energy balance of the CO2 capture process in the reactor that will be demonstrated in the graphs below.</p> 
+                <p>Adjust the sliders for your desired input conditions and press the play button to see how it works.</p>
+
+                -->
+
+                <!-- Condensed text: -->
+
+                <p>Climate change is one of the most pressing issues in the world today. 
+                  The rising temperatures caused by the increase of CO2 in the atmosphere have caused severe environmental catastrophes that can potentially get worse.</p>
+                <p>Direct Air Capture, also known as DAC, is an important technology that allows for the removal of carbon dioxide (CO2) from the atmosphere. 
+                  It is often used on an industrial scale in order to reduce the impact of CO2 emissions. Extracted carbon dioxide can be reallocated to create synthetic fuels, regularly-consumed materials, or processed foods.</p>
+                <p>In our module, we will be analyzing the rate of reaction, mass balance and the energy balance of the CO2 capture process in the reactor that will be demonstrated in the graphs below.</p> 
+                <p>Adjust the sliders for your desired input conditions and press the play button to see how it works.</p>
               </div>
   
               <div class="column_2_home">
@@ -459,11 +521,361 @@
             </div>  
           </div>
 
-          <div id="Slides" class="tabcontent">
-            <h3>DAC Slides</h3>
-            <div class="slide-container">
-              <iframe src="{{url_for('static', filename='DAC.pdf')}}" alt = "DAC Slides" class="slide-iframe" >Loading…</iframe>
+          <div id="Our Model" class="tabcontent">
+            <div class="row">
+              <div class="column_4">
+                <h3>Our Model:</h3>
+                <p><ul>
+                  <li>The Direct Air Capture model that we are going to use is based on a
+                    packed bed reactor model, where there is a column with several
+                    beds embedded with amine-functionalized solid sorbents.</li>
+                  <li>A sorbent is a basic substance that allows the acidic CO2 to be
+                    adsorbed, ie. holds CO2 molecules on its surface via adhesion.</li>
+                  <li>This model focuses on passing ambient air into the reaction column,
+                    where CO2 is adsorbed onto the surface of the sorbent.</li>
+                  <li>Then the CO2 is extracted by either a temperature or a vacuum swing.</li>
+                  <li>Other air particles such as excess O2 are removed, steam is fed to the reactor, and the
+                    CO2 undergoes desorption through the temperature swing. The vacuum swing then
+                    is used to cool the reactor and extract the water.</li>
+                  <li>For our simulation model, we will be studying the packed bed reactor by discretizing
+                    the column length into equal parts and simultaneously calculating the parameters of
+                    concern in each section to get the results of the model.</li>
+                </ul></p>
+              </div>
+              <div class="column_4">
+                <h3>Assumptions:</h3>
+                <p>For our model, we have made the following assumptions:</p>
+                <p><ul>
+                  <li>The velocity of the air is constant throughout the column</li>
+                  <li>The temperature of the reactor walls are the same throughout the column</li>
+                  <li>No axial diffusion of mass or conduction of heat</li>
+                  <li>No radial concentration or temperature gradients</li>
+                  <li>The air that is passed through the column is dry air so minimal humidity in the air.</li>
+                </ul></p>
+              </div>
+              <div class="column_4">
+                <h3>Independent Variables (User Input):</h3>
+                <p><ul>
+                  <li>Volume of the reactor bed</li>
+                  <li>Initial CO2 concentration</li>
+                  <li>Initial temperature</li>
+                  <li>Volumetric flow rate of CO2 passed</li>
+                  <li>ε (Porosity of the bed)</li>
+                  <li>Material of the Wall</li>
+                </ul></p>
+              </div>
+              <div class="column_4">
+                <h3>Dependent Variables (Calculated by the Model):</h3>
+                <p><ul>
+                  <li>Rate of reaction</li>
+                  <li>Rate of adsorption of CO2</li>
+                  <li>Temperature</li>
+                  <li>Concentration of CO2 in the passed air</li>
+                </ul></p>
+              </div>
             </div>
+          </div>
+
+
+          <div id="Equations" class="tabcontent">
+            <h3>Equations</h3>
+            <div class = "row">
+              <p><ul>
+                <li>Rate of Reaction</li>
+              </ul></p>
+
+              <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                <msub>
+                  <mi>r</mi>
+                  <mi>CO2</mi>
+                </msub>
+                <mo>=</mo>
+                <mo>&lbrack;</mo>
+                <msub>
+                  <mi>k</mi>
+                  <mi>T</mi>
+                </msub>
+                <mo>(</mo>
+                <msub>
+                  <mi>P</mi>
+                  <mi>CO2</mi>
+                </msub>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mn>1</mn>
+                    <mo>&minus;</mo>
+                    <msup>
+                      <mrow>
+                      <mo>(</mo>
+                      <mfrac>
+                        <mrow>
+                          <mi>q</mi>
+                        </mrow>
+                        <mrow>
+                          <msub>
+                            <mi>q</mi>
+                            <mi>s</mi>
+                          </msub>
+                        </mrow>
+                      </mfrac>
+                      <mo>)</mo>
+                      </mrow>
+                      <mrow>
+                        <msub>
+                          <mi>t</mi>
+                          <mi>h</mi>
+                        </msub>
+                      </mrow>
+
+                    </msup>
+                    <mo>)</mo>
+                  </mrow>
+                  <mrow>
+                    <mfrac>
+                      <mrow>
+                        <mn>1</mn>
+                      </mrow>
+                      <mrow>
+                        <msub>
+                          <mi>t</mi>
+                          <mi>h</mi>
+                        </msub>
+                      </mrow>
+                    </mfrac>
+                  </mrow>
+                </msup>
+                <mo>&minus;</mo>
+                <mfrac>
+                  <mrow>
+                    <mi>q</mi>
+                  </mrow>
+                  <mrow>
+                    <msub>
+                      <mi>bq</mi>
+                      <mi>s</mi>
+                    </msub>
+                  </mrow>
+                </mfrac>
+                <mo>)</mo>
+                <mo>&rbrack;</mo>
+              </math></p>
+
+            </div>
+
+            <div class="row">
+              <p><ul>
+                <li>Mass Balance</li>
+              </ul></p>
+
+              <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                <msub>
+                  <mi>&epsi;</mi>
+                  <mi>r</mi>
+                </msub>
+                <mfrac>
+                  <mrow>
+                    <mi>&part;</mi>
+                    <msub>
+                      <mi>C</mi>
+                      <mi>CO2</mi>
+                    </msub>
+                  </mrow>
+                  <mrow>
+                    <mi>&part;</mi>
+                    <mi>t</mi>
+                  </mrow>
+                </mfrac>
+                <mo>=</mo>
+                <mo>&minus;</mo>
+                <mi>v</mi>
+                <mo>(</mo>
+                <mfrac>
+                  <mrow>
+                    <msub>
+                      <mi>C</mi>
+                      <msub>
+                        <mi>CO2</mi>
+                        <mn>1</mn>
+                      </msub>
+                    </msub>
+                    <mo>&minus;</mo>
+                    <msub>
+                      <mi>C</mi>
+                      <msub>
+                        <mi>CO2</mi>
+                        <mn>0</mn>
+                      </msub>
+                    </msub>
+                  </mrow>
+                  <mrow>
+                    <mi>&Delta;</mi>
+                    <mi>z</mi>
+                  </mrow>
+                </mfrac>
+                <mo>)</mo>
+                <mo>&minus;</mo>
+                <msub>
+                  <mi>r</mi>
+                  <mi>CO2</mi>
+                </msub>
+                <mo>(</mo>
+                <mn>1</mn>
+                <mo>&minus;</mo>
+                <msub>
+                  <mi>&epsi;</mi>
+                  <mi>r</mi>
+                </msub>
+                <mo>)</mo>
+                <msub>
+                  <mi>&rho;</mi>
+                  <mi>s</mi>
+                </msub>
+              </math></p>
+
+              <p><ul>
+                <li>Energy Balance</li>
+              </ul></p>
+
+            </div>
+            <div class="row">
+
+              <p><math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                <mo>&lbrack;</mo>
+                <mo>(</mo>
+                <mn>1</mn>
+                <mo>&minus;</mo>
+                <msub>
+                  <mi>&epsi;</mi>
+                  <mi>r</mi>
+                </msub>
+                <mo>)</mo>
+                <msub>
+                  <mi>&rho;</mi>
+                  <mi>s</mi>
+                </msub>
+                <msub>
+                  <mi>C</mi>
+                  <msub>
+                    <mi>p</mi>
+                    <mi>s</mi>
+                  </msub>
+                </msub>
+                <mo>+</mo>
+                <msub>
+                  <mi>&epsi;</mi>
+                  <mi>r</mi>
+                </msub>
+                <msub>
+                  <mi>&rho;</mi>
+                  <mi>g</mi>
+                </msub>
+                <msub>
+                  <mi>C</mi>
+                  <msub>
+                    <mi>p</mi>
+                    <mi>g</mi>
+                  </msub>
+                </msub>
+                <mo>&rbrack;</mo>
+                <mfrac>
+                  <mrow>
+                    <mi>&part;</mi>
+                    <mi>T</mi>
+                  </mrow>
+                  <mrow>
+                    <mi>&part;</mi>
+                    <mi>t</mi>
+                  </mrow>
+                </mfrac>
+                <mo>=</mo>
+                <mo>(</mo>
+                <mfrac>
+                  <mrow>
+                    <mi>&part;</mi>
+                  </mrow>
+                  <mrow>
+                    <mi>&part;</mi>
+                    <mi>z</mi>
+                  </mrow>
+                </mfrac>
+                <mo>(</mo>
+                <mo>&minus;</mo>
+                <msub>
+                  <mi>v</mi>
+                  <mn>0</mn>
+                </msub>
+                <msub>
+                  <mi>&rho;</mi>
+                  <mi>g</mi>
+                </msub>
+                <msub>
+                  <mi>C</mi>
+                  <msub>
+                    <mi>p</mi>
+                    <mi>g</mi>
+                  </msub>
+                </msub>
+                <mi>T</mi>
+                <mo>)</mo>
+                <mo>)</mo>
+                <mo>+</mo>
+                <mo>(</mo>
+                <mo>(</mo>
+                <mn>1</mn>
+                <mo>&minus;</mo>
+                <msub>
+                  <mi>&epsi;</mi>
+                  <mi>r</mi>
+                </msub>
+                <mo>)</mo>
+                <msub>
+                  <mi>&rho;</mi>
+                  <mi>s</mi>
+                </msub>
+                <mo>(</mo>
+                <mi>&Delta;</mi>
+                <msub>
+                  <mi>H</mi>
+                  <mi>CO2</mi>
+                </msub>
+                <msub>
+                  <mi>r</mi>
+                  <mi>CO2</mi>
+                </msub>
+                <mo>)</mo>
+                <mo>)</mo>
+                <mo>+</mo>
+                <msub>
+                  <mi>a</mi>
+                  <mi>s</mi>
+                </msub>
+                <mi>h</mi>
+                <mo>(</mo>
+                <msub>
+                  <mi>T</mi>
+                  <mi>w</mi>
+                </msub>
+                <mo>&minus;</mo>
+                <mi>T</mi>
+                <mo>)</mo>
+              </math></p>
+            </div>
+          </div>
+
+          <div id="Questions" class="tabcontent">
+            <h3>Questions</h3>
+            <p><ol>
+              <li>What values of the changing parameters together would give the most efficient
+                result (ie, most CO2 adsorption in minimal temperature change)?</li>
+              <li>How does changing the value of ∆H (change in enthalpy) or ε (porosity of the
+                bed) affect the adsorption and desorption of CO2?</li>
+              <li>What operational variables would be affected if we used humid air instead of
+                dry air on this DAC model? How would this change affect each of our changing
+                parameters?</li>
+              <li>Look up some relevant properties of KOH. How would changing sorbents affect
+                the calculations of our model?</li>
+            </ol></p>
           </div>
         </div>
 
