@@ -250,7 +250,7 @@
     text-align: center;
   }
 
-  /* SLIDESHOW (comes from w3schools.com)
+  /* SLIDESHOW (comes from w3schools.com) */
   .slideshow-container{
     max-width: 800px;
   }
@@ -261,10 +261,10 @@
 
   .prev, .next {
     cursor: pointer;
-    position: absolute;
-    top: 50%;
+    /* position: absolute;
+    top: 50%; */
     width: auto;
-    margin-top: -22px;
+    /* margin-top: -22px; */
     padding: 16px;
     color: white;
     font-weight: bold;
@@ -275,7 +275,7 @@
   }
 
   .next {
-    right: 0;
+    /* right: 0; */
     border-radius: 3px 0 0 3px;
   }
 
@@ -286,20 +286,31 @@
   .text {
     color: #f2f2f2;
     font-size: 15px;
-    padding: 8px 12px;
+    /* padding: 8px 12px;
     position: absolute;
-    bottom: 8px;
+    bottom: 8px; */
     width: 100%;
     text-align: center;
   }
 
-  .numbertext {
+  .slides-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff00;
+
+  }
+
+  /* .numbertext {
     color: #f2f2f2;
     font-size: 12px;
     padding: 8px 12px;
     position: absolute;
     top: 0;
-  }
+  } */
 
   .dot {
     cursor: pointer;
@@ -324,7 +335,7 @@
   @keyframes fade {
     from {opacity: .4}
     to {opacity: 1}
-  } */
+  }
 
   .card {
     display:flex;
@@ -555,28 +566,29 @@
     <div class="container2">
       <h1 style="text-decoration: underline">Modules</h1>
 
-      <!-- <div class="container2">
-        <div class="slideshow-container">
-          <div class="mySlides fade">
-            <div class="numbertext">1 / 3</div>
-            <img src="biodegrad.jpg" alt="one" style="width:100%">
-            <div class="text">Caption Text</div>
+      <div class="container2">
+        <div class="slides-row">
+          <div><a class="prev" onclick="plusSlides(-1)">&#10094;</a></div>
+          <div class="slideshow-container">
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">1 / 3</div> -->
+              <img src="biodegrad.jpg" alt="one" style="width:100%">
+              <div class="text">Caption Text</div>
+            </div>
+          
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">2 / 3</div> -->
+              <img src="reactionkinetics.png" alt="two" style="width:100%">
+              <div class="text">Caption Two</div>
+            </div>
+          
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">3 / 3</div> -->
+              <img src="evap-cooling.jpg" alt="three" style="width:100%">
+              <div class="text">Caption Three</div>
+            </div>
           </div>
-        
-          <div class="mySlides fade">
-            <div class="numbertext">2 / 3</div>
-            <img src="reactionkinetics.png" alt="two" style="width:100%">
-            <div class="text">Caption Two</div>
-          </div>
-        
-          <div class="mySlides fade">
-            <div class="numbertext">3 / 3</div>
-            <img src="evap-cooling.jpg" alt="three" style="width:100%">
-            <div class="text">Caption Three</div>
-          </div>
-        
-          <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-          <a class="next" onclick="plusSlides(1)">&#10095;</a>
+          <div><a class="next" onclick="plusSlides(1)">&#10095;</a></div>
         </div>
         <br>
         
@@ -585,7 +597,7 @@
           <span class="dot" onclick="currentSlide(2)"></span>
           <span class="dot" onclick="currentSlide(3)"></span>
         </div>
-      </div> -->
+      </div>
 
     <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
     <!--each flexwrap is a row, and all modules are in alphabetical order-->
@@ -741,7 +753,7 @@
     </div>
 
 
-    <!-- <script>
+    <script>
       let slideIndex = 1;
       showSlides(slideIndex);
       
@@ -770,7 +782,7 @@
         slides[slideIndex-1].style.display = "block";
         dots[slideIndex-1].className += " active";
       }
-    </script> -->
+    </script>
 
   </body>
 
