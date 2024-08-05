@@ -217,6 +217,15 @@
     margin-bottom:20px;
   }
 
+  .top-flexwrap{
+    display: flex;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff00;
+  }
+
   .top-flexcol {
     width: 50%;
     padding: 10px;
@@ -241,11 +250,145 @@
     text-align: center;
   }
 
+  /* SLIDESHOW (comes from w3schools.com) */
+  .slideshow-container{
+    max-width: 800px;
+  }
+
+  .mySlides {
+    display:none;
+  }
+
+  .prev, .next {
+    cursor: pointer;
+    /* position: absolute;
+    top: 50%; */
+    width: auto;
+    /* margin-top: -22px; */
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+  }
+
+  .next {
+    /* right: 0; */
+    border-radius: 3px 0 0 3px;
+  }
+
+  .prev:hover, .next:hover {
+    background-color: rgba(0,0,0,0.8);
+  }
+
+  .text {
+    color: #f2f2f2;
+    font-size: 15px;
+    /* padding: 8px 12px;
+    position: absolute;
+    bottom: 8px; */
+    width: 100%;
+    text-align: center;
+  }
+
+  .slides-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff00;
+
+  }
+
+  /* .numbertext {
+    color: #f2f2f2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+  } */
+
+  .dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+  }
+
+  .active, .dot:hover {
+    background-color: #717171;
+  }
+
+  .fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+  }
+
+  @keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+  }
+
+  .card {
+    display:flex;
+  }
+
+  .card-container {
+    padding: 2px 16px;
+  }
+
+  /* Add rounded corners to the top left and the top right corner of the image */
+  .card img {
+    border-radius: 5px;
+    width: 100%;
+    object-fit: contain;
+  }
+  
+  .card p{
+    font-size: 14px;
+  }
+
+  .card a{
+    text-decoration: none;
+    color: black;
+  }
+
   .flexwrap {
     display: flex;
     width: 100%;
     font-family: 'Arial', sans-serif;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff00;
+
   }
+
+  .flexwrap a{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+    background-color: white;
+    display: flex;
+    width: 40%;
+    height: 100%;
+    padding: 20px;
+    margin: 20px;
+    text-decoration: none;
+    color:black;
+  }
+  .flexwrap a:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  }
+
+
   .flexcol {
     color: #484848;
     border: 3px;
@@ -260,9 +403,9 @@
   }
 
   .head2 {
-    font-size: 24px;
-    color: rgb(24, 24, 24);
-    text-decoration: underline;
+    font-size: 20px;
+    color: black;
+    /* text-decoration: underline; */
     text-align: center;
   }
   .container2 {
@@ -323,6 +466,12 @@
     .flexwrap {
       flex-direction: column;
     }
+    .card{
+      flex-direction: column;
+    }
+    .flexwrap a{
+      width: 80%;
+    }
     .flexcol {
       width: 100%;
     }
@@ -341,18 +490,18 @@
           <li><div class="dropdown">
               <button class="dropbtn">MODULES</button>
               <div class="dropdown-content">
-                <a href="sliders_reaction_kinetics" class="header-text">Reaction Kinetics</a>
-                <a href="ZECC" class="header-text">Zero Energy Cooling Chamber</a>
-                <a href="SIR" class="header-text">SIR Infectious Diseases</a>
-                <a href="DAC" class="header-text">Direct Air Captures</a>
+                <a href="biodegradability_classification" class="header-text">Biodegradability Classification</a>
                 <a href="catalysis_data_interactive_visualization" class="header-text">Catalysis Data Science</a>
                 <a href="DLT" class="header-text">Digital Lab Twin</a>
-                <a href="biodegradability_classification" class="header-text">Biodegradability Classification</a>
+                <a href="DAC" class="header-text">Direct Air Captures</a>
+                <a href="sliders_reaction_kinetics" class="header-text">Reaction Kinetics</a>
+                <a href="SIR" class="header-text">SIR Infectious Diseases</a>
+                <a href="ZECC" class="header-text">Zero Energy Cooling Chamber</a>
               </div>
             </div>
           </li>
           <li><a href="about" class="header-text">ABOUT</a></li>
-      </div>
+      </nav>
     </header>
     <style>
       .text-size {
@@ -367,7 +516,7 @@
         <h2 class="top-head2"> Introducing accessible, inquiry-based learning technologies into the college classroom.</h2>
       </div>
       <hr style="height:1px; width:150px; background-color: black;">
-      <div class="flexwrap" style="margin-top:70px;">
+      <div class="top-flexwrap" style="margin-top:70px;">
         <div class="top-flexcol">
           <p style="margin-top:0; width:80%;">
             This site was designed to help students learn conceptually complex
@@ -412,157 +561,253 @@
     </div>-->
 
 
-    <!-------MODELS------------------------------------------------------>
+    <!-------MODULES------------------------------------------------------>
 
     <div class="container2">
-      <h1 style="text-decoration: underline">Models</h1>
+      <h1 style="text-decoration: underline">Modules</h1>
 
-      <h2 style="margin-bottom: 40px; font-weight: normal;">
-        The Github repository containing all code and documentation related to
-        this project can be found below:
-      </h2>
+      <div class="container2">
+        <div class="slides-row">
+          <div><a class="prev" onclick="plusSlides(-1)">&#10094;</a></div>
+          <div class="slideshow-container">
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">1 / 3</div> -->
+              <img src="{{url_for('static', filename='biodegrad-ui.png')}}" alt="Biodegradability Classification" style="width:100%">
+              <div class="text">Caption One</div>
+            </div>
+          
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">2 / 3</div> -->
+              <img src="{{url_for('static', filename='catalysis-ui.png')}}" alt="Catalysis" style="width:100%">
+              <div class="text">Caption Two</div>
+            </div>
+          
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">3 / 3</div> -->
+              <img src="{{url_for('static', filename='DLT-ui.png')}}" alt="Digital Lab Twin" style="width:100%">
+              <div class="text">Caption Three</div>
+            </div>
 
-      <p class="button-container">
-        <a
-        href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization"
-        class="button"
-        >Github Repository</a>
-      </p>
-      <!--THIS IS THE TITLE FOR THE MODELS-->
-    </div>
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">1 / 3</div> -->
+              <img src="{{url_for('static', filename='DAC-ui.png')}}" alt="Direct Air Captures" style="width:100%">
+              <div class="text">Caption Text</div>
+            </div>
+
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">1 / 3</div> -->
+              <img src="{{url_for('static', filename='reaction_kinetics-ui.png')}}" alt="Reaction Kinetics" style="width:100%">
+              <div class="text">Caption Text</div>
+            </div>
+
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">1 / 3</div> -->
+              <img src="{{url_for('static', filename='SIR-ui.png')}}" alt="SIR Infectious Diseases" style="width:100%">
+              <div class="text">Caption Text</div>
+            </div>
+
+            <div class="mySlides fade">
+              <!-- <div class="numbertext">1 / 3</div> -->
+              <img src="{{url_for('static', filename='ZECC-ui.png')}}" alt="Zero Energy Cooling Chamber" style="width:100%">
+              <div class="text">Caption Text</div>
+            </div>
+
+          </div>
+          <div><a class="next" onclick="plusSlides(1)">&#10095;</a></div>
+        </div>
+        <br>
+        
+        <div style="text-align:center">
+          <span class="dot" onclick="currentSlide(1)"></span>
+          <span class="dot" onclick="currentSlide(2)"></span>
+          <span class="dot" onclick="currentSlide(3)"></span>
+        </div>
+      </div>
 
     <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
-    <!--each flexwrap is a row-->
+    <!--each flexwrap is a row, and all modules are in alphabetical order-->
+
     <div class="flexwrap">
-      <!--REACTION KINETICS DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Reaction Kinetics:</h2>
+        <!--GITHUB REPO DIVISION-->
+        <a href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization">
+        <div class="card">
+            <div class="card-container">
+                <h2 class="head2">
+                  Github Repository
+                </h2>
+              <p>
+                The Github repository containing all code and documentation related to
+                this project can be found here.
+              </p>
+            </div>
+        </div>
+        </a>
 
-        <p>
-          Reaction kinetics is the branch of chemistry concerned with the rate
-          of transformation of reactant into product. Reaction rate is generally
-          expressed in terms of concentration per unit time. This program allows
-          you to see the change in A, B, and C concentrations as you change the
-          orders and initial k-constants.
-        </p>
-        <p class="button-container">
-          <a href="sliders_reaction_kinetics" class="button"
-            >Reaction Kinetics Model</a
-          >
-        </p>
-      </div>
-
-      <!--ZECC DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Zero Energy Cooling Chamber:</h2>
-
-        <p>
-          This program allows you to create a Zero Energy Cooling Chamber with
-          your chosen specified dimensions, material and location for the
-          chamber. A Zero Energy Cooling Chamber is an eco-friendly and
-          cost-effective way of storing food. Usually used in hot climates, it
-          uses passive evaporation to cool down the food storage chamber. Click
-          to see more information.
-        </p>
-
-        <p class="button-container">
-          <a href="ZECC" class="button">ZECC Model</a></p>
-      </div>
+        <!--BIODEGRAD CLASSIFICATION DIVISION-->
+        <a href="biodegradability_classification">
+          <div class="card">
+            <img src="{{url_for('static', filename='biodegrad.png')}}" alt="Biodegradability Classification">
+            <div class="card-container">
+                <h2 class="head2">Biodegradability Classification</h2>
+              <p>
+                Experiment with a simple classification problem, building your own model
+                to predict the biodegradability of organic compounds. View the implementation
+                and impact of machine learning in chemical engineering contexts.
+              </p>
+              <!-- <p class="button-container">
+                <a href="biodegradability_classification" class="button"
+                >Biodegradability Classification Model</a>
+              </p> -->
+            </div>
+          </div>
+        </a>
     </div>
 
     <div class="flexwrap">
-      <!--SIR DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Infectious Disease Model:</h2>
-
-        <p>
-          The SIR Model (Susceptible-Exposed-Infected-Recovered) is an
-          infectious disease model that relates different populations through a
-          set of ordinary differential equations.
-        </p>
-
-        <p class="button-container">
-          <a href="SIR" class="button">SIR Model</a></p>
-      </div>
-
       <!--Catalysis DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Catalysis Data Science Model:</h2>
+      <a href="catalysis_data_interactive_visualization">
+        <div class="card">
+          <img src="{{url_for('static', filename='data_science.jpg')}}" alt="Catalysis">
+          <div class="card-container">
+              <h2 class="head2">Catalysis Data Science</h2>
+            <p>
+              Discover trends within a large dataset of catalysts through exploration. Use various
+              data science and machine learning methods, such as supervised and unsupervised learning,
+              to gain a deeper understanding of the data.
+            </p>
+            <!-- <p class="button-container">
+              <a href="catalysis_data_interactive_visualization" class="button">Catalysis Model</a>
+            </p> -->
+          </div>
+        </div>
+      </a>
 
-        <p>
-          Ever wonder how your email is classified as spam? How about how
-          forecasting is done in fields such as business, medicine, and many
-          others? The answer is data science and machine learning concepts.
-          Data science and machine learning are emerging fields which are
-          increasingly being used in the real world. Our module will introduce
-          many of the basic key concepts of data science and machine learning
-          which are used in many real world applications.
-        </p>
-        <p class="button-container">
-          <a href="catalysis_data_interactive_visualization" class="button"
-            >Catalysis Model</a
-          >
-        </p>
-      </div>
+      <!--DLT DIVISION-->
+      <a href="DLT">
+        <div class="card">
+          <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="DLT">
+          <div class="card-container">
+              <h2 class="head2">Digital Lab Twin</h2>
+            <p>
+              Delve into using a neural network to predict the outputs of a photobioreactor (PBR).
+              Change the PBR's variables and the neural network's hyperparameters to create an
+              optimized PBR system  and an accurate evaluation.
+            </p>
+            <!-- <p class="button-container">
+              <a href="DLT" class="button">DLT Model</a></p> -->
+          </div>
+        </div>
+      </a>
+
     </div>
 
     <div class="flexwrap">
       <!--DAC DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">DAC Model:</h2>
+      <a href="DAC">
+        <div class="card">
+          <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC">
+          <div class="card-container">
+              <h2 class="head2">Direct Air Captures</h2>
+            <p>
+              Develop a direct air capture (DAC) system, a climate solution that filters out carbon
+              dioxide from any point in ambient air. Modify the DAC's characteristics, observe its
+              performance, and optimize its configuration.
+            </p>
+            <!-- <p class="button-container">
+              <a href="DAC" class="button">DAC Model</a></p> -->
+          </div>
+        </div>
+      </a>
 
-        <p>Develop a direct air capture (DAC) system, a climate solution that removes CO2 from any point in the atmosphere. Modify the DAC’s characteristics, observe its performance, and optimize its configuration.</p>
-
-        <p class="button-container">
-          <a href="DAC" class="button">DAC Model</a></p>
-      </div>
-
-      <!--DLT DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Digital Lab Twin:</h2>
-
-        <p>
-          Want to delve into machine learning? Interested in expediting your
-          experiments? The digital laboratory twin allows you to do both, by
-          building your own neural network! Our system allows you to customize a
-          network and analyse it's capabilities in seconds. Models can then be
-          used to optimize the complex biochemical-engineering system called a
-          photobioreactor, adjusting initial conditions to perform 'experiments'
-          and maximize valuable bioproducts.
-        </p>
-
-        <p class="button-container">
-          <a href="DLT" class="button">DLT Model</a></p>
-      </div>
+      <!--REACTION KINETICS DIVISION-->
+      <a href="sliders_reaction_kinetics">
+        <div class="card">
+          <img src="{{url_for('static', filename='reaction_kinetics.png')}}" alt="Reaction Kinetics">
+          <div class="card-container">
+              <h2 class="head2">Reaction Kinetics</h2>
+            <p>
+              Explore reaction kinetics, the branch of chemistry concerned with the rate of
+              transformation of reactant into product. Observe the progression of a reaction
+              through customizable inputs and dynamic output displays.
+            </p>
+            <!-- <p class="button-container">
+              <a href="sliders_reaction_kinetics" class="button">Reaction Kinetics Model</a>
+            </p> -->
+          </div>
+        </div>
+      </a>      
     </div>
 
     <div class="flexwrap">
-      <!--BIODEGRAD CLASSIFICATION DIVISION-->
-      <div class="flexcol">
-        <h2 class="head2">Biodegradability Classification:</h2>
+      <!--SIR DIVISION-->
+      <a href="SIR">
+        <div class="card">
+          <img src="{{url_for('static', filename='virus.jpg')}}" alt="SEIR">
+          <div class="card-container">
+              <h2 class="head2">SIR Infectious Diseases</h2>
+            <p>
+              Follow the spread of infectious diseases through interactive visualizations of the
+              Susceptible-Exposed-Infected-Recovered (SEIR) model. Adjust the characteristics
+              of the outbreak to see the influence on infection.
+            </p>
+            <!-- <p class="button-container">
+              <a href="SIR" class="button">SIR Model</a></p> -->
+          </div>
+        </div>
+      </a>
 
-        <p>
-          Are you new to machine learning? Our module enables you to experiment
-          with one of three simple machine learning algorithms. We provide the tools needed
-          to guide you through developing, optimizing, evaluating, and applying your
-          model in a Chemical Engineering setting. Specifically, your model will be trained to 
-          predict the biodegradability of organic chemicals.
-        </p>
+      <!--ZECC DIVISION-->
+      <a href="ZECC">
+        <div class="card">
+          <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC">
+          <div class="card-container">
+              <h2 class="head2">Zero Energy Cooling Chamber</h2>
+            <p>
+              Optimize a zero energy cool chamber (ZECC), a storage solution intended to preserve
+              food in arid climates using passive evaporation. Evaluate the chamber's performance in
+              different locations using the visualizations.
+            </p>
+              <!-- <p class="button-container">
+              <a href="ZECC" class="button">ZECC Model</a></p> -->
+          </div>
+        </div>
+      </a>
 
-        <p class="button-container">
-          <a href="biodegradability_classification" class="button"
-          >Biodegradability Classification Model</a>
-        </p>
-      </div>
-    
-      <!--FUTURE MODULE-->
-      <div class="flexcol">
-        <h2 class="head2"> </h2>
-
-        <p></p>
-
-      </div>
     </div>
+
+    </div>
+
+
+    <script>
+      let slideIndex = 1;
+      showSlides(slideIndex);
+      
+      // Next/previous controls
+      function plusSlides(n) {
+        showSlides(slideIndex += n);
+      }
+      
+      // Thumbnail image controls
+      function currentSlide(n) {
+        showSlides(slideIndex = n);
+      }
+      
+      function showSlides(n) {
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        let dots = document.getElementsByClassName("dot");
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+          dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+      }
+    </script>
 
   </body>
 
