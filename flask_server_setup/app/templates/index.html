@@ -588,7 +588,7 @@
       </div> -->
 
     <!--THESE ARE THE DIVISIONS THAT ENCLOSE THE MODELS; EACH DIVISION HAS A BORDER THAT ENCLOSES THE TITLE, PARAGRAPH, AND LINK-->
-    <!--each flexwrap is a row-->
+    <!--each flexwrap is a row, and all modules are in alphabetical order-->
 
     <div class="flexwrap">
         <!--GITHUB REPO DIVISION-->
@@ -627,6 +627,60 @@
     </div>
 
     <div class="flexwrap">
+      <!--Catalysis DIVISION-->
+      <a href="catalysis_data_interactive_visualization">
+        <div class="card">
+          <img src="{{url_for('static', filename='data_science.jpg')}}" alt="Catalysis">
+          <div class="card-container">
+              <h2 class="head2">Catalysis Data Science Model</h2>
+            <p>
+              Discover trends within a large dataset of catalysts through exploration. Use various
+              data science and machine learning methods, such as supervised and unsupervised learning,
+              to gain a deeper understanding of the data.
+            </p>
+            <!-- <p class="button-container">
+              <a href="catalysis_data_interactive_visualization" class="button">Catalysis Model</a>
+            </p> -->
+          </div>
+        </div>
+      </a>
+
+      <!--DAC DIVISION-->
+      <a href="DAC">
+        <div class="card">
+          <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC">
+          <div class="card-container">
+              <h2 class="head2">DAC Model</h2>
+            <p>
+              Develop a direct air capture (DAC) system, a climate solution that filters out carbon
+              dioxide from any point in ambient air. Modify the DAC's characteristics, observe its
+              performance, and optimize its configuration.
+            </p>
+            <!-- <p class="button-container">
+              <a href="DAC" class="button">DAC Model</a></p> -->
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="flexwrap">
+      <!--DLT DIVISION-->
+      <a href="DLT">
+        <div class="card">
+          <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="DLT">
+          <div class="card-container">
+              <h2 class="head2">Digital Lab Twin</h2>
+            <p>
+              Delve into using a neural network to predict the outputs of a photobioreactor (PBR).
+              Change the PBR's variables and the neural network's hyperparameters to create an
+              optimized PBR system  and an accurate evaluation.
+            </p>
+            <!-- <p class="button-container">
+              <a href="DLT" class="button">DLT Model</a></p> -->
+          </div>
+        </div>
+      </a>
+
       <!--REACTION KINETICS DIVISION-->
       <a href="sliders_reaction_kinetics">
         <div class="card">
@@ -643,24 +697,7 @@
             </p> -->
           </div>
         </div>
-      </a>
-
-      <!--ZECC DIVISION-->
-      <a href="ZECC">
-        <div class="card">
-          <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC">
-          <div class="card-container">
-              <h2 class="head2">Zero Energy Cooling Chamber</h2>
-            <p>
-              Optimize a zero energy cool chamber (ZECC), a storage solution intended to preserve
-              food in arid climates using passive evaporation. Evaluate the chamber's performance in
-              different locations using the visualizations.
-            </p>
-              <!-- <p class="button-container">
-              <a href="ZECC" class="button">ZECC Model</a></p> -->
-          </div>
-        </div>
-      </a>
+      </a>      
     </div>
 
     <div class="flexwrap">
@@ -681,67 +718,25 @@
         </div>
       </a>
 
-      <!--Catalysis DIVISION-->
-      <a href="catalysis_data_interactive_visualization">
+      <!--ZECC DIVISION-->
+      <a href="ZECC">
         <div class="card">
-          <img src="{{url_for('static', filename='data_science.jpg')}}" alt="Catalysis">
+          <img src="{{url_for('static', filename='evap-cooling.jpg')}}" alt="ZECC">
           <div class="card-container">
-              <h2 class="head2">Catalysis Data Science Model</h2>
+              <h2 class="head2">Zero Energy Cooling Chamber</h2>
             <p>
-              Discover trends within a large dataset of catalysts through exploration. Use various
-              data science and machine learning methods, such as supervised and unsupervised learning,
-              to gain a deeper understanding of the data.
+              Optimize a zero energy cool chamber (ZECC), a storage solution intended to preserve
+              food in arid climates using passive evaporation. Evaluate the chamber's performance in
+              different locations using the visualizations.
             </p>
-            <!-- <p class="button-container">
-              <a href="catalysis_data_interactive_visualization" class="button">Catalysis Model</a>
-            </p> -->
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="flexwrap">
-      <!--DAC DIVISION-->
-      <a href="DAC">
-        <div class="card">
-          <img src="{{url_for('static', filename='DACPIC3.jpg')}}" alt="DAC">
-          <div class="card-container">
-              <h2 class="head2">DAC Model</h2>
-            <p>
-              Develop a direct air capture (DAC) system, a climate solution that filters out carbon
-              dioxide from any point in ambient air. Modify the DAC's characteristics, observe its
-              performance, and optimize its configuration.
-            </p>
-            <!-- <p class="button-container">
-              <a href="DAC" class="button">DAC Model</a></p> -->
+              <!-- <p class="button-container">
+              <a href="ZECC" class="button">ZECC Model</a></p> -->
           </div>
         </div>
       </a>
 
-      <!--DLT DIVISION-->
-      <a href="DLT">
-        <div class="card">
-          <img src="{{url_for('static', filename='PBR_image.jpg')}}" alt="DLT">
-          <div class="card-container">
-              <h2 class="head2">Digital Lab Twin</h2>
-            <p>
-              Delve into using a neural network to predict the outputs of a photobioreactor (PBR).
-              Change the PBR's variables and the neural network's hyperparameters to create an
-              optimized PBR system  and an accurate evaluation.
-            </p>
-            <!-- <p class="button-container">
-              <a href="DLT" class="button">DLT Model</a></p> -->
-          </div>
-        </div>
-      </a>
     </div>
 
-    <div class="flexwrap">
-
-    
-      <!--next module goes here-->
-
-    </div>
     </div>
 
 
