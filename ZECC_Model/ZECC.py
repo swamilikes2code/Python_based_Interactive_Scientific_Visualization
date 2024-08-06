@@ -324,7 +324,7 @@ dp_Costa=dew_point(yearly_temps_df.iloc[2], yearly_rh_df.iloc[2], range(0,12)) #
 
 #creating a graph that shows the ambient temp, outer wall temp, and dew point temp
 g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, height=300, width=350)
-g4.title.text_font_size='12pt'
+g4.title.text_font_size='9pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], dp=dp_Costa, T1=range(0,12)))
 gl1=g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
 gl2=g4.line('time', 'dp', source=sourceDP, color='darkblue', line_width=2, line_dash=[4,4], legend_label="Dew-Point Temperature")
