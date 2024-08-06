@@ -297,7 +297,7 @@ tableTime=[time_ranges[0]]
 
 #putting info into data table
 sourceTable=ColumnDataSource(data=dict(name=tableName, time=tableTime, Year_Price=tablePriceY, Day_Price=tablePriceD, Year_Water=tableWaterY, Day_Water=tableWaterD, space=tableSpace))
-columnsT=[TableColumn(field='name', title='Location', width=160), TableColumn(field='time', title='Time Interval', width=80), TableColumn(field='space', title='Storage Volume Capacity (in m^3)', width=104), 
+columnsT=[TableColumn(field='name', title='Location', width=160), TableColumn(field='time', title='Time Interval', width=80), TableColumn(field='space', title='Storage Volume Capacity (in m^3)', width=140), 
           TableColumn(field='Day_Water', title='Daily Water Input (in L)', width=100), TableColumn(field='Year_Water', title='Yearly Water Input (in L)', width=140),
           TableColumn(field='Day_Price', title='Daily Cost in $', width=90), TableColumn(field='Year_Price', title='Yearly Cost in $', width=100)]
 data_table=DataTable(source=sourceTable, columns=columnsT, width=350, height=200, autosize_mode="none")
