@@ -297,10 +297,10 @@ tableTime=[time_ranges[0]]
 
 #putting info into data table
 sourceTable=ColumnDataSource(data=dict(name=tableName, time=tableTime, Year_Price=tablePriceY, Day_Price=tablePriceD, Year_Water=tableWaterY, Day_Water=tableWaterD, space=tableSpace))
-columnsT=[TableColumn(field='name', title='Location', width=150), TableColumn(field='time', title='Time Interval', width=100), TableColumn(field='space', title='Storage Volume Capacity (in m^3)', width=100), 
-          TableColumn(field='Day_Water', title='Daily Water Input (in Liters)', width=100), TableColumn(field='Year_Water', title='Yearly Water Input (in L)', width=100),
-          TableColumn(field='Day_Price', title='Daily Cost in $', width=100), TableColumn(field='Year_Price', title='Yearly Cost in $', width=100)]
-data_table=DataTable(source=sourceTable, columns=columnsT, width=370, autosize_mode="none")
+columnsT=[TableColumn(field='name', title='Location', width=170), TableColumn(field='time', title='Time Interval', width=80), TableColumn(field='space', title='Storage Volume Capacity (in m^3)', width=120), 
+          TableColumn(field='Day_Water', title='Daily Water Input (in Liters)', width=100), TableColumn(field='Year_Water', title='Yearly Water Input (in L)', width=120),
+          TableColumn(field='Day_Price', title='Daily Cost in $', width=90), TableColumn(field='Year_Price', title='Yearly Cost in $', width=100)]
+data_table=DataTable(source=sourceTable, columns=columnsT, width=350, height=200, autosize_mode="none")
 
 def dew_point(temps, rh, time): #calculating dew point of location at speific time
     dp_out=[]
@@ -323,7 +323,7 @@ def dew_point_hourly(temps, rh, time): #calculating dew point of loction at spec
 dp_Costa=dew_point(yearly_temps_df.iloc[2], yearly_rh_df.iloc[2], range(0,12)) #dew point for initial Costa Rica ZECC
 
 #creating a graph that shows the ambient temp, outer wall temp, and dew point temp
-g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, height=300, width=370)
+g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, height=300, width=350)
 # g4.title.text_font_size='14pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], dp=dp_Costa, T1=range(0,12)))
 gl1=g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
