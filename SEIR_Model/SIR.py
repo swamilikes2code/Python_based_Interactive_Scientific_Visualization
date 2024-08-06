@@ -253,7 +253,9 @@ graph_renderer.node_renderer.glyph = Scatter(size='size', fill_color='color')
 #when edge is hovered over, will display a description of the movement of individuals along that edge
 # hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
 
-hover_tool_html = HTML("<div style='padding: 5px; font-family: Arial, sans-serif; width: 180px;'><div>Path Movement: {edge_names}</div></div>")
+hover_tool_html = HTML("""<div style='padding: 5px; font-family: Arial, sans-serif; width: 180px;'>
+                       <div>Path Movement: {edge_names}</div>
+                       </div>""")
 hover_tool = HoverTool(tooltips=hover_tool_html(edge_names = '@edge_names'))
 
 plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
