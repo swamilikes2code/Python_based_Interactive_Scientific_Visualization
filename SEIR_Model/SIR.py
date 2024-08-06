@@ -117,7 +117,7 @@ pops.legend.background_fill_alpha=0.5
 # infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=450, width=600, margin=(10, 20, 10, 40))
 infecteds=figure(title="All Infected Individuals", x_axis_label="Time (in days)", y_axis_label="Proportion of Individuals in Population", x_range=pops.x_range, tools=TOOLS, height=350, width=350)
 # infecteds.title.text_font_size='14pt'
-la=infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Uknown Asymptomatic", color=Colorblind8[2], line_width=2)
+la=infecteds.line('time', 'Ia_uk', source=sourcePops, legend_label="Unknown Asymptomatic", color=Colorblind8[2], line_width=2)
 lb=infecteds.line('time', 'Ia_k', source=sourcePops, legend_label="Known Asymptomatic", line_width=2, color=Colorblind8[3], line_dash='dashed')
 lc=infecteds.line('time', 'Is_nh', source=sourcePops, legend_label="Non-Hospitalized Symptomatic", line_width=2, color=Colorblind8[4])
 ld=infecteds.line('time', 'Is_h', source=sourcePops, legend_label="Hospitalized", line_width=2, color=Colorblind8[5], line_dash='dashed')
@@ -224,7 +224,8 @@ graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], li
 graph_renderer.edge_renderer.data_source.data['edge_names']=["Susceptibles becoming exposed to disease", "Susceptibles dying of natural causes", "Susceptibles who have received the vaccine", "Exposed individuals becoming Asymptomatic Infecteds", "Exposed individuals becoming Symptomatic Infected", "Asymptomatic individuals get tested and and are then aware they are a carrier of the disease", "Individuals recover and are no longer infectious", "Dying of natural causes", "Individuals recover and are no longer infectious", "Dying of natural causes", "Becoming hospitalized", "Symptomatic individuals recover", "Symptomatic individuals die of disease or of natural causes", "Hospitalized patients recover", "Hospitalized patients die of the disease or of natural causes", "Recovered individuals die of natural causes", "Recovered individuals lose their immunity and become susceptible again"]
 
 graph_renderer.selection_policy = NodesAndLinkedEdges()
-graph_renderer.inspection_policy = EdgesAndLinkedNodes()
+# graph_renderer.inspection_policy = EdgesAndLinkedNodes()
+graph_renderer.inspection_policy = NodesAndLinkedEdges()
 
 # add the labels to the nodes on the graph
 xcoord = [1.15, .85, -.45, -1.2, -1.25, -1.25, -.15, .85] #location for the label
