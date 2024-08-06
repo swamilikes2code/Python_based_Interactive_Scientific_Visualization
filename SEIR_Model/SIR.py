@@ -13,6 +13,7 @@ from bokeh.io import curdoc
 from bokeh.layouts import row, column
 from bokeh.models import (ColumnDataSource, Slider, TableColumn, DataTable, Button, TabPanel, Tabs, GraphRenderer, Div, Arrow, OpenHead, 
                           BoxSelectTool, Scatter, EdgesAndLinkedNodes, HoverTool, MultiLine, NodesAndLinkedEdges, Plot, Range1d, TapTool, ResetTool, Spacer, EdgesOnly)
+from bokeh.models.dom import HTML
 from bokeh.plotting import figure, from_networkx
 from math import exp
 from bokeh.palettes import Spectral4, Colorblind8
@@ -250,7 +251,14 @@ graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size
 graph_renderer.node_renderer.glyph = Scatter(size='size', fill_color='color')
 
 #when edge is hovered over, will display a description of the movement of individuals along that edge
-hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")], width=100)
+# hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
+
+
+hover_tool = HoverTool(tooltips=HTML("""
+                <div style='padding: 16px; font-family: Arial, sans-serif; width: 180px;'>
+                <div>"Path Movement", "@edge_names"</div>
+                </div>"""))
+
 plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 
 
