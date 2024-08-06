@@ -15,7 +15,7 @@ time_ranges=["12 Months", "24 Hours"] #possible time ranges
 
 #Creating a map of the world to show where each of the 6 possible locations are
 mapp = figure(x_range=(-14000000, 7000000), y_range=(-4000000, 6060000), # range bounds supplied in web mercator coordinates
-           x_axis_type="mercator", y_axis_type="mercator", aspect_ratio=4/3, height=300, width=370)
+           x_axis_type="mercator", y_axis_type="mercator", height=300, width=370)
 mapp.add_tile("CartoDB Positron", retina=True)
 #adding each location to the map
 mapp.scatter(x=-8389827.854690, y=4957234.168513, size=10, fill_color='blue', fill_alpha=0.7, legend_label="Bethlehem, PA")
@@ -45,7 +45,7 @@ else:
 
 TOOLS = "reset,save,box_zoom" #tools for the graphs
 #Creating Grpah to show average temps throught the year for each location
-diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, height=300, width=370)
+diff_temps=figure(title="Average Temperature Throughout the Year", x_axis_label="Months", y_axis_label="Temperature in Celsius", tools=TOOLS, height=300, width=370)
 # diff_temps.title.text_font_size='14pt'
 diff_temps.xaxis.ticker = list(range(1, 13))
 diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -53,11 +53,11 @@ diff_temps.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 
 diff_temps.xaxis.major_label_orientation=1
 
 #creating a graph to show the 6 locations temperatures throught one day 
-hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, aspect_ratio=4/3, height=300, width=370)
+hourly_temps=figure(title="Temperatures Throughout One Day in Mid-June", x_axis_label="Time in Hours", y_axis_label="Temperature in Celsius", tools=TOOLS, height=300, width=370)
 # hourly_temps.title.text_font_size='14pt'
 
 #Creating a graph to show the average humidity trends for each location throughout the year
-humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", x_range=diff_temps.x_range, tools=TOOLS, aspect_ratio=4/3, height=300, width=370)
+humid=figure(title="Average Humidity Throughout The Year", x_axis_label="Months", y_axis_label="Relative Humidity", x_range=diff_temps.x_range, tools=TOOLS, height=300, width=370)
 # humid.title.text_font_size='14pt'
 humid.xaxis.ticker = list(range(1, 13))
 humid.xaxis.major_label_overrides={1:'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June', 
@@ -297,8 +297,8 @@ tableTime=[time_ranges[0]]
 
 #putting info into data table
 sourceTable=ColumnDataSource(data=dict(name=tableName, time=tableTime, Year_Price=tablePriceY, Day_Price=tablePriceD, Year_Water=tableWaterY, Day_Water=tableWaterD, space=tableSpace))
-columnsT=[TableColumn(field='name', title='Location', width=170), TableColumn(field='time', title='Time Interval', width=80), TableColumn(field='space', title='Storage Volume Capacity (in m^3)', width=120), 
-          TableColumn(field='Day_Water', title='Daily Water Input (in Liters)', width=100), TableColumn(field='Year_Water', title='Yearly Water Input (in L)', width=120),
+columnsT=[TableColumn(field='name', title='Location', width=160), TableColumn(field='time', title='Time Interval', width=80), TableColumn(field='space', title='Storage Volume Capacity (in m^3)', width=104), 
+          TableColumn(field='Day_Water', title='Daily Water Input (in L)', width=100), TableColumn(field='Year_Water', title='Yearly Water Input (in L)', width=140),
           TableColumn(field='Day_Price', title='Daily Cost in $', width=90), TableColumn(field='Year_Price', title='Yearly Cost in $', width=100)]
 data_table=DataTable(source=sourceTable, columns=columnsT, width=350, height=200, autosize_mode="none")
 
@@ -324,7 +324,7 @@ dp_Costa=dew_point(yearly_temps_df.iloc[2], yearly_rh_df.iloc[2], range(0,12)) #
 
 #creating a graph that shows the ambient temp, outer wall temp, and dew point temp
 g4=figure(title="Essential Temperature Values for Selected Location", x_axis_label="Time (in Months)", y_axis_label="Temperature (in Celsius)", tools=TOOLS, height=300, width=350)
-# g4.title.text_font_size='14pt'
+g4.title.text_font_size='12pt'
 sourceDP=ColumnDataSource(data=dict(time=time_range1, temps=yearly_temps_df.iloc[2], dp=dp_Costa, T1=range(0,12)))
 gl1=g4.line('time', 'temps', source=sourceDP, color='orange', line_width=2, legend_label="Ambient Temperature")
 gl2=g4.line('time', 'dp', source=sourceDP, color='darkblue', line_width=2, line_dash=[4,4], legend_label="Dew-Point Temperature")
