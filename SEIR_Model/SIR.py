@@ -250,7 +250,8 @@ graph_renderer.node_renderer.data_source.add(current_source.data['sizes'], 'size
 graph_renderer.node_renderer.glyph = Scatter(size='size', fill_color='color')
 
 #when edge is hovered over, will display a description of the movement of individuals along that edge
-hover_tool = HoverTool(tooltips=[("Path Movement", "@edge_names")])
+hover_tool = HoverTool(tooltips=[("Path Movement"),
+                                ("@edge_names")])
 plot.add_tools(hover_tool, TapTool(), BoxSelectTool(), ResetTool())
 
 
