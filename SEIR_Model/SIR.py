@@ -223,7 +223,8 @@ graph_renderer.edge_renderer.selection_glyph = MultiLine(line_color=Spectral4[2]
 graph_renderer.edge_renderer.hover_glyph = MultiLine(line_color=Spectral4[1], line_width=8)
 graph_renderer.edge_renderer.data_source.data['edge_names']=["Susceptibles becoming exposed to disease", "Susceptibles dying of natural causes", "Susceptibles who have received the vaccine", "Exposed individuals becoming Asymptomatic Infecteds", "Exposed individuals becoming Symptomatic Infected", "Asymptomatic individuals get tested and and are then aware they are a carrier of the disease", "Individuals recover and are no longer infectious", "Dying of natural causes", "Individuals recover and are no longer infectious", "Dying of natural causes", "Becoming hospitalized", "Symptomatic individuals recover", "Symptomatic individuals die of disease or of natural causes", "Hospitalized patients recover", "Hospitalized patients die of the disease or of natural causes", "Recovered individuals die of natural causes", "Recovered individuals lose their immunity and become susceptible again"]
 
-graph_renderer.selection_policy = NodesAndLinkedEdges()
+# graph_renderer.selection_policy = NodesAndLinkedEdges()
+graph_renderer.selection_policy = EdgesAndLinkedNodes()
 # graph_renderer.inspection_policy = EdgesAndLinkedNodes()
 graph_renderer.inspection_policy = NodesAndLinkedEdges()
 
