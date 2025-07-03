@@ -1,0 +1,1353 @@
+<!DOCTYPE HTML>
+<!--Overall structure, styling, and functionality developed with assistance from Google's Gemini AI.-->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Bayesian Optimization</title>
+  <style>
+
+  /* -------------------------BODY------------------------- */
+
+  body {
+      margin: 0;
+      background: #fff;
+      font-family: 'Arial', sans-serif;
+      font-weight: 400;
+  }
+
+
+  /* ------------------------- HEADER -------------------------*/
+
+    
+  header {
+        background: #262626;
+        height: 80px;
+        /* display: flex; */
+        /* align-items: center; */
+    }
+    
+  header::after {
+      content: '';
+      display: table;
+      clear:both;
+  }
+  
+  .logo {
+    padding:10px;
+    float:left;
+    width:300px;
+  }
+
+  .sq-logo {
+    padding: 10px;
+    float:left;
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+  }
+  
+  nav {
+    float: right;
+    padding-right: 16px;
+  }
+  
+  nav ul {
+    margin: 0;
+    padding: 0;
+    list-style:none;
+    /* position: relative; */
+  }
+  
+  nav li {
+    /* display: inline-block; */
+    margin: right 3.56vw;
+    margin: 0 2.28vw;
+    /* padding-top: 2.21vw; */
+    position: relative;
+    float: left;
+    height: 80px;
+    display: flex;
+    align-items: center;
+  }
+  
+  nav a {
+    color: rgb(255, 251, 251);
+    /* float: left; */
+    text-decoration: none;
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  nav a:hover {
+      color: #31A6FF;
+  }
+  
+  nav a::before {
+      content: '';
+      display: block;
+      height:5px;
+      background-color: #31A6FF;
+  
+      position:absolute;
+      width: 0%;
+      top: 0;
+      transition: all ease-in-out 250ms;
+  }
+  
+  nav a:hover::before {
+      width: 100%;
+  }
+  
+  .header-text {
+      font-size: 16px;
+  }
+
+  @media all and (max-width: 608px) {
+    header {
+      height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    nav {
+      float: none;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
+  }
+  
+  .dropdown {
+    float:left;
+    overflow:hidden;
+  }
+  
+  .dropdown .dropbtn {
+    padding: 0;
+    font-size: 16px;
+    background-color: transparent;
+    color: rgb(255, 251, 251);
+    text-decoration: none;
+    border: none;
+    margin-top: -1.2px;
+  }
+  
+  .dropbtn::before {
+    content: '';
+    display: block;
+    height:5px;
+    background-color: #31A6FF;
+  
+    position:absolute;
+    width: 0%;
+    top: 0;
+    transition: all ease-in-out 250ms;
+  }
+  
+  .dropbtn:hover::before {
+    width: 100%
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 80px;
+    left: -20%;
+    width: 200%;
+    background-color: #5c5c5c;
+  
+    z-index: 1;
+  }
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+    float: none;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: white;
+    display: block;
+    text-align: left;
+  }
+  
+  .dropdown-content a:hover::before {
+    width:0;
+  }
+  
+  /* Show the dropdown menu on hover, change text color, apply hover bar above */
+  .dropdown:hover .dropdown-content {display: block;}
+  .dropdown:hover .dropbtn::before {width: 100%}
+  .dropdown:hover .dropbtn {color: #31A6FF}
+  li:hover .dropdown-content {display: block;}
+
+
+  /* -------------------------TABS------------------------- */
+
+  .flexwrap1 {
+      display: flex;
+      width: auto;
+      height: auto;
+      font-family: 'Arial', sans-serif;
+      color:#484848;
+      font-weight: 600;
+      font-size: 16px;
+      padding-left:5px;
+      padding-right:5px;
+      padding-bottom:10px;
+      background:#b2e3f4;
+      gap: 2.083vw;
+      line-height: 1.5;
+      margin: auto;
+      justify-content: center;
+    }
+  .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+    }
+
+  /* Style the buttons inside the tab */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+  }
+
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+  }
+
+  /* -------------------------ROWS AND COLUMNS------------------------- */
+
+  .home_container {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.75%;
+      margin-left: auto;
+      margin-right: auto;
+      align-items: stretch;
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+  .column_1_home {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+  .column_2_home {
+      display: flex;
+      align-items: stretch;
+      align-items: first baseline;
+    }
+
+  .column_2_home img {
+      width: auto;
+      max-width: 800px;
+      height: 100%;
+      object-fit: contain;
+    }
+
+  .column_2 {
+      float: left;
+      width: 45.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_3 {
+      float: left;
+      width: 29.3%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .column_4 {
+      float: left;
+      width: 20.9%;
+      padding-left: 2%;
+      padding-right: 2%;
+    }
+
+  .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+  /* Responsive layouts */
+
+  @media screen and (max-width: 1100px) {
+
+    .home_container {
+      grid-template-columns: 1fr;
+      max-width: 600px;
+      align-items: center;
+      justify-items: center;
+    }
+
+    .column_1_home, .column_2_home{
+      width: 100%;
+    }
+
+    .column_1_home {
+      order: 2;
+    }
+
+    .column_2_home {
+      order: 1;
+    }
+
+    .column_2_home img{
+      max-width: 100%;
+    }
+
+  }
+
+  @media screen and (max-width: 800px) {
+
+    .column_2 {
+      width: 96%;
+    }
+    
+
+    .column_3 {
+      width: 96%;
+    }
+    
+    .column_4 {
+      width: 96%;
+    }
+  }
+
+  /* -------------------------STEP TAB------------------------- */
+  .step_container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+  .step_section {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-bottom: 20px;
+  }
+
+  .step_tab_col, .step_col {
+        padding-left:10px; 
+        padding-right:10px;
+        text-align: center;
+        background-color: #fff;
+        border-left: 7px solid #b2e3f4;
+        border-right: 7px solid #b2e3f4;
+      }
+
+  .step_tab_col {
+        flex: 1 1 100%;
+        background-color: #f5f5f5;
+      }
+
+  .step_col {
+        flex: 2 2 10%;
+        background-color: #ddd;
+      }
+
+  @media screen and (max-width: 570px) {
+    .step_section {
+        flex-direction: column;
+    }
+      
+    .step_tab_col, .step_col {
+        flex: 1 1 100%;
+    }
+  }
+
+
+  /*-------------------TOOLTIPS--------------------- */
+  /* Tooltip container */
+  .tooltip {
+      position: relative;
+      display: inline-block;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-decoration-thickness: 1px;
+      text-decoration-color: #484848;
+      
+    }
+
+  /* Tooltip text */
+  .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 130px;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -65px;
+      background-color: #262626;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      padding: 5px;
+      border-radius: 6px;
+      
+      position: absolute;
+      z-index: 1;
+    }
+
+  .tooltip .tooltiptext::after {
+      content: " ";
+      position: absolute;
+      top: 100%; /* At the bottom of the tooltip */
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #262626 transparent transparent transparent;
+    }
+
+  /* Show the tooltip text when you mouse over the tooltip container */
+  .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+
+  /*-------------------BOKEH SECTION--------------------- */
+  .scrollable-container {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+
+  /*-------------------FOOTER--------------------- */
+  .footer {
+    margin: 0;
+    padding: 10px 0 10px 0;
+    list-style:none;
+    text-decoration: none;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: #262626;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-family: 'Arial', sans-serif;
+  }
+
+  @media all and (max-width: 700px) {
+      .footer {
+        flex-direction: column;
+      }
+    }
+
+  .container2 {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: nowrap;
+      padding: 10px;
+  }
+
+
+  /* -------------------MISC------------------- */
+
+  .button1 {
+      margin: 0;
+      justify-self: center;
+      text-decoration: none;
+      color: black;
+      font-family: 'Arial', sans-serif;
+      font-weight: 200;
+      font-size: 28px;
+      text-align: center;
+      background-color: #fff;
+
+      border: solid 2px black;
+      border-radius: 50px;
+      padding: 0.651vw 5.208vw;
+
+      -webkit-transition-duration: 300ms;
+      transition-duration: 300ms;
+    }
+
+  .caption {
+    font-size: 12px;
+    justify-items: center;
+    display: grid;
+  }
+
+  .center {
+      display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 52.083vw;
+    height: 29.297vw;
+  }
+
+  .head1 {
+    text-align: center;
+    background-color: #fff;
+    color: #000;
+    font-size: 32px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+  }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div><a href="/app"><img src="/app/static/Logo2.JPG" alt="logo" class="logo"></a></div>
+    <nav>
+        <li><a href="/app" class="header-text">HOME</a></li>
+        <li><div class="dropdown">
+            <button class="dropbtn">MODULES</button>
+            <div class="dropdown-content">
+              <a href="Bayesian_Optimization" class="header-text">Bayesian Optimization</a>
+              <a href="biodegradability_classification" class="header-text">Biodegradability Classification</a>
+              <a href="catalysis_data_interactive_visualization" class="header-text">Catalysis Data Science</a>
+              <a href="DLT" class="header-text">Digital Lab Twin</a>
+              <a href="DAC" class="header-text">Direct Air Captures</a>
+              <a href="sliders_reaction_kinetics" class="header-text">Reaction Kinetics</a>
+              <a href="SIR" class="header-text">SEIR Infectious Diseases</a>
+              <a href="ZECC" class="header-text">Zero Energy Cooling Chamber</a>
+            </div>
+          </div>
+        </li>
+        <li><a href="about" class="header-text">ABOUT</a></li>
+    </nav>
+  </header>
+    <style>
+        .text-size {
+            font-size: 16px;
+        }
+    </style>
+    <h1 class="head1">Bayseian Optimization</h1>
+    <div class="tab">
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'About')" id="defaultOpen">About</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Photobioreactor')">Photobioreactor</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'BO Model')">BO Model</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Surrogate Model / Acquisition Function')">Surrogate Model / Acquisition Function</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Surr. Model Methods')">Surr. Model Methods</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Acq. Func. Methods')">Acq. Func. Methods</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Sampling Methods')">Sampling Methods</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Instructions')">Instructions</button>
+        <button tabindex= "0" class="tablinks" onclick="openTab(event, 'Questions')">Questions</button>
+      </div>
+  
+      <div class="flexwrap1">
+        <div id="About" class="tabcontent">
+            <h3>Welcome to Bayesian Optimization</h3>
+            <div class="home_container">
+              <div class="column_1_home">
+                <p>Ever wish there was a more efficent way to find an optimal set of conditions for your experiment? This module will guide you on how to be able to use Bayesian Optimization to be able to find optimal conditions for the highest yeild using a few given data points.</p>
+        
+                <p>Our module will be able to help teach about a specific machine learning topic even with NO coding experience. Now, you may be wondering, "What is machine learning?" Machine learning (ML) is subfield of Artificial Intelligence (AI) that can learn from given data without having the explicit programming to do so. ML is used in the engineering, science, and business industries to solve complex problems that can not be easily defined by a model. In this module, a photobioreactor example will be used to help demostrate the topic by predicting an optimal lutein, the product, concentration.</p>
+        
+                <p>CLICK on the next tab to start learning!</p>
+              </div>
+              
+              <div class="column_2_home">
+                <figure>
+                  <img src="BO_Cycle.png" alt="Front page image" class="right" style="width:600px; height: 425px;">
+                  <!--Image made with help from Gemini AI-->
+                </figure>
+              </div>
+        
+            </div>
+        
+            <div class="row" style="justify-items: center; display: grid; padding: 30px 0 0 0; gap: 8px;">
+                <p style="margin: 0;">
+                    <b>NOTE:</b> If the module below is not appearing, try opening this page in a private/incognito window.
+                </p> 
+                <br>
+                <p style="margin: 0;">
+                    Due to the size of the dataset, it may take a few seconds to load.
+                </p>
+                <br>
+                <p style="margin: 0;"><a href="#jump" class="button1">Jump to Module</a></p>
+            </div>
+        
+            <style>
+              figure {
+                margin: 0;
+              }
+        
+              figcaption {
+                text-align: right;
+                margin-top: 8px;
+                font-size: 0.9em;
+                font-style: italic;
+                color: #555;
+              }
+            </style>
+        </div>
+      
+        <div id="Photobioreactor" class="tabcontent">
+            <div class="row">
+        
+                <div class="left-section">
+                    <div class="model-container" style="text-align: center;">
+                        <h2>What is a Photobioreactor?</h2>
+                        <p>A photobioreactor (PBR) is a reactor used to cultivate products from phototrophic organisms, using light as their main source of energy. PBRs are made of transparent materials such as plastics or glass to allow for this light growth. Conditions such as temperature, CO<sub>2</sub>, pH, and nutrients can be easily controlled to keep a healthy environment for the organisms. The parameters of this reactor in this module can be found under the <i>Instructions</i> tab.</p>
+                        <br>
+                        <h2>About Lutein</h2>
+                        <p>Our particular photobioreactor in this model is used to grow lutein. Lutein is a carotenoid which is a red-orange-yellow dye that is found primarily in marigolds. What makes lutein so special is that it can be used in medical treatments. Common treatments are to help prevent cataracts in the human eyes and delay of cancers and macular degeneration. It also has common use in food dyes. However, marigolds are low in lutein content. This has led scientists to try and find other sources of higher lutein content. The source of focus for this module will be microalgae which shows promise to be a more efficient way of extracting Lutein than marigolds. To produce lutein from microalgae, nitrate is used as a nutrient and light is shined into the photobioreactor from either side. However, too much nitrate is not good for lutein production since microalgae produce more lutein under stress. Too much biomass is also not good for lutein production as overcrowding can block the light source.</p>
+                    </div>
+                </div>
+            
+                <div class="right-column-container">
+            
+                    <div class="top-right-section">
+                        <figure>
+                          <img src="Photobioreactor.jpg" alt="PBR_image" class="columni-img">
+                          <figcaption>Image Source: https://www.researchgate.net/figure/Schematic-representation-of-the-photobioreactor_fig1_259772693</figcaption>
+                        </figure>
+                    </div>
+            
+                    <div class="bottom-right-section">
+                        <div class="model-container">
+                            <h2>How can this be put to action?</h2>
+                            <p style="text-align: center;">The main challenge faced when trying to make microalgea a feasible source of lutein is industrializing it. First off, the microalgae is very sensitive to high temperatures making it difficult to industrialize. The second part, our focus in this module, is optimizing the lutein output. Scaling up is an expensive process, so it is important that the lutein is in high yield and cost efficient. The parameters of the experiemnt must be optimized in order to help solve this industrialization challenge, but how do we find the optimal conditions when experiments are expensive to conduct? This is where Bayesian Optimization comes into play.</p>
+                        </div>
+                    </div>
+            
+                </div>
+            </div>
+        
+            <style>
+        
+                .row {
+                    display: flex;
+                    gap: 20px;
+                    margin: 20px;
+                }
+            
+                .left-section {
+                    flex: 1; 
+                    padding: 10px;
+                }
+            
+                .right-column-container {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+            
+                .top-right-section {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            
+                .bottom-right-section {
+                    flex: 1;
+                    padding: 10px;
+                }
+            
+                .columni-img {
+                    width: 100%;
+                    max-width: 600px;
+                    height: 325px;
+                    border-radius: 8px;
+                }
+            
+                .model-container h2 {
+                    text-align: center;
+                }
+        
+                figure {
+                    margin: 0;
+                }
+        
+                figcaption {
+                    text-align: center;
+                    margin-top: 8px;
+                    font-size: 0.9em;
+                    font-style: italic;
+                    color: #555;
+                }
+            </style>
+        </div>
+  
+        <div id="BO Model" class="tabcontent">
+            <div class="model-section">
+                <div class="text-content">
+                    <h2>Basics of Bayesian Optimization</h2>
+                    <h3>What is it?</h3>
+                    <p>Bayesian Optimization (BO) is an optimization technique that uses expensive trials to quickly arrive at an optimum point in some unknown function. The functions are called 
+                      <span class="tooltip">
+                        black box functions
+                        <span class="tooltip-text">These are systems where the internal function is unknown.</span>
+                      </span>.
+                    </p>
+                    <h3>Why use it?</h3>
+                    <p>Since these black box functions have no model, Bayesian Optimization is used to find these unknown optimal values. In the photobioreactor system, a few different conditions will be tested, varying the parameters of each one. This information can be used for Bayesian Optimization to find a likely set of parameters for the optimal lutein extraction.</p>
+                    
+                    <h3>How does it work?</h3>
+                    <p>BO uses a combination of 
+                      <span class="tooltip">
+                        exploration
+                        <span class="tooltip-text">A prediction is made at an unknown set of parameters to find out more about the function.</span>
+                      </span> 
+                      and 
+                      <span class="tooltip">
+                        exploitation
+                        <span class="tooltip-text">Information about known and predicted parameter sets are used to hone in on a possible optimum.</span>
+                      </span>. 
+                      If the parameter set, known or guessed, is considered far away from the optimum, it will not be considered, but if it is considered close to a theoretical optimum, guesses will be made closer to that parameter set. BO is a coherent combination of an acquisition function and a surrogate model. Acquisition function can be thought of making an educated guess based off of the ground work a surrogate model has laid. The surrogate model effectively creates a pseudo function for the acquisition function to guess within.</p>
+                </div>
+                
+                <div class="image-container">
+                    <img src="iterationdata.png" alt="iteration data" class="model-img">
+                    <br><br>
+                    <img src="optimizaerconvergence.png" alt="optimizer convergence" class="model-img">
+                    <br><br>
+                    <img src="situationwithbestparameters.png" alt="situation with best parameters" class="model-img">
+                </div>
+            </div>
+            <style>
+                .model-section {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    gap: 40px;
+                    padding: 40px;
+                    margin: 0 auto;
+                    max-width: 1000px; 
+                }
+            
+                .text-content {
+                    flex: 3; 
+                    text-align: left;
+                }
+            
+                .image-container {
+                    flex: 2;
+                    text-align: center;
+                }
+            
+                .model-img {
+                    max-width: 100%;
+                    height: 200px;
+                    border-radius: 8px;
+                }
+            
+                .caption {
+                    margin-top: 10px;
+                    font-style: italic;
+                    font-size: 0.9em;
+                    color: #555;
+                }
+            
+                @media (max-width: 768px) {
+                    .model-section {
+                        flex-direction: column; 
+                    }
+                }
+
+                .tooltip {
+                  position: relative;
+                  display: inline-block;
+                  cursor: help;
+                  border-bottom: 1px dotted black;
+                }
+                .tooltip .tooltip-text {
+                  visibility: hidden;
+                  width: 220px;
+                  background-color: #333;
+                  color: #fff;
+                  text-align: center;
+                  border-radius: 6px;
+                  padding: 8px;
+                  position: absolute;
+                  z-index: 1;
+                  bottom: 125%;
+                  left: 50%;
+                  margin-left: -110px;
+                  opacity: 0;
+                  transition: opacity 0.3s;
+                }
+                .tooltip:hover .tooltip-text {
+                  visibility: visible;
+                  opacity: 1;
+                }
+            </style>
+        </div>
+
+      
+        <div id="Surrogate Model / Acquisition Function" class="tabcontent">
+            <div class="row">
+        
+                <div class="column">
+                  <div class="model-container">
+                    <h2>Surrogate Model</h2>
+                    <p>This is used together with the acquisition function to find the optimum set of parameters. The surrogate model’s part of the job is to create a function that encapsulates many possibilities for functions given the data set. Using given data points the surrogate model can create a probabilistic function that is representative of the unknown real function. The surrogate model uses exploration and exploitation by creating a smaller confidence limit near points of known data and creating a larger confidence limit in areas further away from known data points.</p>
+                    <br>
+                    <figure>
+                      <img src="SurrogateModel.png" alt="Surrogate Model" style="width:450px; height:350px;" class="center model-img">
+                      <figcaption style="text-align: center; margin-top: 8px; font-size: 0.9em; font-style: italic; color: #555;">
+                        Image Source: https://neurocomputinglab.com/jobs/surrogate-modeling/
+                      </figcaption>
+                    </figure>
+                    </div>
+                </div>
+        
+                  <div class="column">
+                    <div class="model-container">
+                      <h2>Acquisition Function</h2>
+                      <p>On the other side of the coin, there is the acquisition function. This uses the surrogate model to make predictions of an optimal value. The way the acquisition function makes its predictions is through a balance of exploration and exploitation. Predictions will be made in high areas of uncertainty, commonly areas far away from the original data set or previous predictions. The other way predictions are made is by checking areas with a high mean compared to the original dataset and previously predicted points. A prediction that has a higher value compared to the mean will be considered more optimal.</p>
+                      <figure>
+                        <img src="AcquisitionFunction.png" alt="Acquisition Function" style="width:450px; height:350px;" class="center model-img">
+                        <figcaption style="text-align: center; margin-top: 8px; font-size: 0.9em; font-style: italic; color: #555;">
+                          Image Source: https://ekamperi.github.io/machine%20learning/2021/06/11/acquisition-functions.html
+                        </figcaption>
+                      </figure>
+                    </div>
+                  </div>
+        
+            </div>
+        </div>
+          </div>
+        </div>
+      
+       <div class="flexwrap1">
+        <div id="Surr. Model Methods" class="tabcontent">
+            <div class="row">
+              <div class="column">
+                <figure>
+                    <img src="GaussianProcess.gif" alt="Image for GP" class="column3-img">
+                    <figcaption id="caption-gp">Image Source: https://www.php.cn/faq/662604.html</figcaption>
+                </figure>
+                <div class="model-container">
+                  <h2>Gaussian Process (GP)</h2>
+                  <p>The Gaussian Process (GP) is the most commonly used surrogate model in Bayesian Optimization due to its strength in dealing with smooth functions. Unlike other regression models, GP uses a distribution over possible functions that could explain the observed data. This can be visualized as each point along this surrogate function having its own unique confidence uncertainty and mean prediction. This is done through 
+                    <span class="tooltip">
+                      kernels
+                      <span class="tooltip-text">Functions that measure the similarity between two data points. For example, comparing point x to x' to help calculate the mean and uncertainty.</span>
+                    </span>. All the points together create the confidence interval used by the acquisition function to make predictions.
+                  </p>
+                </div>
+              </div>
+          
+              <div class="column">
+                <figure>
+                    <img src="RandomForests.jpg" alt="Image for RF" class="column3-img">
+                    <figcaption id="caption-rf">Image Source: https://medium.com/@roiyeho/random-forests-98892261dc49</figcaption>
+                </figure>
+                <div class="model-container">
+                  <h2>Random Forest (RF)</h2>
+                  <p>As per what it sounds like, Random Forest (RF) is a “forest.” This “forest” is a large group of many decision trees that each have slightly different approximations of the true function that may give different results. These different functions are based off of a 
+                    <span class="tooltip">
+                      bootstrap method
+                      <span class="tooltip-text">A method where new training sets are created by randomly selecting data points with replacement from the original set.</span>
+                    </span>. These may look like A, B, C, etc. where a random combination of these parameters are made to be some like A, A, C or B, A, C where either a condition(s) is not accounted for, the order is randomized, or a combination of both. Each tree will be assigned a bootstrap to be trained on. The result of these decision trees are averaged to find an average result. This result is then also used to predict the variance in the surrogate by comparing the average result to each result of each decision tree.</p>
+                </div>
+              </div>
+          
+              <div class="column">
+                <figure>
+                    <img src="ExtraTrees.png" alt="Image for ET" class="column3-img">
+                    <figcaption id="caption-et">Image Source: https://www.researchgate.net/figure/Shows-the-diagram-of-the-extra-trees-regressor-32_fig1_392660477</figcaption>
+                </figure>
+                <div class="model-container">
+                  <h2>Extra Trees (ET)</h2>
+                  <p>Extra trees (ET) can be confused with RF due to their similarity in use of decision trees. However, there are key differences between the two. For instance, ET does NOT use bootstrapping. ET uses also increases the randomness at the node. Each decision node makes decisions randomly, once again, unlike RF which proactively tries to make the best decision. ET really emphasizes randomness. The prediction from each of these trees and then average and a confidence limit is derived based on the variance in predictions.</p>
+                </div>
+              </div>
+            </div>
+          
+            <style>
+              
+              :root {
+                --caption-gp-size: 12px;  
+                --caption-rf-size: 10px;  
+                --caption-et-size: 6px;  
+              }
+        
+              .row {
+                display: flex;
+                gap: 80px; 
+                margin: 20px;
+              }
+          
+              .column {
+                flex: 1;
+                padding: 10px;
+                border-radius: 10px;
+              }
+          
+              .model-container {
+                border: 0px;
+                padding: 10px;
+                margin-top: 10px;
+              }
+          
+              .center-img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+              }
+          
+              .column3-img {
+                display: block;
+                margin: 0 auto 10px auto;
+                width: 300px;
+                height: 185px;
+                border-radius: 8px;
+              }
+        
+              figure {
+                  margin: 0;
+              }
+        
+              figcaption {
+                  text-align: center;
+                  margin-top: 8px; 
+                  font-style: italic;
+                  color: #555;
+                  
+              }
+        
+              #caption-gp { font-size: var(--caption-gp-size); }
+              #caption-rf { font-size: var(--caption-rf-size); }
+              #caption-et { font-size: var(--caption-et-size); }
+              
+              .tooltip {
+                position: relative;
+                display: inline-block;
+                cursor: help;
+                border-bottom: 1px dotted black;
+              }
+              .tooltip .tooltip-text {
+                visibility: hidden;
+                width: 220px;
+                background-color: #333;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 8px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                margin-left: -110px;
+                opacity: 0;
+                transition: opacity 0.3s;
+              }
+              .tooltip:hover .tooltip-text {
+                visibility: visible;
+                opacity: 1;
+              }
+            </style>
+        
+        </div>
+       
+        <div id="Acq. Func. Methods" class="tabcontent">
+            <div class="row">
+              <div class="column">
+                <div class="model-container">
+                  
+                  <h2>Expected Improvement (EI)<br>& Probable Improvement (PI)</h2>
+                  
+                  <p>EI uses the known data points and the unknown areas in order to predict the magnitude of improvement of a prediction to help decide which prediction to make. PI focuses on predicting a spot with the highest chance of improvement. Comparing these two, EI could be said to explore more in order to find that big jump in improvement while EI is more conservative and makes guesses closer to known good values in order to see any improvement.</p>
+                
+                  <h2>Lowest Confidence Boundary (LCB)</h2>
+                  <p>LCB will look for low valued areas then exploit and exploit off of that. LCB is usually used for minimization.</p>
+                  
+                </div>
+              </div>
+          
+              <div class="column">
+                <div class="model-container">
+                  <h2>GP Hedge</h2>
+                  <p>Unlike the other acquisition methods in this module, GP Hedge uses multiple strategies, and in fact, it combines the previous three strategies. This uses a softmax which is just the way GP Hedge gives a probability of improvement to each acquisition strategy. This is then converted to a number that helps decide which one to test. The strategy will then be given a score. This will be repeated until the best acquisition function is decided.
+                  </p>
+        
+                  <figure>
+                    <img src="generalacquisitionfunction.png" alt="gerneral acquisition function" class="column-img">
+                    <figcaption>Image Source: https://www.researchgate.net/figure/Acquisition-functions-computed-from-eight-observations-green-of-an-otherwise-unknown_fig4_322306222?__cf_chl_tk=6CMGvV628QdPH540UlF6yilT.szL7MXFDZC_lTQf9lA-1750786891-1.0.1.1-C.xnlFsXMGOfVK1z6op7MwsR9BAD6ie_PzThDwFCKcc</figcaption>
+                  </figure>
+        
+                </div>
+              </div>
+        
+            </div>
+          
+            <style>
+              .row {
+                display: flex;
+                gap: 40px;
+                margin: 20px;
+              }
+          
+              .column {
+                flex: 1;
+                padding: 10px;
+                border-radius: 10px;
+              }
+          
+              .model-container {
+                border: 0px;
+                padding: 10px;
+                margin-top: 10px;
+              }
+              
+              .model-container p {
+                text-align: center;
+              }
+          
+              .center-img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+              }
+          
+              .column-img {
+                display: block;
+                margin: 20px auto 10px auto;
+                width: 400px;
+                height: auto;
+                border-radius: 8px;
+              }
+        
+              figure {
+                  margin: 0;
+              }
+        
+              figcaption {
+                  text-align: center;
+                  margin-top: 8px;
+                  font-size: 0.4em !important;
+                  font-style: italic;
+                  color: #555;
+              }
+            </style>
+          </div>
+
+          <div id="Sampling Methods" class="tabcontent">
+            <div class="row">
+            <div class="column">
+                <div class="model-container">
+                <h2>Random Sampling</h2>
+                <p>It's as basic as they come. In random sampling, any part of the population has an equal chance of being selected. For the PBR, any set of parameters is just as likely to be sampled as the next.
+                </p>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <figure>
+                    <img src="RandomSampling.png" alt="Image for Random Sampling" class="column3-img">
+                    <figcaption>Image Source: https://www.researchgate.net/figure/Static-sampling-strategies-A-Random-sampling-B-Latin-hypercube-sampling-C-Sobol_fig1_370656695</figcaption>
+                </figure>
+                </div>
+            </div>
+        
+            <div class="column">
+                <div class="model-container">
+                <h2>Sobol</h2>
+                <p>This and LHS are quasi-random sampling methods. Quasi random sampling is random to an extent but with that catch that there will not be large spaces without a sample taken unlike what is possible in random sampling. Sobol is deterministic which means that if given a set of data or like the parameters in the PBR, the sampling will always result as the same (unlike random sampling where it is random every time). Sobol also is effective for sampling higher dimensioned problems.</p>
+                <br>
+                <figure>
+                    <img src="Sobol.png" alt="Image for Sobol" class="column3-img">
+                    <figcaption>Image Source: https://www.researchgate.net/figure/Static-sampling-strategies-A-Random-sampling-B-Latin-hypercube-sampling-C-Sobol_fig1_370656695</figcaption>
+                </figure>
+                </div>
+            </div>
+        
+            <div class="column">
+                <div class="model-container">
+                <h2>Latin Hypercube Sampling</h2>
+                <p>Latin Hypercube Sampling (LHS) is another quasi-random sampling technique that is in between random sampling and sobol. The way this method works is by ensuring each variable/parameters range is covered. An easy way to visualize this is by imagining ingredients for a cake. The samples could be 1-2 cups of flour, 2-3 cups of flour, and 3-4 cups of flour. While it does not matter where in the range of cups is chosen, the sample must cover that area such as sampling 1.1, 2.5, and 3.2 cups.</p>
+                <figure>
+                    <img src="LHS.png" alt="Image for LHS" class="column3-img">
+                    <figcaption>Image Source: https://www.researchgate.net/figure/Static-sampling-strategies-A-Random-sampling-B-Latin-hypercube-sampling-C-Sobol_fig1_370656695</figcaption>
+                </figure>
+                </div>
+            </div>
+            </div>
+        
+            <style>
+            .row {
+                display: flex;
+                gap: 80px; 
+                margin: 20px;
+            }
+        
+            .column {
+                flex: 1;
+                padding: 10px;
+                border-radius: 10px;
+            }
+        
+            .model-container {
+                border: 0px;
+                padding: 10px;
+                margin-top: 10px;
+            }
+        
+            .center-img {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        
+            .column3-img {
+                display: block;
+                margin: 0 auto 10px auto;
+                width: 300px;
+                height: 185px;
+                border-radius: 8px;
+            }
+
+            figure {
+                margin: 0;
+            }
+        
+            figcaption {
+                text-align: center;
+                margin-top: 8px;
+                font-size: 0.9em;
+                font-style: italic;
+                color: #555;
+            }
+            </style>
+        
+        </div>
+
+        <div id="Instructions" class="tabcontent">
+            <div class="model-section">
+                <div class="text-content">
+                    <h2>How to use the module:</h2>
+                    <ol>
+                        <li>
+                            <h3>Define Parameter Search Space</h3>
+                            <p>This is where you will define the range for each parameter. Defining the range tells the machine what range it is allowed to make guesses from. The first parameters you can vary are the initial concentration of biomass and initial concentration of nitrate. These materials are already in the reactor at the start of the experiment. You will then change the flowrate and the concentration of nitrate in. This lets the machine know how much nitrate will be entering the reactor at the start of the experiment and rate of entry. Finally the initial light intensity can be manipulated which is the amount of light being shined through the reactor glass.
+                            </p>
+                        </li>
+                        <li>
+                            <h3>Configure Initial Sampling & Model</h3>
+                            <p>In this section, you can choose the surrogate model, acquisition function, sampling method, and number of 
+                            <span class="tooltip">
+                                initial points
+                                <span class="tooltip-text">The starting dataset that BO will use to make the first prediction.</span>
+                            </span>.
+                            </p>
+                        </li>
+                        <li>
+                            <h3>Run Experiment Workflow</h3>
+                            <p>Once the first two sections have been set-up and chosen, the final step is the start running the experiment. The first part is to generate the inital data points. Next, calculate lutein for those data points. Then, showthe prediction and the suggested next epxperiment. Based of of the inital trial and first optimization run, a suggested point from the model will be created. This suggested run can then be ran and produce an updated model as a result. This process may be 
+                            <span class="tooltip">
+                                repeated
+                                <span class="tooltip-text">Back and forth between buttons C & D</span>
+                            </span> 
+                            until the user is happy with their optimized result. The experiment can then be reset to try other models.</p>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div class="image-container">
+                    <br><br><br><br><br>
+                    <img src="step1.png" alt="Image for step 1" class="model-img" width="300px" height="100%">
+                    <br><br>
+                    <img src="step2.png" alt="Image for step 2" class="model-img" width="180px" height="100%">
+                    <br><br>
+                    <img src="step3.png" alt="Image for step 3" class="model-img" width="400px" height="100%">
+                </div>
+            </div>
+            <style>
+                .model-section {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    gap: 40px;
+                    padding: 40px;
+                    margin: 0 auto;
+                    max-width: 1000px; 
+                }
+            
+                .text-content {
+                    flex: 3; 
+                    text-align: left;
+                }
+            
+                .image-container {
+                    flex: 2;
+                    text-align: center;
+                }
+            
+                .model-img {
+                    max-width: 100%;
+                    height: 200px;
+                    border-radius: 8px;
+                }
+            
+                .caption {
+                    margin-top: 10px;
+                    font-style: italic;
+                    font-size: 0.9em;
+                    color: #555;
+                }
+            
+                @media (max-width: 768px) {
+                    .model-section {
+                        flex-direction: column; 
+                    }
+                }
+        
+                .tooltip {
+                position: relative;
+                display: inline-block;
+                cursor: help;
+                border-bottom: 1px dotted black;
+                }
+                .tooltip .tooltip-text {
+                visibility: hidden;
+                width: 220px;
+                background-color: #333;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 8px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                margin-left: -110px;
+                opacity: 0;
+                transition: opacity 0.3s;
+                }
+                .tooltip:hover .tooltip-text {
+                visibility: visible;
+                opacity: 1;
+                }
+            </style>
+        </div>
+
+        <div id="Questions" class="tabcontent">
+          <h3>Guiding Questions:</h3>
+
+          <div class = "row">
+            <div class = "column_2">
+              <h3>Parameter Questions:</h3>
+                <p>
+                  <ol type="1">
+                    <li>What is the optimal lutein concentration with the default settings on the module?</li>
+                    <li>How does the optimal lutein concentration change when the light intensity range slider is shifted to 300-400 μmol/m<sup>2</sup>s</li>
+                    <li>How does the optimal lutein concentration change when the initial concentration of biomass is increased to 5-6 g/L? Repeat this for the inital nitrate concentration. Which one seems to have a greater effect on lutein concetration? Does this make sense?</li>
+                    <li>Increase inltet nitrate's concentration range to 20-30 g/L. What effect does this have on lutein concentration. After testing this question and question 3, what does the overall trend for lutein concentration seem to be when initial concentrations are increased?</li>
+                    <li>Change the inlet flow rate to 0.0750-0.1001 L/h. What is the value of lutein's concentration? Why does the concentration increase/decrease like this compared to question 1.</li>
+                  </ol>
+                </p>
+            </div>
+
+            <div class = "column_2">
+              <h3>Modeling Questions:</h3>
+                  <ol type="1" start="6">
+                    <li>When the default settings of the moduel are used, the optimal lutein outcome should be 0.0107 g/L. Try each surrogate model with 10 initial points and 10 additonal trials, or until 0.0107 g/L of lutein is reached. Do this three times for each. Which model seems to be the best fit for this PBR?</li>
+                    <li>Repeat question 6 for each acquisition function.</li>
+                    <li>Repeat question 6 for each sampling method.</li>
+                    <li>Change the initial samples to 5. Run a few trials until 0.0107 g/L is reached, and then average the number of additional trials to reach that lutein concentration. Do this for 15 intial samples too. Based off of comparing the averages of additional trials needed, does having more inital samples before bayesian optimization is used help speed up the computational arrival to optimal lutein concentration?</li>
+                  </ol>
+                </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="jump" style="margin:5px;"> </h3>
+
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+    // Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+// Keyboard navigation
+document.addEventListener('keydown', (event) => {
+const tablinks = document.querySelectorAll('.tablinks');
+let currentTab = Array.from(tablinks).findIndex((tab) => tab.classList.contains('active'));
+
+if (event.key === 'ArrowRight') {
+currentTab = (currentTab + 1) % tablinks.length;
+} else if (event.key === 'ArrowLeft') {
+currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+} else {
+return;
+}
+
+tablinks[currentTab].click();
+});
+
+  </script>
+    <div class="scrollable-container">
+      <script id="cb12a5a2-7c40-4b17-b783-01c90f6d8214">
+  (function() {
+    const xhr = new XMLHttpRequest()
+    xhr.responseType = 'blob';
+    xhr.open('GET', "https://srrweb.cc.lehigh.edu/biodegradability_classification/autoload.js?bokeh-autoload-element=cb12a5a2-7c40-4b17-b783-01c90f6d8214&bokeh-app-path=/biodegradability_classification&bokeh-absolute-url=https://srrweb.cc.lehigh.edu/biodegradability_classification", true);
+    xhr.withCredentials = false;
+    xhr.onload = function (event) {
+      const script = document.createElement('script');
+      const src = URL.createObjectURL(event.target.response);
+      script.src = src;
+      document.body.appendChild(script);
+    };
+    xhr.send();
+  })();
+</script>
+    </div>
+    <br>
+    <br>
+</body>
+
+<div class="footer">
+  <a href="https://cache.org/"><img src="/app/static/cache_logo.png" alt="cache" class="sq-logo";></a>
+  <a href="https://www.nsf.gov/"><img src="/app/static/nsf_logo.png" alt="nsf" class="sq-logo";></a>
+  <a href="/app"><img src="/app/static/Logo2.JPG" alt="logo" class="logo";></a>
+  <a href="https://engineering.lehigh.edu/chbe"><img src="/app/static/chbe_logo.png" alt="chbe" class="sq-logo";></a>
+  <a href="https://creativeinquiry.lehigh.edu/"><img src="/app/static/creative_inquiry_logo.png" alt="ci" class="sq-logo";></a>
+</div>
+</html>
