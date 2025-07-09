@@ -813,13 +813,24 @@
     width:60px;
     height:60px;
     border-radius:50%;
-    /* Path to the logo image. This assumes the image is in app/static/ */
-    background:url("/static/clutch-logo.jpeg") center/cover no-repeat;
-    background-size: cover; /* Ensure the image covers the button area */
+    /* REMOVED background-image here, it's now handled by <img> tag inside */
+    background-color: transparent; /* Ensure no default background interferes */
     cursor:pointer;
     z-index:1000; /* Ensure it's above most page content */
     box-shadow:0 4px 12px rgba(0,0,0,.3);
+    overflow: hidden; /* Hide parts of image that exceed round shape */
+    display: flex; /* Use flexbox to center image inside */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
   }
+
+  /* Style for the actual image inside the button */
+  #clutchChatIcon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure image covers the button area */
+  }
+
   /* hidden iframe */
   #clutchIframe{
     display:none; /* Initially hidden, toggled by JS */
@@ -853,7 +864,8 @@
   }
 </style>
 
-<div id="clutchChatIcon" onclick="toggleClutchChat()"></div>
+<div id="clutchChatIcon" onclick="toggleClutchChat()">
+  <img src="{{ url_for('static', filename='clutch-logo.jpeg') }}" alt="Clutch AI Chat"> </div>
 
 <iframe id="clutchIframe"
         title="Clutch AI Chat"
