@@ -445,6 +445,7 @@
         <li><div class="dropdown">
             <button class="dropbtn">MODULES</button>
             <div class="dropdown-content">
+              <a href="bayesian_optimization" class="header-text">Bayesian Optimization</a>
               <a href="biodegradability_classification" class="header-text">Biodegradability Classification</a>
               <a href="catalysis_data_interactive_visualization" class="header-text">Catalysis Data Science</a>
               <a href="DLT" class="header-text">Digital Lab Twin</a>
@@ -980,6 +981,33 @@ document.addEventListener('keydown', (event) => {
     object-fit: cover; /* Ensure image covers the button area */
   }
 
+<style>
+  /* floating round button */
+  #clutchChatIcon{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    /* REMOVED background-image here, it's now handled by <img> tag inside */
+    background-color: transparent; /* Ensure no default background interferes */
+    cursor:pointer;
+    z-index:1000; /* Ensure it's above most page content */
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+    overflow: hidden; /* Hide parts of image that exceed round shape */
+    display: flex; /* Use flexbox to center image inside */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+  }
+
+  /* Style for the actual image inside the button */
+  #clutchChatIcon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure image covers the button area */
+  }
+
   /* hidden iframe */
   #clutchIframe{
     display:none; /* Initially hidden, toggled by JS */
@@ -1032,6 +1060,7 @@ document.addEventListener('keydown', (event) => {
     }
   }
 </script>
+
 </body>
 </body>
 

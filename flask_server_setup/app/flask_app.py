@@ -73,6 +73,12 @@ def biodegradability_classification():
     bokeh_script_biodegradability_classification = server_document(url="https://srrweb.cc.lehigh.edu/biodegradability_classification")
     return render_template("biodegradability_classification.html", bokeh_script_biodegradability_classification=bokeh_script_biodegradability_classification)
 
+
+@app.route("/bayesian_optimization", methods=["GET"])
+def bayesian_optimization():
+    bokeh_script_bayesian_optimization = server_document(url="https://srrweb.cc.lehigh.edu/bayesian_optimization")
+    return render_template("bayesian_optimization", bokeh_script_bayesian_optimization=bokeh_script_bayesian_optimization)
+
 # @app.route("/acknowledgements", methods=['GET'])
 # def acknowledgements():
 #     return render_template("acknowledgements.html")
