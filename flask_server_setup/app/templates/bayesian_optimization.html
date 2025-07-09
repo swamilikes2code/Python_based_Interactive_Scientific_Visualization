@@ -576,7 +576,7 @@
               
               <div class="column_2_home">
                 <figure>
-                  <img src="BO_Cycle.png" alt="Front page image" class="right" style="width:600px; height: 425px;">
+                  <img src="{{url_for('static', filename='BO_Cycle.png')}}" alt="Front page image" class="right" style="width:600px; height: 425px;">
                   <!--Image made with help from Gemini AI-->
                 </figure>
               </div>
@@ -627,7 +627,7 @@
             
                     <div class="top-right-section">
                         <figure>
-                          <img src="Photobioreactor.jpg" alt="PBR_image" class="columni-img">
+                          <img src="{{url_for('static', filename='Photobioreactor.jpg')}}" alt="PBR_image" class="columni-img">
                           <figcaption>Image Source: https://www.researchgate.net/figure/Schematic-representation-of-the-photobioreactor_fig1_259772693</figcaption>
                         </figure>
                     </div>
@@ -728,11 +728,11 @@
                 </div>
                 
                 <div class="image-container">
-                    <img src="iterationdata.png" alt="iteration data" class="model-img">
+                    <img src="{{url_for('static', filename='iterationdata.png')}}" alt="iteration data" class="model-img">
                     <br><br>
-                    <img src="optimizaerconvergence.png" alt="optimizer convergence" class="model-img">
+                    <img src="{{url_for('static', filename='optimizaerconvergence.png')}}" alt="optimizer convergence" class="model-img">
                     <br><br>
-                    <img src="situationwithbestparameters.png" alt="situation with best parameters" class="model-img">
+                    <img src="{{url_for('static', filename='situationwithbestparameters.png')}}" alt="situation with best parameters" class="model-img">
                 </div>
             </div>
             <style>
@@ -814,7 +814,7 @@
                     <p>This is used together with the acquisition function to find the optimum set of parameters. The surrogate model’s part of the job is to create a function that encapsulates many possibilities for functions given the data set. Using given data points the surrogate model can create a probabilistic function that is representative of the unknown real function. The surrogate model uses exploration and exploitation by creating a smaller confidence limit near points of known data and creating a larger confidence limit in areas further away from known data points.</p>
                     <br>
                     <figure>
-                      <img src="SurrogateModel.png" alt="Surrogate Model" style="width:450px; height:350px;" class="center model-img">
+                      <img src="{{url_for('static', filename='SurrogateModel.png')}}" alt="Surrogate Model" style="width:450px; height:350px;" class="center model-img">
                       <figcaption style="text-align: center; margin-top: 8px; font-size: 0.9em; font-style: italic; color: #555;">
                         Image Source: https://neurocomputinglab.com/jobs/surrogate-modeling/
                       </figcaption>
@@ -827,7 +827,7 @@
                       <h2>Acquisition Function</h2>
                       <p>On the other side of the coin, there is the acquisition function. This uses the surrogate model to make predictions of an optimal value. The way the acquisition function makes its predictions is through a balance of exploration and exploitation. Predictions will be made in high areas of uncertainty, commonly areas far away from the original data set or previous predictions. The other way predictions are made is by checking areas with a high mean compared to the original dataset and previously predicted points. A prediction that has a higher value compared to the mean will be considered more optimal.</p>
                       <figure>
-                        <img src="AcquisitionFunction.png" alt="Acquisition Function" style="width:450px; height:350px;" class="center model-img">
+                        <img src="{{url_for('static', filename='AcquisitionFunction.png')}}" alt="Acquisition Function" style="width:450px; height:350px;" class="center model-img">
                         <figcaption style="text-align: center; margin-top: 8px; font-size: 0.9em; font-style: italic; color: #555;">
                           Image Source: https://ekamperi.github.io/machine%20learning/2021/06/11/acquisition-functions.html
                         </figcaption>
@@ -845,7 +845,7 @@
             <div class="row">
               <div class="column">
                 <figure>
-                    <img src="GaussianProcess.gif" alt="Image for GP" class="column3-img">
+                    <img src="{{url_for('static', filename='GaussianProcess.gif')}}" alt="Image for GP" class="column3-img">
                     <figcaption id="caption-gp">Image Source: https://www.php.cn/faq/662604.html</figcaption>
                 </figure>
                 <div class="model-container">
@@ -861,7 +861,7 @@
           
               <div class="column">
                 <figure>
-                    <img src="RandomForests.jpg" alt="Image for RF" class="column3-img">
+                    <img src="{{url_for('static', filename='RandomForests.jpg')}}" alt="Image for RF" class="column3-img">
                     <figcaption id="caption-rf">Image Source: https://medium.com/@roiyeho/random-forests-98892261dc49</figcaption>
                 </figure>
                 <div class="model-container">
@@ -876,7 +876,7 @@
           
               <div class="column">
                 <figure>
-                    <img src="ExtraTrees.png" alt="Image for ET" class="column3-img">
+                    <img src="{{url_for('static', filename='ExtraTrees.png')}}" alt="Image for ET" class="column3-img">
                     <figcaption id="caption-et">Image Source: https://www.researchgate.net/figure/Shows-the-diagram-of-the-extra-trees-regressor-32_fig1_392660477</figcaption>
                 </figure>
                 <div class="model-container">
@@ -994,7 +994,7 @@
                   </p>
         
                   <figure>
-                    <img src="generalacquisitionfunction.png" alt="gerneral acquisition function" class="column-img">
+                    <img src="{{url_for('static', filename='generalacquisitionfunction.png')}}" alt="gerneral acquisition function" class="column-img">
                     <figcaption>Image Source: https://www.researchgate.net/figure/Acquisition-functions-computed-from-eight-observations-green-of-an-otherwise-unknown_fig4_322306222?__cf_chl_tk=6CMGvV628QdPH540UlF6yilT.szL7MXFDZC_lTQf9lA-1750786891-1.0.1.1-C.xnlFsXMGOfVK1z6op7MwsR9BAD6ie_PzThDwFCKcc</figcaption>
                   </figure>
         
@@ -1069,7 +1069,7 @@
                 <br>
                 <br>
                 <figure>
-                    <img src="RandomSampling.png" alt="Image for Random Sampling" class="column3-img">
+                    <img src="{{url_for('static', filename='RandomSampling.png')}}" alt="Image for Random Sampling" class="column3-img">
                     <figcaption>Image Source: https://www.researchgate.net/figure/Static-sampling-strategies-A-Random-sampling-B-Latin-hypercube-sampling-C-Sobol_fig1_370656695</figcaption>
                 </figure>
                 </div>
@@ -1081,7 +1081,7 @@
                 <p>This and LHS are quasi-random sampling methods. Quasi random sampling is random to an extent but with that catch that there will not be large spaces without a sample taken unlike what is possible in random sampling. Sobol is deterministic which means that if given a set of data or like the parameters in the PBR, the sampling will always result as the same (unlike random sampling where it is random every time). Sobol also is effective for sampling higher dimensioned problems.</p>
                 <br>
                 <figure>
-                    <img src="Sobol.png" alt="Image for Sobol" class="column3-img">
+                    <img src="{{url_for('static', filename='Sobol.png')}}" alt="Image for Sobol" class="column3-img">
                     <figcaption>Image Source: https://www.researchgate.net/figure/Static-sampling-strategies-A-Random-sampling-B-Latin-hypercube-sampling-C-Sobol_fig1_370656695</figcaption>
                 </figure>
                 </div>
@@ -1092,7 +1092,7 @@
                 <h2>Latin Hypercube Sampling</h2>
                 <p>Latin Hypercube Sampling (LHS) is another quasi-random sampling technique that is in between random sampling and sobol. The way this method works is by ensuring each variable/parameters range is covered. An easy way to visualize this is by imagining ingredients for a cake. The samples could be 1-2 cups of flour, 2-3 cups of flour, and 3-4 cups of flour. While it does not matter where in the range of cups is chosen, the sample must cover that area such as sampling 1.1, 2.5, and 3.2 cups.</p>
                 <figure>
-                    <img src="LHS.png" alt="Image for LHS" class="column3-img">
+                    <img src="{{url_for('static', filename='LHS.png')}}" alt="Image for LHS" class="column3-img">
                     <figcaption>Image Source: https://www.researchgate.net/figure/Static-sampling-strategies-A-Random-sampling-B-Latin-hypercube-sampling-C-Sobol_fig1_370656695</figcaption>
                 </figure>
                 </div>
@@ -1180,11 +1180,11 @@
                 
                 <div class="image-container">
                     <br><br><br><br><br>
-                    <img src="step1.png" alt="Image for step 1" class="model-img" width="300px" height="100%">
+                    <img src="{{url_for('static', filename='step1.png')}}"alt="Image for step 1" class="model-img" width="300px" height="100%">
                     <br><br>
-                    <img src="step2.png" alt="Image for step 2" class="model-img" width="180px" height="100%">
+                    <img src="{{url_for('static', filename='step2.png')}}" class="model-img" width="180px" height="100%">
                     <br><br>
-                    <img src="step3.png" alt="Image for step 3" class="model-img" width="400px" height="100%">
+                    <img src="{{url_for('static', filename='step3.png')}}" class="model-img" width="400px" height="100%">
                 </div>
             </div>
             <style>
@@ -1341,6 +1341,87 @@ tablinks[currentTab].click();
     </div>
     <br>
     <br>
+
+<style>
+  /* floating round button */
+  #clutchChatIcon{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    /* REMOVED background-image here, it's now handled by <img> tag inside */
+    background-color: transparent; /* Ensure no default background interferes */
+    cursor:pointer;
+    z-index:1000; /* Ensure it's above most page content */
+    box-shadow:0 4px 12px rgba(0,0,0,.3);
+    overflow: hidden; /* Hide parts of image that exceed round shape */
+    display: flex; /* Use flexbox to center image inside */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+  }
+
+  /* Style for the actual image inside the button */
+  #clutchChatIcon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure image covers the button area */
+  }
+
+  /* hidden iframe */
+  #clutchIframe{
+    display:none; /* Initially hidden, toggled by JS */
+    position:fixed;
+    bottom:90px; /* Positions the iframe above the icon when expanded */
+    right:20px;
+    width:350px; /* Standard chat window width */
+    height:500px; /* Standard chat window height */
+    border:none;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,.25);
+    z-index:1001; /* Ensure the iframe is above the icon */
+  }
+
+  /* Optional: Basic responsive adjustments for smaller screens */
+  @media (max-width: 600px) {
+    #clutchChatIcon {
+      bottom: 10px;
+      right: 10px;
+      width: 50px;
+      height: 50px;
+    }
+    #clutchIframe {
+      width: 90%;
+      height: 70%;
+      bottom: 70px;
+      right: 5%; /* Centers it horizontally */
+      left: 5%; /* Centers it horizontally */
+      margin: auto; /* Ensures centering */
+    }
+  }
+</style>
+
+<div id="clutchChatIcon" onclick="toggleClutchChat()">
+  <img src="{{ url_for('static', filename='clutch-logo.jpeg') }}" alt="Clutch AI Chat"> </div>
+
+<iframe id="clutchIframe"
+        title="Clutch AI Chat"
+        src="https://omar852-clutch-ai-chat.hf.space"
+        allow="microphone">
+</iframe>
+
+<script>
+  function toggleClutchChat(){
+    const frame = document.getElementById("clutchIframe");
+    if (frame.style.display === "none" || frame.style.display === "") {
+      frame.style.display = "block";
+    } else {
+      frame.style.display = "none";
+    }
+  }
+</script>
+    
 </body>
 
 <div class="footer">
