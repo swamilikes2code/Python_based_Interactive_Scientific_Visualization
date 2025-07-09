@@ -570,6 +570,12 @@
         <div class="slides-row">
           <div style="grid-column: 1; display:flex; justify-content: right;"><a class="prev" onclick="plusSlides(-1)">&#10094;</a></div>
           <div class="slideshow-container">
+
+            <div class="mySlides fade">
+              <a href="bayesian_optimization"><img src="{{url_for('static', filename='bayesian_optimization-ui.png')}}" alt="Biodegradability Classification" style="width:100%"></a>
+              <div class="caption">Biodegradability Classification: Build and test your own classification model.</div>
+            </div>
+              
             <div class="mySlides fade">
               <a href="biodegradability_classification"><img src="{{url_for('static', filename='biodegrad-ui.png')}}" alt="Biodegradability Classification" style="width:100%"></a>
               <div class="caption">Biodegradability Classification: Build and test your own classification model.</div>
@@ -625,19 +631,40 @@
     <!--each flexwrap is a row, and all modules are in alphabetical order-->
 
     <div class="flexwrap">
-        <!--GITHUB REPO DIVISION-->
-        <a href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization">
-        <div class="card" style="grid-template-columns: 1fr;">
+      <!--GITHUB REPO DIVISION-->
+      <a href="https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization">
+      <div class="card" style="grid-template-columns: 1fr;">
+          <div class="card-container">
+              <h2 class="head2">
+                Github Repository
+              </h2>
+            <p>
+              The Github repository containing all code and documentation related to
+              this project can be found here.
+            </p>
+          </div>
+      </div>
+      </a>
+    </div>
+
+    <div class="flexwrap">
+        <!--BAYESIAN OPTIMIZATION DIVISION-->
+        <a href="bayesian_optimization">
+          <div class="card">
+            <img src="{{url_for('static', filename='BO_Cycle.png')}}" alt="Bayesian Optimization">
             <div class="card-container">
-                <h2 class="head2">
-                  Github Repository
-                </h2>
+                <h2 class="head2">Bayesian Optimization</h2>
               <p>
-                The Github repository containing all code and documentation related to
-                this project can be found here.
+                Apply Bayesian optimization to enhance laboratory experiment efficiency 
+                by systematically optimizing a photobioreactor through varied parameters, 
+                acquisition functions, and sampling methods.
               </p>
+              <!-- <p class="button-container">
+                <a href="biodegradability_classification" class="button"
+                >Biodegradability Classification Model</a>
+              </p> -->
             </div>
-        </div>
+          </div>
         </a>
 
         <!--BIODEGRAD CLASSIFICATION DIVISION-->
