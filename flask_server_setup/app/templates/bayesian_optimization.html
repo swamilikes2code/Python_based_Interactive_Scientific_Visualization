@@ -1322,22 +1322,7 @@ tablinks[currentTab].click();
 });
 
   </script>
-    <div class="scrollable-container">
-      <script id="cb12a5a2-7c40-4b17-b783-01c90f6d8214">
-  (function() {
-    const xhr = new XMLHttpRequest()
-    xhr.responseType = 'blob';
-    xhr.open('GET', "https://srrweb.cc.lehigh.edu/biodegradability_classification/autoload.js?bokeh-autoload-element=cb12a5a2-7c40-4b17-b783-01c90f6d8214&bokeh-app-path=/biodegradability_classification&bokeh-absolute-url=https://srrweb.cc.lehigh.edu/biodegradability_classification", true);
-    xhr.withCredentials = false;
-    xhr.onload = function (event) {
-      const script = document.createElement('script');
-      const src = URL.createObjectURL(event.target.response);
-      script.src = src;
-      document.body.appendChild(script);
-    };
-    xhr.send();
-  })();
-</script>
+  
 <div class="scrollable-container">
     {{bokeh_script_bayesian_optimization|safe}}
   </div>
