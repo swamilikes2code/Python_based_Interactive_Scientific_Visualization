@@ -616,7 +616,7 @@
                 <div class="left-section">
                     <div class="model-container" style="text-align: center;">
                         <h2>What is a Photobioreactor?</h2>
-                        <p>A photobioreactor (PBR) is a reactor used to cultivate products from phototrophic organisms, using light as their main source of energy. PBRs are made of transparent materials such as plastics or glass to allow for this light growth. Conditions such as temperature, CO<sub>2</sub>, pH, and nutrients can be easily controlled to keep a healthy environment for the organisms. The parameters of this reactor in this module can be found under the <i>Instructions</i> tab.</p>
+                        <p>A photobioreactor (PBR) is a reactor used to cultivate products from phototrophic organisms, using light as their main source of energy. PBRs are made of transparent materials such as plastics or glass to allow for this light to shine through. Conditions can be easily controlled to keep a healthy environment for the organisms. The parameters of this reactor in this module can be found under the <i>Instructions</i> tab. or by clicking on a ❓ in the interactive module.</p>
                         <br>
                         <h2>About Lutein</h2>
                         <p>Our particular photobioreactor in this model is used to grow lutein. Lutein is a carotenoid which is a red-orange-yellow dye that is found primarily in marigolds. What makes lutein so special is that it can be used in medical treatments. Common treatments are to help prevent cataracts in the human eyes and delay of cancers and macular degeneration. It also has common use in food dyes. However, marigolds are low in lutein content. This has led scientists to try and find other sources of higher lutein content. The source of focus for this module will be microalgae which shows promise to be a more efficient way of extracting Lutein than marigolds. To produce lutein from microalgae, nitrate is used as a nutrient and light is shined into the photobioreactor from either side. However, too much nitrate is not good for lutein production since microalgae produce more lutein under stress. Too much biomass is also not good for lutein production as overcrowding can block the light source.</p>
@@ -728,6 +728,11 @@
                 </div>
                 
                 <div class="image-container">
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
                     <img src="{{url_for('static', filename='iterationdata.png')}}" alt="iteration data" class="model-img">
                     <br><br>
                     <img src="{{url_for('static', filename='optimizaerconvergence.png')}}" alt="optimizer convergence" class="model-img">
@@ -747,18 +752,18 @@
                 }
             
                 .text-content {
-                    flex: 3; 
+                    flex: 1; 
                     text-align: left;
                 }
             
                 .image-container {
-                    flex: 2;
+                    flex: 1;
                     text-align: center;
                 }
             
                 .model-img {
                     max-width: 100%;
-                    height: 200px;
+                    height: auto;
                     border-radius: 8px;
                 }
             
@@ -1148,85 +1153,50 @@
         </div>
 
         <div id="Instructions" class="tabcontent">
-            <div class="model-section">
-                <div class="text-content">
-                    <h2>How to use the module:</h2>
-                    <ol>
-                        <li>
-                            <h3>Define Parameter Search Space</h3>
-                            <p>This is where you will define the range for each parameter. Defining the range tells the machine what range it is allowed to make guesses from. The first parameters you can vary are the initial concentration of biomass and initial concentration of nitrate. These materials are already in the reactor at the start of the experiment. You will then change the flowrate and the concentration of nitrate in. This lets the machine know how much nitrate will be entering the reactor at the start of the experiment and rate of entry. Finally the initial light intensity can be manipulated which is the amount of light being shined through the reactor glass.
-                            </p>
-                        </li>
-                        <li>
-                            <h3>Configure Initial Sampling & Model</h3>
-                            <p>In this section, you can choose the surrogate model, acquisition function, sampling method, and number of 
-                            <span class="tooltip">
-                                initial points
-                                <span class="tooltip-text">The starting dataset that BO will use to make the first prediction.</span>
-                            </span>.
-                            </p>
-                        </li>
-                        <li>
-                            <h3>Run Experiment Workflow</h3>
-                            <p>Once the first two sections have been set-up and chosen, the final step is the start running the experiment. The first part is to generate the inital data points. Next, calculate lutein for those data points. Then, showthe prediction and the suggested next epxperiment. Based of of the inital trial and first optimization run, a suggested point from the model will be created. This suggested run can then be ran and produce an updated model as a result. This process may be 
-                            <span class="tooltip">
-                                repeated
-                                <span class="tooltip-text">Back and forth between buttons C & D</span>
-                            </span> 
-                            until the user is happy with their optimized result. The experiment can then be reset to try other models.</p>
-                        </li>
-                    </ol>
-                </div>
-                
-                <div class="image-container">
-                    <br><br><br><br><br>
-                    <img src="{{url_for('static', filename='step1.png')}}" alt="Image for step 1" class="model-img" width="300px" height="100%">
-                    <br><br>
-                    <img src="{{url_for('static', filename='step2.png')}}" alt="Image for step 2" class="model-img" width="180px" height="100%">
-                    <br><br>
-                    <img src="{{url_for('static', filename='step3.png')}}" alt="Image for step 3" class="model-img" width="400px" height="100%">
-                </div>
+            <div style="max-width: 900px; margin: 0 auto; text-align: left;">
+                <h2>How to use the module:</h2>
+                <ol>
+                    <li style="margin-bottom: 2em;">
+                        <h3>Define Parameter Search Space</h3>
+                        <p>This is where you will define the range for each parameter. Defining the range tells the machine what range it is allowed to make guesses from. The first parameters you can vary are the initial concentration of biomass and initial concentration of nitrate. These materials are already in the reactor at the start of the experiment. You will then change the flowrate and the concentration of nitrate in. This lets the machine know how much nitrate will be entering the reactor at the start of the experiment and rate of entry. Finally the initial light intensity can be manipulated which is the amount of light being shined through the reactor glass.
+                        </p>
+                        <div style="text-align: center; padding: 10px 0;">
+                            <img src="{{url_for('static', filename='step1.png')}}" alt="Image for step 1" class="step1-img">
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 2em;">
+                        <h3>Configure Initial Sampling & Model</h3>
+                        <p>In this section, you can choose the surrogate model, acquisition function, sampling method, and number of 
+                        <span class="tooltip">
+                            initial points
+                            <span class="tooltip-text">The starting dataset that BO will use to make the first prediction.</span>
+                        </span>.
+                        </p>
+                        <div style="text-align: center; padding: 10px 0;">
+                            <img src="{{url_for('static', filename='step2.png')}}" alt="Image for step 2" class="step2-img">
+                        </div>
+                    </li>
+                    <li style="margin-bottom: 2em;">
+                        <h3>Run Experiment Workflow</h3>
+                        <p>Once the first two sections have been set-up and chosen, the final step is the start running the experiment. The first part is to generate the inital data points. Next, calculate lutein for those data points. Then, showthe prediction and the suggested next epxperiment. Based of of the inital trial and first optimization run, a suggested point from the model will be created. This suggested run can then be ran and produce an updated model as a result. This process may be 
+                        <span class="tooltip">
+                            repeated
+                            <span class="tooltip-text">Back and forth between buttons C & D</span>
+                        </span> 
+                        until the user is happy with their optimized result. The experiment can then be reset to try other models.</p>
+                        <div style="text-align: center; padding: 10px 0;">
+                            <img src="{{url_for('static', filename='step3.png')}}" alt="Image for step 3" class="step3-img">
+                        </div>
+                    </li>
+                </ol>
             </div>
             <style>
-                .model-section {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    gap: 40px;
-                    padding: 40px;
-                    margin: 0 auto;
-                    max-width: 1000px; 
-                }
-            
-                .text-content {
-                    flex: 3; 
-                    text-align: left;
-                }
-            
-                .image-container {
-                    flex: 2;
-                    text-align: center;
-                }
-            
-                .model-img {
-                    max-width: 100%;
-                    height: 200px;
+                .step1-img, .step2-img, .step3-img {
+                    max-width: 60%;
+                    height: auto;
                     border-radius: 8px;
+                    display: inline-block;
                 }
-            
-                .caption {
-                    margin-top: 10px;
-                    font-style: italic;
-                    font-size: 0.9em;
-                    color: #555;
-                }
-            
-                @media (max-width: 768px) {
-                    .model-section {
-                        flex-direction: column; 
-                    }
-                }
-        
                 .tooltip {
                 position: relative;
                 display: inline-block;
@@ -1255,7 +1225,7 @@
                 }
             </style>
         </div>
-
+           
         <div id="Questions" class="tabcontent">
           <h3>Guiding Questions:</h3>
 
