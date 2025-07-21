@@ -242,7 +242,7 @@ def run_final_simulation(params_to_simulate):
             "time": sol.t,
             "C_X": np.maximum(0, sol.y[0]),  # Ensure concentrations are non-negative
             "C_N": np.maximum(0, sol.y[1]),  # Ensure concentrations are non-negative
-            "C_L": np.maximum(0, sol.y[2])    # Lutein is already in mg/L
+            "C_L": np.maximum(0, sol.y[2])   # Lutein is already in mg/L
         }
     except Exception as e:
         print(f"Simulation error: {e}")
@@ -261,6 +261,17 @@ def run_final_simulation(params_to_simulate):
 # Bokeh Application Setup
 doc = curdoc()
 doc.title = "Lutein Production Optimizer"
+
+# --- ADDED: JavaScript helper for toggling widget visibility ---
+js_helper_code = """
+window.toggleVisibility = (widget_id) => {
+    const widget = Bokeh.documents[0].get_model_by_id(widget_id);
+    if (widget) {
+        widget.visible = !widget.visible;
+    }
+}
+"""
+doc.js_on_event('document_ready', CustomJS(code=js_helper_code))
 
 # Data Sources for Bokeh Plots and Tables
 convergence_source = ColumnDataSource(data=dict(iter=[], best_value=[]))
@@ -835,27 +846,78 @@ def update_convergence_plot_from_history():
         p_conv.x_range.end = iters[-1] + 0.5
 
 
+# --- ADDED: Helper function to create sliders with clickable info icons ---
+def create_slider_with_info(label_text, tooltip_text, slider_widget):
+    """Creates a column layout with a styled label (including a clickable icon)
+       and a collapsible help text paragraph."""
+    # Create the help text Paragraph, initially hidden.
+    help_paragraph = Paragraph(
+        text=tooltip_text,
+        styles={
+            'font-size': '12px',
+            'color': '#555',
+            'margin-left': '15px',
+            'margin-top': '5px',
+            'margin-bottom': '5px',
+            'border-left': '3px solid #ccc',
+            'padding-left': '10px',
+            'background-color': '#f9f9f9',
+        },
+        visible=False,
+        width=400
+    )
+    # The HTML for the icon calls the global JS function 'toggleVisibility'
+    info_icon_html = f'<span onclick="window.toggleVisibility(\'{help_paragraph.id}\')" style="cursor: pointer; user-select: none;">❓</span>'
+    label_div = Div(
+        text=f"<b>{label_text}</b> {info_icon_html}",
+        styles={'font-size': '13px', 'color': '#444', 'margin-bottom': '-5px'}
+    )
+    # The slider's own title is removed as it's now handled by the Div above it.
+    slider_widget.title = ""
+    # Return a column containing the label, the (hidden) help text, and the slider.
+    return column(label_div, help_paragraph, slider_widget, styles={'margin-top': '8px'})
+
+
 # UI Widgets
 title_div = Div(text="<h1>Lutein Production Bayesian Optimizer with Cost Analysis</h1>")
 description_p = Paragraph(text="""This application uses Bayesian Optimization to find optimal operating conditions for a photobioreactor. You can optimize for maximum lutein concentration (mg/L), maximum profit (Revenue), or maximum yield. Follow the steps to run a virtual experiment.""", width=450)
 
 objective_title = Div(text="<h4>0. Select Optimization Objective</h4>")
 objective_select = Select(title="Optimization Objective:", value="concentration",
-                                  options=[("concentration", "Maximize Lutein Concentration (mg/L)"),
-                                           ("cost", "Maximize Revenue (Profit - Cost)"),
-                                           ("yield", "Maximize Lutein Yield")])
+                                options=[("concentration", "Maximize Lutein Concentration (mg/L)"),
+                                         ("cost", "Maximize Revenue (Profit - Cost)"),
+                                         ("yield", "Maximize Lutein Yield")])
 objective_select.on_change('value', lambda attr, old, new: set_optimization_mode())
 
 time_hours_input = Spinner(title="Simulation Time (Hours):", low=1, step=1, value=TIME_HOURS, width=150, visible=False)
 time_hours_input.on_change('value', update_time_hours)
 
-
 param_range_title = Div(text="<h4>1. Define Parameter Search Space</h4>")
-cx0_range = RangeSlider(title="C_x0 Range (g/L)", start=0, end=10, value=(0.2, 2.0), step=0.1)
-cn0_range = RangeSlider(title="C_N0 Range (g/L)", start=0, end=10, value=(0.2, 2.0), step=0.1)
-fin_range = RangeSlider(title="F_in Range (1/hr)", start=1e-5, end=1.5e-1, value=(1e-3, 1.5e-2), step=1e-4, format="0.0000")
-cnin_range = RangeSlider(title="C_N_in Range (g/L)", start=0, end=50, value=(5.0, 15.0), step=0.5)
-i0_range = RangeSlider(title="I0 Range (umol/m2-s)", start=0, end=1000, value=(100, 200), step=10)
+
+# --- ADDED: Tooltip text and info paragraph ---
+hover_info_p = Paragraph(text="""Click ❓ next to a parameter for more details.""", styles={'font-size': '13px', 'color': '#444', 'margin-top': '-15px'})
+tooltips = {
+    "C_x0": "Initial Biomass Concentration (g/L): This is the starting amount of algae in the photobioreactor (PBR).",
+    "C_N0": "Initial Nitrate Concentration (g/L): This is the starting amount of the primary nutrient (nitrate) in the PBR.",
+    "F_in": "Inlet Flow Rate (1/hr): The rate at which new, nutrient-rich medium is fed to the PBR.",
+    "C_N_in": "Inlet Nitrate Concentration (g/L): The concentration of nitrate in the feed medium.",
+    "I0": "Incident Light Intensity (μmol/m²-s): The amount of light energy supplied to the PBR surface."
+}
+
+# --- MODIFIED: Sliders now defined without titles ---
+cx0_range = RangeSlider(start=0, end=10, value=(0.2, 2.0), step=0.1)
+cn0_range = RangeSlider(start=0, end=10, value=(0.2, 2.0), step=0.1)
+fin_range = RangeSlider(start=1e-5, end=1.5e-1, value=(1e-3, 1.5e-2), step=1e-4, format="0.0000")
+cnin_range = RangeSlider(start=0, end=50, value=(5.0, 15.0), step=0.5)
+i0_range = RangeSlider(start=0, end=1000, value=(100, 200), step=10)
+
+# --- ADDED: Create composite UI components using the helper function ---
+cx0_input = create_slider_with_info("C_x0 Range (g/L)", tooltips["C_x0"], cx0_range)
+cn0_input = create_slider_with_info("C_N0 Range (g/L)", tooltips["C_N0"], cn0_range)
+fin_input = create_slider_with_info("F_in Range (1/hr)", tooltips["F_in"], fin_range)
+cnin_input = create_slider_with_info("C_N_in Range (g/L)", tooltips["C_N_in"], cnin_range)
+i0_input = create_slider_with_info("I0 Range (μmol/m²-s)", tooltips["I0"], i0_range)
+
 
 indicator_panel_title = Div(text="<h4>Photobioreactor State</h4>")
 lights = [Div(text="<p>...</p>", width=60, height=60, styles={'text-align': 'center'}) for _ in range(6)]
@@ -978,11 +1040,13 @@ right_light_col = column(lights[3], lights[4], lights[5], styles=lamp_style)
 center_column = column(vertical_tube_div, tube_div, spacer, styles={'gap': '0'})
 indicator_panel = row(left_light_col, center_column, right_light_col, align='center')
 
-# Layout of the Bokeh app
+# --- MODIFIED: Layout of the Bokeh app now uses the composite slider widgets ---
 controls_col = column(
     title_div, description_p,
     objective_title, objective_select, time_hours_input,
-    param_range_title, cx0_range, cn0_range, fin_range, cnin_range, i0_range,
+    param_range_title,
+    hover_info_p,
+    cx0_input, cn0_input, fin_input, cnin_input, i0_input,
     settings_title, surrogate_select, acq_func_select, sampler_select, n_initial_input,
     actions_title, generate_button, calculate_button, suggest_button, suggestion_div, run_suggestion_button, reset_button,
     status_div,
