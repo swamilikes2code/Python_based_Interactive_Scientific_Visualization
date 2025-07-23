@@ -74,7 +74,7 @@ STAGNATION_THRESHOLD = 3  # Number of consecutive "non-improving" suggestions to
 PREDICTED_TOLERANCE_THRESHOLD = 0.5 # e.g., 0.5 mg/L or $0.5
 
 # Minimum number of optimization steps (beyond initial random points) before considering full convergence
-MIN_OPTIMIZATION_STEPS = 5 # This forces a bit more exploration before potentially locking in
+MIN_OPTIMIZATION_STEPS = 6 # This forces a bit more exploration before potentially locking in
 
 
 def pbr(t, C, F_in, C_N_in, I0):
