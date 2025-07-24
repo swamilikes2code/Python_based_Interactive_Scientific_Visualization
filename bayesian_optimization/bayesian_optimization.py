@@ -67,14 +67,15 @@ best_observed_point = None
 best_observed_value = -float('inf')
 
 converged = False
-# Stagnation count now tracks consecutive times we reject optimizer's suggestion or it suggests best point
-stagnation_count = 0
-STAGNATION_THRESHOLD = 3  # Number of consecutive "non-improving" suggestions to converge (can be adjusted)
-# How much lower a predicted value can be than best_observed_value before we IGNORE optimizer's suggestion
-PREDICTED_TOLERANCE_THRESHOLD = 0.5 # e.g., 0.5 mg/L or $0.5
 
-# Minimum number of optimization steps (beyond initial random points) before considering full convergence
-MIN_OPTIMIZATION_STEPS = 6 # This forces a bit more exploration before potentially locking in
+optimization_stagnation_count = 0
+STAGNATION_RESET_THRESHOLD = 15
+MAX_RESTARTS = 3
+current_restarts_count = 0
+
+MIN_OPTIMIZATION_STEPS = 5
+PREDICTED_TOLERANCE_THRESHOLD = 0.5
+X_CANDIDATES = 10
 
 
 def pbr(t, C, F_in, C_N_in, I0):
@@ -248,7 +249,7 @@ def update_time_hours(attr, old, new):
 
 
 def set_optimization_mode():
-    global optimization_mode, optimizer, best_observed_point, best_observed_value, converged, stagnation_count
+    global optimization_mode, optimizer, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
     new_mode = objective_select.value
 
     if new_mode == optimization_mode and optimizer is not None:
@@ -259,7 +260,8 @@ def set_optimization_mode():
     best_observed_point = None
     best_observed_value = -float('inf')
     converged = False
-    stagnation_count = 0
+    optimization_stagnation_count = 0
+    current_restarts_count = 0
 
     if optimization_mode == "concentration":
         p_conv.title.text = "Optimizer Convergence - Lutein Concentration (Maximize)"
@@ -327,14 +329,15 @@ def get_current_dimensions():
 
 
 def reset_experiment():
-    global optimization_history, optimizer, previewed_point, TIME_HOURS, best_observed_point, best_observed_value, converged, stagnation_count
+    global optimization_history, optimizer, previewed_point, TIME_HOURS, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
     optimization_history.clear()
     optimizer = None
     previewed_point = None
     best_observed_point = None
     best_observed_value = -float('inf')
     converged = False
-    stagnation_count = 0
+    optimization_stagnation_count = 0
+    current_restarts_count = 0
 
     experiments_source.data = {k: [] for k in experiments_source.data}
     convergence_source.data = {k: [] for k in convergence_source.data}
@@ -507,7 +510,7 @@ def calculate_lutein_for_table():
 
 
 def _ensure_optimizer_is_ready():
-    global optimizer
+    global optimizer, optimization_stagnation_count, current_restarts_count
 
     dims = get_current_dimensions()
     if dims is None:
@@ -522,8 +525,16 @@ def _ensure_optimizer_is_ready():
 
     min_skopt_initial_points = max(5, 2 * len(dims), n_initial_input.value)
 
-    if optimizer is None or (len(optimizer.Xi) != len(valid_history_x)):
+    if optimizer is None or (len(optimizer.Xi) != len(valid_history_x)) or \
+       (optimization_stagnation_count >= STAGNATION_RESET_THRESHOLD and current_restarts_count < MAX_RESTARTS):
+        
+        if optimizer is not None and optimization_stagnation_count >= STAGNATION_RESET_THRESHOLD:
+            current_restarts_count += 1
+            optimization_stagnation_count = 0
+            doc.add_next_tick_callback(partial(update_status, f"🔄 Performing warm restart {current_restarts_count}/{MAX_RESTARTS}..."))
+
         seed = np.random.randint(1000)
+        
         optimizer = Optimizer(
             dimensions=dims,
             base_estimator=surrogate_select.value,
@@ -547,39 +558,26 @@ def _ensure_optimizer_is_ready():
 
 
 def suggest_next_experiment():
-    global previewed_point, best_observed_point, best_observed_value, converged, stagnation_count
+    global previewed_point, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
     doc.add_next_tick_callback(lambda: update_status("🔄 Getting next suggestion preview..."))
     doc.add_next_tick_callback(lambda: set_ui_state(lock_all=True))
 
     def worker():
-        global previewed_point, best_observed_point, best_observed_value, converged, stagnation_count
+        global previewed_point, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
         try:
-            next_point_from_optimizer = None
             final_suggested_point = None
-            converged_note = ""
+            converged_note = "" # Initialize here, will be updated below
 
-            # Calculate current optimization steps
             current_opt_steps = len(optimization_history) - n_initial_input.value
 
-            # Phase 1: Force exploration for a minimum number of optimization steps
-            if current_opt_steps < MIN_OPTIMIZATION_STEPS and not converged:
-                if not _ensure_optimizer_is_ready():
-                    doc.add_next_tick_callback(partial(update_status,
-                                                       "❌ Optimizer not ready or no initial data to train. Please calculate initial points first."))
-                    doc.add_next_tick_callback(set_ui_state)
-                    return
-                # In this phase, always ask the optimizer for a new point. No stagnation logic yet.
-                final_suggested_point = optimizer.ask()
-                stagnation_count = 0
-                doc.add_next_tick_callback(partial(update_status, f"🔄 Performing initial exploration step {current_opt_steps + 1}/{MIN_OPTIMIZATION_STEPS}..."))
-
-            # Phase 2: Aggressive Exploitation / Lock-in if already converged
-            elif converged and best_observed_point is not None:
+            # Determine true convergence: exhausted restarts AND hit stagnation threshold
+            if current_restarts_count >= MAX_RESTARTS and optimization_stagnation_count >= STAGNATION_RESET_THRESHOLD:
+                converged = True
                 final_suggested_point = best_observed_point
-                converged_note = "<br/><b>Note: Optimization has converged to the global maximum found. Subsequent suggestions will be the same.</b>"
-            # Phase 2: Intelligent Exploration / Exploitation (after minimum steps, if not converged)
+                converged_note = "<br/><b>✅ Global Maximum Reached and Validated. Subsequent suggestions will be the same.</b>"
+            # Otherwise, proceed with optimization steps or warm restart logic
             else:
                 if not _ensure_optimizer_is_ready():
                     doc.add_next_tick_callback(partial(update_status,
@@ -587,74 +585,93 @@ def suggest_next_experiment():
                     doc.add_next_tick_callback(set_ui_state)
                     return
 
-                # Ask the optimizer for its next best point based on its model
-                next_point_from_optimizer = optimizer.ask()
+                # Phase 1: Mandatory initial exploration steps OR Warm Restart initial steps
+                if current_opt_steps < MIN_OPTIMIZATION_STEPS or \
+                   (optimization_stagnation_count >= STAGNATION_RESET_THRESHOLD and current_restarts_count < MAX_RESTARTS):
+                    
+                    final_suggested_point = optimizer.ask()
+                    doc.add_next_tick_callback(partial(update_status, f"🔄 Performing exploration step (Restart Phase {current_restarts_count + 1}/{MAX_RESTARTS})..."))
 
-                # --- CRITICAL FILTERING & STAGNATION LOGIC ---
-                # Only apply this logic if we have a meaningful best_observed_point
-                if best_observed_point is not None and best_observed_value > 0.0:
-                    # Get the model's predicted mean value for the point suggested by the optimizer
-                    predicted_mean_internal = -float('inf') # Default in case model fails
-                    if optimizer and optimizer.models and next_point_from_optimizer is not None:
-                        X_transformed = optimizer.space.transform([next_point_from_optimizer])
-                        model = optimizer.models[-1] # Use the latest model
-
-                        if hasattr(model, 'predict') and 'return_std' in model.predict.__code__.co_varnames:
-                            predicted_mean_internal = model.predict(X_transformed)[0]
-                        elif hasattr(model, 'estimators_'):
-                            predictions = np.array([tree.predict(X_transformed)[0] for tree in model.estimators_])
-                            predicted_mean_internal = np.mean(predictions)
-                        else:
-                            predicted_mean_internal = model.predict(X_transformed)[0]
-
-                    predicted_objective_value_for_suggested_point = -predicted_mean_internal # Convert to positive for comparison
-
-                    # Decision: If optimizer suggests something predicted significantly worse than best_observed_value,
-                    # or if it's suggesting the same point repeatedly, increment stagnation.
-                    # Otherwise, pursue the optimizer's suggestion and reset stagnation.
-                    if np.allclose(next_point_from_optimizer, best_observed_point, atol=1e-5):
-                        # Optimizer is suggesting the best known point, increment stagnation
-                        stagnation_count += 1
-                        final_suggested_point = best_observed_point
-                        doc.add_next_tick_callback(partial(update_status,
-                                                           f"ℹ️ Optimizer suggested best_observed_point. Stagnation count: {stagnation_count}"))
-                    elif predicted_objective_value_for_suggested_point < (best_observed_value - PREDICTED_TOLERANCE_THRESHOLD):
-                        # Optimizer suggested something different, but predicted significantly worse.
-                        # Increment stagnation and force suggestion of best_observed_point.
-                        stagnation_count += 1
-                        final_suggested_point = best_observed_point
-                        doc.add_next_tick_callback(partial(update_status,
-                                                           f"ℹ️ Predicted drop detected ({predicted_objective_value_for_suggested_point:.2f} vs Best: {best_observed_value:.2f}, Diff > {PREDICTED_TOLERANCE_THRESHOLD}). Suggesting best_observed_point. Stagnation count: {stagnation_count}"))
-                    else:
-                        # Optimizer's suggestion is new AND predicted to be good/promising. Reset stagnation.
-                        stagnation_count = 0
-                        final_suggested_point = next_point_from_optimizer
+                # Phase 2: Intelligent Exploitation / Filtering (after mandatory exploration)
                 else:
-                    # No meaningful best_observed_point yet, so always follow optimizer's suggestion (initial search)
-                    stagnation_count = 0
-                    final_suggested_point = next_point_from_optimizer
+                    candidate_points = optimizer.ask(n_points=X_CANDIDATES)
+                    
+                    chosen_candidate_based_on_prediction = None
+                    
+                    if best_observed_point is not None and best_observed_value > -float('inf') and optimizer.models:
+                        model = optimizer.models[-1]
+                        
+                        scored_candidates = []
+                        for candidate_p in candidate_points:
+                            X_transformed = optimizer.space.transform([candidate_p])
+                            if hasattr(model, 'predict') and 'return_std' in model.predict.__code__.co_varnames:
+                                predicted_mean_internal_for_candidate = model.predict(X_transformed)[0]
+                            else:
+                                predictions = np.array([tree.predict(X_transformed)[0] for tree in model.estimators_])
+                                predicted_mean_internal_for_candidate = np.mean(predictions)
+                            
+                            predicted_value = -predicted_mean_internal_for_candidate
+                            scored_candidates.append((predicted_value, candidate_p))
+                        
+                        scored_candidates.sort(key=lambda x: x[0], reverse=True)
+
+                        for predicted_val, candidate_p in scored_candidates:
+                            if predicted_val >= (best_observed_value - PREDICTED_TOLERANCE_THRESHOLD):
+                                chosen_candidate_based_on_prediction = candidate_p
+                                break
+                        
+                        if chosen_candidate_based_on_prediction is None:
+                            final_suggested_point = best_observed_point
+                            optimization_stagnation_count += 1
+                            doc.add_next_tick_callback(partial(update_status, f"ℹ️ All {X_CANDIDATES} optimizer suggestions predicted significantly lower than Best. Suggesting best_observed_point. Stagnation: {optimization_stagnation_count}"))
+                        else:
+                            final_suggested_point = chosen_candidate_based_on_prediction
+                            optimization_stagnation_count = 0 
+
+                    else: # No meaningful best_observed_value yet, or model not ready
+                        if optimizer.models and candidate_points:
+                            model = optimizer.models[-1]
+                            best_of_optimizer_candidates_val = -float('inf')
+                            best_of_optimizer_candidates_point = None
+                            for candidate_p in candidate_points:
+                                 X_transformed = optimizer.space.transform([candidate_p])
+                                 if hasattr(model, 'predict') and 'return_std' in model.predict.__code__.co_varnames:
+                                    predicted_mean_internal_for_candidate = model.predict(X_transformed)[0]
+                                 else:
+                                    predictions = np.array([tree.predict(X_transformed)[0] for tree in model.estimators_])
+                                    predicted_mean_internal_for_candidate = np.mean(predictions)
+                                 
+                                 current_predicted_value = -predicted_mean_internal_for_candidate
+                                 if current_predicted_value > best_of_optimizer_candidates_val:
+                                     highest_predicted_value = current_predicted_value
+                                     best_of_optimizer_candidates_point = candidate_p
+                            final_suggested_point = best_of_optimizer_candidates_point
+                        else:
+                            final_suggested_point = candidate_points[0] if candidate_points else None
+
+            # Safety fallback for final_suggested_point
+            if final_suggested_point is None and best_observed_point is not None:
+                final_suggested_point = best_observed_point
+            elif final_suggested_point is None and len(optimization_history) > 0:
+                final_suggested_point = optimization_history[-1][0]
+            elif final_suggested_point is None:
+                 doc.add_next_tick_callback(partial(update_status, "❌ No points to suggest, try generating initial points."))
+                 doc.add_next_tick_callback(set_ui_state)
+                 return
 
 
-                # Check if we should transition to the 'converged' state based on stagnation
-                if stagnation_count >= STAGNATION_THRESHOLD:
-                    converged = True
-                    # If we just converged, ensure the final suggestion is the best_observed_point.
-                    final_suggested_point = best_observed_point
-                    converged_note = "<br/><b>Note: Optimization has converged to the global maximum found. Subsequent suggestions will be the same.</b>"
-
-            # Fallback if final_suggested_point is still None (e.g., very early before any suggestions)
-            if final_suggested_point is None and next_point_from_optimizer is not None:
-                final_suggested_point = next_point_from_optimizer
-
-            # --- DISPLAY PREDICTIONS: Use actual observed value if converged, otherwise model's prediction ---
+            # --- DISPLAY PREDICTIONS: Ensure accuracy for known points ---
             predicted_objective_value_for_display = 0.0
             std = 0.0
-            if converged and best_observed_point is not None:
-                # If converged, explicitly display the *actual observed* global max and zero uncertainty
+
+            # If the final suggested point is our known best_observed_point (or we are globally converged)
+            # This is the primary condition for displaying the exact value
+            if (converged and best_observed_point is not None) or \
+               (best_observed_point is not None and np.allclose(final_suggested_point, best_observed_point, atol=1e-5)):
                 predicted_objective_value_for_display = best_observed_value
-                std = 0.0
+                std = 0.0 # Zero uncertainty for a known empirical point
             elif optimizer and optimizer.models and final_suggested_point is not None:
-                # If not converged, display the model's prediction for the 'final_suggested_point'
+                # Otherwise, rely on the model's prediction for this point
                 X_transformed = optimizer.space.transform([final_suggested_point])
                 model = optimizer.models[-1]
 
@@ -676,13 +693,12 @@ def suggest_next_experiment():
             else:
                 metric_text = f"<b>Predicted Lutein Yield: {predicted_objective_value_for_display:.4f} &plusmn; {std:.4f} %</b>"
 
-            # Update previewed_point for the 'Run Suggested Experiment' button
             previewed_point = final_suggested_point
 
             def callback():
                 names = [d.name for d in get_current_dimensions()]
                 suggestion_html = "<h5>Suggested Next Experiment:</h5>"
-                suggestion_html += metric_text + converged_note + "<ul>"
+                suggestion_html += metric_text + converged_note + "<ul>" # converged_note is now correctly appended here
                 if previewed_point is not None:
                     for name, val in zip(names, previewed_point):
                         suggestion_html += f"<li><b>{name}:</b> {val:.4f}</li>"
@@ -701,7 +717,7 @@ def suggest_next_experiment():
 
 
 def run_suggestion():
-    global previewed_point, optimization_history, best_observed_point, best_observed_value, converged, stagnation_count
+    global previewed_point, optimization_history, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
     if previewed_point is None:
         update_status("No suggestion to run. Please click 'Suggest Next Experiment' first.")
@@ -710,7 +726,7 @@ def run_suggestion():
     doc.add_next_tick_callback(lambda: set_ui_state(lock_all=True))
 
     def worker():
-        global previewed_point, optimization_history, optimizer, best_observed_point, best_observed_value, converged, stagnation_count
+        global previewed_point, optimization_history, optimizer, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
         try:
             point_to_run = previewed_point
@@ -751,8 +767,10 @@ def run_suggestion():
             if current_actual_value > best_observed_value + 1e-6:
                 best_observed_value = current_actual_value
                 best_observed_point = point_to_run
-                stagnation_count = 0
+                optimization_stagnation_count = 0
                 converged = False
+            else:
+                optimization_stagnation_count += 1
 
             def callback():
                 global previewed_point
