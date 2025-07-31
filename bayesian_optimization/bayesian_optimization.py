@@ -61,6 +61,7 @@ TIME_HOURS = 150
 optimization_history = []
 optimizer = None
 previewed_point = None
+predicted_optimal_value_for_previewed_point = np.nan # New: To store prediction for suggested point
 optimization_mode = "concentration"
 
 best_observed_point = None
@@ -234,7 +235,8 @@ simulation_source = ColumnDataSource(data=dict(time=[], C_X=[], C_N=[], C_L=[]))
 experiments_source = ColumnDataSource(data=dict(
     C_x0=[], C_N0=[], F_in=[], C_N_in=[], I0=[],
     Lutein_mg_per_L=[], Total_Cost=[], Lutein_Profit=[], Revenue_J=[],
-    Lutein_Yield=[], Biomass_Cost=[], Nitrogen_Cost=[], Energy_Cost=[]
+    Lutein_Yield=[], Biomass_Cost=[], Nitrogen_Cost=[], Energy_Cost=[],
+    Predicted_Optimal=[] # New: Predicted optimal value for the suggested point
 ))
 
 
@@ -329,16 +331,18 @@ def get_current_dimensions():
 
 
 def reset_experiment():
-    global optimization_history, optimizer, previewed_point, TIME_HOURS, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
+    global optimization_history, optimizer, previewed_point, predicted_optimal_value_for_previewed_point, TIME_HOURS, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
     optimization_history.clear()
     optimizer = None
     previewed_point = None
+    predicted_optimal_value_for_previewed_point = np.nan # Reset the predicted value
     best_observed_point = None
     best_observed_value = -float('inf')
     converged = False
     optimization_stagnation_count = 0
     current_restarts_count = 0
 
+    # Reset all columns, including Predicted_Optimal
     experiments_source.data = {k: [] for k in experiments_source.data}
     convergence_source.data = {k: [] for k in convergence_source.data}
     simulation_source.data = {k: [] for k in simulation_source.data}
@@ -402,7 +406,8 @@ def generate_initial_points():
                 'Lutein_Yield': [np.nan] * n_initial,
                 'Biomass_Cost': [np.nan] * n_initial,
                 'Nitrogen_Cost': [np.nan] * n_initial,
-                'Energy_Cost': [np.nan] * n_initial
+                'Energy_Cost': [np.nan] * n_initial,
+                'Predicted_Optimal': [np.nan] * n_initial # Initialize with NaN
             })
 
             def callback():
@@ -462,7 +467,8 @@ def calculate_lutein_for_table():
                     'lutein_yield': lutein_yield,
                     'biomass_cost': cost_analysis['biomass_cost'],
                     'nitrogen_cost': cost_analysis['nitrogen_cost'],
-                    'energy_cost': cost_analysis['energy_cost']
+                    'energy_cost': cost_analysis['energy_cost'],
+                    'predicted_optimal': np.nan # Initial points don't have a predicted optimal value from optimizer
                 })
 
                 if np.isfinite(obj_val_internal) and not any(np.array_equal(p, item[0]) for item in optimization_history):
@@ -491,6 +497,7 @@ def calculate_lutein_for_table():
                     current_data['Biomass_Cost'][idx] = res['biomass_cost']
                     current_data['Nitrogen_Cost'][idx] = res['nitrogen_cost']
                     current_data['Energy_Cost'][idx] = res['energy_cost']
+                    # Predicted_Optimal remains NaN for initial points
 
                 experiments_source.data = current_data
                 optimization_history.extend(new_optimization_history_entries)
@@ -558,13 +565,13 @@ def _ensure_optimizer_is_ready():
 
 
 def suggest_next_experiment():
-    global previewed_point, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
+    global previewed_point, predicted_optimal_value_for_previewed_point, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
     doc.add_next_tick_callback(lambda: update_status("🔄 Getting next suggestion preview..."))
     doc.add_next_tick_callback(lambda: set_ui_state(lock_all=True))
 
     def worker():
-        global previewed_point, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
+        global previewed_point, predicted_optimal_value_for_previewed_point, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
         try:
             final_suggested_point = None
@@ -581,7 +588,7 @@ def suggest_next_experiment():
             else:
                 if not _ensure_optimizer_is_ready():
                     doc.add_next_tick_callback(partial(update_status,
-                                                       "❌ Optimizer not ready or no initial data to train. Please calculate initial points first."))
+                                                         "❌ Optimizer not ready or no initial data to train. Please calculate initial points first."))
                     doc.add_next_tick_callback(set_ui_state)
                     return
 
@@ -634,17 +641,17 @@ def suggest_next_experiment():
                             best_of_optimizer_candidates_val = -float('inf')
                             best_of_optimizer_candidates_point = None
                             for candidate_p in candidate_points:
-                                 X_transformed = optimizer.space.transform([candidate_p])
-                                 if hasattr(model, 'predict') and 'return_std' in model.predict.__code__.co_varnames:
+                                X_transformed = optimizer.space.transform([candidate_p])
+                                if hasattr(model, 'predict') and 'return_std' in model.predict.__code__.co_varnames:
                                     predicted_mean_internal_for_candidate = model.predict(X_transformed)[0]
-                                 else:
+                                else:
                                     predictions = np.array([tree.predict(X_transformed)[0] for tree in model.estimators_])
                                     predicted_mean_internal_for_candidate = np.mean(predictions)
-                                 
-                                 current_predicted_value = -predicted_mean_internal_for_candidate
-                                 if current_predicted_value > best_of_optimizer_candidates_val:
-                                     highest_predicted_value = current_predicted_value
-                                     best_of_optimizer_candidates_point = candidate_p
+                                
+                                current_predicted_value = -predicted_mean_internal_for_candidate
+                                if current_predicted_value > best_of_optimizer_candidates_val:
+                                    best_of_optimizer_candidates_val = current_predicted_value
+                                    best_of_optimizer_candidates_point = candidate_p
                             final_suggested_point = best_of_optimizer_candidates_point
                         else:
                             final_suggested_point = candidate_points[0] if candidate_points else None
@@ -655,9 +662,9 @@ def suggest_next_experiment():
             elif final_suggested_point is None and len(optimization_history) > 0:
                 final_suggested_point = optimization_history[-1][0]
             elif final_suggested_point is None:
-                 doc.add_next_tick_callback(partial(update_status, "❌ No points to suggest, try generating initial points."))
-                 doc.add_next_tick_callback(set_ui_state)
-                 return
+                doc.add_next_tick_callback(partial(update_status, "❌ No points to suggest, try generating initial points."))
+                doc.add_next_tick_callback(set_ui_state)
+                return
 
 
             # --- DISPLAY PREDICTIONS: Ensure accuracy for known points ---
@@ -684,6 +691,8 @@ def suggest_next_experiment():
                 else:
                     predicted_objective_value_for_display = -model.predict(X_transformed)[0]
                     std = 0.0
+            
+            predicted_optimal_value_for_previewed_point = predicted_objective_value_for_display # Store the prediction
 
             # Formulate the metric text
             if optimization_mode == "concentration":
@@ -717,7 +726,7 @@ def suggest_next_experiment():
 
 
 def run_suggestion():
-    global previewed_point, optimization_history, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
+    global previewed_point, predicted_optimal_value_for_previewed_point, optimization_history, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
     if previewed_point is None:
         update_status("No suggestion to run. Please click 'Suggest Next Experiment' first.")
@@ -726,7 +735,7 @@ def run_suggestion():
     doc.add_next_tick_callback(lambda: set_ui_state(lock_all=True))
 
     def worker():
-        global previewed_point, optimization_history, optimizer, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
+        global previewed_point, predicted_optimal_value_for_previewed_point, optimization_history, optimizer, best_observed_point, best_observed_value, converged, optimization_stagnation_count, current_restarts_count
 
         try:
             point_to_run = previewed_point
@@ -748,7 +757,7 @@ def run_suggestion():
                 optimization_history.append([point_to_run, obj_val_internal])
             else:
                 doc.add_next_tick_callback(partial(update_status,
-                                                   "ℹ️ This exact experiment has already been run and added to the model. No new data added to optimizer."))
+                                                    "ℹ️ This exact experiment has already been run and added to the model. No new data added to optimizer."))
 
             sim_results_dict = run_final_simulation(point_to_run)
             lutein_val_mg_per_L = sim_results_dict['C_L'][-1]
@@ -773,7 +782,7 @@ def run_suggestion():
                 optimization_stagnation_count += 1
 
             def callback():
-                global previewed_point
+                global previewed_point, predicted_optimal_value_for_previewed_point
 
                 new_point_data = {
                     'C_x0': [point_to_run[0]],
@@ -788,7 +797,8 @@ def run_suggestion():
                     'Lutein_Yield': [lutein_yield_val],
                     'Biomass_Cost': [cost_analysis['biomass_cost']],
                     'Nitrogen_Cost': [cost_analysis['nitrogen_cost']],
-                    'Energy_Cost': [cost_analysis['energy_cost']]
+                    'Energy_Cost': [cost_analysis['energy_cost']],
+                    'Predicted_Optimal': [predicted_optimal_value_for_previewed_point] # Populate prediction for this row
                 }
                 experiments_source.stream(new_point_data)
 
@@ -805,6 +815,7 @@ def run_suggestion():
                         f"✅ Ran suggested experiment as Optimization Step {opt_step_number}. Lutein Yield: {lutein_yield_val:.4f} %")
 
                 previewed_point = None
+                predicted_optimal_value_for_previewed_point = np.nan # Reset for next suggestion
                 suggestion_div.text = ""
                 process_and_plot_latest_results()
                 set_ui_state()
@@ -989,7 +1000,7 @@ time_hours_input.on_change('value', update_time_hours)
 param_range_title = Div(text="<h4>1. Define Parameter Search Space</h4>")
 
 hover_info_p = Paragraph(text="""Click ❓ next to a parameter for more details.""",
-                         styles={'font-size': '13px', 'color': '#444', 'margin-top': '-15px'})
+                             styles={'font-size': '13px', 'color': '#444', 'margin-top': '-15px'})
 tooltips = {
     "C_x0": "Initial Biomass Concentration (g/L): This is the starting amount of algae in the photobioreactor (PBR).",
     "C_N0": "Initial Nitrate Concentration (g/L): This is the starting amount of the primary nutrient (nitrate) in the PBR.",
@@ -1083,6 +1094,7 @@ columns = [
     TableColumn(field="C_N_in", title="C_N_in (g/L)", formatter=NumberFormatter(format="0.0000")),
     TableColumn(field="I0", title="I0 (umol/m2-s)", formatter=NumberFormatter(format="0.0000")),
     TableColumn(field="Lutein_mg_per_L", title="Lutein (mg/L)", formatter=NumberFormatter(format="0.0000")),
+    TableColumn(field="Predicted_Optimal", title="Predicted Optimal", formatter=NumberFormatter(format="0.0000")), # New column
     TableColumn(field="Total_Cost", title="Total Cost ($)", formatter=NumberFormatter(format="0.0000")),
     TableColumn(field="Lutein_Profit", title="Lutein Profit ($)", formatter=NumberFormatter(format="0.0000")),
     TableColumn(field="Revenue_J", title="Revenue ($)", formatter=NumberFormatter(format="0.0000")),
@@ -1095,7 +1107,7 @@ columns = [
 cost_columns = [col for col in columns if col.field in ['Total_Cost', 'Lutein_Profit', 'Revenue_J', 'Biomass_Cost', 'Nitrogen_Cost', 'Energy_Cost']]
 yield_columns = [col for col in columns if col.field in ['Lutein_Yield']]
 
-data_table = DataTable(source=experiments_source, columns=columns, width=1000, height=280, editable=False)
+data_table = DataTable(source=experiments_source, columns=columns, width=1150, height=280, editable=False) # Increased width
 
 p_conv = figure(height=300, width=800, title="Optimizer Convergence", x_axis_label="Optimization Step",
                 y_axis_label="Best Value", y_range=DataRange1d(start=0, range_padding=0.1, range_padding_units='percent'))
