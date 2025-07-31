@@ -81,7 +81,7 @@ def bayesian_optimization():
 
 @app.route("/lab_bayesian_optimization", methods=["GET"])
 def lab_bayesian_optimization():
-    bokeh_script_lab_bayesian_optimization = server_document(url="https://srrweb.cc.lehigh.edu/lab_bayesian_optimization)
+    bokeh_script_lab_bayesian_optimization = server_document(url="https://srrweb.cc.lehigh.edu/lab_bayesian_optimization")
     return render_template("lab_bayesian_optimization.html", bokeh_script_lab_bayesian_optimization=bokeh_script_lab_bayesian_optimization)
 
 # @app.route("/acknowledgements", methods=['GET'])
