@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Bayesian Optimization for Experiments</title>
+    <style>
+
+    /* -------------------------BODY------------------------- */
+
+    body {
+        margin: 0;
+        background: #fff;
+        font-family: 'Arial', sans-serif;
+        font-weight: 400;
+    }
+
+
+    /* ------------------------- HEADER -------------------------*/
+
+        
+    header {
+            background: #262626;
+            height: 80px;
+        }
+        
+    header::after {
+            content: '';
+            display: table;
+            clear:both;
+        }
+    
+    .logo {
+        padding:10px;
+        float:left;
+        width:300px;
+    }
+
+    .sq-logo {
+        padding: 10px;
+        float:left;
+        width: 65px;
+        height: 65px;
+        object-fit: cover;
+    }
+    
+    nav {
+        float: right;
+        padding-right: 16px;
+    }
+    
+    nav ul {
+        margin: 0;
+        padding: 0;
+        list-style:none;
+    }
+    
+    nav li {
+        margin: 0 2.28vw;
+        position: relative;
+        float: left;
+        height: 80px;
+        display: flex;
+        align-items: center;
+    }
+    
+    nav a {
+        color: rgb(255, 251, 251);
+        text-decoration: none;
+        font-size: 16px;
+        text-align: center;
+    }
+    
+    nav a:hover {
+            color: #31A6FF;
+    }
+    
+    nav a::before {
+            content: '';
+            display: block;
+            height:5px;
+            background-color: #31A6FF;
+            position:absolute;
+            width: 0%;
+            top: 0;
+            transition: all ease-in-out 250ms;
+    }
+    
+    nav a:hover::before {
+            width: 100%;
+    }
+    
+    .header-text {
+            font-size: 16px;
+    }
+
+    @media all and (max-width: 608px) {
+      header {
+        height: 160px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      nav {
+        float: none;
+      }
+
+      nav ul {
+        display: flex;
+        justify-content: center;
+        padding: 0;
+      }
+    }
+    
+    .dropdown {
+        float:left;
+        overflow:hidden;
+    }
+    
+    .dropdown .dropbtn {
+        padding: 0;
+        font-size: 16px;
+        background-color: transparent;
+        color: rgb(255, 251, 251);
+        text-decoration: none;
+        border: none;
+        margin-top: -1.2px;
+    }
+    
+    .dropbtn::before {
+        content: '';
+        display: block;
+        height:5px;
+        background-color: #31A6FF;
+        position:absolute;
+        width: 0%;
+        top: 0;
+        transition: all ease-in-out 250ms;
+    }
+    
+    .dropbtn:hover::before {
+        width: 100%
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 80px;
+        left: -20%;
+        width: 200%;
+        background-color: #5c5c5c;
+        z-index: 1;
+    }
+    
+    .dropdown-content a {
+        float: none;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: white;
+        display: block;
+        text-align: left;
+    }
+    
+    .dropdown-content a:hover::before {
+        width:0;
+    }
+    
+    .dropdown:hover .dropdown-content {display: block;}
+    .dropdown:hover .dropbtn::before {width: 100%}
+    .dropdown:hover .dropbtn {color: #31A6FF}
+    li:hover .dropdown-content {display: block;}
+
+
+    /* -------------------------TABS------------------------- */
+
+    .flexwrap1 {
+            display: flex;
+            width: auto;
+            height: auto;
+            font-family: 'Arial', sans-serif;
+            color:#484848;
+            font-weight: 600;
+            font-size: 16px;
+            padding-left:5px;
+            padding-right:5px;
+            padding-bottom:10px;
+            background:#b2e3f4;
+            gap: 2.083vw;
+            line-height: 1.5;
+            margin: auto;
+            justify-content: center;
+        }
+    .tabcontent {
+      display: block; /* Make content visible by default */
+      padding: 6px 12px;
+      width: 100%; /* Ensure it takes full width */
+      max-width: 960px; /* Optional: Constrain width for readability */
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    /*-------------------BOKEH SECTION--------------------- */
+    .scrollable-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+    .button1 { /* Style for your "Jump to Module" button */
+        background-color: #31A6FF;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+        border: none;
+    }
+
+
+    /*-------------------FOOTER--------------------- */
+    .footer {
+        margin: 0;
+        padding: 10px 0 10px 0;
+        list-style:none;
+        text-decoration: none;
+        overflow: hidden;
+        box-sizing: border-box;
+        background-color: #262626;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        font-family: 'Arial', sans-serif;
+    }
+
+    @media all and (max-width: 700px) {
+            .footer {
+                flex-direction: column;
+            }
+        }
+
+    .container2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            padding: 10px;
+        }
+
+
+    /* -------------------MISC------------------- */
+
+    .head1 {
+      text-align: center;
+      background-color: #fff;
+      color: #000;
+      font-size: 32px;
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+    }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div><a href="/app"><img src="/app/static/Logo2.JPG" alt="logo" class="logo"></a></div>
+        <nav>
+            <li><a href="/app" class="header-text">HOME</a></li>
+            <li><div class="dropdown">
+                <button class="dropbtn">MODULES</button>
+                <div class="dropdown-content">
+                    <a href="/lab_bayesian_optimization" class="header-text">Lab Bayesian Optimization</a>
+                    <a href="/bayesian_optimization" class="header-text">Bayesian Optimization</a>
+                    <a href="/biodegradability_classification" class="header-text">Biodegradability Classification</a>
+                    <a href="/catalysis_data_interactive_visualization" class="header-text">Catalysis Data Science</a>
+                    <a href="/DLT" class="header-text">Digital Lab Twin</a>
+                    <a href="/DAC" class="header-text">Direct Air Captures</a>
+                    <a href="/sliders_reaction_kinetics" class="header-text">Reaction Kinetics</a>
+                    <a href="/SIR" class="header-text">SEIR Infectious Diseases</a>
+                    <a href="/ZECC" class="header-text">Zero Energy Cooling Chamber</a>
+                </div>
+              </div>
+            </li>
+            <li><a href="about" class="header-text">ABOUT</a></li>
+        </nav>
+    </header>
+    <style>
+        .text-size {
+            font-size: 16px;
+        }
+    </style>
+    <h1 class="head1">Bayesian Optimization for Experiments</h1>
+    
+      <div class="flexwrap1">
+        <div id="Generalized" class="tabcontent">
+            <h3>
+                Welcome to Bayesian Optimization for Experiments
+            </h3>
+            
+            <p>This module is a continuation of the <i>Bayesian Optimization</i> module. Please follow along that module first in order to understand the basics of Bayesian optimization.</p>
+            <p>This time, you will enter your own parameters, optimization objective, and experimental data. Instructions can be seen below.</p>
+            
+            <h4>Process:</h4>
+            <ol>
+                <li>Input the amount of paramters you have in your experiment. Name them and give them ranges for optimization.</li>
+                <li>Name your optimization objective. Choose whether to maximize or minimize this objective.</li>
+                <li>Enter the number of experimental trials you have already carried out.</li>
+                <li>Either enter the values for the parameters and objective manually or upload a csv file with each column titled to mathc your paramters and objective with the objective in the last column. (Units should not matter as long as the units for each paramter or objective stays the sanme the whole time.</li>
+                <li>Choose your Surrogate Model and Acquisition Function. Lock your settings.</li>
+                <li>Click "Suggest Next Experiment." Carry out these parameters and then report the objective result in the box.</li>
+                <li>Click "Submit Result & Update Model." Repat Step 6 and this step until the objective is optimized.</li>
+            </ol>
+        </div>
+      </div>
+
+    <div class="row" style="justify-items: center;display: grid;padding: 30px 0 0 0;">
+      <p><b>NOTE:</b> If the module below is not appearing, try opening this page in a private/incognito window.</p>
+      <p>Due to the size of the dataset, it may take a few seconds to load.</p>
+      <p><a href="#jump" class="button1">Jump to Module</a></p><br>
+    </div>
+
+    <div id="jump" class="scrollable-container">
+        {{ bokeh_script_lab_bayesian_optimization|safe }}
+    </div>
+    <br>
+    <br>
+
+<div class="footer">
+    <a href="https://cache.org/"><img src="/app/static/cache_logo.png" alt="cache" class="sq-logo"></a>
+    <a href="https://www.nsf.gov/"><img src="/app/static/nsf_logo.png" alt="nsf" class="sq-logo"></a>
+    <a href="/app"><img src="/app/static/Logo2.JPG" alt="logo" class="logo"></a>
+    <a href="https://engineering.lehigh.edu/chbe"><img src="/app/static/chbe_logo.png" alt="chbe" class="sq-logo"></a>
+    <a href="https://creativeinquiry.lehigh.edu/"><img src="/app/static/creative_inquiry_logo.png" alt="ci" class="sq-logo"></a>
+</div>
+</body>
+</html>
