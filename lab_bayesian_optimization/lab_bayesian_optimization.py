@@ -43,6 +43,17 @@ experiment_history = []
 suggested_x = None
 TOLERANCE = 1e-4    # Stopping threshold
 
+# --- Global State for Advanced Logic ---
+best_observed_x = None
+best_observed_y_internal = -float('inf')  # Start with negative infinity for maximization
+optimization_stagnation_count = 0
+current_restarts_count = 0
+MAX_RESTARTS = 3
+STAGNATION_RESET_THRESHOLD = 15
+MIN_OPTIMIZATION_STEPS = 5
+PREDICTED_TOLERANCE_THRESHOLD = 0.5  # Tolerance for predicting a better value
+X_CANDIDATES = 10  # Number of candidate points to ask from the optimizer
+
 # --- Bokeh Application Setup ---
 doc = curdoc()
 doc.title = "Interactive Optimizer"
@@ -92,7 +103,6 @@ def on_num_params_change(attr, old, new):
         if i < num_params:
             on_param_range_change(i, None, None, None)
     
-    # Update initial data UI
     num_initial_points = initial_data_spinner.value or 0
     on_initial_data_change(None, None, num_initial_points)
     update_initial_random_points_info()
@@ -117,9 +127,6 @@ def on_objective_name_change(attr, old, new):
     """Updates the initial data header for the objective column in real-time."""
     objective_header.text = f"<b>{new or 'Objective'}</b>"
     update_direction_indicator()
-    # When objective name changes, it might affect the column header in the DataTable,
-    # so we need to trigger a DataTable columns update.
-    # This will be handled by re-initializing the optimizer when setup is locked in.
 
 def on_param_name_change(index, attr, old, new):
     """Updates a specific parameter header in the initial data section in real-time."""
@@ -152,30 +159,42 @@ def on_param_range_change(index, attr, old, new):
 def update_initial_points_warning(num_points=0):
     """Shows a warning if the number of points is between 1 and 4."""
     num_points = num_points or 0
-    initial_points_warning_div.visible = 0 < num_points < 5
+    num_params = num_params_spinner.value
+    recommended_min = max(5, 2 * num_params)
+    initial_points_warning_div.visible = 0 < num_points < recommended_min
+    warning_text = f"""
+    <p style="color: #856404; background-color: #FFF3CD; border: 1px solid #FFEEBA; padding: 10px; border-radius: 5px;">
+    ⚠️ <b>Warning:</b> The optimizer recommends at least <b>{recommended_min}</b> initial points. Model performance may be poor with fewer.
+    </p>
+    """
+    initial_points_warning_div.text = warning_text
 
 def update_initial_random_points_info():
     """Updates the info div about the number of initial random points."""
     num_params = num_params_spinner.value
-    num_initial_data = initial_data_spinner.value if initial_data_spinner.value is not None else 0 
+    num_initial_data = initial_data_spinner.value if initial_data_spinner.value is not None else 0
     
-    # Calculate the effective n_initial_points that skopt will use
-    effective_initial_random_points = max(5, 2 * num_params, num_initial_data)
+    effective_initial_random_points = max(5, 2 * num_params)
+    points_to_generate = max(effective_initial_random_points - num_initial_data, 0)
     
-    info_text = f"""
-    <p style="font-size: 0.9em; color: #555;">
-    The optimizer requires at least <b>{effective_initial_random_points}</b> total initial experiments
-    to build its first reliable model before suggesting optimized points.
-    <br><br>
-    This count includes any existing data you provide. If you provide fewer than this number,
-    the optimizer will automatically suggest additional random experiments
-    until this total is reached. This initial phase helps explore the search space effectively.
-    </p>
-    """
+    if num_initial_data >= effective_initial_random_points:
+        info_text = f"""
+        <p style="font-size: 0.9em; color: #555;">
+        You have provided enough initial data. The optimizer will not generate additional random points.
+        </p>
+        """
+    else:
+        info_text = f"""
+        <p style="font-size: 0.9em; color: #555;">
+        The optimizer requires at least <b>{effective_initial_random_points}</b> total initial experiments.
+        It will automatically generate <b>{points_to_generate}</b> additional random points if you click 'Suggest Next Experiment' before providing more data.
+        </p>
+        """
     initial_random_points_info_div.text = info_text
 
 def lock_in_setup():
     """Reads all setup widgets, creates the Optimizer, and transitions the UI."""
+    global best_observed_x, best_observed_y_internal, optimization_stagnation_count, current_restarts_count
     update_status("🔄 Initializing...")
     doc.add_next_tick_callback(lambda: set_ui_state(lock_all=True))
 
@@ -193,8 +212,8 @@ def lock_in_setup():
             "initial_data": []
         }
 
-        # Make n_initial_points more robust
-        config["initial_random_points"] = max(5, 2 * config["num_params"], num_initial_data_val)
+        effective_initial_random_points = max(5, 2 * num_params_val)
+        config["initial_random_points"] = max(effective_initial_random_points - num_initial_data_val, 1)
 
         p_names_check = set()
         for i in range(config["num_params"]):
@@ -213,7 +232,6 @@ def lock_in_setup():
         if not config["params"]:
             raise ValueError("At least one parameter must be defined.")
 
-        # Collect initial data from UI
         for i in range(num_initial_data_val):
             obj_val = initial_objective_inputs[i].value
             if obj_val == None:
@@ -235,27 +253,30 @@ def lock_in_setup():
         return
 
     def worker(config):
-        global optimizer, dimensions, param_names, maximize_objective, experiment_history
+        global optimizer, dimensions, param_names, maximize_objective, experiment_history, best_observed_x, best_observed_y_internal, optimization_stagnation_count, current_restarts_count
         try:
             doc.add_next_tick_callback(lambda: update_status("🔄 Step 1/4: Validating parameters..."))
+            
+            experiment_history = []
+            best_observed_x = None
+            best_observed_y_internal = -float('inf') if config['maximize'] else float('inf')
+            optimization_stagnation_count = 0
+            current_restarts_count = 0
 
             dims = [Real(p['low'], p['high'], name=p['name']) for p in config['params']]
             p_names = [p['name'] for p in config['params']]
-
-            # FIX 1: Construct table_cols with Objective as the last column
+            
             table_cols = [
                 TableColumn(field="Iteration", title="Iteration"),
+                TableColumn(field="Objective", title=config['objective_name'], formatter=NumberFormatter(format="0.0000"))
             ]
             for name in p_names:
-                table_cols.append(TableColumn(field=name, title=name, formatter=NumberFormatter(format="0.0000")))
-            # Add objective LAST, using the actual objective name from config
-            table_cols.append(TableColumn(field="Objective", title=config['objective_name'], formatter=NumberFormatter(format="0.0000")))
+                table_cols.insert(1, TableColumn(field=name, title=name, formatter=NumberFormatter(format="0.0000")))
 
             doc.add_next_tick_callback(lambda: update_status("🔄 Step 2/4: Initializing optimizer model..."))
 
             param_names, dimensions, maximize_objective = p_names, dims, config['maximize']
             
-            # Update direction indicator
             doc.add_next_tick_callback(update_direction_indicator)
 
             def update_table_cols():
@@ -277,14 +298,18 @@ def lock_in_setup():
 
             doc.add_next_tick_callback(lambda: update_status("🔄 Step 3/4: Processing initial data..."))
 
-            experiment_history = []
             initial_xs, initial_ys = [], []
             for point in config["initial_data"]:
                 x, y = point["x"], point["y"]
-                initial_xs.append(x)
                 internal_y = -y if maximize_objective else y
+                initial_xs.append(x)
                 initial_ys.append(internal_y)
                 experiment_history.append((x, internal_y))
+                
+                if (maximize_objective and internal_y > best_observed_y_internal) or \
+                   (not maximize_objective and internal_y < best_observed_y_internal):
+                    best_observed_y_internal = internal_y
+                    best_observed_x = x
 
             if initial_xs:
                 optimizer.tell(initial_xs, initial_ys)
@@ -292,21 +317,18 @@ def lock_in_setup():
             doc.add_next_tick_callback(lambda: update_status("🔄 Step 4/4: Finalizing setup..."))
 
             def final_callback():
-                # Initialize new_cols with all dynamic parameter names
-                # It's important to set up all keys in the source initially
                 initial_source_data = {'Iteration': [], 'Objective': []}
                 for name in param_names:
                     initial_source_data[name] = []
-                experiments_source.data = initial_source_data # Reset with all potential keys
+                experiments_source.data = initial_source_data
                 
-                # If there's initial data, populate it
                 if initial_xs:
                     new_data = {"Iteration": list(range(1, len(initial_xs) + 1))}
                     new_data["Objective"] = [point['y'] for point in config["initial_data"]]
                     for i, name in enumerate(param_names):
                         new_data[name] = [x[i] for x in initial_xs]
-                    experiments_source.data = new_data # Update with actual data
-
+                    experiments_source.data = new_data
+                
                 process_and_plot_latest_results()
                 update_initial_points_warning(len(experiment_history))
                 update_status("🟢 Ready. Click 'Suggest Next Experiment' to begin.")
@@ -325,8 +347,12 @@ def error_callback(e):
     set_ui_state(phase='setup')
 
 def suggest_next_experiment():
-    """Asks the optimizer for the next point and displays it with predictions."""
-    global suggested_x
+    """
+    Asks the optimizer for the next point and displays it with predictions,
+    using logic to detect stagnation and perform warm restarts.
+    """
+    global suggested_x, best_observed_y_internal, best_observed_x, \
+           optimization_stagnation_count, current_restarts_count
 
     try:
         if optimizer is None:
@@ -335,25 +361,94 @@ def suggest_next_experiment():
 
         update_status("🤔 Thinking of the next best experiment...")
 
-        suggested_x = optimizer.ask()
+        converged = False
+        converged_note = ""
+        current_opt_steps = len(experiment_history) - (initial_data_spinner.value or 0)
+        
+        best_observed_y_display = -best_observed_y_internal if maximize_objective else best_observed_y_internal
+        
+        if best_observed_x is None:
+            best_observed_x = experiment_history[0][0] if experiment_history else None
+
+        if current_restarts_count >= MAX_RESTARTS and optimization_stagnation_count >= STAGNATION_RESET_THRESHOLD:
+            converged = True
+            suggested_x = best_observed_x
+            converged_note = "<br/><b>✅ Global optimum reached and validated. Subsequent suggestions will be the same.</b>"
+        else:
+            if current_opt_steps < MIN_OPTIMIZATION_STEPS or \
+               (optimization_stagnation_count >= STAGNATION_RESET_THRESHOLD and current_restarts_count < MAX_RESTARTS):
+                
+                if optimization_stagnation_count >= STAGNATION_RESET_THRESHOLD:
+                    current_restarts_count += 1
+                    optimization_stagnation_count = 0
+                    update_status(f"🔄 Performing warm restart {current_restarts_count}/{MAX_RESTARTS}...")
+                    
+                    # Re-initialize the optimizer with the existing history
+                    model_map = {
+                        "GP": GaussianProcessRegressor(normalize_y=True), 
+                        "RF": RandomForestRegressor(n_estimators=100), 
+                        "ET": ExtraTreesRegressor(n_estimators=100)
+                    }
+                    optimizer.base_estimator = model_map[surrogate_select.value]
+                    optimizer.acq_func = acq_func_select.value
+                    
+                suggested_x = optimizer.ask()
+                
+            else:
+                candidate_points = optimizer.ask(n_points=X_CANDIDATES)
+                chosen_candidate = None
+                
+                if best_observed_x is not None and optimizer.models:
+                    model = optimizer.models[-1]
+                    scored_candidates = []
+                    
+                    for candidate_p in candidate_points:
+                        X_transformed = optimizer.space.transform([candidate_p])
+                        if isinstance(model, GaussianProcessRegressor):
+                            predicted_mean_internal = model.predict(X_transformed)[0]
+                        else:
+                            predictions = np.array([tree.predict(X_transformed)[0] for tree in model.estimators_])
+                            predicted_mean_internal = np.mean(predictions)
+                        
+                        predicted_value = -predicted_mean_internal if maximize_objective else predicted_mean_internal
+                        scored_candidates.append((predicted_value, candidate_p))
+                    
+                    scored_candidates.sort(key=lambda x: x[0], reverse=maximize_objective)
+
+                    for predicted_val, candidate_p in scored_candidates:
+                        is_better_or_within_tolerance = (maximize_objective and predicted_val >= (best_observed_y_display - PREDICTED_TOLERANCE_THRESHOLD)) or \
+                                                         (not maximize_objective and predicted_val <= (best_observed_y_display + PREDICTED_TOLERANCE_THRESHOLD))
+                        
+                        if is_better_or_within_tolerance:
+                            chosen_candidate = candidate_p
+                            break
+                    
+                    if chosen_candidate is None:
+                        suggested_x = best_observed_x
+                        optimization_stagnation_count += 1
+                        update_status(f"ℹ️ All {X_CANDIDATES} optimizer suggestions predicted significantly worse than Best. Suggesting best_observed_point. Stagnation: {optimization_stagnation_count}")
+                    else:
+                        suggested_x = chosen_candidate
+                        optimization_stagnation_count = 0
+                else:
+                    suggested_x = candidate_points[0] if candidate_points else None
+        
+        if suggested_x is None:
+            update_status("❌ No points to suggest, try submitting some initial data first.", is_error=True)
+            return
 
         expected_internal, uncertainty_val = 0.0, 1.0
-
-        if optimizer.models:
+        
+        if optimizer.models and suggested_x is not None:
             model = optimizer.models[-1]
             X_transformed = optimizer.space.transform([suggested_x])
-
+            
             if isinstance(model, GaussianProcessRegressor):
                 mean, std = model.predict(X_transformed, return_std=True)
                 expected_internal, uncertainty_val = mean[0], std[0]
             elif isinstance(model, (RandomForestRegressor, ExtraTreesRegressor)):
                 predictions = [tree.predict(X_transformed)[0] for tree in model.estimators_]
                 expected_internal, uncertainty_val = np.mean(predictions), np.std(predictions)
-
-        elif experiment_history:
-            ys = [item[1] for item in experiment_history]
-            expected_internal = np.mean(ys)
-            uncertainty_val = np.std(ys) if len(ys) > 1 else 1.0
 
         expected_display_val = -expected_internal if maximize_objective else expected_internal
         direction_label = "Maximum" if maximize_objective else "Minimum"
@@ -366,6 +461,7 @@ def suggest_next_experiment():
 
         suggestion_html += f"<b>Predicted {direction_label}:</b> {expected_display_val:.4f}<br>"
         suggestion_html += f"<b>Model Uncertainty:</b> {uncertainty_val:.4f}"
+        suggestion_html += converged_note
 
         suggestion_div.text = suggestion_html
         actual_result_input.disabled = False
@@ -377,7 +473,8 @@ def suggest_next_experiment():
 
 def submit_result():
     """Submits the experimental result to the optimizer and updates the display."""
-    global suggested_x
+    global suggested_x, best_observed_y_internal, best_observed_x, optimization_stagnation_count
+    
     result_value = actual_result_input.value
     if result_value is None or suggested_x is None: 
         return
@@ -385,10 +482,18 @@ def submit_result():
     update_status("🔄 Updating model with new result...")
 
     internal_result = -result_value if maximize_objective else result_value
+    
+    if (maximize_objective and internal_result > best_observed_y_internal) or \
+       (not maximize_objective and internal_result < best_observed_y_internal):
+        best_observed_y_internal = internal_result
+        best_observed_x = suggested_x
+        optimization_stagnation_count = 0
+    else:
+        optimization_stagnation_count += 1
+        
     optimizer.tell(suggested_x, internal_result)
     experiment_history.append((suggested_x, internal_result))
 
-    # Prepare new_data for streaming, ensuring all parameter columns are included
     new_data = {"Iteration": [len(experiment_history)], "Objective": [result_value]}
     for i, name in enumerate(param_names):
         new_data[name] = [suggested_x[i]]
@@ -409,15 +514,13 @@ def process_and_plot_latest_results():
     """Finds the best result from history and updates plots and summary stats."""
     if not experiment_history:
         best_result_div.text = ""
+        convergence_source.data = dict(iter=[], best_value=[])
         return
 
-    # Find the best result
     best_idx = 0
-    best_y_internal = float('inf')
-    # Use actual objective value for comparison, taking into account maximization
     current_best_objective = -float('inf') if maximize_objective else float('inf')
 
-    for idx, (x_val, y_internal) in enumerate(experiment_history):
+    for idx, (_, y_internal) in enumerate(experiment_history):
         y_display = -y_internal if maximize_objective else y_internal
         if (maximize_objective and y_display > current_best_objective) or \
            (not maximize_objective and y_display < current_best_objective):
@@ -426,7 +529,7 @@ def process_and_plot_latest_results():
 
     best_x = experiment_history[best_idx][0]
     best_y_display = -experiment_history[best_idx][1] if maximize_objective else experiment_history[best_idx][1]
-
+    
     results_html = f"<h3>Current Best: {best_y_display:.6f}</h3><ul>"
     for name, value in zip(param_names, best_x):
         results_html += f"<li><b>{name}:</b> {value:.6f}</li>"
@@ -434,29 +537,32 @@ def process_and_plot_latest_results():
         
     best_result_div.text = results_html
 
-    # Convergence tracking
     iters = list(range(1, len(experiment_history) + 1))
     best_values_so_far = []
     
-    # Re-calculate current_best based on display values for the plot
     current_best_plot = -float('inf') if maximize_objective else float('inf')
     for _, y_val_internal in experiment_history:
         y_val_display = -y_val_internal if maximize_objective else y_val_internal
         if (maximize_objective and y_val_display > current_best_plot) or \
            (not maximize_objective and y_val_display < current_best_plot):
             current_best_plot = y_val_display
-        best_values_so_far.append(current_best_plot) # Append current best for plot
+        best_values_so_far.append(current_best_plot)
 
     convergence_source.data = {'iter': iters, 'best_value': best_values_so_far}
 
 def reset_all():
     """Resets the entire application state."""
-    global optimizer, param_names, dimensions, experiment_history, suggested_x, csv_file_input
+    global optimizer, param_names, dimensions, experiment_history, suggested_x, csv_file_input, \
+           best_observed_x, best_observed_y_internal, optimization_stagnation_count, current_restarts_count
+    
     optimizer, param_names, dimensions, experiment_history, suggested_x = None, [], [], [], None
+    best_observed_x = None
+    best_observed_y_internal = -float('inf') if objective_type_select.active == 0 else float('inf')
+    optimization_stagnation_count = 0
+    current_restarts_count = 0
 
-    # Reset data sources
-    experiments_source.data = dict(Iteration=[], Objective=[]) # Initial minimal columns
-    data_table.columns = [ # Reset DataTable columns to default
+    experiments_source.data = dict(Iteration=[], Objective=[])
+    data_table.columns = [
         TableColumn(field="Iteration", title="Iteration"),
         TableColumn(field="Objective", title="Objective")
     ]
@@ -468,35 +574,26 @@ def reset_all():
     update_initial_points_warning(0)
     update_direction_indicator()
 
-    # Reset visual headers based on current input values (before user might change them)
     objective_header.text = f"<b>{objective_name_input.value or 'Objective'}</b>"
     for i in range(MAX_PARAMS):
         initial_data_headers[i].text = f"<b>{param_name_inputs[i].value or f'Param {i+1}'}</b>"
 
-    # Reset all initial data input spinners
     initial_data_spinner.value = 0
     for i in range(MAX_INITIAL_POINTS):
         initial_objective_inputs[i].value = None
         for j in range(MAX_PARAMS):
             initial_param_inputs[i][j].value = None
-
-    # THE FIX for FileInput: Replace the FileInput widget instance to clear its state
+    
+    # Reset CSV file input by replacing the widget
     new_csv_file_input = FileInput(
         accept=".csv",
         multiple=False,
         title="Upload CSV Data",
         width=200
     )
-    # Re-attach its callback
     new_csv_file_input.on_change('value', handle_csv_upload)
-    
-    # Update the global reference
     csv_file_input = new_csv_file_input
-
-    # Find the row that contains the csv_file_input and replace its child
-    # Based on your layout, it's the second child (index 1) of initial_data_layout
-    initial_data_layout.children[1] = row(initial_data_spinner, csv_file_input)
-
+    initial_data_layout.children[1].children[1] = new_csv_file_input
 
     update_status("🟢 Ready. Define optimization problem.")
     set_ui_state(phase='setup')
@@ -528,7 +625,6 @@ def handle_csv_upload(attr, old, new):
         return
 
     try:
-        # Decode base64 content
         decoded_csv_content = base64.b64decode(new).decode('utf-8-sig')
         csv_data = io.StringIO(decoded_csv_content)
         reader = csv.reader(csv_data)
@@ -537,11 +633,9 @@ def handle_csv_upload(attr, old, new):
         if not header:
             raise ValueError("CSV file is empty or missing header row.")
 
-        # CHANGE: Last column is objective, rest are parameters
-        obj_col_name = header[-1].strip()  # Last column is objective
-        csv_param_names = [name.strip() for name in header[:-1]]  # All except last are parameters
+        obj_col_name = header[-1].strip()
+        csv_param_names = [name.strip() for name in header[:-1]]
 
-        # Validate against current setup
         current_num_params = num_params_spinner.value
         current_param_names = [param_name_inputs[i].value.strip() for i in range(current_num_params)]
         current_obj_name = objective_name_input.value.strip()
@@ -554,7 +648,6 @@ def handle_csv_upload(attr, old, new):
             update_status(f"CSV has {len(csv_param_names)} parameters, but current setup expects {current_num_params}.", is_error=True)
             return
 
-        # Check parameter names
         for p_csv, p_setup in zip(csv_param_names, current_param_names):
             if p_csv.lower() != p_setup.lower():
                 update_status("CSV parameter names do not match current setup.", is_error=True)
@@ -569,7 +662,6 @@ def handle_csv_upload(attr, old, new):
                 return
 
             try:
-                # CHANGE: Last value is objective, rest are parameters
                 obj_value = float(row_data[-1])
                 param_values = [float(v) for v in row_data[:-1]]
                 parsed_data.append({"x": param_values, "y": obj_value})
@@ -585,19 +677,16 @@ def handle_csv_upload(attr, old, new):
             update_status(f"CSV contains {len(parsed_data)} data points, only first {MAX_INITIAL_POINTS} loaded.", is_error=False)
             parsed_data = parsed_data[:MAX_INITIAL_POINTS]
 
-        # Reset previous data
         for i in range(MAX_INITIAL_POINTS):
             initial_objective_inputs[i].value = None
             for j in range(MAX_PARAMS):
                 initial_param_inputs[i][j].value = None
 
-        # Populate UI with parsed data
         for i, data_point in enumerate(parsed_data):
             initial_objective_inputs[i].value = data_point["y"]
             for j, val in enumerate(data_point["x"]):
                 initial_param_inputs[i][j].value = val
         
-        # Set spinner value and update UI
         initial_data_spinner.value = len(parsed_data)
         doc.add_next_tick_callback(partial(on_initial_data_change, 'value', None, len(parsed_data)))
 
@@ -612,7 +701,6 @@ num_params_spinner = Spinner(title="Number of Input Parameters", low=1, high=20,
 objective_name_input = TextInput(title="Objective Name (e.g., Yield, Purity):", value="Objective")
 objective_type_select = RadioButtonGroup(labels=["Maximize", "Minimize"], active=0)
 
-# Direction indicator
 direction_indicator = Div(text="(Maximizing)", styles={
     'color': 'green',
     'font-style': 'italic',
@@ -643,7 +731,6 @@ for i in range(MAX_PARAMS):
 initial_data_title = Div(text="<h4>Enter Existing Experimental Data (Recommended)</h4>")
 initial_data_spinner = Spinner(title="Number of existing data points:", low=0, high=MAX_INITIAL_POINTS, step=1, value=0, width=200)
 
-# CSV File Input (Initial Definition)
 csv_file_input = FileInput(
     accept=".csv",
     multiple=False,
@@ -651,7 +738,6 @@ csv_file_input = FileInput(
     width=200
 )
 
-# NEW: Div for CSV format instruction
 csv_format_instruction = Div(text="""
     <p style="font-size: 0.9em; color: #555;">
     <b>CSV Format:</b> Your CSV should have input parameters starting from the first column and first row as headers,
@@ -659,20 +745,9 @@ csv_format_instruction = Div(text="""
     </p>
 """, styles={'margin-top': '5px', 'margin-bottom': '10px'})
 
-
-warning_text = """
-<p style="color: #856404; background-color: #FFF3CD; border: 1px solid #FFEEBA; padding: 10px; border-radius: 5px;">
-⚠️ <b>Note:</b> It is recommended to have at least 2 * number of variables as entered data points. Model performance may be poor with fewer points.
-</p>
-"""
-initial_points_warning_div = Div(text=warning_text, visible=False)
-
-# Div to inform about initial random points strategy
+initial_points_warning_div = Div(text="", visible=False)
 initial_random_points_info_div = Div(text="", styles={'margin-top': '10px'})
-
 objective_header = Div(text=f"<b>{objective_name_input.value}</b>", width=80, styles={'text-align': 'center'})
-
-# Initial definition of header row for data entry, Parameters first, objective last
 initial_data_header_row = row(*initial_data_headers, objective_header, sizing_mode="stretch_width", visible=False)
 
 initial_data_rows, initial_param_inputs, initial_objective_inputs = [], [], []
@@ -683,7 +758,6 @@ for i in range(MAX_INITIAL_POINTS):
     obj_input = Spinner(width=80, step=0.01, value=None)
     initial_param_inputs.append(param_inputs)
     initial_objective_inputs.append(obj_input)
-    # CHANGE: Parameters first, objective last in each row
     initial_data_rows.append(row(*param_inputs, obj_input, sizing_mode="stretch_width", visible=False))
 
 model_title = Div(text="<h4>Model Configuration</h4>")
@@ -699,20 +773,16 @@ submit_result_button = Button(label="Submit Result & Update Model", button_type=
 
 status_div = Div(text="🟢 Ready. Define optimization problem.")
 best_result_div = Div()
-# DataTable columns are dynamically set in lock_in_setup, so initial definition can be minimal
 data_table = DataTable(source=experiments_source, columns=[TableColumn(field="Iteration", title="Iteration"), TableColumn(field="Objective", title="Objective")], width=600, height=200, editable=False)
 p_conv = figure(height=300, width=600, title="Convergence Plot", x_axis_label="Iteration", y_axis_label="Best Objective Value")
 p_conv.line(x='iter', y='best_value', source=convergence_source, line_width=2)
 reset_button = Button(label="Reset Experiment", button_type="danger", width=400)
-
-# Add a new button for CSV download
 download_csv_button = Button(label="Download Experiment Data (CSV)", button_type="default", width=250)
 
-# Layout for initial data, needs to be re-created if csv_file_input is replaced
 initial_data_layout = column(
     initial_data_title,
     row(initial_data_spinner, csv_file_input),
-    csv_format_instruction, # <--- ADDED THIS LINE
+    csv_format_instruction,
     initial_points_warning_div,
     initial_random_points_info_div,
     initial_data_header_row,
@@ -721,31 +791,26 @@ initial_data_layout = column(
 
 setup_widgets = [
     num_params_spinner, objective_name_input, objective_type_select,
-    surrogate_select, acq_func_select, lock_setup_button, initial_data_spinner,
+    surrogate_select, acq_func_select, lock_setup_button,
 ] + param_name_inputs + param_low_spinners + param_high_spinners + [
     item for sublist in initial_param_inputs for item in sublist
-] + initial_objective_inputs
-
-# Add the row containing csv_file_input (which is the second child of initial_data_layout)
-# and the new csv_format_instruction to setup_widgets for correct disabling
-setup_widgets.append(initial_data_layout.children[1]) # row(initial_data_spinner, csv_file_input)
-setup_widgets.append(csv_format_instruction) # The new instruction div
-
+] + initial_objective_inputs + [
+    initial_data_layout, csv_file_input, csv_format_instruction, initial_points_warning_div, initial_random_points_info_div
+]
 
 optimization_widgets = [suggest_button, actual_result_input, submit_result_button]
 all_buttons = [lock_setup_button, suggest_button, submit_result_button, reset_button]
 
-# --- Attach Callbacks ---
 objective_name_input.on_change('value', on_objective_name_change)
 num_params_spinner.on_change('value', on_num_params_change)
 initial_data_spinner.on_change('value', on_initial_data_change)
 surrogate_select.on_change('value', on_surrogate_model_change)
-# Initial attachment of the callback for csv_file_input
 csv_file_input.on_change('value', handle_csv_upload)
 
 def on_objective_type_change(attr, old, new):
-    global maximize_objective
+    global maximize_objective, best_observed_y_internal
     maximize_objective = (new == 0)
+    best_observed_y_internal = -float('inf') if maximize_objective else float('inf')
     update_direction_indicator()
 objective_type_select.on_change('active', on_objective_type_change)
 
@@ -754,57 +819,46 @@ suggest_button.on_click(suggest_next_experiment)
 submit_result_button.on_click(submit_result)
 reset_button.on_click(reset_all)
 
-# CustomJS for CSV download button
 download_csv_button.js_on_click(CustomJS(args=dict(source=experiments_source, maximize=maximize_objective, obj_name_input=objective_name_input), code="""
     const data = source.data;
     const file_name = 'experiment_data.csv';
     const is_maximizing = maximize;
-    const objective_actual_name = obj_name_input.value || 'Objective'; // Get actual objective name
+    const objective_actual_name = obj_name_input.value || 'Objective';
 
     let csv_content = "";
 
-    // Dynamically get all unique keys (column fields) from the data source
     let all_fields = Object.keys(data);
-    
-    // Remove "Iteration" and "Objective" (which is now dynamic) from the list temporarily
     const iteration_field = "Iteration";
-    const objective_field = "Objective"; // This field is fixed in the ColumnDataSource
+    const objective_field = "Objective";
 
-    const parameter_fields = all_fields.filter(field => 
+    const parameter_fields = all_fields.filter(field =>
         field !== iteration_field && field !== objective_field
     );
 
-    // Construct header titles in desired order: Iteration, Parameters, Objective
     const header_titles = [iteration_field, ...parameter_fields, objective_actual_name];
-    // Construct header fields (which are the actual keys in source.data)
     const header_fields_ordered = [iteration_field, ...parameter_fields, objective_field];
 
     csv_content += header_titles.join(",") + "\\n";
 
-    // Prepare rows for sorting
     const all_rows = [];
-    const num_rows = data[iteration_field] ? data[iteration_field].length : 0; 
+    const num_rows = data[iteration_field] ? data[iteration_field].length : 0;
 
     for (let i = 0; i < num_rows; i++) {
-        const row_values_obj = {}; // Stores raw values for sorting
-        const row_display_values = []; // Stores formatted values for CSV string
+        const row_values_obj = {};
+        const row_display_values = [];
 
         for (let j = 0; j < header_fields_ordered.length; j++) {
             const col_field = header_fields_ordered[j];
             let value = data[col_field][i];
             
-            // Store raw value for sorting (using the fixed 'Objective' field name)
             row_values_obj[col_field] = value;
 
-            // Format for CSV output
             if (value === null || typeof value === 'undefined') {
-                value = ''; // Handle null or undefined values
+                value = '';
             } else if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\\n'))) {
-                // Enclose strings with special characters in double quotes and escape existing double quotes
                 value = '"' + value.replace(/"/g, '""') + '"';
             } else if (typeof value === 'number') {
-                // Format numbers to a reasonable precision, adjust as needed
-                value = value.toFixed(6); 
+                value = value.toFixed(6);
             }
             row_display_values.push(value);
         }
@@ -814,27 +868,25 @@ download_csv_button.js_on_click(CustomJS(args=dict(source=experiments_source, ma
         });
     }
 
-    // Sort rows by Objective
-    if (all_rows.length > 0) { 
+    if (all_rows.length > 0) {
         all_rows.sort((a, b) => {
-            const objA = a.raw[objective_field]; // Use the fixed 'Objective' field for sorting
+            const objA = a.raw[objective_field];
             const objB = b.raw[objective_field];
             if (is_maximizing) {
-                return objB - objA; // Descending for maximization
+                return objB - objA;
             } else {
-                return objA - objB; // Ascending for minimization
+                return objA - objB;
             }
         });
     }
 
-    // Append sorted rows to CSV content
     for (let i = 0; i < all_rows.length; i++) {
         csv_content += all_rows[i].display + "\\n";
     }
 
     const blob = new Blob([csv_content], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    if (link.download !== undefined) { // feature detection
+    if (link.download !== undefined) {
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
         link.setAttribute("download", file_name);
@@ -846,14 +898,12 @@ download_csv_button.js_on_click(CustomJS(args=dict(source=experiments_source, ma
 """))
 
 
-# Combine objective name and direction indicator
 objective_row = row(objective_name_input, direction_indicator)
-
 controls_col = column(
     setup_title, num_params_spinner, *param_rows,
     Div(text="<b>Objective Configuration:</b>"),
     objective_row, objective_type_select,
-    initial_data_layout, # This layout contains the csv_file_input row
+    initial_data_layout,
     model_title, row(surrogate_select, acq_func_select),
     lock_setup_button, workflow_title,
     suggest_button, suggestion_div, actual_result_input, submit_result_button,
@@ -861,14 +911,10 @@ controls_col = column(
     width=500
 )
 
-# Update the results_col layout to include the download button
 results_col = column(best_result_div, data_table, download_csv_button, p_conv)
-
 main_layout = row(controls_col, results_col)
-
 doc.add_root(main_layout)
 
-# --- Document Ready Handler ---
 def on_doc_ready(event):
     set_ui_state(phase='setup')
     update_status("🟢 Ready. Define optimization problem.")
@@ -876,7 +922,6 @@ def on_doc_ready(event):
         on_param_range_change(i, None, None, None)
     update_initial_random_points_info()
     update_direction_indicator()
-    # Ensure initial data layout is hidden on initial load
     initial_data_spinner.value = 0
     initial_data_header_row.visible = False
     for row_widget in initial_data_rows:
