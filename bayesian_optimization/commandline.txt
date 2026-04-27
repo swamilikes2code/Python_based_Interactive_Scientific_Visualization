@@ -1,0 +1,2 @@
+cd Python_based_Interactive_Scientific_Visualization
+python3 -m bokeh serve --show bayesian_optimization/bayesian_optimization.py
