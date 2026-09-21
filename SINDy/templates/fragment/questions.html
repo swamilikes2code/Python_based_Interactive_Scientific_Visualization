@@ -1,0 +1,209 @@
+<div class="faq-container">
+    <h2 class="section-title">General Questions</h2>
+    <p class="subtitle">Understand your model deeper</p>
+
+    <!--TRAIN TAB QUESTION-->
+    <details class="faq-item">
+        <summary>How to compare the models?</summary>
+        <div class="answer">
+            <p>Every time you run a training session, the results are saved in the <b>History Leaderboard</b>. You can
+                compare models based on the metrics (\( R^2 \), RMSE, MAE), residual statistics, and the number of
+                active terms. To test a
+                specific model, go to the <b>Test</b> or <b>Predict</b> tabs and select the Model ID from the dropdown.
+            </p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>What's the difference between the metrics shown in the Training History table and the metrics shown in
+            the Test tab?</summary>
+        <div class="answer">
+            <p>Training/Validation metrics (\( R^2 \), RMSE, MAE) are computed on the derivative space (\( dX/dt \)) —
+                this is what SINDy's STLSQ optimizer directly fits.
+                Test tab metrics are computed on the state space (\( x(t) \)), after forward-simulating the discovered
+                equations with <code>solve_ivp</code>.
+                These two sets of numbers use different units and are not directly comparable. A model can have
+                excellent Training RMSE(\( dX \)) and still show poor
+                Test RMSE(\( x \)) if the small derivative-space errors compound during simulation. Always check both.
+            </p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>Why is R² high but the simulated trajectory still diverges from the true data?</summary>
+        <div class="answer">
+            <p>\( R^2 \) shown in the Training tab is computed on the derivative space (\( dX/dt \)), which is what
+                SINDy's loss function actually optimizes — not on the simulated trajectory \( x(t) \). A model can fit
+                the derivative field almost perfectly and still diverge when numerically integrated, because small
+                coefficient errors compound over time during simulation. This is exactly why the Test tab exists: it
+                forward-integrates your equations with <code>solve_ivp</code> and reports RMSE/\( R^2 \) on \( x(t) \)
+                directly, which is the metric that actually matters for prediction.</p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>What does "Sparsity parameter is too big and eliminated all coefficients" mean?</summary>
+        <div class="answer">
+            <p>Your Sparsity Threshold is set higher than the magnitude of every coefficient in the true (or best-fit)
+                equations,
+                so STLSQ pruned everything to zero — the model effectively found \( dX/dt = 0 \) for your system.
+                Lower the threshold (try the "type exact threshold" box for fine control) and re-train.</p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>Why do Train R² and Validation R² both look reasonably good, but the equations found still contain
+            extra "junk" terms that shouldn't be there?</summary>
+        <div class="answer">
+            <p>With Random Sampling split, individual data points are shuffled before splitting.
+                Because the trajectory changes smoothly over time, a validation point can sit just one or two time-steps
+                away from a training point — making them nearly identical (high autocorrelation).
+                The model effectively "sees" a near-duplicate of each validation point during training, which can make
+                the validation score look better than it should, without actually confirming the equations are correct.
+                Random Block split (chopping the trajectory into contiguous chunks before shuffling) reduces this leak
+                while still covering the full trajectory — consider it if your Random Sampling results look suspiciously
+                clean but the equations still have unexpected terms.</p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>For damped/decaying system, why did Time-based split find cleaner equations than Random Sampling or
+            Random Block, even though its Validation R² was lower (or even negative)?</summary>
+        <div class="answer">
+            <p>Systems whose amplitude decays over time (e.g. a damped Duffing oscillator) concentrate most of their
+                useful information — the signal needed to correctly identify nonlinear terms — in the early,
+                high-amplitude portion of the trajectory. Time-based split puts that entire high-amplitude region into
+                training, giving SINDy the strongest possible signal to correctly identify terms like \( x^3 \). Random
+                splits
+                mix in the low-amplitude "tail" (where the signal-to-noise ratio is poor), which can introduce spurious
+                cross-terms. The low or negative Validation R² for Time-based split in this case is a separate, expected
+                artifact: the validation set (the decayed tail) has very low true-signal variance, so even a small
+                absolute error produces a poor R² — it does not mean the equations are wrong. Lesson: a lower Validation
+                R² does not automatically mean worse equations — always inspect the actual discovered equations, not
+                just the metric.
+            </p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>My system has an explicit time-dependent term (e.g. dx/dt = -x + sin(t)) — why can't SINDy find
+            it directly?</summary>
+        <div class="answer">
+            <p>SINDy assumes the system is autonomous: \( dx/dt = f(x) \), depending only on the current state, never
+                explicitly on time t. A term like sin(t) cannot appear in the candidate library because t is not a state
+                variable. Workaround: add an auxiliary state \(τ\) that tracks time \((dτ/dt = 1)\) to your data, so the
+                system
+                becomes autonomous in the augmented state \((x, τ)\). SINDy can then discover \(sin(τ)\) as a valid
+                term, since
+                \(τ\) is now a regular state variable. This has been verified to work in this module (see the Fourier
+                test
+                datasets).
+            </p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>Should I trust a model just because every metric looks good?</summary>
+        <div class="answer">
+            <p>Be appropriately skeptical. Check: (1) Training and Validation metrics are close to each other (not
+                overfitting), (2) Residual Diagnostics show no structured pattern (flat residual-vs-time, no FFT peak,
+                tight scatter along the y=x line), (3) the discovered equations have few, simple terms with coefficients
+                that make physical sense, and (4) the Test tab confirms the equations generalize to a genuinely new
+                initial condition. No single metric is sufficient on its own.
+            </p>
+        </div>
+    </details>
+
+
+    <!-- TEST TAB QUESTION -->
+    <details class="faq-item">
+        <summary>Why might solve_ivp fail or diverge on the test trajectory, even though the same discovered equations
+            fit the training data well?</summary>
+        <div class="answer">
+            <p>SINDy only fits your equations within the region of state space actually explored by the training
+                trajectory. If your test file's initial condition sends the trajectory into state values well outside
+                that explored region, the discovered terms — especially higher-degree polynomial ones — can extrapolate
+                very poorly there. A polynomial coefficient that looks perfectly reasonable near \(x≈1\) can produce
+                enormous derivative values at \(x≈10\), since polynomial growth is unbounded. This is why choosing a test
+                initial condition that is meaningfully different but not wildly outside the training range gives the
+                most informative test.
+            </p>
+        </div>
+    </details>
+
+    <details class="faq-item">
+        <summary>Why is the prediction diverging after some time?</summary>
+        <div class="answer">
+            <p>SINDy models are sensitive to the <i>Prediction Horizon</i>. If the identified dynamics are slightly
+                unstable or if the data was noisy, errors can accumulate during integration. Try increasing the Sparsity
+                Threshold to find a more robust physical representation.</p>
+        </div>
+    </details>
+
+</div>
+
+<style>
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        color: var(--primary);
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 15px;
+    }
+
+    .faq-item {
+        background: #fcfcfc;
+        border: 1px solid #edf2f7;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .faq-item[open] {
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border-color: var(--accent);
+    }
+
+    summary {
+        padding: 15px 20px;
+        font-weight: 400;
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        outline: none;
+        color: var(--primary);
+    }
+
+    summary::after {
+        content: '+';
+        font-size: 18px;
+        color: var(--accent);
+    }
+
+    .faq-item[open] summary::after {
+        content: '−';
+    }
+
+    .answer {
+        padding: 0 20px 20px 20px;
+        color: #4a5568;
+        line-height: 1.8;
+        font-size: 15px;
+    }
+
+    .answer b {
+        color: var(--accent);
+    }
+</style>

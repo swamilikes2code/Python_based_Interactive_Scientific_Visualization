@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SINDy System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/polyfill/3.25.1/polyfill.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    {{ bokeh_js | safe }}
+</head>
+
+<body>
+    <header>
+        <h1>SINDy module</h1>
+    </header>
+
+    <div class="navbar">
+        <a href="#" class="nav-link" data-page="storyline" onclick="loadPage('storyline', this); return false;">
+            About
+        </a>
+
+        <a href="#" class="nav-link" data-page="about" onclick="loadPage('about', this); return false;">
+            SINDy
+        </a>
+
+        <a href="#" class="nav-link" data-page="training" onclick="loadPage('training', this); return false;">
+            Train
+        </a>
+
+        <a href="#" class="nav-link" data-page="testing" onclick="loadPage('testing', this); return false;">
+            Test
+        </a>
+
+        <a href="#" class="nav-link" data-page="predicting" onclick="loadPage('predicting', this); return false;">
+            Predict
+        </a>
+
+        <a href="#" class="nav-link" data-page="questions" onclick="loadPage('questions', this); return false;">
+            Questions
+        </a>
+    </div>
+
+    <div class="container main-content-area">
+        <div id="page-content"></div>
+    </div>
+
+    <div class="container module-section">
+        <!-- <div class="workstation-header">
+            <h2> SINDy Module</h2>
+            <p>Configure and run in real-time.</p>
+        </div> -->
+
+        <div class="bokeh-app-wrapper">
+            {% if script %}
+            {{ script | safe }}
+            {% else %}
+            <div class="loading-status">
+                <p>Dashboard is initializing... Please wait.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        body {
+            background-color: #ffffff !important;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .main-content-area {
+            min-height: 1vh;
+            padding: 10px 5px;
+        }
+
+        .section-divider {
+            text-align: center;
+            margin: 10px 0;
+            position: relative;
+            background-color: #ffffff;
+            /* border-bottom: 2px dashed #dcdde1; */
+        }
+
+        .divider-text {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #ffffff;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        /* Module section below */
+        .module-section {
+            padding: 50px 20px;
+            background: #ffffff;
+            border-top: 1px solid #ffffff;
+        }
+
+        .workstation-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .workstation-header h2 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .bokeh-app-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            min-height: 600px;
+        }
+
+        .loading-status {
+            text-align: center;
+            padding: 100px;
+            color: #bdc3c7;
+        }
+    </style>
+
+    <script>
+
+        async function loadPage(page, element = null) {
+
+            document.querySelectorAll(".navbar .nav-link")
+                .forEach(link => link.classList.remove("active"));
+
+            if (element) {
+                element.classList.add("active");
+            }
+
+            const response = await fetch("/fragment/" + page);
+            const html = await response.text();
+
+            document.getElementById("page-content").innerHTML = html;
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        }
+
+        // When open module
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const firstTab = document.querySelector(
+                '.nav-link[data-page="storyline"]'
+            );
+
+            loadPage("storyline", firstTab);
+
+        });
+
+    </script>
+</body>
+
+</html>
