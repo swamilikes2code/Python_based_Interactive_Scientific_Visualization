@@ -6,6 +6,32 @@ from bokeh.plotting import figure
 import numpy as np
 
 
+def _default_initial_condition(saved_data, n_vars):
+    """Return one flat initial-condition vector from stored run data.
+
+    Newer Train runs store ``initial_conditions`` as a list of vectors—one
+    vector per uploaded trajectory. Older runs stored a single flat vector.
+    Predict needs exactly one vector, so use the primary trajectory's IC while
+    preserving compatibility with the legacy storage shape.
+    """
+    fallback = [1.0] + [0.0] * max(0, n_vars - 1)
+    stored = saved_data.get('initial_conditions')
+    if stored is None:
+        return fallback
+
+    values = np.asarray(stored, dtype=float)
+    if values.ndim == 1:
+        initial_condition = values
+    elif values.ndim == 2 and values.shape[0] > 0:
+        initial_condition = values[0]
+    else:
+        return fallback
+
+    if len(initial_condition) != n_vars or not np.isfinite(initial_condition).all():
+        return fallback
+    return initial_condition.tolist()
+
+
 def predict_tab_layout(engine, trained_model_storage):
     # -------------------------------------------------------------------------
     # 1. UI Components
@@ -53,7 +79,10 @@ def predict_tab_layout(engine, trained_model_storage):
         names      = saved_data.get('feature_names', [])
         n_vars     = len(names)
 
-        ic_list = saved_data.get('initial_conditions', [1.0] + [0.0] * (n_vars - 1))
+        # Multi-file Train runs keep one IC per trajectory. Prediction starts
+        # from the first (primary) trajectory by default; users can still edit
+        # the values freely before running the simulation.
+        ic_list = _default_initial_condition(saved_data, n_vars)
 
         if names:
             # convert list to string
@@ -78,7 +107,6 @@ def predict_tab_layout(engine, trained_model_storage):
                     sizing_mode="stretch_width", height=500,
                     x_axis_label="Time (s)", y_axis_label="")
     p_pred.scatter([], [], alpha=0)
-    p_pred.legend.click_policy = "hide"
     
     # Hovertool for prediction plot. same set up as train tab and test tab
     hover_pred = HoverTool(
@@ -133,21 +161,12 @@ def predict_tab_layout(engine, trained_model_storage):
 
         t_future = np.linspace(0, horizon_s.value, 1000)
 
-        x_future = engine.simulate_with_model(model_instance, x0, t_future)
-
-        # ── ROBUSTNESS FIX ──────────────────────────────────────────────
-        # engine.simulate_with_model() silently returns a zero-filled array
-        # on internal failure (it only prints to the server console, never
-        # raises). Previously, on_predict_click had no way to distinguish
-        # "the model genuinely predicts x=0 everywhere" from "the simulation
-        # crashed" — the status message always showed a green success
-        # message regardless. We now explicitly detect the zero-fallback
-        # signature and surface it as a visible error instead of silently
-        # plotting a flat line the user might mistake for a real result.
-        if x_future is not None and np.all(x_future == 0):
+        try:
+            x_future = engine.simulate_with_model(
+                model_instance, x0, t_future)
+        except RuntimeError as e:
             status_div.text = (
-                "<span style='color:red;'>⚠ Simulation failed — the model "
-                "could not be integrated from this initial condition. "
+                f"<span style='color:red;'>⚠ {e} "
                 "Try a different x₀, or retrain with a lower degree / "
                 "higher sparsity threshold.</span>"
             )

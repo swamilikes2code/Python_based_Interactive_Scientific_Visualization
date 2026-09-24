@@ -31,9 +31,15 @@ Whether you are studying coupled oscillators, chaotic attractors, or your own cu
 ## 🚀 Features
 
 ### 🧠 Train & Validate Tab
-- Upload your own CSV data or choose from built-in pre-set systems
+- Upload one CSV, upload multiple trajectories of the same system from
+  different initial conditions, or choose a built-in pre-set system
 - Configurable library: **Polynomial**, **Fourier**, or **Combined**
-- Random train/validation split with per-run metrics (R², RMSE, MAE) in derivative space
+- Random-sampling, time-based, and random-block train/validation splits
+- Multi-trajectory derivatives are computed independently before pooling, so
+  time resets between files never create artificial derivative spikes
+- Per-file trajectory buttons let users isolate any uploaded initial condition
+  without retraining the shared model
+- Per-run metrics (R², RMSE, MAE) in derivative space
 - Full training history leaderboard — compare runs side by side
 - Click any past run to instantly restore its plot and diagnostics
 - Delete runs you no longer need
@@ -72,23 +78,37 @@ The diagnostics show you numbers and plots. *You* interpret them. No automated l
 - Run forward simulation from any initial condition using a trained model
 - Visualize predicted trajectories interactively
 
+### 🎲 Ensemble Tab
+- Run block-bootstrap SINDy fits on any model in training history
+- Inspect term inclusion frequency and coefficient mean/standard deviation
+- Preserve temporal structure and trajectory boundaries during resampling
+- Save and replay multiple ensemble analyses for each trained run
+- Report failed bootstrap fits separately; inclusion percentages use only
+  successful fits as their denominator
+
 ---
 
 ## 📁 Project Structure
 
 ```
 SINDy/
-├── main.py                  # Bokeh + Flask entry point
-├── data/                    # Pre-set and user-uploaded CSV files
-│   ├── cs_train_data.csv
-│   ├── vanderpol_train.csv
-│   └── ...
+├── main.py                  # Bokeh application and per-session state
+├── flask_app.py             # Flask shell that embeds the Bokeh server
+├── run.sh                   # Local launcher for both services
+├── render.yaml              # Two-service Render deployment blueprint
+├── data/                    # Built-in training and test trajectories
 ├── engine/
-│   └── sindy_model.py       # SINDyEngine class — fit, simulate, diagnostics
-└── tabs/
-    ├── train_tab.py         # Train & Validate tab layout + callbacks
-    ├── test_tab.py          # Test tab layout + callbacks
-    └── predict_tab.py       # Predict tab layout + callbacks
+│   ├── sindy_model.py       # Fit, simulate, diagnostics, ensemble bootstrap
+│   ├── check_datafile.py    # Shared CSV and trajectory-set validation
+│   └── suggester.py         # Offline hyperparameter heuristics
+├── tabs/
+│   ├── train_tab.py         # Train & Validate UI and callbacks
+│   ├── test_tab.py          # Held-out trajectory evaluation
+│   ├── predict_tab.py       # Forward prediction from a supplied IC
+│   └── ensemble_tab.py      # Bootstrap robustness analysis
+├── templates/               # Flask page and educational fragments
+├── static/                  # CSS and documentation images
+└── tests/                   # unittest regression and app smoke tests
 ```
 
 ---
@@ -108,29 +128,47 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**requirements.txt** should include:
-```
-bokeh>=3.0
-flask
-pysindy
-scikit-learn
-scipy
-numpy
-pandas
-```
-
----
-
 ## ▶️ Running the App
 
+The local launcher starts both the Bokeh backend and Flask frontend:
+
 ```bash
-bokeh serve --allow-websocket-origin=127.0.0.1:8080 main.py
+chmod +x run.sh
+./run.sh
 ```
 
-Then open your browser at:
+Open:
+
 ```
 http://127.0.0.1:8080
 ```
+
+To run the services manually, use two terminals:
+
+```bash
+# Terminal 1 — Bokeh backend
+bokeh serve --allow-websocket-origin=127.0.0.1:8080 main.py
+
+# Terminal 2 — Flask frontend
+python3 flask_app.py
+```
+
+### Render deployment
+
+[`render.yaml`](render.yaml) defines two web services:
+
+1. **Bokeh backend** — serves `main.py` and accepts WebSocket connections
+   from the Flask service's public hostname.
+2. **Flask frontend** — serves the website and embeds the Bokeh application
+   through the `BOKEH_URL` environment variable.
+
+Render service names must be globally unique. If Render changes either
+hostname, update both `BOKEH_URL` and Bokeh's
+`--allow-websocket-origin` value in `render.yaml`, then redeploy.
+
+Training history and uploaded files are held in memory per Bokeh session;
+they are intentionally isolated between users and are not persisted after a
+session or service restart.
 
 ---
 
@@ -148,15 +186,37 @@ t,       x1,      x2,      ...
 - First column: **time** (uniformly spaced recommended)
 - Remaining columns: **state variables** (any number)
 - Header row required — column names become variable names in the equations
+- Time must be strictly increasing within each file
+
+### Multiple training trajectories
+
+Multiple uploaded files are treated as trajectories of the **same dynamical
+system** measured from different initial conditions. They must have identical
+state-column names in identical order. Sample count, duration, time step, and
+initial condition may differ between files.
+
+Derivatives and FFTs are computed per trajectory. Training pairs are pooled
+only after differentiation, and spectra are aligned to a common frequency grid
+before averaging.
+
+Test CSV state columns must exactly match the selected model's training-column
+names and order.
 
 ---
 
 ## 🧬 Supported Systems (Pre-set)
-The purpose of these two pre-set systems is to show SINDy's ability to retrieve equation from data.
+
+The built-in systems demonstrate equation recovery across different dynamics.
+
 | System | Variables | Dynamics |
 |--------|-----------|----------|
 | Coupled Spring-Mass | x1, v1, x2, v2 | Linear, oscillatory |
 | Van der Pol Oscillator | x, v | Nonlinear limit cycle |
+| Nonlinear Pendulum | θ and angular velocity | Trigonometric dynamics |
+| Forced Oscillator | System-dependent | Time-dependent/combined library example |
+
+Duffing training trajectories with multiple initial conditions are included in
+`data/duffing system/` for custom multi-file experiments.
 
 Custom systems: upload any CSV following the format above.
 
@@ -202,7 +262,7 @@ dv/dt = μ(1 − x²)v − x        (μ = 1)
 
 ---
 
-## � Design Philosophy
+## 🧭 Design Philosophy
 
 > *"A tool that shows you what it found is useful. A tool that shows you why it found it — and what it might have missed — is a research instrument."*
 
@@ -213,6 +273,21 @@ Three principles guided every design decision:
 **Per-run reproducibility** — Every training run is stored with its full diagnostics, plot data, and model instance. Clicking a row in the history table restores everything exactly as it was.
 
 **No silent failures** — Upload errors, simulation divergence, and missing files surface as visible messages, not silent crashes.
+
+---
+
+## ✅ Automated Tests
+
+The test suite covers multi-trajectory pooling, FFT-grid alignment, residual
+segmentation, ensemble failure accounting, prediction initial-condition
+compatibility, test-column validation, and construction of all four Bokeh tabs.
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+The suite uses Python's standard-library `unittest`; no additional test
+dependency is required.
 
 ---
 

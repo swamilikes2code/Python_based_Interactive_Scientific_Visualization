@@ -249,10 +249,12 @@ class SINDyEngine:
 
     def simulate_with_model(self, model_instance, x0, t):
         try:
-            return model_instance.simulate(x0, t)
+            result = model_instance.simulate(x0, t)
         except Exception as e:
-            print(f"Error when simulate using old model: {e}")
-            return np.zeros((len(t), len(x0)))
+            raise RuntimeError(f"Simulation failed: {e}") from e
+        if result is None or not np.isfinite(result).all():
+            raise RuntimeError("Simulation diverged (overflow/nan).")
+        return result
 
     def calculate_metrics(self, X_true, X_pred):
         """Metrics on x(t) — use for Test tab."""
@@ -273,6 +275,8 @@ class SINDyEngine:
         Returns a dict with:
             't'           : time array (shared x-axis for Plot 1)
             'residuals'   : dict {var_name: residual array}  -> Plot 1
+            'residual_segments': per-trajectory residual data for rendering
+                                 without connecting unrelated timelines
             'fft_freqs'   : frequency array (shared x-axis for Plot 2)
             'fft_amps'    : dict {var_name: FFT amplitude}   -> Plot 2
             'dX_true'     : dict {var_name: true derivative} -> Plot 3
@@ -328,6 +332,14 @@ class SINDyEngine:
                 'autocorr': round(autocorr, 3),
             }
 
+        result['residual_segments'] = [{
+            'label': 'IC1',
+            't': np.asarray(t),
+            'residuals': {
+                name: values for name, values in result['residuals'].items()
+            },
+        }]
+
         return result
 
     # ------------------------------------------------------------------
@@ -339,6 +351,48 @@ class SINDyEngine:
     #     must be consistently present across ICs to stand out
     #   - scatter & stats use all pooled samples
     # ------------------------------------------------------------------
+    def _average_spectra_on_common_grid(self, spectra):
+        """Align and average spectra produced on different frequency grids.
+
+        Each item in ``spectra`` is ``(freqs, amplitudes)`` where amplitudes
+        has shape ``(n_frequencies, n_states)``. The shared grid stops at the
+        lowest Nyquist frequency and uses the coarsest input resolution, so
+        every trajectory contributes without inventing unsupported frequency
+        detail or averaging unrelated FFT bins by array index.
+        """
+        if not spectra:
+            return np.array([], dtype=float), None
+
+        valid = [
+            (np.asarray(freqs, dtype=float), np.asarray(amps, dtype=float))
+            for freqs, amps in spectra
+            if len(freqs) >= 2 and len(freqs) == len(amps)
+        ]
+        if not valid:
+            return np.array([], dtype=float), None
+
+        max_common_frequency = min(freqs[-1] for freqs, _ in valid)
+        common_resolution = max(
+            float(np.median(np.diff(freqs))) for freqs, _ in valid
+        )
+        if max_common_frequency <= 0 or common_resolution <= 0:
+            return np.array([], dtype=float), None
+
+        # Include the common upper bound when it falls on the grid, while
+        # avoiding floating-point accumulation beyond the supported range.
+        bin_ratio = max_common_frequency / common_resolution
+        n_bins = int(np.floor(bin_ratio + 1e-9)) + 1
+        common_freqs = np.arange(n_bins, dtype=float) * common_resolution
+
+        aligned = []
+        for freqs, amps in valid:
+            aligned.append(np.column_stack([
+                np.interp(common_freqs, freqs, amps[:, state_index])
+                for state_index in range(amps.shape[1])
+            ]))
+
+        return common_freqs, np.mean(np.stack(aligned), axis=0)
+
     def compute_diagnostics_multi(self, trajectories):
         if self.model is None:
             return None
@@ -348,9 +402,9 @@ class SINDyEngine:
                                             np.asarray(t0, float))
 
         t_all, resid_all, dxt_all, dxp_all = [], [], [], []
+        residual_segments = []
         spectra = []
-        fft_freqs = None
-        for X_i, t_i in trajectories:
+        for trajectory_index, (X_i, t_i) in enumerate(trajectories):
             X_i = np.asarray(X_i, dtype=float)
             t_i = np.asarray(t_i, dtype=float)
             dX_true = self.compute_derivatives(X_i, t_i)
@@ -361,28 +415,33 @@ class SINDyEngine:
             resid_all.append(r)
             dxt_all.append(dX_true)
             dxp_all.append(dX_pred)
+            residual_segments.append({
+                'label': f'IC{trajectory_index + 1}',
+                't': t_i,
+                'residuals': {
+                    (self.feature_names[j] if self.feature_names else f"x{j}"):
+                    r[:, j]
+                    for j in range(r.shape[1])
+                },
+            })
 
             n = len(t_i)
             dt = float(np.mean(np.diff(t_i)))
             freqs = np.fft.rfftfreq(n, d=dt)
             amp = np.abs(np.fft.rfft(r, axis=0)) / n  # (n_freqs, n_states)
-            if fft_freqs is None:
-                fft_freqs = freqs
-            if amp.shape[0] == len(fft_freqs):
-                spectra.append(amp)
-            # trajectories with a different length / sampling rate are
-            # skipped from the averaged spectrum (their residual structure
-            # still shows up in the residual & scatter plots)
+            spectra.append((freqs, amp))
 
         t_cat = np.concatenate(t_all)
         resid_cat = np.vstack(resid_all)
         dxt_cat = np.vstack(dxt_all)
         dxp_cat = np.vstack(dxp_all)
-        fft_amps_avg = np.mean(np.stack(spectra), axis=0) if spectra else None
+        fft_freqs, fft_amps_avg = self._average_spectra_on_common_grid(
+            spectra)
 
         result = {
             't': t_cat, 'residuals': {}, 'fft_freqs': fft_freqs,
             'fft_amps': {}, 'dX_true': {}, 'dX_pred': {}, 'stats': {},
+            'residual_segments': residual_segments,
         }
 
         for i in range(resid_cat.shape[1]):
@@ -495,7 +554,9 @@ class SINDyEngine:
                     'n_samples':     {term: int},
                 }
             },
-            'n_bootstrap': n_bootstrap,
+            'n_bootstrap': n_bootstrap,          # requested attempts
+            'n_successful_bootstrap': int,
+            'n_failed_bootstrap': int,
         }
         """
         # --- STEP 0: Build the full trajectory list and pool derivatives ---
@@ -524,6 +585,7 @@ class SINDyEngine:
         n_terms = len(term_names)
         inclusion_count = np.zeros((n_states, n_terms))
         coef_records = [[[] for _ in range(n_terms)] for _ in range(n_states)]
+        successful_bootstraps = 0
 
         # --- STEP 3: Bootstrap loop ---
         for b in range(n_bootstrap):
@@ -543,6 +605,7 @@ class SINDyEngine:
                 print(f"[Ensemble] bootstrap {b} failed: {e}")
                 continue
 
+            successful_bootstraps += 1
             coefs = model_b.coefficients()
             for s in range(n_states):
                 for k in range(n_terms):
@@ -554,15 +617,30 @@ class SINDyEngine:
                 progress_callback(b + 1, n_bootstrap)
 
         # --- STEP 4: Aggregate results ---
-        result = {'feature_names': term_names,
-                  'per_state': {}, 'n_bootstrap': n_bootstrap}
+        if successful_bootstraps == 0:
+            raise RuntimeError(
+                "All ensemble bootstrap fits failed; no robustness "
+                "statistics can be computed."
+            )
+
+        result = {
+            'feature_names': term_names,
+            'per_state': {},
+            'n_bootstrap': n_bootstrap,
+            'n_successful_bootstrap': successful_bootstraps,
+            'n_failed_bootstrap': n_bootstrap - successful_bootstraps,
+        }
 
         for s in range(n_states):
             state_name = names[s] if names else f"x{s}"
             incl_pct, coef_mean, coef_std, n_samp = {}, {}, {}, {}
 
             for k, term in enumerate(term_names):
-                incl_pct[term] = float(inclusion_count[s, k] / n_bootstrap)
+                # Failed fits contain no evidence about whether a term should
+                # be included. Divide only by successful fits so numerical
+                # failures cannot bias inclusion frequency toward zero.
+                incl_pct[term] = float(
+                    inclusion_count[s, k] / successful_bootstraps)
                 vals = coef_records[s][k]
                 n_samp[term] = len(vals)
 

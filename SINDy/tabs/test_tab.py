@@ -37,6 +37,34 @@ from scipy.integrate import solve_ivp
 from engine.check_datafile import check_upload_size, validate_dataframe
 
 
+def _validate_test_columns(df, expected_names, n_model_vars):
+    """Validate test state dimensions, names, and order against training."""
+    actual_names = list(df.columns[1:])
+    if len(actual_names) != n_model_vars:
+        return (f"Variable count mismatch: test file has "
+                f"{len(actual_names)} state variable(s), but the selected "
+                f"model was trained on {n_model_vars}.")
+
+    # Runs created before feature-name metadata was stored can still be
+    # tested safely using the dimension check above.
+    expected_names = list(expected_names or [])
+    if not expected_names or actual_names == expected_names:
+        return None
+
+    expected_display = ", ".join(map(str, expected_names))
+    actual_display = ", ".join(map(str, actual_names))
+    if sorted(map(str, actual_names)) == sorted(map(str, expected_names)):
+        return ("Variable column order mismatch: expected "
+                f"[{expected_display}], but received [{actual_display}].")
+    return ("Variable column names mismatch: expected "
+            f"[{expected_display}], but received [{actual_display}].")
+
+
+def _model_variable_count(model_instance, df):
+    """Read the fitted model dimension, with a legacy-model fallback."""
+    return getattr(model_instance, "n_features_in_", df.shape[1] - 1)
+
+
 def test_tab_layout(engine, trained_model_storage):
     """
     Build the Bokeh layout for the Test tab.
@@ -152,10 +180,10 @@ def test_tab_layout(engine, trained_model_storage):
             # training runs (Run 1, Run 2, ...). We now KEEP whatever is
             # cached in _upload_buffer across model switches instead of
             # wiping it. Any genuine incompatibility (e.g. this model
-            # expects a different number of state variables) is still
-            # caught safely later by _run_single_test()'s variable-count
-            # check, so reusing a stale buffer is never unsafe — at worst
-            # it produces a clear error message instead of a crash.
+            # expects different state variables) is still caught safely
+            # later by _run_single_test()'s column-contract check, so
+            # reusing a stale buffer is never unsafe — at worst it produces
+            # a clear error message instead of a crash.
             if is_custom:
                 if _upload_buffer["test1"]:
                     status_div.text = "<b style='color:#27ae60;'>✅ Reusing previously uploaded Test file 1. Click TEST.</b>"
@@ -228,6 +256,9 @@ def test_tab_layout(engine, trained_model_storage):
                 x_axis_label="Time (s)", sizing_mode="stretch_width")
     p2 = figure(title="Test Run 2", width=900, height=350,
                 x_axis_label="Time (s)", visible=False, sizing_mode="stretch_width")
+    # Prevent Bokeh's MISSING_RENDERERS warning before the first test run.
+    p1.scatter([], [], alpha=0)
+    p2.scatter([], [], alpha=0)
 
     # Hover for each plot, view on SINDy line mode='vline'
     # view 3 stats at once: sindy, true, and diff = true - sindy for all the states
@@ -301,7 +332,7 @@ def test_tab_layout(engine, trained_model_storage):
     # error metrics against the true (measured) trajectory.
     # =========================================================================
 
-    def _run_single_test(fig, df, label):
+    def _run_single_test(fig, df, label, expected_names=None):
         """
         Run one test trajectory through the currently-selected model and
         plot the result on `fig`.
@@ -322,6 +353,8 @@ def test_tab_layout(engine, trained_model_storage):
         label : str
             Human-readable label for this run (currently only used for
             potential future logging — not rendered directly).
+        expected_names : list[str] | None
+            State columns stored with the training run, in model input order.
 
         Returns
         -------
@@ -333,7 +366,6 @@ def test_tab_layout(engine, trained_model_storage):
         """
         t = df.iloc[:, 0].values
         X = df.iloc[:, 1:].values
-        n_test_vars = X.shape[1]
 
         # ── ROBUSTNESS FIX ──────────────────────────────────────────────
         # If the test CSV has a different number of state variables than
@@ -341,11 +373,11 @@ def test_tab_layout(engine, trained_model_storage):
         # low-level sklearn/numpy shape-mismatch error deep inside
         # solve_ivp's internal loop, which is confusing to a non-technical
         # user. We check this up front and fail with a clear message.
-        n_model_vars = getattr(model_instance, "n_features_in_", n_test_vars)
-        if n_test_vars != n_model_vars:
-            return None, (f"Variable count mismatch: test file has "
-                          f"{n_test_vars} state variable(s), but the "
-                          f"selected model was trained on {n_model_vars}.")
+        n_model_vars = _model_variable_count(model_instance, df)
+        column_error = _validate_test_columns(
+            df, expected_names, n_model_vars)
+        if column_error:
+            return None, column_error
 
         def rhs(t_val, x):
             # model_instance.predict expects a 2D array of shape (1, n_features);
@@ -453,6 +485,7 @@ def test_tab_layout(engine, trained_model_storage):
         # inner rhs() closure can access it.
         nonlocal model_instance
         model_instance = model_data['model_instance']
+        expected_names = model_data.get('feature_names') or []
 
         run_id_str = f"#{run_id}"
         res_data = {'run': [], 'model_run': [],
@@ -472,7 +505,8 @@ def test_tab_layout(engine, trained_model_storage):
         if err:
             messages.append(f"⚠️ Run 1 error: {err}")
         elif df is not None:
-            rows, err = _run_single_test(p1, df, "Run 1")
+            rows, err = _run_single_test(
+                p1, df, "Run 1", expected_names=expected_names)
             if err:
                 messages.append(f"⚠️ Run 1 error: {err}")
             elif rows:
@@ -498,7 +532,8 @@ def test_tab_layout(engine, trained_model_storage):
         if err2:
             messages.append(f"⚠️ Run 2 error: {err2}")
         elif df2 is not None:
-            rows2, err2 = _run_single_test(p2, df2, "Run 2")
+            rows2, err2 = _run_single_test(
+                p2, df2, "Run 2", expected_names=expected_names)
             if err2:
                 messages.append(f"⚠️ Run 2 error: {err2}")
             elif rows2:

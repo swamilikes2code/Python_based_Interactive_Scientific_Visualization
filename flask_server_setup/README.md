@@ -39,3 +39,29 @@ Below is a link to the screenshot of command line commands in the repository.
 The final output on your local machine should appear as:
 
 ![Screesnshot of Final Output](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/blob/master/flask_server_setup/images/final_server_output.PNG)
+
+## SINDy module
+
+The SINDy expert system is mounted at `/SINDy` in the parent Flask site. Run
+its Bokeh backend from the module directory so its built-in `data/` paths
+resolve correctly:
+
+```bash
+cd SINDy
+pip install -r requirements.txt
+bokeh serve main.py --port 5006 \
+  --allow-websocket-origin=localhost:8080
+```
+
+In a second terminal, start the parent Flask application:
+
+```bash
+export SINDY_BOKEH_URL=http://localhost:5006/main
+python flask_server_setup/app/flask_app.py
+```
+
+Then open `http://localhost:8080/SINDy`. In production, set
+`SINDY_BOKEH_URL` to the public Bokeh service URL and allow the parent
+website's hostname in the Bokeh WebSocket origin list. The Bokeh service and
+Flask service must be deployed separately because the interactive callbacks
+run on the Bokeh server.

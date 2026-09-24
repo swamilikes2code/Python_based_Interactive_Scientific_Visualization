@@ -35,6 +35,16 @@ from engine.check_datafile import check_upload_size, validate_dataframe, validat
 from bokeh.io import curdoc
 
 
+def _compact_trajectory_label(filename, index, max_stem_length=20):
+    """Build a compact, distinctive button label for one trajectory file."""
+    stem = os.path.splitext(os.path.basename(str(filename)))[0]
+    if len(stem) > max_stem_length:
+        left = max_stem_length // 2
+        right = max_stem_length - left - 1
+        stem = f"{stem[:left]}…{stem[-right:]}"
+    return f"IC {index + 1} · {stem}"
+
+
 def train_tab_layout(engine, trained_model_storage):
     """
     Build the Bokeh layout for the Train & Validate tab.
@@ -383,26 +393,48 @@ def train_tab_layout(engine, trained_model_storage):
 
     p = figure(title="Model Result", height=500, sizing_mode="stretch_width")
     p.scatter([], [], alpha=0)
-    p.legend.click_policy = "hide"
 
     fit_hover = HoverTool(
         renderers=[],
         mode="vline",
         tooltips=[
             ("Variable", "@name"),
+            ("Trajectory", "@trajectory"),
             ("t", "@t{0.000}"),
             ("Value", "@y{0.0000}"),],
     )
     p.add_tools(fit_hover)
 
-    # 'fit' is a LIST of renderers (one per initial condition) and
-    # 'fit_alphas' the matching per-line alpha factors.
-    _main_renderers = {}   # {state_idx: {'train','val','fit':[...],'fit_alphas':[...]}}
+    # Renderers are grouped by state and then trajectory so the state, layer,
+    # and trajectory controls can filter the same plot independently.
+    _main_renderers = {}   # {state_idx: {'trajectories': [{train,val,fit,...}]}}
 
     state_toggle = CheckboxButtonGroup(
         labels=[], active=[], button_type="default")
     layer_toggle = CheckboxButtonGroup(
         labels=["Data points", "SINDy fit"], active=[0, 1], button_type="default")
+    trajectory_toggle = CheckboxButtonGroup(
+        labels=[], active=[], button_type="default")
+    btn_show_all_trajectories = Button(
+        label="SHOW ALL", button_type="default", width=88)
+    btn_hide_all_trajectories = Button(
+        label="HIDE ALL", button_type="default", width=88)
+    trajectory_controls = row(
+        trajectory_toggle,
+        Spacer(width=8),
+        btn_show_all_trajectories,
+        btn_hide_all_trajectories,
+    )
+    trajectory_filter_panel = row(
+        Spacer(sizing_mode="stretch_width"),
+        trajectory_controls,
+        Spacer(sizing_mode="stretch_width"),
+        visible=False, sizing_mode="stretch_width",
+    )
+    # Selection order determines visual focus: the earliest still-active
+    # trajectory is solid; later selections are dashed. When the focused
+    # trajectory is hidden, the next active one is promoted automatically.
+    _trajectory_activation_order = []
 
     state_key_div = Div(text="", styles={'padding': '2px 0'})
 
@@ -410,27 +442,65 @@ def train_tab_layout(engine, trained_model_storage):
         active_states = set(state_toggle.active)
         data_on = 0 in set(layer_toggle.active)
         fit_on = 1 in set(layer_toggle.active)
+        active_trajectories = set(trajectory_toggle.active)
+        focused_trajectory = next(
+            (index for index in _trajectory_activation_order
+             if index in active_trajectories),
+            None,
+        )
 
         for i, rends in _main_renderers.items():
             state_on = i in active_states
+            for trajectory_index, trajectory_renders in enumerate(
+                    rends['trajectories']):
+                trajectory_on = trajectory_index in active_trajectories
+                data_visible = state_on and data_on and trajectory_on
+                fit_visible = state_on and fit_on and trajectory_on
 
-            train_alpha = 0.35 if (state_on and data_on) else 0
-            val_alpha = 0.55 if (state_on and data_on) else 0
-            fit_alpha = 1.0 if (state_on and fit_on) else 0
+                r_train = trajectory_renders['train']
+                r_val = trajectory_renders['val']
+                train_alpha = 0.35 if data_visible else 0
+                val_alpha = 0.55 if data_visible else 0
+                r_train.glyph.fill_alpha = train_alpha
+                r_train.glyph.line_alpha = train_alpha
+                r_val.glyph.fill_alpha = val_alpha
+                r_val.glyph.line_alpha = val_alpha
 
-            rends['train'].glyph.fill_alpha = train_alpha
-            rends['train'].glyph.line_alpha = train_alpha
-            rends['val'].glyph.fill_alpha = val_alpha
-            rends['val'].glyph.line_alpha = val_alpha
-
-            fits = rends.get('fit') or []
-            fit_alphas = rends.get('fit_alphas') or [1.0] * len(fits)
-            for r_fit, a in zip(fits, fit_alphas):
-                r_fit.glyph.line_alpha = fit_alpha * a
-                r_fit.visible = bool(state_on and fit_on)
+                r_fit = trajectory_renders.get('fit')
+                if r_fit is not None:
+                    is_focused = trajectory_index == focused_trajectory
+                    fit_alpha = 1.0 if is_focused else 0.65
+                    r_fit.glyph.line_dash = (
+                        "solid" if is_focused else "dashed")
+                    r_fit.glyph.line_width = 2.8 if is_focused else 1.3
+                    r_fit.glyph.line_alpha = fit_alpha if fit_visible else 0
+                    r_fit.visible = bool(fit_visible)
 
     state_toggle.on_change('active', _update_main_visibility)
     layer_toggle.on_change('active', _update_main_visibility)
+
+    def _on_trajectory_visibility_change(attr, old, new):
+        active_now = set(new)
+        _trajectory_activation_order[:] = [
+            index for index in _trajectory_activation_order
+            if index in active_now
+        ]
+        for index in new:
+            if index not in _trajectory_activation_order:
+                _trajectory_activation_order.append(index)
+        _update_main_visibility(attr, old, new)
+
+    trajectory_toggle.on_change(
+        'active', _on_trajectory_visibility_change)
+
+    def _show_all_trajectories():
+        trajectory_toggle.active = list(range(len(trajectory_toggle.labels)))
+
+    def _hide_all_trajectories():
+        trajectory_toggle.active = []
+
+    btn_show_all_trajectories.on_click(_show_all_trajectories)
+    btn_hide_all_trajectories.on_click(_hide_all_trajectories)
 
     # =========================================================================
     # SECTION 5 — RESIDUAL DIAGNOSTIC PLOTS
@@ -485,6 +555,16 @@ def train_tab_layout(engine, trained_model_storage):
         train_idx = data['train_idx']
         val_idx = data['val_idx']
         ic_sims = data.get('ic_sims') or []
+        trajectories = data.get('trajectories') or [(X, t)]
+        trajectory_labels = data.get('trajectory_labels') or [
+            sim.get('label', f"IC {k + 1}")
+            for k, sim in enumerate(ic_sims)
+        ]
+        if len(trajectory_labels) < len(trajectories):
+            trajectory_labels.extend(
+                f"IC {k + 1}"
+                for k in range(len(trajectory_labels), len(trajectories))
+            )
         names = trained_model_storage[run_id].get('feature_names') or \
             [f"x{i+1}" for i in range(X.shape[1])]
 
@@ -492,43 +572,58 @@ def train_tab_layout(engine, trained_model_storage):
         _main_renderers.clear()
 
         n_vars = X.shape[1]
+        n_trajectories = len(trajectories)
         color_key_parts = []
+
+        # Map each raw trajectory to its slice in the pooled X/t arrays.
+        trajectory_bounds = []
+        offset = 0
+        for X_k, _ in trajectories:
+            end = offset + len(X_k)
+            trajectory_bounds.append((offset, end))
+            offset = end
 
         for i in range(n_vars):
             color = _DIAG_COLORS[i % len(_DIAG_COLORS)]
             label = names[i] if i < len(names) else f"x{i+1}"
+            trajectory_renderers = []
 
-            r_train = p.scatter(t[train_idx], X[train_idx, i],
-                                color="#1f77b4", alpha=0.35, size=4, legend_label="Train points")
-            r_val = p.scatter(t[val_idx], X[val_idx, i],
-                              color="#ff7f0e", alpha=0.55, size=4, legend_label="Val points")
+            for k, (start, end) in enumerate(trajectory_bounds):
+                train_k = train_idx[(train_idx >= start) & (train_idx < end)]
+                val_k = val_idx[(val_idx >= start) & (val_idx < end)]
+                r_train = p.scatter(
+                    t[train_k], X[train_k, i], color="#1f77b4",
+                    alpha=0.35, size=4, legend_label="Train points")
+                r_val = p.scatter(
+                    t[val_k], X[val_k, i], color="#ff7f0e",
+                    alpha=0.55, size=4, legend_label="Val points")
 
-            fits_for_state = []
-            fit_alphas = []
-            for sim_k in ic_sims:
-                if sim_k.get('x_sim') is None:
-                    continue  # simulation from this IC diverged — skip its line
-                primary = (sim_k is ic_sims[0])
-                hover_name = label if primary else \
-                    f"{label} ({sim_k.get('label', 'IC')})"
-                fit_source = ColumnDataSource(data=dict(
-                    t=sim_k['t'],
-                    y=sim_k['x_sim'][:, i],
-                    name=[hover_name] * len(sim_k['t']),
-                ))
-                r_fit = p.line(
-                    't', 'y', source=fit_source, color=color,
-                    line_width=2.8 if primary else 1.3,
-                    line_dash="solid" if primary else "dashed",
-                    alpha=1.0 if primary else 0.65,
-                )
-                fits_for_state.append(r_fit)
-                fit_alphas.append(1.0 if primary else 0.65)
+                r_fit = None
+                fit_alpha = 1.0 if k == 0 else 0.65
+                if k < len(ic_sims) and ic_sims[k].get('x_sim') is not None:
+                    sim_k = ic_sims[k]
+                    full_trajectory_name = trajectory_labels[k]
+                    fit_source = ColumnDataSource(data=dict(
+                        t=sim_k['t'],
+                        y=sim_k['x_sim'][:, i],
+                        name=[label] * len(sim_k['t']),
+                        trajectory=[full_trajectory_name] * len(sim_k['t']),
+                    ))
+                    r_fit = p.line(
+                        't', 'y', source=fit_source, color=color,
+                        line_width=2.8 if k == 0 else 1.3,
+                        line_dash="solid" if k == 0 else "dashed",
+                        alpha=fit_alpha,
+                    )
 
-            _main_renderers[i] = {
-                'train': r_train, 'val': r_val,
-                'fit': fits_for_state, 'fit_alphas': fit_alphas,
-            }
+                trajectory_renderers.append({
+                    'train': r_train,
+                    'val': r_val,
+                    'fit': r_fit,
+                    'fit_alpha': fit_alpha,
+                })
+
+            _main_renderers[i] = {'trajectories': trajectory_renderers}
             color_key_parts.append(
                 f"<span style='color:{color}; font-weight:700;'>●</span> "
                 f"<span style='color:#2c3e50;'>{label}</span>"
@@ -542,16 +637,29 @@ def train_tab_layout(engine, trained_model_storage):
         )
 
         fit_hover.renderers = [
-            r for rends in _main_renderers.values() for r in rends['fit']
+            trajectory_renders['fit']
+            for state_renders in _main_renderers.values()
+            for trajectory_renders in state_renders['trajectories']
+            if trajectory_renders.get('fit') is not None
         ]
 
         state_toggle.labels = names[:n_vars] if len(names) >= n_vars else \
             [f"x{i+1}" for i in range(n_vars)]
         state_toggle.active = list(range(n_vars))
         layer_toggle.active = [0, 1]
+        trajectory_toggle.labels = [
+            _compact_trajectory_label(filename, k)
+            for k, filename in enumerate(trajectory_labels)
+        ]
+        _trajectory_activation_order.clear()
+        trajectory_toggle.active = list(range(n_trajectories))
+        _trajectory_activation_order[:] = list(range(n_trajectories))
+        trajectory_filter_panel.visible = n_trajectories > 1
         _update_main_visibility(None, None, None)
 
-        p.title.text = f"Model Result — Run #{run_id}"
+        trajectory_suffix = (
+            f" · {n_trajectories} trajectories" if n_trajectories > 1 else "")
+        p.title.text = f"Model Result — Run #{run_id}{trajectory_suffix}"
         _current_view_run[0] = run_id
 
         warning_msg = trained_model_storage[run_id].get('warning')
@@ -578,16 +686,29 @@ def train_tab_layout(engine, trained_model_storage):
 
         var_names = list(diag['residuals'].keys())
         freqs = diag['fft_freqs']
+        residual_segments = diag.get('residual_segments') or [{
+            'label': 'IC1',
+            't': diag['t'],
+            'residuals': diag['residuals'],
+        }]
 
         for idx, name in enumerate(var_names):
             color = _DIAG_COLORS[idx % len(_DIAG_COLORS)]
 
-            p_resid.line(
-                diag['t'], diag['residuals'][name],
-                color=color, line_width=1.5, alpha=0.8,
-                legend_label=name,
-                muted_color=color, muted_alpha=0.12,
-            )
+            # Each uploaded trajectory has its own time origin. Render the
+            # residuals as independent lines so Bokeh never draws a fake
+            # connection from the end of one IC to the start of the next.
+            # Reusing legend_label groups all IC renderers for this state.
+            for segment_index, segment in enumerate(residual_segments):
+                p_resid.line(
+                    segment['t'], segment['residuals'][name],
+                    color=color,
+                    line_width=1.7 if segment_index == 0 else 1.2,
+                    line_dash="solid" if segment_index == 0 else "dashed",
+                    alpha=0.8 if segment_index == 0 else 0.45,
+                    legend_label=name,
+                    muted_color=color, muted_alpha=0.08,
+                )
 
             p_fft.line(
                 freqs, diag['fft_amps'][name],
@@ -733,7 +854,7 @@ def train_tab_layout(engine, trained_model_storage):
             ic_sims.append({
                 't': np.asarray(t_k),
                 'x_sim': sim_k,
-                'label': f"IC{k+1}",
+                'label': labels[k],
             })
 
         x_sim_full = ic_sims[0]['x_sim']
@@ -790,6 +911,7 @@ def train_tab_layout(engine, trained_model_storage):
                 't':            t_pool,       # pooled time (scatter x-axis)
                 'X':            X_pool,       # pooled states (scatter y-axis)
                 'trajectories': trajectories, # raw list [(X_1,t_1), (X_2,t_2), ...]
+                'trajectory_labels': labels,  # full filenames for filters/hover
                 'train_idx':    train_idx,    # indices INTO the pooled arrays
                 'val_idx':      val_idx,
                 'x_sim':        x_sim_full,   # primary-IC simulation
@@ -798,9 +920,13 @@ def train_tab_layout(engine, trained_model_storage):
             'diagnostics': diag,
         }
 
-        # ── 9. Render the plots for the run that was just trained ──────────
-        render_plot(counter[0])
-        _render_diag_plots(diag)
+        # ── 9. Select the new history row automatically ───────────────────
+        # This triggers on_row_select(), which renders the saved run and
+        # enables DELETE immediately. A user who notices a bad parameter
+        # choice can therefore remove the run without scrolling to and
+        # manually selecting it in the history table first.
+        newest_row = len(source_history.data['run']) - 1
+        source_history.selected.indices = [newest_row]
 
     def on_delete_click():
         """
@@ -832,6 +958,10 @@ def train_tab_layout(engine, trained_model_storage):
             _main_renderers.clear()
             state_toggle.labels = []
             state_toggle.active = []
+            trajectory_toggle.labels = []
+            _trajectory_activation_order.clear()
+            trajectory_toggle.active = []
+            trajectory_filter_panel.visible = False
             state_key_div.text = ""
 
         for figs in [p_resid, p_fft, p_scatter]:
@@ -874,6 +1004,7 @@ def train_tab_layout(engine, trained_model_storage):
                    sizing_mode="stretch_width"), sizing_mode="stretch_width"),
                row(Spacer(sizing_mode="stretch_width"), row(state_toggle, layer_toggle), Spacer(
                    sizing_mode="stretch_width"), sizing_mode="stretch_width"),
+               trajectory_filter_panel,
                sizing_mode="stretch_width"),
         sizing_mode="stretch_width"
     )

@@ -21,8 +21,15 @@ echo "🚀 Starting Flask app..."
 python3 flask_app.py &
 FLASK_PID=$!
 
-# When Ctrl+C is pressed, kill both background processes before exiting.
-trap "echo '🛑 Stopping...'; kill -9 $BOKEH_PID $FLASK_PID; exit" SIGINT SIGTERM
+# Stop whichever services are still alive. Suppress "No such process" when
+# one service has already exited on its own.
+cleanup() {
+    echo "🛑 Stopping..."
+    kill "$BOKEH_PID" "$FLASK_PID" 2>/dev/null || true
+    wait "$BOKEH_PID" "$FLASK_PID" 2>/dev/null || true
+    exit
+}
+trap cleanup SIGINT SIGTERM
 
 # ── Auto-open browser ────────────────────────────────────────────────
 # Wait a few seconds for Flask/Bokeh to actually start listening before

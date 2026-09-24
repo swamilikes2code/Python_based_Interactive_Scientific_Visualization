@@ -41,6 +41,12 @@ from bokeh.layouts import column, row
 from bokeh.plotting import figure
 
 
+def _ensemble_label(run_id, ensemble_number, n_bootstrap):
+    """Build the canonical label used by the ensemble history dropdown."""
+    return (f"Run #{run_id} - Ensemble #{ensemble_number} "
+            f"- n = {n_bootstrap}")
+
+
 def ensemble_tab_layout(engine, trained_model_storage):
     """
     Read-only against trained_model_storage: never creates a new run,
@@ -72,6 +78,8 @@ def ensemble_tab_layout(engine, trained_model_storage):
     p_incl = figure(x_range=[], title="Term Inclusion Frequency",
                     sizing_mode="stretch_width", height=300,
                     y_axis_label="% of bootstrap runs", toolbar_location=None)
+    # Prevent Bokeh's MISSING_RENDERERS warning before an ensemble is run.
+    p_incl.scatter([], [], alpha=0)
 
     # Rebuild whenever options change — required because the label alone cannot
     # safely infer (run_id) via simple string splitting.
@@ -125,7 +133,7 @@ def ensemble_tab_layout(engine, trained_model_storage):
                 #     {'n_bootstrap': 50, ...},   # i=0, r=this dict
                 #     {'n_bootstrap': 70, ...},   # i=1, r=this dict
                 # ]
-                label = f"Run #{run_id} - Ensemble #{i+1} - n = {r['n_bootstrap']}" # Label string for UI - Viewing 
+                label = _ensemble_label(run_id, i + 1, r['n_bootstrap']) # Label string for UI - Viewing
                 # r['n_bootstrap'] is to get the number of bootstrap conducted - for user to differentiate between each ensembles
                 opts.append(label)
                 _ensemble_option_map[label] = (run_id, i)
@@ -154,8 +162,15 @@ def ensemble_tab_layout(engine, trained_model_storage):
         # No re-fitting here - this is purely a "replay a saved result" action.
         result = trained_model_storage[run_id]['ensemble_runs'][idx]
 
-        # Give the user visual confirmation of which ensemble is now displayed
-        progress_div.text = f"<b style='color:#27ae60;'>✅ Showing {new}</b>"
+        # Give the user visual confirmation of which ensemble is displayed,
+        # including fit failures that affect the effective sample count.
+        n_requested = result.get('n_bootstrap', 0)
+        n_success = result.get('n_successful_bootstrap', n_requested)
+        n_failed = result.get('n_failed_bootstrap', n_requested - n_success)
+        detail = (f" — {n_success}/{n_requested} fits succeeded"
+                  if n_failed else "")
+        progress_div.text = (
+            f"<b style='color:#27ae60;'>✅ Showing {new}{detail}</b>")
 
         # Re-render plots/tables using the selected saved result
         _render_results(result)
@@ -258,7 +273,8 @@ def ensemble_tab_layout(engine, trained_model_storage):
             # of this new result within THIS run's list, matching how
             # _build_global_ensemble_options() generates labels
             # ("Ensemble #{i+1}").
-            new_label = f"Run {run_id} - Ensemble #{len(run_data['ensemble_runs'])} - n = {n_boot}"
+            new_label = _ensemble_label(
+                run_id, len(run_data['ensemble_runs']), n_boot)
 
             # Setting .value to this new label triggers
             # on_ensemble_view_run_change via on_change, because this label
@@ -274,7 +290,19 @@ def ensemble_tab_layout(engine, trained_model_storage):
             # timing/event-order edge case.
             _render_results(result)
 
-            progress_div.text = "<b style='color:#27ae60;'>✅ Ensemble complete!</b>"
+            n_success = result.get('n_successful_bootstrap', n_boot)
+            n_failed = result.get('n_failed_bootstrap', n_boot - n_success)
+            if n_failed:
+                progress_div.text = (
+                    "<b style='color:#d97706;'>⚠ Ensemble complete: "
+                    f"{n_success}/{n_boot} fits succeeded; {n_failed} failed. "
+                    "Inclusion frequencies use successful fits only.</b>"
+                )
+            else:
+                progress_div.text = (
+                    f"<b style='color:#27ae60;'>✅ Ensemble complete: "
+                    f"{n_success}/{n_boot} fits succeeded.</b>"
+                )
         except Exception as e:
             # Catch-all: any failure during fit_ensemble (bad data,
             # numerical error, etc.) is shown to the user instead of

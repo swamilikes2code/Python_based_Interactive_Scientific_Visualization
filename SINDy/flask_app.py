@@ -59,4 +59,7 @@ if __name__ == "__main__":
     # falls back to port 8080 exactly as before — no change to local dev.
     port = int(os.environ.get("PORT", 8080))
     debug_mode = os.environ.get("FLASK_DEBUG", "true").lower() == "true"
-    app.run(host="0.0.0.0", port=port, debug=debug_mode)
+    # run.sh owns the process lifecycle. Avoid Flask's child reloader so one
+    # Ctrl+C cleanly stops the exact process that run.sh launched.
+    app.run(host="0.0.0.0", port=port, debug=debug_mode,
+            use_reloader=False)
