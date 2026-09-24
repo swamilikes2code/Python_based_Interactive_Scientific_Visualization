@@ -1,5 +1,7 @@
 # flask app
 
+import os
+
 from flask import Flask, render_template
 from bokeh.client import pull_session
 from bokeh.embed import server_document
@@ -8,6 +10,11 @@ from flask import send_from_directory
 
 # instantiate the flask app
 app = Flask(__name__, static_url_path="/app/static")
+
+# The parent website and the SINDy Bokeh service are deployed separately.
+# Keep the public endpoint configurable while preserving the local setup.
+SINDY_BOKEH_URL = os.environ.get(
+    "SINDY_BOKEH_URL", "http://localhost:5006/main")
 
 
 # create index page function
@@ -83,6 +90,15 @@ def bayesian_optimization():
 def lab_bayesian_optimization():
     bokeh_script_lab_bayesian_optimization = server_document(url="https://srrweb.cc.lehigh.edu/lab_bayesian_optimization")
     return render_template("lab_bayesian_optimization.html", bokeh_script_lab_bayesian_optimization=bokeh_script_lab_bayesian_optimization)
+
+
+@app.route("/SINDy", methods=["GET"])
+def SINDy():
+    bokeh_script_SINDy = server_document(url=SINDY_BOKEH_URL)
+    return render_template(
+        "SINDy.html",
+        bokeh_script_SINDy=bokeh_script_SINDy,
+    )
 
 # @app.route("/acknowledgements", methods=['GET'])
 # def acknowledgements():

@@ -1,0 +1,84 @@
+<!--
+    ============================================================================
+    Predicting.html
+    ============================================================================
+    Host page for Predict section — same minimal pattern as Testing.html:
+    1-2 lines of text, then one full-tab screenshot.
+    ============================================================================
+-->
+<div class="minimal-container">
+
+    <header class="page-header">
+        <h2 class="minimal-title">Predicting With Your SINDy Model</h2>
+    </header>
+
+    <p class="doc-intro-p">Pick a trained model, set a new initial condition and a time horizon, then press
+        <b>PREDICT</b> — the discovered equations are simulated forward from that starting point, with no true
+        trajectory to compare against. Use this to explore how the model behaves beyond your original data.</p>
+
+    <div class="doc-frame">
+        <img src="{{ url_for('static', filename='images/predict_tab.png') }}" alt="Predict tab overview"
+            class="doc-frame-img">
+    </div>
+    <p class="doc-img-caption">The Predict tab — model selector, initial condition &amp; horizon controls, and the
+        simulated trajectory plot.</p>
+
+</div>
+
+<style>
+    .minimal-container {
+        --ink: var(--primary);
+        --ink-soft: #4f5f6f;
+        --muted: #8a94a0;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+        background-color: #b2e3f4;
+    }
+
+    .minimal-title {
+        font-size: 28px;
+        color: var(--ink);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .doc-intro-p {
+        font-size: 15.5px;
+        line-height: 1.75;
+        color: var(--ink-soft);
+        width: 100%;
+        margin: 0 0 24px 0;
+    }
+
+    .doc-intro-p b {
+        color: var(--ink);
+    }
+
+    .doc-frame {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        background: #fff;
+    }
+
+    .doc-frame-img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .doc-img-caption {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin: 10px 0 0 0;
+        text-align: center;
+        font-style: italic;
+    }
+</style>
