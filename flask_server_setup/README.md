@@ -50,18 +50,35 @@ resolve correctly:
 cd SINDy
 pip install -r requirements.txt
 bokeh serve main.py --port 5006 \
+  --prefix /sindy-bokeh \
   --allow-websocket-origin=localhost:8080
 ```
 
 In a second terminal, start the parent Flask application:
 
 ```bash
-export SINDY_BOKEH_URL=http://localhost:5006/main
+export SINDY_BOKEH_URL=http://localhost:5006/sindy-bokeh/main
 python flask_server_setup/app/flask_app.py
 ```
 
-Then open `http://localhost:8080/SINDy`. In production, set
-`SINDY_BOKEH_URL` to the public Bokeh service URL and allow the parent
-website's hostname in the Bokeh WebSocket origin list. The Bokeh service and
-Flask service must be deployed separately because the interactive callbacks
-run on the Bokeh server.
+Then open `http://localhost:8080/SINDy`. Flask owns the public page at
+`/SINDy`; Bokeh is deliberately mounted at `/sindy-bokeh/main` so the two services
+never compete for the same URL.
+
+In production, the Flask page is `https://srrweb.cc.lehigh.edu/SINDy` and its
+embedded backend defaults to `https://srrweb.cc.lehigh.edu/sindy-bokeh/main`. The
+included launcher uses the public host, `/sindy-bokeh` prefix, and port `5006` by
+default:
+
+```bash
+./SINDy/serve_parent_site.sh
+```
+
+Override `SINDY_PORT`, `SINDY_ADDRESS`, `SINDY_URL_PREFIX`, or
+`SINDY_WEBSOCKET_ORIGIN` when the server uses different values.
+
+The web server must proxy the complete `/sindy-bokeh/` prefix, including WebSocket
+upgrades, to the Bokeh process. Do not proxy `/SINDy` to Bokeh; that route must
+continue to reach Flask. Set `SINDY_BOKEH_URL` only when the public endpoint
+differs from the default. Full deployment and verification steps are in
+[`../SINDy/DEPLOYMENT.md`](../SINDy/DEPLOYMENT.md).

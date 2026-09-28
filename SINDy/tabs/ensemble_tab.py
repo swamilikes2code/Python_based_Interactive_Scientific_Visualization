@@ -36,7 +36,10 @@
 # while shuffling/repeating the blocks themselves. This far better reflects the true uncertainty of trajectory data.
 # =============================================================================
 
-from bokeh.models import ColumnDataSource, Button, Select, Div, Slider, DataTable, TableColumn
+import html
+
+from bokeh.models import (ColumnDataSource, Button, Select, Div, Slider,
+                          DataTable, TableColumn, Span)
 from bokeh.layouts import column, row
 from bokeh.plotting import figure
 
@@ -45,6 +48,46 @@ def _ensemble_label(run_id, ensemble_number, n_bootstrap):
     """Build the canonical label used by the ensemble history dropdown."""
     return (f"Run #{run_id} - Ensemble #{ensemble_number} "
             f"- n = {n_bootstrap}")
+
+
+def _format_consensus_equations(result, state_names=None, threshold=0.5,
+                                precision=4):
+    """Build equations from bootstrap means for sufficiently stable terms.
+
+    ``threshold`` is deliberately strict: a term must have inclusion greater
+    than the threshold, not greater-than-or-equal. This mirrors the research
+    rule that a term appearing in exactly half of the fits has no majority.
+    """
+    state_names = list(state_names or result.get('per_state', {}).keys())
+    term_names = result.get('feature_names', [])
+    equations = []
+
+    for state_name in state_names:
+        stats = result.get('per_state', {}).get(state_name, {})
+        inclusion = stats.get('inclusion_pct', {})
+        means = stats.get('coef_mean', {})
+        pieces = []
+
+        for term in term_names:
+            coefficient = means.get(term)
+            if inclusion.get(term, 0.0) <= threshold or coefficient is None:
+                continue
+
+            magnitude = abs(float(coefficient))
+            coefficient_text = f"{magnitude:.{precision}g}"
+            body = coefficient_text if term == "1" else \
+                f"{coefficient_text} {term}"
+
+            if not pieces:
+                pieces.append(f"-{body}" if coefficient < 0 else body)
+            else:
+                pieces.append(
+                    f" {'-' if coefficient < 0 else '+'} {body}")
+
+        rhs = "".join(pieces) if pieces else "0"
+        equations.append(f"d({state_name})/dt = {rhs}")
+
+    return equations
 
 
 def ensemble_tab_layout(engine, trained_model_storage):
@@ -65,21 +108,47 @@ def ensemble_tab_layout(engine, trained_model_storage):
         title="VIEWING RUN", options=[], value="", visible=False)
 
     source_incl = ColumnDataSource(data=dict(
-        state=[], term=[], incl_pct=[], coef_mean=[], coef_std=[], n_samples=[]))
+        state=[], term=[], incl_pct=[], coef_summary=[], ci_95=[],
+        stability=[], n_samples=[]))
     incl_table = DataTable(source=source_incl, columns=[
         TableColumn(field="state",     title="State",        width=80),
         TableColumn(field="term",      title="Term",          width=150),
         TableColumn(field="incl_pct",  title="Inclusion %",   width=100),
-        TableColumn(field="coef_mean", title="Coef (mean)",   width=120),
-        TableColumn(field="coef_std",  title="Coef (std)",    width=120),
+        TableColumn(field="coef_summary", title="Coefficient (mean ± std)",
+                    width=190),
+        TableColumn(field="ci_95", title="95% Bootstrap CI", width=190),
+        TableColumn(field="stability", title="Stability", width=110),
         TableColumn(field="n_samples", title="# Samples",     width=100),
-    ], sizing_mode="stretch_width", height=400)
+    ], sizing_mode="stretch_width", height=420)
+
+    method_div = Div(text=(
+        "<div style='padding:10px 14px;border-left:4px solid #3498db;"
+        "background:#f4f8fb;color:#2c3e50;'>"
+        "<b>How to read this:</b> coefficient statistics use the non-zero "
+        "bootstrap fits. A 95% CI is shown only when inclusion is "
+        "<b>strictly above 50%</b>. Stability = inclusion × sign consistency."
+        "</div>"), sizing_mode="stretch_width")
+
+    consensus_threshold_s = Slider(
+        start=50, end=95, value=50, step=5,
+        title="Consensus Inclusion Threshold (%)", width=330)
+    equation_compare_div = Div(
+        text="<i>Run an ensemble to compare equations.</i>",
+        sizing_mode="stretch_width")
+    summary_div = Div(text="", sizing_mode="stretch_width")
 
     p_incl = figure(x_range=[], title="Term Inclusion Frequency",
                     sizing_mode="stretch_width", height=300,
                     y_axis_label="% of bootstrap runs", toolbar_location=None)
     # Prevent Bokeh's MISSING_RENDERERS warning before an ensemble is run.
     p_incl.scatter([], [], alpha=0)
+    consensus_line = Span(location=50, dimension="width",
+                          line_color="#e67e22", line_dash="dashed",
+                          line_width=2)
+    p_incl.add_layout(consensus_line)
+
+    _current_result = [None]
+    _current_run_data = [None]
 
     # Rebuild whenever options change — required because the label alone cannot
     # safely infer (run_id) via simple string splitting.
@@ -160,7 +229,8 @@ def ensemble_tab_layout(engine, trained_model_storage):
 
         # Fetch the already-computed ensemble result dict directly from storage.
         # No re-fitting here - this is purely a "replay a saved result" action.
-        result = trained_model_storage[run_id]['ensemble_runs'][idx]
+        run_data = trained_model_storage[run_id]
+        result = run_data['ensemble_runs'][idx]
 
         # Give the user visual confirmation of which ensemble is displayed,
         # including fit failures that affect the effective sample count.
@@ -173,7 +243,7 @@ def ensemble_tab_layout(engine, trained_model_storage):
             f"<b style='color:#27ae60;'>✅ Showing {new}{detail}</b>")
 
         # Re-render plots/tables using the selected saved result
-        _render_results(result)
+        _render_results(result, run_data)
 
     # Register the callback: whenever the dropdown's 'value' property changes, call the handler above
     ensemble_view_run.on_change('value', on_ensemble_view_run_change)
@@ -288,7 +358,7 @@ def ensemble_tab_layout(engine, trained_model_storage):
             # fire and call _render_results itself, call it directly here
             # too, guaranteeing the UI updates regardless of any Bokeh
             # timing/event-order edge case.
-            _render_results(result)
+            _render_results(result, run_data)
 
             n_success = result.get('n_successful_bootstrap', n_boot)
             n_failed = result.get('n_failed_bootstrap', n_boot - n_success)
@@ -312,31 +382,110 @@ def ensemble_tab_layout(engine, trained_model_storage):
             # Always re-enable the button, whether the run succeeded or failed.
             btn_run.disabled = False
             
-    def _render_results(result):
-        rows = dict(state=[], term=[], incl_pct=[],
-                    coef_mean=[], coef_std=[], n_samples=[])
-        bar_labels, bar_vals = [], []
+    def _render_results(result, run_data=None):
+        _current_result[0] = result
+        _current_run_data[0] = run_data
+
+        rows = dict(state=[], term=[], incl_pct=[], coef_summary=[],
+                    ci_95=[], stability=[], n_samples=[])
+        bar_labels, bar_vals, bar_colors = [], [], []
+        consensus_threshold = consensus_threshold_s.value / 100.0
+        consensus_line.location = consensus_threshold_s.value
+        stable_count = 0
+        ci_count = 0
+        total_terms = 0
+
         for state_name, stats in result['per_state'].items():
             for term in result['feature_names']:
                 pct = stats['inclusion_pct'][term]
+                total_terms += 1
                 rows['state'].append(state_name)
                 rows['term'].append(term)
                 rows['incl_pct'].append(f"{pct*100:.1f}%")
                 mean = stats['coef_mean'][term]
                 std = stats['coef_std'][term]
-                rows['coef_mean'].append(
-                    f"{mean:.4f}" if mean is not None else "—")
-                rows['coef_std'].append(
-                    f"{std:.4f}" if std is not None else "—")
+                rows['coef_summary'].append(
+                    f"{mean:.4f} ± {std:.4f}"
+                    if mean is not None and std is not None else "—")
+
+                ci_low = stats.get('coef_ci_low', {}).get(term)
+                ci_high = stats.get('coef_ci_high', {}).get(term)
+                if ci_low is not None and ci_high is not None:
+                    rows['ci_95'].append(f"[{ci_low:.4f}, {ci_high:.4f}]")
+                    ci_count += 1
+                elif pct <= 0.5:
+                    rows['ci_95'].append("— (requires > 50%)")
+                else:
+                    rows['ci_95'].append("— (insufficient samples)")
+
+                stability = stats.get('stability_score', {}).get(term)
+                if stability is None:
+                    # Backward-compatible replay for ensemble results made
+                    # before stability statistics were introduced.
+                    stability = pct
+                rows['stability'].append(f"{stability*100:.1f}%")
                 rows['n_samples'].append(stats['n_samples'][term])
                 bar_labels.append(f"{state_name}: {term}")
                 bar_vals.append(pct * 100)
+                is_consensus = pct > consensus_threshold and mean is not None
+                bar_colors.append("#2e9f69" if is_consensus else "#b7c2cc")
+                stable_count += int(is_consensus)
         source_incl.data = rows
 
         p_incl.renderers = []
         p_incl.x_range.factors = bar_labels
-        p_incl.vbar(x=bar_labels, top=bar_vals, width=0.7, color="#3498db")
+        p_incl.vbar(x=bar_labels, top=bar_vals, width=0.7,
+                    color=bar_colors)
         p_incl.xaxis.major_label_orientation = 1.0
+
+        n_requested = result.get('n_bootstrap', 0)
+        n_success = result.get('n_successful_bootstrap', n_requested)
+        summary_div.text = (
+            "<div style='display:flex;gap:12px;flex-wrap:wrap;margin:6px 0;'>"
+            f"<div style='padding:10px 14px;background:#eef7f2;border-radius:8px;'>"
+            f"<b>{stable_count}/{total_terms}</b><br><span style='font-size:12px;'>"
+            "consensus terms</span></div>"
+            f"<div style='padding:10px 14px;background:#eef4fb;border-radius:8px;'>"
+            f"<b>{ci_count}</b><br><span style='font-size:12px;'>terms with CI</span></div>"
+            f"<div style='padding:10px 14px;background:#f7f3ea;border-radius:8px;'>"
+            f"<b>{n_success}/{n_requested}</b><br><span style='font-size:12px;'>"
+            "successful fits</span></div></div>"
+        )
+
+        original_equations = (run_data or {}).get('equations', [])
+        state_names = (run_data or {}).get(
+            'feature_names', list(result['per_state'].keys()))
+        consensus_equations = _format_consensus_equations(
+            result, state_names=state_names, threshold=consensus_threshold)
+
+        def equation_lines(equations):
+            if not equations:
+                return "<i>Not available.</i>"
+            return "<br>".join(
+                f"<code style='font-size:13px;'>{html.escape(str(eq))}</code>"
+                for eq in equations)
+
+        equation_compare_div.text = (
+            "<div style='display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;'>"
+            "<div style='flex:1;min-width:300px;padding:14px;border:1px solid "
+            "#d8dee4;border-radius:10px;background:#fff;'>"
+            "<div style='font-weight:700;margin-bottom:8px;color:#34495e;'>"
+            "Original SINDy Equation</div>"
+            f"{equation_lines(original_equations)}</div>"
+            "<div style='flex:1;min-width:300px;padding:14px;border:1px solid "
+            "#b7dfca;border-radius:10px;background:#f4fbf7;'>"
+            "<div style='font-weight:700;margin-bottom:8px;color:#237a4b;'>"
+            f"Consensus Equation · inclusion &gt; {consensus_threshold_s.value:.0f}%"
+            "</div>"
+            f"{equation_lines(consensus_equations)}</div></div>"
+        )
+
+    def on_consensus_threshold_change(attr, old, new):
+        if _current_result[0] is not None:
+            _render_results(_current_result[0], _current_run_data[0])
+
+    consensus_threshold_s.on_change(
+        'value', on_consensus_threshold_change)
 
     btn_run.on_click(on_run_click)
 
@@ -359,8 +508,10 @@ def ensemble_tab_layout(engine, trained_model_storage):
             ensemble_view_run.value = current
         elif ens_opts:
             ensemble_view_run.value = ens_opts[-1]
-            _render_results(trained_model_storage[_ensemble_option_map[ens_opts[-1]][0]]
-                            ['ensemble_runs'][_ensemble_option_map[ens_opts[-1]][1]])
+            latest_run_id, latest_index = _ensemble_option_map[ens_opts[-1]]
+            latest_run = trained_model_storage[latest_run_id]
+            _render_results(latest_run['ensemble_runs'][latest_index],
+                            latest_run)
         else:
             ensemble_view_run.visible = False
 
@@ -368,6 +519,10 @@ def ensemble_tab_layout(engine, trained_model_storage):
         row(model_select, n_bootstrap_s, btn_run),
         progress_div,
         ensemble_view_run,
+        method_div,
+        row(consensus_threshold_s),
+        summary_div,
+        equation_compare_div,
         p_incl,
         incl_table,
         sizing_mode="stretch_width"

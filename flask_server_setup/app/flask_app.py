@@ -2,7 +2,7 @@
 
 import os
 
-from flask import Flask, render_template
+from flask import Flask, abort, render_template, url_for
 from bokeh.client import pull_session
 from bokeh.embed import server_document
 from flask import send_from_directory
@@ -14,7 +14,16 @@ app = Flask(__name__, static_url_path="/app/static")
 # The parent website and the SINDy Bokeh service are deployed separately.
 # Keep the public endpoint configurable while preserving the local setup.
 SINDY_BOKEH_URL = os.environ.get(
-    "SINDY_BOKEH_URL", "http://localhost:5006/main")
+    "SINDY_BOKEH_URL", "https://srrweb.cc.lehigh.edu/sindy-bokeh/main")
+
+SINDY_FRAGMENT_TEMPLATES = {
+    "storyline": "sindy_fragments/storyline.html",
+    "about": "sindy_fragments/about.html",
+    "training": "sindy_fragments/training.html",
+    "testing": "sindy_fragments/testing.html",
+    "predicting": "sindy_fragments/predicting.html",
+    "questions": "sindy_fragments/questions.html",
+}
 
 
 # create index page function
@@ -98,7 +107,19 @@ def SINDy():
     return render_template(
         "SINDy.html",
         bokeh_script_SINDy=bokeh_script_SINDy,
+        sindy_fragment_urls={
+            page: url_for("sindy_fragment", page=page)
+            for page in SINDY_FRAGMENT_TEMPLATES
+        },
     )
+
+
+@app.route("/SINDy/fragment/<page>", methods=["GET"])
+def sindy_fragment(page):
+    template = SINDY_FRAGMENT_TEMPLATES.get(page)
+    if template is None:
+        abort(404)
+    return render_template(template)
 
 # @app.route("/acknowledgements", methods=['GET'])
 # def acknowledgements():

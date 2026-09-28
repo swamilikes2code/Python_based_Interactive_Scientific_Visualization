@@ -80,11 +80,23 @@ The diagnostics show you numbers and plots. *You* interpret them. No automated l
 
 ### 🎲 Ensemble Tab
 - Run block-bootstrap SINDy fits on any model in training history
-- Inspect term inclusion frequency and coefficient mean/standard deviation
+- Inspect term inclusion frequency and coefficient mean ± standard deviation
+- Report empirical 95% coefficient intervals only for terms included in
+  strictly more than 50% of successful bootstrap fits
+- Score term stability from inclusion frequency and coefficient-sign consistency
+- Build an adjustable consensus equation and compare it directly with the
+  original fitted equation
 - Preserve temporal structure and trajectory boundaries during resampling
 - Save and replay multiple ensemble analyses for each trained run
 - Report failed bootstrap fits separately; inclusion percentages use only
   successful fits as their denominator
+
+### 💬 SINDy Research Guide
+- Browse 14 curated questions covering training, testing, prediction,
+  multi-trajectory data, and ensemble interpretation
+- Search locally by topic or keyword, with related-question suggestions
+- Use a conversational interface with no external API, quota, account, or
+  uploaded-data transfer
 
 ---
 
@@ -153,18 +165,14 @@ bokeh serve --allow-websocket-origin=127.0.0.1:8080 main.py
 python3 flask_app.py
 ```
 
-### Render deployment
+### Parent website deployment
 
-[`render.yaml`](render.yaml) defines two web services:
-
-1. **Bokeh backend** — serves `main.py` and accepts WebSocket connections
-   from the Flask service's public hostname.
-2. **Flask frontend** — serves the website and embeds the Bokeh application
-   through the `BOKEH_URL` environment variable.
-
-Render service names must be globally unique. If Render changes either
-hostname, update both `BOKEH_URL` and Bokeh's
-`--allow-websocket-origin` value in `render.yaml`, then redeploy.
+This directory is a self-contained Bokeh application inside the parent STEM
+Visualization repository. The central Flask site provides the shared header,
+documentation tabs, and page route; this directory provides the interactive
+SINDy workbench. See [`../flask_server_setup/README.md`](../flask_server_setup/README.md)
+for local development and [`DEPLOYMENT.md`](DEPLOYMENT.md) for the production
+process and reverse-proxy contract.
 
 Training history and uploaded files are held in memory per Bokeh session;
 they are intentionally isolated between users and are not persisted after a
@@ -279,8 +287,11 @@ Three principles guided every design decision:
 ## ✅ Automated Tests
 
 The test suite covers multi-trajectory pooling, FFT-grid alignment, residual
-segmentation, ensemble failure accounting, prediction initial-condition
-compatibility, test-column validation, and construction of all four Bokeh tabs.
+segmentation, ensemble failure accounting, coefficient confidence intervals,
+consensus equations, prediction initial-condition compatibility, test-column
+validation, and construction of all four Bokeh tabs.
+The Flask smoke tests also verify the local assistant knowledge base and its
+JavaScript asset.
 
 ```bash
 python3 -m unittest discover -s tests -v

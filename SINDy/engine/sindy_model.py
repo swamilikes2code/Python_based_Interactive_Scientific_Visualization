@@ -481,9 +481,12 @@ class SINDyEngine:
     # ------------------------------------------------------------------
     def _make_blocks(self, n, n_blocks=20):
         block_size = max(5, n // n_blocks)
-        n_blocks_total = n // block_size
-        return [np.arange(b * block_size, (b + 1) * block_size)
-                for b in range(n_blocks_total)]
+        # Include the final partial block instead of truncating it. The old
+        # floor-division implementation silently omitted up to
+        # ``block_size - 1`` tail samples, so those samples were neither fit
+        # nor displayed as Train/Validation points for custom trajectories.
+        return [np.arange(start, min(start + block_size, n))
+                for start in range(0, n, block_size)]
 
     def _make_blocks_multi(self, lengths, n_blocks=20):
         """
@@ -523,6 +526,11 @@ class SINDyEngine:
     #                     chose not to use this" decision, not a small
     #                     coefficient estimate — mixing the two would
     #                     bias the mean toward zero without meaning)
+    #   - coef_ci_low/high : empirical 95% percentile interval, reported only
+    #                     when the term appears in strictly more than 50% of
+    #                     successful fits (and has at least two samples)
+    #   - stability_score : inclusion frequency multiplied by sign
+    #                     consistency, in [0, 1]
     #
     # CHANGED: multi-trajectory aware, mirrors fit_model()'s pooling logic
     # exactly, so this can run on a model trained from several initial
@@ -551,6 +559,10 @@ class SINDyEngine:
                     'inclusion_pct': {term: float},
                     'coef_mean':     {term: float or None},
                     'coef_std':      {term: float or None},
+                    'coef_ci_low':   {term: float or None},
+                    'coef_ci_high':  {term: float or None},
+                    'sign_consistency': {term: float},
+                    'stability_score':  {term: float},
                     'n_samples':     {term: int},
                 }
             },
@@ -634,6 +646,8 @@ class SINDyEngine:
         for s in range(n_states):
             state_name = names[s] if names else f"x{s}"
             incl_pct, coef_mean, coef_std, n_samp = {}, {}, {}, {}
+            coef_ci_low, coef_ci_high = {}, {}
+            sign_consistency, stability_score = {}, {}
 
             for k, term in enumerate(term_names):
                 # Failed fits contain no evidence about whether a term should
@@ -645,14 +659,46 @@ class SINDyEngine:
                 n_samp[term] = len(vals)
 
                 if incl_pct[term] >= min_inclusion_pct and vals:
-                    coef_mean[term] = float(np.mean(vals))
-                    coef_std[term] = float(np.std(vals))
+                    values = np.asarray(vals, dtype=float)
+                    coef_mean[term] = float(np.mean(values))
+                    coef_std[term] = float(np.std(values))
                 else:
                     coef_mean[term] = None
                     coef_std[term] = None
 
+                if vals:
+                    values = np.asarray(vals, dtype=float)
+                    positive_fraction = float(np.mean(values > 0))
+                    negative_fraction = float(np.mean(values < 0))
+                    sign_consistency[term] = max(
+                        positive_fraction, negative_fraction)
+                else:
+                    sign_consistency[term] = 0.0
+
+                stability_score[term] = (
+                    incl_pct[term] * sign_consistency[term]
+                )
+
+                # A term selected in half (or fewer) of the successful fits
+                # is structurally unstable: a numerical interval around its
+                # non-zero values would hide the more important fact that the
+                # term frequently disappears. Keep the strict > 50% rule
+                # explicit and require two values to form an interval.
+                if incl_pct[term] > 0.5 and len(vals) >= 2:
+                    values = np.asarray(vals, dtype=float)
+                    coef_ci_low[term] = float(np.percentile(values, 2.5))
+                    coef_ci_high[term] = float(np.percentile(values, 97.5))
+                else:
+                    coef_ci_low[term] = None
+                    coef_ci_high[term] = None
+
             result['per_state'][state_name] = {
                 'inclusion_pct': incl_pct, 'coef_mean': coef_mean,
-                'coef_std': coef_std, 'n_samples': n_samp,
+                'coef_std': coef_std,
+                'coef_ci_low': coef_ci_low,
+                'coef_ci_high': coef_ci_high,
+                'sign_consistency': sign_consistency,
+                'stability_score': stability_score,
+                'n_samples': n_samp,
             }
         return result
