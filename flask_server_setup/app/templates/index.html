@@ -489,6 +489,7 @@
           <li><div class="dropdown">
               <button class="dropbtn">MODULES</button>
               <div class="dropdown-content">
+                <a href="SINDy" class="header-text">SINDy Module</a>
                 <a href="lab_bayesian_optimization" class="header-text">Lab Bayesian Optimization</a>
                 <a href="bayesian_optimization" class="header-text">Bayesian Optimization</a>
                 <a href="biodegradability_classification" class="header-text">Biodegradability Classification</a>
@@ -573,6 +574,11 @@
           <div class="slideshow-container">
 
             <div class="mySlides fade">
+              <a href="SINDy"><img src="{{url_for('static', filename='sindy/images/train_newlayout.png')}}" alt="SINDy Module" style="width:100%"></a>
+              <div class="caption">SINDy Module: Discover governing equations from time-series data.</div>
+            </div>
+
+            <div class="mySlides fade">
               <a href="bayesian_optimization"><img src="{{url_for('static', filename='bayesian_optimization-ui.png')}}" alt="Bayesian_Optimization" style="width:100%"></a>
               <div class="caption">Bayesian Optimization: Build and test your own classification model.</div>
             </div>
@@ -625,6 +631,8 @@
           <span class="dot" onclick="currentSlide(5)"></span>
           <span class="dot" onclick="currentSlide(6)"></span>
           <span class="dot" onclick="currentSlide(7)"></span>
+          <span class="dot" onclick="currentSlide(8)"></span>
+          <span class="dot" onclick="currentSlide(9)"></span>
         </div>
       </div>
 
@@ -645,6 +653,22 @@
             </p>
           </div>
       </div>
+      </a>
+    </div>
+
+    <div class="flexwrap">
+      <!--SINDY DIVISION-->
+      <a href="SINDy">
+        <div class="card">
+          <img src="{{url_for('static', filename='sindy/images/train_newlayout.png')}}" alt="SINDy Module">
+          <div class="card-container">
+            <h2 class="head2">SINDy Module</h2>
+            <p>
+              Discover sparse governing equations from one or more time-series trajectories.
+              Train, validate, test, predict, and assess equation stability with ensemble analysis.
+            </p>
+          </div>
+        </div>
       </a>
     </div>
 

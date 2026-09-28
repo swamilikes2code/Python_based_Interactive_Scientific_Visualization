@@ -1,0 +1,144 @@
+<div class="minimal-container">
+
+    <section class="welcome-hero-section">
+        <div class="hero-left-text">
+            <h2 class="minimal-title">About SINDy</h2>
+            <div class="text-block">
+                <p>Suppose we have a set of measurements \( x(t) \in \mathbb{R}^n \) from some physical system at different points in time \( t \). SINDy seeks to represent the time evolution of \( x(t) \) in terms of a nonlinear function \( f \):</p>
+                <div class="formula">\[ \frac{d}{dt}x(t) = f(x(t)) \]</div>
+                <p>The key idea behind SINDy is that \( f \) is often <b>sparse</b> in the space of an appropriate set of basis functions — meaning only a small number of terms are nonzero.</p>
+                <p>For this module, we use Python's <b>pySINDy</b> package to implement SINDy.</p>
+            </div>
+            <a href="https://pysindy.readthedocs.io/en/latest/summary.html" target="_blank" class="jump-btn">Read PySINDy Docs ↗</a>
+        </div>
+    </section>
+
+    <hr class="separator">
+
+    <section class="detail-section">
+        <h2 class="section-title">The Approximation Problem</h2>
+        <div class="text-block">
+            <p>Data are aggregated into matrices \( X \) and \( \dot{X} \), then a library matrix \( \Theta(X) \) is formed whose columns consist of candidate basis functions:</p>
+        </div>
+
+        <div class="formula">
+            \[
+            X = \begin{bmatrix} 
+            x_1(t_1) & \dots & x_n(t_1) \\
+            \vdots & \ddots & \vdots \\
+            x_1(t_m) & \dots & x_n(t_m) 
+            \end{bmatrix}, \quad
+            \dot{X} = \begin{bmatrix} 
+            \dot{x}_1(t_1) & \dots & \dot{x}_n(t_1) \\
+            \vdots & \ddots & \vdots \\
+            \dot{x}_1(t_m) & \dots & \dot{x}_n(t_m) 
+            \end{bmatrix}
+            \]
+        </div>
+
+        <div class="formula">
+            \[
+            \Theta(X) = \begin{bmatrix} 
+            | & | & & | \\
+            \theta_1(X) & \theta_2(X) & \dots & \theta_\ell(X) \\
+            | & | & & | 
+            \end{bmatrix}
+            \]
+        </div>
+    </section>
+
+    <hr class="separator">
+
+    <section class="detail-section">
+        <h2 class="section-title">The Core SINDy Problem</h2>
+        <div class="text-block">
+            <p>SINDy seeks a set of <b>sparse</b> coefficient vectors collected into a matrix \( \Xi \), solving:</p>
+        </div>
+
+        <div class="highlight-box">
+            \[ \dot{X} \approx \Theta(X)\Xi \]
+        </div>
+
+        <div class="text-block">
+            <p>Each column \( \xi_i \) of \( \Xi \) represents the coefficients for the \( i \)-th component of the model. SINDy uses <b>sparse regression</b> to ensure the resulting model is both accurate and <i>parsimonious</i> — using the simplest possible form.</p>
+            <p>For example, a sparse \( f(x) \) might look like:</p>
+        </div>
+
+        <div class="formula">
+            \[ \frac{d}{dt}x = \begin{bmatrix} 1 - x_1 + 3x_1x_2 \\ x_2^2 - 5x_1^3 \end{bmatrix} \]
+        </div>
+    </section>
+
+</div>
+
+<style>
+    .minimal-container {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: transparent;
+    }
+    .welcome-hero-section {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 40px;
+        margin-bottom: 50px;
+    }
+    .hero-left-text { flex: 1.2; }
+    .minimal-title {
+        font-size: 28px;
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+    }
+    .section-title {
+        font-size: 22px;
+        color: #2c3e50;
+        font-weight: 700;
+        border-left: 5px solid #3498db;
+        padding-left: 15px;
+        margin-bottom: 20px;
+    }
+    .text-block p {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #4f5f6f;
+        margin-bottom: 18px;
+    }
+    .jump-btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 22px;
+        background-color: #fff;
+        color: #000;
+        text-decoration: none;
+        border-radius: 25px;
+        border: 1.5px solid #000000;
+        font-weight: 400;
+        font-size: 14px;
+        transition: background 0.2s;
+    }
+    .jump-btn:hover { background-color: var(--primary); color: #fff; }
+    .separator { border: none; margin: 40px 0; }
+    .detail-section { margin-bottom: 40px; }
+    .formula {
+        padding: 20px 0;
+        text-align: center;
+        font-size: 1.1em;
+        overflow-x: auto;
+    }
+    .highlight-box {
+        background: #f1f8ff;
+        border: 2px solid #3498db;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+        font-size: 1.4em;
+    }
+    @media (max-width: 768px) {
+        .welcome-hero-section { flex-direction: column; }
+    }
+</style>

@@ -1,0 +1,365 @@
+<section class="assistant-page" data-sindy-assistant>
+    <div class="assistant-hero">
+        <div>
+            <!-- <span class="assistant-eyebrow">CURATED MODULE SUPPORT</span> -->
+            <h2>Ask the SINDy Assistant</h2>
+        </div>
+        <!-- <div class="assistant-privacy-pill"><span></span> Local knowledge base</div> -->
+    </div>
+
+    <div class="assistant-shell">
+        <aside class="assistant-topics" aria-label="Suggested questions">
+            <div class="assistant-search-wrap">
+                <label for="assistant-search">Search the guide</label>
+                <div class="assistant-search-row">
+                    <input id="assistant-search" data-assistant-search type="search"
+                        placeholder="Try “threshold”, “R²”, or “ensemble”…" autocomplete="off">
+                    <button type="button" data-search-submit aria-label="Search curated answers">Ask</button>
+                </div>
+                <p class="assistant-search-hint">Choose a question below or press Enter for the closest answer.</p>
+            </div>
+
+            <div class="assistant-question-groups">
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>01</span> Train &amp; validate</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="compare-models">How do I compare trained models?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="metrics-spaces">Why are Train and Test metrics different?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="threshold-zero">Why did the threshold remove every term?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="junk-terms">Why does a good model still contain junk terms?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="multi-trajectory">How should I use multiple training files?</button>
+                </div>
+
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>02</span> Test &amp; predict</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="high-r2-diverge">Why is R² high but simulation diverges?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="solve-failure">Why can solve_ivp fail on test data?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="prediction-horizon">Why does prediction drift over time?</button>
+                </div>
+
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>03</span> Ensemble &amp; confidence</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="inclusion">What does term inclusion percentage mean?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="ci-unavailable">Why is a coefficient CI unavailable?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="consensus">Original vs consensus equation?</button>
+                </div>
+
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>04</span> Research judgment</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="time-split">Why can Time-based split have lower R² but cleaner equations?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="time-dependent">How do I model an explicitly time-dependent system?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="trust-model">Should I trust a model when every metric looks good?</button>
+                </div>
+            </div>
+            <p class="assistant-empty-search" data-empty-search hidden></p>
+        </aside>
+
+        <div class="assistant-chat-panel">
+            <div class="assistant-chat-header">
+                <div class="assistant-identity">
+                    <span class="assistant-avatar" aria-hidden="true">ẋ</span>
+                    <div><strong>SINDy Assistant</strong><span>Research workflow guide</span></div>
+                </div>
+                <button type="button" class="assistant-clear" data-clear-chat hidden>Clear conversation</button>
+            </div>
+
+            <div class="assistant-chat-log" data-chat-log aria-live="polite" aria-label="Assistant conversation">
+                <div class="assistant-message assistant-message-bot assistant-welcome">
+                    <span class="assistant-avatar" aria-hidden="true">ẋ</span>
+                    <div class="assistant-bubble">
+                        <strong>Hi — I’m the SINDy Assistant.</strong>
+                        <p>Choose a question or search the curated knowledge base. I can explain this module’s workflow,
+                            metrics, predictions, and ensemble results.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assistant-chat-footer">
+                <span class="assistant-footer-dot"></span>
+                SINDy Module - STEM VISUALIZATION
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden knowledge base: JavaScript clones the selected answer into chat. -->
+    <div class="assistant-knowledge-base" hidden>
+        <article class="assistant-kb-entry" data-id="compare-models"
+            data-keywords="compare history leaderboard run model metrics residual active terms equation"
+            data-related="metrics-spaces,trust-model,consensus">
+            <h3 class="kb-question">How do I compare trained models?</h3>
+            <div class="kb-answer">
+                <p>Every training session is saved in the <b>History Leaderboard</b>. Start with validation RMSE and
+                    \(R^2\), but also compare equation sparsity, residual structure, and whether the terms make physical
+                    sense. Then select the same Run ID in <b>Test</b> and evaluate it on a genuinely new trajectory.</p>
+                <p>A strong candidate is usually simple, has similar train/validation performance, produces
+                    unstructured residuals, and remains accurate during forward simulation.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="metrics-spaces"
+            data-keywords="metric train validation test derivative state space rmse mae r2 difference"
+            data-related="high-r2-diverge,compare-models,trust-model">
+            <h3 class="kb-question">Why are Train and Test metrics different?</h3>
+            <div class="kb-answer">
+                <p>Train and validation metrics are computed in derivative space, \(dX/dt\), because that is what
+                    SINDy fits directly. Test metrics are computed in state space, \(x(t)\), after integrating the
+                    discovered equations.</p>
+                <p>The values have different units and should not be compared numerically. Small derivative errors can
+                    accumulate during integration, so always inspect both kinds of evidence.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="threshold-zero"
+            data-keywords="sparsity threshold zero eliminated coefficients terms empty equation"
+            data-related="junk-terms,compare-models,inclusion">
+            <h3 class="kb-question">Why did the threshold remove every term?</h3>
+            <div class="kb-answer">
+                <p>The sparsity threshold is larger than every fitted coefficient, so STLSQ pruned the full library and
+                    returned \(dX/dt=0\). Lower the threshold, preferably in small increments using the exact-threshold
+                    input, and retrain.</p>
+                <p>Do not automatically choose the smallest threshold: an overly small value can preserve many noisy
+                    terms. Look for the simplest equation that still validates and simulates well.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="junk-terms"
+            data-keywords="junk extra spurious terms random sampling leakage autocorrelation block split"
+            data-related="threshold-zero,time-split,trust-model">
+            <h3 class="kb-question">Why does a good model still contain junk terms?</h3>
+            <div class="kb-answer">
+                <p>Random Sampling can place nearly identical neighboring timesteps in training and validation. Because
+                    a trajectory is autocorrelated, this leakage can make validation look better than the discovered
+                    structure really is.</p>
+                <p>Try <b>Random Block</b>, inspect Ensemble inclusion, and compare the actual equations—not only the
+                    aggregate score. Spurious terms often have low inclusion or unstable coefficients.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="multi-trajectory"
+            data-keywords="multiple files trajectories initial conditions ic upload columns same system"
+            data-related="compare-models,solve-failure,inclusion">
+            <h3 class="kb-question">How should I use multiple training files?</h3>
+            <div class="kb-answer">
+                <p>Upload trajectories from the <b>same dynamical system</b> under different initial conditions. Every
+                    file must use identical state-column names and order, with time in the first column.</p>
+                <p>The module differentiates each trajectory separately before pooling the training pairs. This avoids
+                    a false derivative jump where one file ends and the next restarts at \(t=0\), while constraining one
+                    equation to explain a broader region of state space.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="high-r2-diverge"
+            data-keywords="high r2 simulation diverge derivative error integration prediction"
+            data-related="metrics-spaces,prediction-horizon,solve-failure">
+            <h3 class="kb-question">Why is R² high but simulation diverges?</h3>
+            <div class="kb-answer">
+                <p>Training \(R^2\) measures how well the model reproduces local derivatives, not the complete
+                    trajectory. Slight coefficient errors are repeatedly integrated and can accumulate into phase drift,
+                    amplitude error, or instability.</p>
+                <p>Use the Test tab to evaluate \(x(t)\) directly, inspect where divergence begins, and prefer equations
+                    that remain stable across unseen initial conditions.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="solve-failure"
+            data-keywords="solve ivp fail crash integration test initial condition extrapolation polynomial"
+            data-related="prediction-horizon,high-r2-diverge,multi-trajectory">
+            <h3 class="kb-question">Why can solve_ivp fail on test data?</h3>
+            <div class="kb-answer">
+                <p>SINDy only learns the region explored by its training trajectories. A test initial condition far
+                    outside that region forces the equation to extrapolate, and high-degree polynomial terms can grow
+                    extremely quickly.</p>
+                <p>Test with meaningfully different—but not wildly out-of-range—initial conditions. If integration still
+                    fails, try a simpler library, lower polynomial degree, or stronger sparsity.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="prediction-horizon"
+            data-keywords="prediction drift horizon time phase accumulated error unstable"
+            data-related="high-r2-diverge,solve-failure,metrics-spaces">
+            <h3 class="kb-question">Why does prediction drift over time?</h3>
+            <div class="kb-answer">
+                <p>Forward prediction repeatedly feeds the model’s output back into itself. Small errors in frequency,
+                    damping, or nonlinear coefficients therefore accumulate. Oscillators are especially sensitive: a
+                    small frequency error eventually becomes a large pointwise phase error.</p>
+                <p>Judge both short- and long-horizon behavior. A model can be scientifically useful over a finite
+                    horizon even when it is not an indefinite predictor.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="inclusion"
+            data-keywords="ensemble inclusion percentage bootstrap selected term frequency robustness"
+            data-related="ci-unavailable,consensus,junk-terms">
+            <h3 class="kb-question">What does term inclusion percentage mean?</h3>
+            <div class="kb-answer">
+                <p>Inclusion is the fraction of <b>successful bootstrap fits</b> in which a candidate term remains
+                    non-zero after thresholding. For example, 82% means the term survived in 82 of every 100 successful
+                    resampled fits.</p>
+                <p>High inclusion suggests structural robustness, but it is not proof of physical truth. Also inspect
+                    coefficient spread, sign consistency, validation performance, and domain knowledge.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="ci-unavailable"
+            data-keywords="confidence interval ci unavailable 50 majority bootstrap coefficient"
+            data-related="inclusion,consensus,trust-model">
+            <h3 class="kb-question">Why is a coefficient CI unavailable?</h3>
+            <div class="kb-answer">
+                <p>This module reports a 95% bootstrap coefficient interval only when a term appears in
+                    <b>strictly more than 50%</b> of successful fits. A term selected half the time has no structural
+                    majority, so an interval computed only from its non-zero values would look more trustworthy than it
+                    really is.</p>
+                <p>The CI is conditional on the term being present. Read it together with inclusion and stability.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="consensus"
+            data-keywords="consensus original equation threshold mean coefficient ensemble compare"
+            data-related="inclusion,ci-unavailable,compare-models">
+            <h3 class="kb-question">Original vs consensus equation?</h3>
+            <div class="kb-answer">
+                <p>The original equation comes from the selected training run. The consensus equation keeps only terms
+                    whose bootstrap inclusion exceeds the chosen consensus threshold and uses their bootstrap-mean
+                    coefficients.</p>
+                <p>Agreement between the two is evidence of robustness. Disagreement identifies terms that depend
+                    strongly on the sampled data; it does not automatically mean the original equation is wrong.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="time-split"
+            data-keywords="time based split damped decaying lower negative r2 clean equation tail signal"
+            data-related="junk-terms,metrics-spaces,trust-model">
+            <h3 class="kb-question">Why can Time-based split have lower R² but cleaner equations?</h3>
+            <div class="kb-answer">
+                <p>Damped systems concentrate useful nonlinear information in the early, high-amplitude region.
+                    Time-based splitting puts that region in training, which can reveal cleaner terms. Its validation
+                    tail may have very low signal variance, making \(R^2\) poor even when absolute errors are small.</p>
+                <p>A lower tail \(R^2\) does not automatically imply worse equations. Inspect absolute error, equation
+                    structure, residuals, and performance on a new initial condition.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="time-dependent"
+            data-keywords="time dependent forced sin t autonomous auxiliary state tau fourier"
+            data-related="multi-trajectory,trust-model,compare-models">
+            <h3 class="kb-question">How do I model an explicitly time-dependent system?</h3>
+            <div class="kb-answer">
+                <p>The current workflow assumes an autonomous system, \(dX/dt=f(X)\). For a forcing term such as
+                    \(\sin(t)\), add time as an auxiliary state \(\tau\) with \(d\tau/dt=1\). The augmented system can
+                    then represent \(\sin(\tau)\) through the Fourier or Combined library.</p>
+                <p>Include the auxiliary state as a normal CSV column and keep the same column order across every
+                    trajectory.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="trust-model"
+            data-keywords="trust reliable good metrics physical residual test ensemble evidence"
+            data-related="compare-models,inclusion,high-r2-diverge">
+            <h3 class="kb-question">Should I trust a model when every metric looks good?</h3>
+            <div class="kb-answer">
+                <p>No single score is sufficient. Look for agreement across several kinds of evidence:</p>
+                <ul>
+                    <li>Train and validation performance are reasonably close.</li>
+                    <li>Residuals have little visible time structure or unexplained frequency content.</li>
+                    <li>The equation is sparse and physically plausible.</li>
+                    <li>A new trajectory is reproduced through forward simulation.</li>
+                    <li>Important terms remain stable under the Ensemble bootstrap.</li>
+                </ul>
+                <p>Use the module to assemble evidence—not to replace scientific judgment.</p>
+            </div>
+        </article>
+    </div>
+</section>
+
+<style>
+    .assistant-page {
+        --assistant-ink: #183346;
+        --assistant-muted: #627385;
+        --assistant-cyan: #38b6d8;
+        --assistant-blue: #237caa;
+        --assistant-soft: #eef8fb;
+        max-width: 1280px;
+        margin: 0 auto;
+        color: var(--assistant-ink);
+    }
+
+    .assistant-hero {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        align-items: flex-end;
+        padding: 16px 4px 24px;
+    }
+
+    .assistant-eyebrow { display: block; color: var(--assistant-blue); font-size: 11px; font-weight: 800; letter-spacing: 1.8px; margin-bottom: 8px; }
+    .assistant-hero h2 { margin: 0 0 8px; font-size: clamp(27px, 3vw, 40px); letter-spacing: -1px; }
+    .assistant-hero p { max-width: 720px; margin: 0; color: var(--assistant-muted); line-height: 1.6; font-size: 15px; }
+    .assistant-privacy-pill { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 9px 13px; border: 1px solid #cce6ee; border-radius: 999px; background: #f7fdff; color: #356879; font-size: 12px; font-weight: 650; }
+    .assistant-privacy-pill span, .assistant-footer-dot { width: 8px; height: 8px; border-radius: 50%; background: #35af70; box-shadow: 0 0 0 4px rgba(53, 175, 112, .12); }
+
+    .assistant-shell { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(460px, 1.45fr); min-height: 690px; overflow: hidden; border: 1px solid #dce8ed; border-radius: 18px; background: #fff; box-shadow: 0 18px 45px rgba(24, 51, 70, .10); }
+    .assistant-topics { padding: 22px; overflow-y: auto; background: linear-gradient(180deg, #f7fbfd, #eef7fa); border-right: 1px solid #dce8ed; }
+    .assistant-search-wrap label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 750; }
+    .assistant-search-row { display: flex; gap: 7px; }
+    .assistant-search-row input { min-width: 0; flex: 1; padding: 11px 12px; border: 1px solid #cadbe2; border-radius: 9px; background: #fff; color: var(--assistant-ink); font: inherit; font-size: 13px; outline: none; }
+    .assistant-search-row input:focus { border-color: var(--assistant-cyan); box-shadow: 0 0 0 3px rgba(56, 182, 216, .13); }
+    .assistant-search-row button { padding: 0 14px; border: 0; border-radius: 9px; background: var(--assistant-ink); color: white; font-weight: 700; cursor: pointer; }
+    .assistant-search-hint { margin: 8px 0 18px; color: #788894; font-size: 11px; line-height: 1.45; }
+    .assistant-question-group { margin-top: 19px; }
+    .assistant-question-group h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; color: #486170; font-size: 12px; letter-spacing: .35px; text-transform: uppercase; }
+    .assistant-question-group h3 span { color: var(--assistant-cyan); font-size: 10px; }
+    .assistant-question-card { width: 100%; margin: 0 0 7px; padding: 10px 12px; border: 1px solid transparent; border-radius: 9px; background: rgba(255, 255, 255, .75); color: #294858; font: inherit; font-size: 12.5px; line-height: 1.4; text-align: left; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+    .assistant-question-card:hover, .assistant-question-card:focus-visible { transform: translateX(3px); border-color: #b9dfe9; background: #fff; outline: none; }
+    .assistant-question-card:disabled { cursor: wait; opacity: .55; }
+    .assistant-empty-search { padding: 13px; border-radius: 9px; background: #fff8e8; color: #85631e; font-size: 12px; line-height: 1.5; }
+
+    .assistant-chat-panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; background: linear-gradient(180deg, #fff, #fbfdfe); }
+    .assistant-chat-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e7eef1; }
+    .assistant-identity { display: flex; align-items: center; gap: 10px; }
+    .assistant-identity div { display: flex; flex-direction: column; gap: 2px; }
+    .assistant-identity strong { font-size: 14px; }
+    .assistant-identity span:not(.assistant-avatar) { color: #788894; font-size: 11px; }
+    .assistant-avatar { display: inline-grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg, #183346, #2c8fb2); color: #fff; box-shadow: 0 6px 16px rgba(35, 124, 170, .22); font: 700 18px Georgia, serif; }
+    .assistant-clear { padding: 7px 10px; border: 1px solid #d9e4e8; border-radius: 8px; background: #fff; color: #637684; font-size: 11px; cursor: pointer; }
+    .assistant-chat-log { min-height: 550px; max-height: 650px; overflow-y: auto; padding: 26px 22px; scroll-behavior: smooth; }
+    .assistant-message { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; animation: assistant-message-in .28s ease both; }
+    .assistant-message-user { justify-content: flex-end; }
+    .assistant-bubble { max-width: min(680px, 84%); padding: 13px 15px; border-radius: 4px 15px 15px 15px; background: var(--assistant-soft); color: #294553; font-size: 13.5px; line-height: 1.65; box-shadow: 0 5px 16px rgba(24, 51, 70, .06); }
+    .assistant-message-user .assistant-bubble { border-radius: 15px 4px 15px 15px; background: var(--assistant-ink); color: #fff; }
+    .assistant-bubble p { margin: 0 0 9px; }
+    .assistant-bubble p:last-child { margin-bottom: 0; }
+    .assistant-bubble ul { margin: 7px 0 10px; padding-left: 19px; }
+    .assistant-bubble b, .assistant-bubble strong { color: #183346; }
+    .assistant-message-user .assistant-bubble strong { color: #fff; }
+    .assistant-thinking .assistant-bubble { display: flex; align-items: center; gap: 5px; min-width: 66px; min-height: 42px; }
+    .assistant-avatar-thinking { animation: assistant-avatar-think 1s ease-in-out infinite; }
+    .thinking-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--assistant-blue); animation: assistant-dot 1.1s infinite ease-in-out; }
+    .thinking-dot:nth-child(2) { animation-delay: .14s; }
+    .thinking-dot:nth-child(3) { animation-delay: .28s; }
+    .assistant-related { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; padding-top: 11px; border-top: 1px solid #d7e7ec; }
+    .assistant-related > span { width: 100%; color: #71838f; font-size: 10px; font-weight: 750; letter-spacing: .5px; text-transform: uppercase; }
+    .assistant-related-chip { padding: 6px 9px; border: 1px solid #badde7; border-radius: 999px; background: #fff; color: #26657c; font-size: 10.5px; cursor: pointer; }
+    .assistant-related-chip:hover { background: #e4f5fa; }
+    .assistant-answer-note { margin-top: 10px; color: #8797a1; font-size: 9.5px; }
+    .assistant-chat-footer { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 18px; border-top: 1px solid #e7eef1; color: #81909a; font-size: 10.5px; letter-spacing: .1px; }
+    .assistant-chat-footer .assistant-footer-dot { width: 6px; height: 6px; box-shadow: none; }
+
+    @keyframes assistant-message-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes assistant-avatar-think { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 182, 216, .25); } 50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(56, 182, 216, 0); } }
+    @keyframes assistant-dot { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+    @media (max-width: 900px) {
+        .assistant-shell { grid-template-columns: 1fr; }
+        .assistant-topics { max-height: 420px; border-right: 0; border-bottom: 1px solid #dce8ed; }
+        .assistant-chat-log { min-height: 480px; }
+    }
+
+    @media (max-width: 620px) {
+        .assistant-hero { align-items: flex-start; flex-direction: column; }
+        .assistant-topics, .assistant-chat-log { padding: 17px; }
+        .assistant-bubble { max-width: 90%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .assistant-message, .assistant-avatar-thinking, .thinking-dot { animation: none !important; }
+    }
+</style>
