@@ -1,12 +1,13 @@
+import os
+import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from bokeh.io import curdoc, show
+from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models import (
     ColumnDataSource,
     CustomJS,
-    Dropdown,
     HoverTool,
     RadioButtonGroup,
     Select,
@@ -14,10 +15,11 @@ from bokeh.models import (
     Spacer,
     WheelZoomTool,
 )
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure
 
-# taskkill /F /IM python.exe
-# python -m bokeh serve --show Gas_Laws.py
+# Ensure working directory points to PyInstaller bundle if running as packaged EXE
+if hasattr(sys, "_MEIPASS"):
+    os.chdir(sys._MEIPASS)
 
 
 # Helper function to format numbers so 1.0 -> '1' while preserving 0.03 -> '0.03' and 2.5 -> '2.5'
@@ -27,7 +29,7 @@ def format_val(val):
     )
 
 
-# dropdown menu to select a substance
+# Dropdown menu to select a substance
 substance_choice = Select(
     title="Select a Substance",
     value="Ammonia",
@@ -42,7 +44,7 @@ substance_choice = Select(
     ],
 )
 
-# hover tool
+# Hover tool configuration
 hover = HoverTool(
     tooltips=[
         ("Volume (L/mol)", "@x{0.00}"),
@@ -51,7 +53,7 @@ hover = HoverTool(
     mode="vline",
 )
 
-# creates the graph that will be selected based off of the radio button
+# Main figure setup
 source = ColumnDataSource(data=dict(x=[], y=[]))
 p = figure(
     title="Gas Law Comparison",
@@ -63,11 +65,11 @@ p = figure(
     y_range=[0.05, 25],
     tools=[hover, "pan,wheel_zoom,box_zoom,reset,save"],
 )
-# Keep hover tool in toolbar but inactive by default
+
 p.toolbar.active_inspect = None
 p.toolbar.active_scroll = p.select_one(dict(type=WheelZoomTool))
 
-# Specific temperature graphs
+# Specific real gas temperature/volume/pressure scatter sources
 real_1_source = ColumnDataSource(data=dict(x=[], y=[]))
 real_2_source = ColumnDataSource(data=dict(x=[], y=[]))
 real_3_source = ColumnDataSource(data=dict(x=[], y=[]))
@@ -89,10 +91,10 @@ substance_ranges = {
         "vols": [0.03, 0.1, 0.5, 2, 5],
     },
     "Carbon Dioxide": {
-    "temps": [315, 345, 375, 405, 435],
-    "pres": [0.5, 10, 15, 20],  # Ensure these values match Carbon Dioxide_*P.csv files on disk
-    "vols": [0.1, 1, 10, 20, 30],
-   },
+        "temps": [],
+        "pres": [0.5, 10, 15, 20],
+        "vols": [0.1, 1, 10, 20, 30],
+    },
     "Methane": {
         "temps": [195, 210, 225, 250, 275],
         "pres": [0.5, 2.5, 5, 10, 15],
@@ -121,7 +123,7 @@ substance_ranges = {
 }
 dfs = {}
 
-# initializing the real gas lines
+# Initializing real gas scatter renderers
 real_renderers = []
 real_renderers.append(
     p.scatter(
@@ -220,7 +222,7 @@ p.line(
 
 p.legend.click_policy = "hide"
 
-# radio button group to select which graph to view
+# Radio button group to select graph view mode
 LABELS = [
     "Pressure vs. Volume Graph",
     "Pressure vs. Temperature Graph",
@@ -236,14 +238,13 @@ graph_options.js_on_change(
     ),
 )
 
-# sliders to adjust the volume, pressure, temperature, and number of moles
+# Sliders
 volume = Slider(
     start=0.03, end=5, value=0.03, step=0.005, title="Volume (L/mol)", format="0.000"
 )
 temp = Slider(start=410, end=575, value=410, step=5, title="Temperature (K)")
 pressure = Slider(start=1, end=35, value=1, step=0.1, title="Pressure (MPa)")
 
-# dictionary of the values to be used below
 gas_constants = {
     "Nitrogen": {"Tc": 126.2, "Pc": 3.39, "w": 0.037},
     "Methane": {"Tc": 190.7, "Pc": 4.64, "w": 0.011},
@@ -255,21 +256,25 @@ gas_constants = {
 }
 
 
-# update the sliders when adjusted
 def update_data(attr, old, new):
     ranges = substance_ranges[substance_choice.value]
     temps = ranges["temps"]
     pres = ranges["pres"]
     vols = ranges["vols"]
-    # universal gas constant
-    R = 0.008314  # J/mol*K
+    R = 0.008314  # Universal gas constant in J/mol*K
 
-    # Dynamic base directory path using pathlib
-    data_dir = Path("data") / substance_choice.value
+    # Dynamic data path resolution
+    if hasattr(sys, "_MEIPASS"):
+        base_dir = Path(sys._MEIPASS) / "data"
+    else:
+        base_dir = Path("data")
+
+    data_dir = base_dir / substance_choice.value
 
     vol_min, vol_max = min(vols), max(vols)
     pres_min, pres_max = min(pres), max(pres)
-    temp_min, temp_max = min(temps), max(temps)
+    temp_min = min(temps) if temps else 300
+    temp_max = max(temps) if temps else 500
 
     volume.start, volume.end = vol_min, vol_max
     pressure.start, pressure.end = pres_min, pres_max
@@ -282,14 +287,12 @@ def update_data(attr, old, new):
         pressure.value = pres_min
         update_data.last_substance = substance_choice.value
 
-    # Get the current slider values
     V = volume.value
     T = temp.value
     P = pressure.value
 
     selection = graph_options.active
 
-    # Map selection to the desired names
     if selection == 0:
         labels = {f"r{i+1}": f"Real Gas {temps[i]}K" for i in range(len(temps))}
         dot_size = 4
@@ -304,12 +307,12 @@ def update_data(attr, old, new):
         r.glyph.size = dot_size
 
     for item in p.legend.items:
-        # Get the name of the renderer associated with this legend item
         r_name = item.renderers[0].name
         if r_name in labels:
             item.label = {"value": labels[r_name]}
+        elif r_name in [f"r{i}" for i in range(1, 6)]:
+            item.label = {"value": "N/A"}
 
-    # virial equation constants
     gas = substance_choice.value
     tc = gas_constants[gas]["Tc"]
     pc = gas_constants[gas]["Pc"]
@@ -326,13 +329,17 @@ def update_data(attr, old, new):
         a_t = alpha * a_srk_const
         return (R * T_val) / (V_val - b_srk) - a_t / (V_val * (V_val + b_srk))
 
+    def clear_sources_from(start_idx):
+        for i in range(start_idx, 6):
+            real_sources[i].data = dict(x=[], y=[])
+
     if selection == 0:
         p.xaxis.axis_label = "Volume (L/mol)"
         p.yaxis.axis_label = "Pressure (MPa)"
         hover.tooltips = [("Volume (L/mol)", "@x"), ("Pressure (MPa)", "@y")]
         pressure.visible = False
         volume.visible = False
-        temp.visible = True
+        temp.visible = True if temps else False
 
         p.x_range.start = vol_min
         p.x_range.end = vol_max
@@ -344,16 +351,22 @@ def update_data(attr, old, new):
             p.x_range.end = 8
 
         x_coords = np.linspace(0.0001, vol_max, 500)
-        y_coords = (R * T) / x_coords  # pv = nrt
+        y_coords = (R * T) / x_coords
 
         count = 1
+        dfs.clear()
         for t_val in temps:
             csv_path = data_dir / f"{substance_choice.value}_{format_val(t_val)}T.csv"
-            dfs[t_val] = pd.read_csv(csv_path).sort_values(by="Volume (l/mol)")
-            real_sources[count].data = dict(
-                x=dfs[t_val]["Volume (l/mol)"], y=dfs[t_val]["Pressure (MPa)"]
-            )
-            count += 1
+            try:
+                df_loaded = pd.read_csv(csv_path).sort_values(by="Volume (l/mol)")
+                dfs[t_val] = df_loaded
+                real_sources[count].data = dict(
+                    x=df_loaded["Volume (l/mol)"], y=df_loaded["Pressure (MPa)"]
+                )
+                count += 1
+            except Exception:
+                continue
+        clear_sources_from(count)
 
         y_virial = (R * T) / (x_coords - b) - (a / x_coords**2)
         y_srk = get_srk_p(T, x_coords)
@@ -367,22 +380,31 @@ def update_data(attr, old, new):
         volume.visible = True
 
         x_coords = np.linspace(0.0001, 1000, 5000)
-        y_coords = (R / V) * x_coords  # pv = nrt
+        y_coords = (R / V) * x_coords
 
         count = 1
+        dfs.clear()
+        valid_dfs = []
         for v_val in vols:
             csv_path = data_dir / f"{substance_choice.value}_{format_val(v_val)}V.csv"
-            dfs[v_val] = pd.read_csv(csv_path).sort_values(by="Temperature (K)")
-            real_sources[count].data = dict(
-                x=dfs[v_val]["Temperature (K)"], y=dfs[v_val]["Pressure (MPa)"]
-            )
-            count += 1
+            try:
+                df_loaded = pd.read_csv(csv_path).sort_values(by="Temperature (K)")
+                dfs[v_val] = df_loaded
+                valid_dfs.append(df_loaded)
+                real_sources[count].data = dict(
+                    x=df_loaded["Temperature (K)"], y=df_loaded["Pressure (MPa)"]
+                )
+                count += 1
+            except Exception:
+                continue
+        clear_sources_from(count)
 
-        all_data = pd.concat([dfs[v_val] for v_val in vols])
-        p.x_range.start = all_data["Temperature (K)"].min() / 1.05
-        p.x_range.end = all_data["Temperature (K)"].max() * 1.05
-        p.y_range.start = all_data["Pressure (MPa)"].min() / 1.2
-        p.y_range.end = all_data["Pressure (MPa)"].max() * 2
+        if valid_dfs:
+            all_data = pd.concat(valid_dfs)
+            p.x_range.start = all_data["Temperature (K)"].min() / 1.05
+            p.x_range.end = all_data["Temperature (K)"].max() * 1.05
+            p.y_range.start = all_data["Pressure (MPa)"].min() / 1.2
+            p.y_range.end = all_data["Pressure (MPa)"].max() * 2
 
         y_virial = (R * x_coords) / (V - b) - (a / V**2)
         y_srk = get_srk_p(x_coords, V)
@@ -396,22 +418,31 @@ def update_data(attr, old, new):
         pressure.visible = True
 
         x_coords = np.linspace(0.0001, 1000, 5000)
-        y_coords = (R / P) * x_coords  # pv = nrt
+        y_coords = (R / P) * x_coords
 
         count = 1
+        dfs.clear()
+        valid_dfs = []
         for p_val in pres:
             csv_path = data_dir / f"{substance_choice.value}_{format_val(p_val)}P.csv"
-            dfs[p_val] = pd.read_csv(csv_path).sort_values(by="Temperature (K)")
-            real_sources[count].data = dict(
-                x=dfs[p_val]["Temperature (K)"], y=dfs[p_val]["Volume (l/mol)"]
-            )
-            count += 1
+            try:
+                df_loaded = pd.read_csv(csv_path).sort_values(by="Temperature (K)")
+                dfs[p_val] = df_loaded
+                valid_dfs.append(df_loaded)
+                real_sources[count].data = dict(
+                    x=df_loaded["Temperature (K)"], y=df_loaded["Volume (l/mol)"]
+                )
+                count += 1
+            except Exception:
+                continue
+        clear_sources_from(count)
 
-        all_data = pd.concat([dfs[p_val] for p_val in pres])
-        p.x_range.start = all_data["Temperature (K)"].min() / 1.05
-        p.x_range.end = all_data["Temperature (K)"].max() * 1.05
-        p.y_range.start = all_data["Volume (l/mol)"].min() / 1.2
-        p.y_range.end = all_data["Volume (l/mol)"].max() * 2
+        if valid_dfs:
+            all_data = pd.concat(valid_dfs)
+            p.x_range.start = all_data["Temperature (K)"].min() / 1.05
+            p.x_range.end = all_data["Temperature (K)"].max() * 1.05
+            p.y_range.start = all_data["Volume (l/mol)"].min() / 1.2
+            p.y_range.end = all_data["Volume (l/mol)"].max() * 2
 
         y_virial = ((R * x_coords) / P) + (b - (a / (R * x_coords)))
         y_srk = ((R * x_coords) / P) + b_srk
@@ -421,13 +452,11 @@ def update_data(attr, old, new):
     srk_source.data = dict(x=x_coords, y=y_srk)
 
 
-# updates the radio button and the graph values
 graph_options.on_change("active", update_data)
 
 for w in [substance_choice, volume, temp, pressure]:
     w.on_change("value", update_data)
 
-# output/spacing of all of the widgets
 space = Spacer(height=140)
 
 left_layout = column(substance_choice, graph_options, p)
@@ -437,3 +466,14 @@ curdoc().add_root(final_layout)
 
 update_data.last_substance = substance_choice.value
 update_data(None, None, None)
+
+if __name__ == "__main__":
+    from bokeh.server.server import Server
+
+    # Create and start the standalone Bokeh server on port 5006
+    server = Server({"/": curdoc()}, port=5006, allow_websocket_origin=["*"])
+    server.start()
+    server.io_loop.add_callback(server.show, "/")
+    print("Opening Bokeh app at http://localhost:5006/")
+    server.io_loop.start()
+    
