@@ -1,0 +1,510 @@
+<!--
+    ============================================================================
+    Training.html
+    ============================================================================
+    Host page for Training section. 
+
+    LAYOUT: each explained concept is a row — text on the left, a matching
+    screenshot on the right (same pattern as the hero/proof sections in
+    storyline.html). Rows stack to full width on narrow screens.
+
+    VISUAL SYSTEM: re-aligned to storyline.html's tokens (var(--primary),
+    var(--accent), light card borders, sd-browser-frame-style image frames)
+    instead of the previous standalone palette, so all fragments look like
+    one product.
+
+    Image placeholders added for: data file example, the 3 split strategies,
+    the library/degree/threshold control, and the 3 residual diagnostics.
+    Drop your screenshots into static/images/ using the filenames referenced
+    in each <img src> below (they're just placeholders until then).
+    ============================================================================
+-->
+<div class="minimal-container">
+
+    <header class="page-header">
+        <h2 class="minimal-title">Training Your SINDy Model</h2>
+    </header>
+
+    <!-- =====================================================================
+         TRAIN TAB
+         Mirrors tabs/train_tab.py top-to-bottom: data source -> AI suggester
+         -> split strategy -> model config -> leaderboard -> residual
+         diagnostics.
+    ====================================================================== -->
+    <section class="subtab-panel" data-panel="train">
+
+        <!-- ---- Phase 1: Data source ---- -->
+        <div class="doc-row">
+            <div class="doc-row-text">
+                <span class="eyebrow">Data Source</span>
+                <h3 class="doc-title">Bringing In Your Data</h3>
+                <p>Start from the Select System dropdown. Pick one of the pre-set systems to test SINDy's ability or
+                    upload your own data file. The file must have time in the first column and one state variable per
+                    subsequent column — \( t, x_1, x_2, \dots, x_n \).</p>
+                <p>When the file is uploaded, the module also runs the System Suggestion in the background: it analyzes
+                    the linearity, periodicity, and noise level of your data and pre-fills the hyperparameter controls
+                    below with a reasonable starting point. These are only suggestions, as they can be wrong.</p>
+            </div>
+            <div class="doc-row-media">
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/data.png') }}"
+                        alt="Example of a correctly formatted state-space CSV" class="doc-frame-img">
+                </div>
+                <p class="doc-img-caption">A correctly formatted state-space CSV — time in column 1, states after it.
+                </p>
+            </div>
+        </div>
+
+        <hr class="doc-divider">
+
+        <!-- ---- Phase 2: Model configuration ---- -->
+        <div class="doc-section-intro">
+            <span class="eyebrow">Model Configuration</span>
+            <h3 class="doc-title">Choosing How SINDy Learns</h3>
+        </div>
+
+        <h4 class="doc-subtitle">Train/Validation set up & Split Strategy</h4>
+        <p class="doc-intro-p">Derivatives \( \dot{X} \) are always computed once on the <i>full</i> trajectory first —
+            the split only decides how the resulting \( (X, \dot{X}) \) pairs are divided afterward. Three strategies
+            are available, and they test different things:</p>
+
+        <!-- 3 type of split in column format: text above, description image below-->
+        <!-- RANDOM SAMPLING -->
+        <div class="doc-grid">
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Random Sampling</p>
+                    <p>
+                        Every point is shuffled independently into train or validation.
+                    </p>
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/random_sampling.png') }}"
+                        alt="Random Sampling split example" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Random Sampling example.
+                </p>
+            </div>
+
+            <!-- TIME-BASED SPLIT -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Time-based</p>
+                    <p>
+                        Training uses the earlier portion of the trajectory, validation the later portion.
+                    </p>
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/time_based.png') }}" alt="Time-based split example"
+                        class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Time-based example.
+                </p>
+            </div>
+
+            <!-- RANDOM BLOCK SPLIT -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Random Block</p>
+                    <p>
+                        Splits by contiguous random blocks instead of single points.
+                    </p>
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/random_block.png') }}"
+                        alt="Random Block split example" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Random Block example.
+                </p>
+            </div>
+        </div>
+
+
+        <h4 class="doc-subtitle">Library, degree, and sparsity threshold</h4>
+        <div class="doc-row">
+            <div class="doc-row-text">
+                <p>The <b>Library</b> dropdown sets the candidate function space: <i>Polynomial</i>, <i>Fourier</i>, or
+                    <i>Combined</i> (both at once).
+                </p>
+                <p><b>Degree / Harmonics</b> controls how high the polynomial power (or
+                    Fourier harmonic) goes.</p>
+                <p>The <b>Sparsity Threshold \( (\lambda) \)</b> prunes small coefficients: higher \( \lambda \) means a
+                    simpler, sparser equation.</p>
+            </div>
+            <div class="doc-row-media">
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/hyperparameter.png') }}"
+                        alt="Hyperparameter controls" class="doc-frame-img">
+                </div>
+                <p class="doc-img-caption">SINDy's hyperparameters.</p>
+            </div>
+        </div>
+
+        <hr class="doc-divider">
+
+        <!-- ---- Phase 3: Leaderboard ---- -->
+        <div class="doc-section-intro">
+            <span class="eyebrow">Training Results</span>
+            <h3 class="doc-title">Reading the Leaderboard</h3>
+            <p>Every time you press <b>Train</b>, a new row is appended below, so you can compare configurations side by
+                side. Clicking a row to view the run's chart.</p>
+        </div>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Column</th>
+                    <th>Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data File / Split Type</td>
+                    <td>Run context: Dataset and Split strategy.</td>
+                </tr>
+                <tr>
+                    <td>Library / Degree / Threshold</td>
+                    <td>Configuration used.</td>
+                </tr>
+                <tr>
+                    <td>Train/Validation Metrics</td>
+                    <td>\( R^2 \), RMSE, and MAE on the training vs. validation split — computed on \( \dot{X} \).</td>
+                </tr>
+                <tr>
+                    <td>RMSE Diff</td>
+                    <td>\( | \text{RMSE}_{\text{train}} - \text{RMSE}_{\text{val}} | \). A large gap is an early warning
+                        sign of overfitting.</td>
+                </tr>
+                <tr>
+                    <td>Identified Equations</td>
+                    <td>The actual sparse ODE system SINDy recovered.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="doc-frame">
+            <img src="{{ url_for('static', filename='images/metric_table.png') }}" alt="History Leaderboard"
+                class="doc-frame-img">
+        </div>
+        <p class="doc-img-caption">A run's statistics are record after training.</p>
+
+        <hr class="doc-divider">
+
+        <!-- ---- Phase 4: Residual diagnostics ---- -->
+        <div class="doc-section-intro">
+            <span class="eyebrow">Model Diagnosis</span>
+            <h3 class="doc-title">Residual Diagnostics</h3>
+            <p>A <b>residual</b> is simply the leftover error the model didn't explain: for each state variable, \(
+                \text{residual} = \dot{x}_{\text{true}} - \dot{x}_{\text{predicted}} \), computed across the full
+                dataset.</p>
+                <!-- <p>If SINDy has found the right terms, whatever is left over should look
+                like structureless noise. Otherwise, the leftover error still carries a pattern — and that pattern
+                tells you what's missing.</p> -->
+        </div>
+
+        <!-- 3 type of residual stats: format text above, image below, separate into 3 columns, use all the width we had-->
+        <!-- RESIDUAL VS. TIME-->
+        <div class="doc-grid">
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Residual vs. time</p>
+                    <p>
+                        A well-fit model's residuals should scatter randomly around zero with no visible trend. </p>
+                    <!-- <p> A repeating wave or drift in the residual means the library is missing a term that captures that behavior.
+                    </p> -->
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/residual_time.png') }}"
+                        alt="Residual vs .time example" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Residual vs time example.
+                </p>
+            </div>
+
+            <!-- RESIDUAL FFT -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Residual FFT (frequency content)</p>
+                    <p>
+                    <p>Same residual, viewed as a frequency spectrum. </p>
+                    <!-- <p>A flat spectrum with no dominant peak confirms the
+                        error really is noise. A sharp peak means there's periodic structure left over.</p>
+                    </p> -->
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/residual_fft.png') }}" alt="Residual FFT example"
+                        class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Residual FFT example.
+                </p>
+            </div>
+
+            <!-- TRUE VS. PREDICTED DERIVATIVE -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">True vs. predicted derivative</p>
+                    <p>
+                        Each point plots \( \dot{x}_{\text{predicted}} \) against \( \dot{x}_{\text{true}} \) for one
+                        sample. </p>
+                    <!-- <p> A perfect model places every point on the \( y = x \) diagonal. Curvature or fanning away from
+                        that
+                        line signals bias or error.
+                    </p> -->
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='images/derivative_compare.png') }}"
+                        alt="True vs. predicted derivative" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    True vs. predicted derivative example.
+                </p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<style>
+    /* ==========================================================================
+       Design tokens — aligned to storyline.html's system (var(--primary),
+       var(--accent), light #e9ecef borders, white cards) so this fragment
+       reads as the same product regardless of which tab loads first.
+       ========================================================================== */
+    .minimal-container {
+        --ink: var(--primary);
+        --ink-soft: #4f5f6f;
+        --muted: #8a94a0;
+        /* --line: #641a5e; */
+        --tip-ink: var(--accent);
+        --warn-ink: #b45309;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+    }
+
+    .page-header {
+        margin-bottom: 28px;
+        background-color: #b2e3f4;
+    }
+
+    .minimal-title {
+        font-size: 28px;
+        color: var(--ink);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    /* ---------- Section intros (no image, full width) ---------- */
+    .doc-section-intro {
+        margin-bottom: 18px;
+    }
+
+    .doc-divider {
+        border: none;
+        border-top: 1px solid var(--line);
+        margin: 22px 0;
+    }
+
+    .eyebrow {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 6px;
+    }
+
+    .doc-title {
+        font-size: 22px;
+        color: var(--ink);
+        font-weight: 700;
+        margin: 0 0 14px 0;
+    }
+
+    .doc-subtitle {
+        font-size: 16px;
+        color: var(--ink);
+        font-weight: 700;
+        margin: 34px 0 14px 0;
+    }
+
+    p {
+        font-size: 15.5px;
+        line-height: 1.75;
+        color: var(--ink-soft);
+        margin: 0 0 14px 0;
+    }
+
+    .doc-intro-p {
+        max-width: 760px;
+    }
+
+    p b {
+        color: var(--ink);
+    }
+
+
+    /* ==========================================================================
+       TEXT-LEFT / IMAGE-RIGHT ROWS — same ratio and framing as the
+       storyline.html hero/proof sections (sd-hero, sd-proof).
+       ========================================================================== */
+    .doc-row {
+        display: flex;
+        align-items: stretch;
+        gap: 48px;
+        margin-bottom: 8px;
+    }
+
+    .doc-row-text {
+        flex: 1.15;
+    }
+
+    .doc-row-media {
+        flex: 0.85;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .doc-item-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ink);
+        margin: 0 0 6px 0;
+    }
+
+    .doc-frame {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        background: #fff;
+    }
+
+    .doc-frame-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .doc-img-caption {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin: 10px 0 0 0;
+        text-align: center;
+        font-style: italic;
+    }
+
+    .doc-row-media .doc-frame {
+        flex: 1;
+        position: relative;
+        min-height: 0;
+        /* Firefox flexbox fix so it can actually shrink/grow */
+    }
+
+    .doc-row-media .doc-frame-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* ===== 3-column layout ===== */
+
+    .doc-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        margin: 24px 0;
+    }
+
+    .doc-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .doc-card-text {
+        flex: 1;
+        margin-bottom: 16px;
+    }
+
+    /* ---------- Definition list (stats line) ---------- */
+    .def-list {
+        margin: 0 0 20px 0;
+        max-width: 760px;
+    }
+
+    .def-list dt {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-top: 12px;
+    }
+
+    .def-list dd {
+        font-size: 15px;
+        line-height: 1.7;
+        color: var(--ink-soft);
+        margin: 2px 0 0 0;
+    }
+
+    /* ---------- Table (leaderboard columns) ---------- */
+    .doc-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0 24px 0;
+    }
+
+    .doc-table th,
+    .doc-table td {
+        text-align: left;
+        font-size: 14px;
+        padding: 10px 12px 10px 0;
+        /* border-bottom: 1px solid var(--line); */
+        color: var(--ink-soft);
+        vertical-align: top;
+    }
+
+    .doc-table th {
+        color: var(--ink);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 11.5px;
+        letter-spacing: 0.04em;
+    }
+
+    .doc-table td:first-child {
+        color: var(--ink);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+
+    @media (max-width: 860px) {
+        .doc-row {
+            flex-direction: column;
+        }
+
+        .doc-row-media {
+            width: 100%;
+        }
+    }
+</style>

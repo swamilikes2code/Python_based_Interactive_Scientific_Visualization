@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SINDy Module</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/polyfill/3.25.1/polyfill.min.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="{{ url_for('static', filename='sindy/js/sindy-assistant.js') }}" defer></script>
+  <style>
+    :root {
+      --site-blue: #31a6ff;
+      --sindy-ink: #183346;
+      --sindy-sky: #b2e3f4;
+      --sindy-muted: #667985;
+      --primary: #2c3e50;
+      --accent: #183346;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      background: #fff;
+      color: #263845;
+      font-family: Arial, sans-serif;
+    }
+
+    .site-header {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 26px 0 10px;
+      background: #262626;
+    }
+
+    .site-logo {
+      display: block;
+      width: min(300px, 45vw);
+      padding: 10px;
+    }
+
+    .site-nav,
+    .site-nav-list {
+      display: flex;
+      align-items: stretch;
+      min-height: 80px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .site-nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin: 0 22px;
+    }
+
+    .site-nav a,
+    .modules-button {
+      position: relative;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      font: inherit;
+      font-size: 16px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .site-nav a::before,
+    .modules-button::before {
+      content: "";
+      position: absolute;
+      top: -31px;
+      left: 0;
+      width: 0;
+      height: 5px;
+      background: var(--site-blue);
+      transition: width .2s ease;
+    }
+
+    .site-nav a:hover,
+    .modules-button:hover { color: var(--site-blue); }
+    .site-nav a:hover::before,
+    .modules-dropdown:hover .modules-button::before { width: 100%; }
+
+    .modules-menu {
+      position: absolute;
+      z-index: 1000;
+      top: 80px;
+      left: 50%;
+      display: none;
+      width: 270px;
+      transform: translateX(-50%);
+      background: #4d4d4d;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, .25);
+    }
+
+    .modules-dropdown:hover .modules-menu,
+    .modules-dropdown:focus-within .modules-menu { display: block; }
+
+    .modules-menu a {
+      display: block;
+      padding: 11px 16px;
+      color: #fff;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .modules-menu a::before { display: none; }
+    .modules-menu a:hover { background: #5d5d5d; }
+    .modules-menu a[aria-current="page"] { color: #7dc8ff; }
+
+    .sindy-title {
+      margin: 0;
+      padding: 24px 20px 18px;
+      color: #111;
+      background: #fff;
+      font-size: clamp(26px, 3vw, 34px);
+      text-align: center;
+    }
+
+    .sindy-tabs {
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      border: 1px solid #ccc;
+      background: #f1f1f1;
+    }
+
+    .sindy-tab {
+      flex: 0 0 auto;
+      padding: 14px 22px;
+      border: 0;
+      background: transparent;
+      color: #273b48;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    .sindy-tab:hover { background: #ddd; }
+    .sindy-tab.active {
+      background: #ccc;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .sindy-info-panel {
+      min-height: 110px;
+      padding: 26px clamp(12px, 3vw, 42px) 34px;
+      background: var(--sindy-sky);
+    }
+
+    #sindy-page-content {
+      width: min(1400px, 100%);
+      margin: 0 auto;
+    }
+
+    .fragment-loading,
+    .fragment-error {
+      padding: 36px;
+      color: var(--sindy-muted);
+      text-align: center;
+    }
+
+    .fragment-error { color: #a33a2e; }
+
+    .sindy-workbench {
+      width: 100%;
+      padding: 16px 16px 50px;
+      background: #fff;
+    }
+
+    .bokeh-app-wrapper {
+      width: 100%;
+      min-height: 600px;
+      overflow-x: auto;
+    }
+
+    @media (max-width: 760px) {
+      .site-header {
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 10px 0;
+      }
+
+      .site-nav,
+      .site-nav-list { min-height: 58px; }
+      .site-nav-item { margin: 0 12px; }
+      .site-nav a::before,
+      .modules-button::before { top: -19px; }
+      .modules-menu { top: 58px; right: -80px; left: auto; transform: none; }
+      .sindy-tabs { justify-content: flex-start; }
+      .sindy-tab { padding: 12px 16px; font-size: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <a href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='Logo2.JPG') }}" alt="STEM Visualization" class="site-logo">
+    </a>
+
+    <nav class="site-nav" aria-label="Site navigation">
+      <ul class="site-nav-list">
+        <li class="site-nav-item"><a href="{{ url_for('index') }}">HOME</a></li>
+        <li class="site-nav-item modules-dropdown">
+          <button type="button" class="modules-button" aria-haspopup="true">MODULES</button>
+          <div class="modules-menu">
+            <a href="{{ url_for('SINDy') }}" aria-current="page">SINDy Module</a>
+            <a href="{{ url_for('lab_bayesian_optimization') }}">Lab Bayesian Optimization</a>
+            <a href="{{ url_for('bayesian_optimization') }}">Bayesian Optimization</a>
+            <a href="{{ url_for('biodegradability_classification') }}">Biodegradability Classification</a>
+            <a href="{{ url_for('catalysis_data_interactive_visualization') }}">Catalysis Data Science</a>
+            <a href="{{ url_for('DLT') }}">Digital Lab Twin</a>
+            <a href="{{ url_for('DAC') }}">Direct Air Captures</a>
+            <a href="{{ url_for('sliders_reaction_kinetics') }}">Reaction Kinetics</a>
+            <a href="{{ url_for('SIR') }}">SEIR Infectious Diseases</a>
+            <a href="{{ url_for('ZECC') }}">Zero Energy Cooling Chamber</a>
+          </div>
+        </li>
+        <li class="site-nav-item"><a href="{{ url_for('about') }}">ABOUT</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1 class="sindy-title">SINDy Module</h1>
+
+    <div class="sindy-tabs" role="tablist" aria-label="SINDy documentation">
+      <button class="sindy-tab active" type="button" role="tab" aria-selected="true" data-page="storyline">About</button>
+      <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="about">SINDy</button>
+      <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="training">Train</button>
+      <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="testing">Test</button>
+      <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="predicting">Predict</button>
+      <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="questions">Questions</button>
+    </div>
+
+    <section class="sindy-info-panel" aria-live="polite">
+      <div id="sindy-page-content">
+        <div class="fragment-loading">Loading SINDy guide…</div>
+      </div>
+    </section>
+
+    <section class="sindy-workbench" id="sindy-workbench">
+      <div class="bokeh-app-wrapper">
+        {{ bokeh_script_SINDy | safe }}
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const sindyFragmentUrls = {{ sindy_fragment_urls | tojson }};
+    const sindyContent = document.getElementById("sindy-page-content");
+    const sindyTabs = Array.from(document.querySelectorAll(".sindy-tab"));
+
+    async function loadSindyPage(page, tabButton, updateHash = true) {
+      const fragmentUrl = sindyFragmentUrls[page];
+      if (!fragmentUrl) return;
+
+      sindyTabs.forEach((tab) => {
+        const selected = tab === tabButton;
+        tab.classList.toggle("active", selected);
+        tab.setAttribute("aria-selected", selected ? "true" : "false");
+      });
+      sindyContent.innerHTML = '<div class="fragment-loading">Loading SINDy guide…</div>';
+
+      try {
+        const response = await fetch(fragmentUrl, {
+          headers: { "X-Requested-With": "SINDyFragment" }
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        sindyContent.innerHTML = await response.text();
+
+        if (page === "questions" && window.initSindyAssistant) {
+          window.initSindyAssistant();
+        }
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([sindyContent]).catch(() => {});
+        }
+        if (updateHash) history.replaceState(null, "", `#${page}`);
+      } catch (error) {
+        sindyContent.innerHTML = '<div class="fragment-error">The guide section could not be loaded. The interactive workbench below is still available.</div>';
+        console.error("SINDy fragment load failed:", error);
+      }
+    }
+
+    sindyTabs.forEach((tab) => {
+      tab.addEventListener("click", () => loadSindyPage(tab.dataset.page, tab));
+    });
+
+    document.querySelector(".sindy-tabs").addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      const current = sindyTabs.findIndex((tab) => tab.classList.contains("active"));
+      const direction = event.key === "ArrowRight" ? 1 : -1;
+      const next = (current + direction + sindyTabs.length) % sindyTabs.length;
+      sindyTabs[next].focus();
+      sindyTabs[next].click();
+    });
+
+    const initialPage = sindyFragmentUrls[location.hash.slice(1)]
+      ? location.hash.slice(1)
+      : "storyline";
+    const initialTab = sindyTabs.find((tab) => tab.dataset.page === initialPage)
+      || sindyTabs[0];
+    loadSindyPage(initialPage, initialTab, false);
+  </script>
+</body>
+</html>

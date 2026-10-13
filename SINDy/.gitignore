@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# macOS junk
+.DS_Store
+
+# virtual environment
+venv/
+.venv/
+env/
+# history training logs
+logs/
+*.xlsx
