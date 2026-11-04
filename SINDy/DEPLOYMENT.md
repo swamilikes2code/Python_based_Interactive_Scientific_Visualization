@@ -14,12 +14,16 @@ hostname.
 From the repository root:
 
 ```bash
-python3 -m venv .venv-sindy
-. .venv-sindy/bin/activate
+python3.13 -m venv lehigh_stem_modules
+. lehigh_stem_modules/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -r SINDy/requirements.txt
+python -m pip check
+python -m unittest discover -s SINDy/tests -v
 ```
 
-The virtual environment is server-local and must not be committed.
+The pinned requirements match the Python 3.13 environment used by the Lehigh
+server. The virtual environment is server-local and must not be committed.
 
 ## 2. Start Bokeh
 
