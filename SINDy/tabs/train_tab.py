@@ -9,14 +9,11 @@
 #      Custom upload accepts MULTIPLE CSV files — trajectories of the SAME
 #      system recorded from DIFFERENT initial conditions — and trains ONE
 #      robust model pooled across all of them.
-#   2. Run an automatic data-analysis heuristic ("AI Suggester") that
-#      recommends starting values for polynomial degree and sparsity
-#      threshold based on linearity / periodicity / noise level.
-#   3. Fit a SINDy model on a random train/validation split.
-#   4. Show the fitted trajectory (one simulation line per initial
+#   2. Fit a SINDy model on a user-configured train/validation split.
+#   3. Show the fitted trajectory (one simulation line per initial
 #      condition), a leaderboard of all past runs, and residual diagnostics
 #      (time-domain, frequency-domain, and true-vs-predicted scatter).
-#   5. Allow viewing/deleting any past run from the leaderboard.
+#   4. Allow viewing/deleting any past run from the leaderboard.
 # =============================================================================
 
 from bokeh.models import (ColumnDataSource, Slider, Div, Button,
@@ -30,7 +27,6 @@ import copy
 import base64
 import io
 import warnings
-from engine.suggester import analyze_data_linearity
 from engine.check_datafile import check_upload_size, validate_dataframe, validate_trajectory_set
 from bokeh.io import curdoc
 
@@ -67,24 +63,6 @@ def train_tab_layout(engine, trained_model_storage):
         The complete tab layout, ready to be added to a Bokeh document.
     """
 
-    def apply_suggestion(df, prefix_msg=""):
-        """
-        Run analyze_data_linearity() and push the result into the UI:
-        updates poly_s / thr_s slider values and displays the reasoning
-        text in upload_status. (library is intentionally NOT auto-applied.)
-        """
-        lib, deg, thr, reason = analyze_data_linearity(df)
-        if reason.strip().lower().startswith("error"):
-            suggestion_div.text = ""
-            upload_status.text = f"<span style='color:#e74c3c;'>⚠ {reason}</span>"
-            return
-
-        poly_s.value = deg
-        thr_s.value = thr
-        if prefix_msg:
-            upload_status.text = prefix_msg
-        suggestion_div.text = f"Suggestion: {reason}"
-
     # =========================================================================
     # SECTION 1 — DATA SOURCE SELECTION
     # Dropdown for pre-set systems + custom CSV upload widget.
@@ -116,8 +94,6 @@ def train_tab_layout(engine, trained_model_storage):
 
     upload_status = Div(
         text="", styles={'color': "#247008", 'font-size': '13px'})
-    suggestion_div = Div(
-        text="", styles={'color': "#2c3e50", 'font-size': '13px'})
 
     upload_list_div = Div(
         text="", styles={'color': '#2c3e50', 'font-size': '12px',
@@ -143,11 +119,7 @@ def train_tab_layout(engine, trained_model_storage):
         return pd.read_csv(io.BytesIO(base64.b64decode(f['b64']))).astype(np.float64)
 
     def on_file_select_change(attr, old, new):
-        """
-        Toggle the upload widget visibility and, for pre-set systems,
-        immediately load the CSV and run the AI Suggester so the sliders
-        are pre-filled before the user even presses Train.
-        """
+        """Toggle upload controls and validate the selected pre-set file."""
         show_upload = (new == "custom_upload")
         file_input.visible = show_upload
         upload_list_div.visible = show_upload
@@ -162,10 +134,9 @@ def train_tab_layout(engine, trained_model_storage):
                 df = pd.read_csv(path).astype(np.float64)
                 val_err = validate_dataframe(df)
                 if val_err:
-                    suggestion_div.text = ""
                     upload_status.text = f"<span style='color:#e74c3c;'>⚠ {val_err}</span>"
                     return
-                apply_suggestion(df, f"Selected system file: {new}")
+                upload_status.text = f"Selected system file: {new}"
             else:
                 upload_status.text = f"⚠ Pre-set file not found at {path}"
 
@@ -223,18 +194,19 @@ def train_tab_layout(engine, trained_model_storage):
                 return
             val_err = validate_dataframe(df_k)
             if val_err:
-                suggestion_div.text = ""
                 upload_status.text = f"<span style='color:#e74c3c;'>⚠ {f['name']}: {val_err}</span>"
                 return
             dfs.append(df_k)
 
         set_err = validate_trajectory_set(dfs)
         if set_err:
-            suggestion_div.text = ""
             upload_status.text = f"<span style='color:#e74c3c;'>⚠ {set_err}</span>"
             return
 
-        # apply_suggestion(pd.concat(dfs, ignore_index=True), f"Uploaded {len(dfs)} file(s) — suggestion uses pooled data.")
+        upload_status.text = (
+            f"Uploaded {len(dfs)} valid trajectory file(s). "
+            "Configure the model below, then press Train."
+        )
 
     file_input.on_change('value', upload_to_local_drive)
 
@@ -974,8 +946,8 @@ def train_tab_layout(engine, trained_model_storage):
 
     btn_delete.on_click(on_delete_click)
 
-    # ── Run the Suggester once on page load for the default pre-set
-    #     system, so the sliders aren't left at arbitrary defaults. ──────
+    # Validate the default pre-set once so missing or malformed packaged data
+    # surfaces immediately without changing the user's model configuration.
     initial_path = os.path.join('data', file_select.value)
     if os.path.exists(initial_path):
         try:
@@ -984,8 +956,7 @@ def train_tab_layout(engine, trained_model_storage):
             if val_err:
                 upload_status.text = f"<span style='color:#e74c3c;'>⚠ {val_err}</span>"
             else:
-                apply_suggestion(
-                    df_init, f"Loaded default pre-set system: {file_select.value}")
+                upload_status.text = f"Loaded default pre-set system: {file_select.value}"
         except Exception:
             pass  # non-fatal — user can still configure manually
 

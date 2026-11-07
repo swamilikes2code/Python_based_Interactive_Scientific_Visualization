@@ -2,10 +2,12 @@ import unittest
 
 import numpy as np
 import pandas as pd
-from bokeh.models import Button, CheckboxButtonGroup, DataTable, Plot
+from bokeh.models import (Button, CheckboxButtonGroup, DataTable, Div, Plot,
+                          Select, Slider)
 
 from engine.sindy_model import SINDyEngine
-from tabs.ensemble_tab import _ensemble_label
+from tabs.ensemble_tab import (ensemble_tab_layout, _ensemble_label,
+                               _format_consensus_equations)
 from tabs.predict_tab import _default_initial_condition
 from tabs.test_tab import (test_tab_layout, _model_variable_count,
                            _validate_test_columns)
@@ -26,6 +28,74 @@ class UIContractTests(unittest.TestCase):
             _ensemble_label(1, 2, 100),
             "Run #1 - Ensemble #2 - n = 100",
         )
+
+    def test_consensus_equation_uses_strict_majority_and_bootstrap_mean(self):
+        result = {
+            "feature_names": ["1", "x", "x^2"],
+            "per_state": {
+                "x": {
+                    "inclusion_pct": {"1": 0.5, "x": 0.51, "x^2": 0.9},
+                    "coef_mean": {"1": 9.0, "x": -1.25, "x^2": 0.5},
+                }
+            },
+        }
+        self.assertEqual(
+            _format_consensus_equations(result, ["x"], threshold=0.5),
+            ["d(x)/dt = -1.25 x + 0.5 x^2"],
+        )
+
+    def test_ensemble_ui_shows_ci_stability_and_equation_comparison(self):
+        result = {
+            "feature_names": ["x"],
+            "per_state": {
+                "x": {
+                    "inclusion_pct": {"x": 0.75},
+                    "coef_mean": {"x": -1.25},
+                    "coef_std": {"x": 0.1},
+                    "coef_ci_low": {"x": -1.4},
+                    "coef_ci_high": {"x": -1.1},
+                    "stability_score": {"x": 0.75},
+                    "n_samples": {"x": 75},
+                }
+            },
+            "n_bootstrap": 100,
+            "n_successful_bootstrap": 100,
+            "n_failed_bootstrap": 0,
+        }
+        storage = {
+            1: {
+                "feature_names": ["x"],
+                "equations": ["d(x)/dt = -1.000 x"],
+                "ensemble_runs": [result],
+            }
+        }
+
+        layout, update_model_list = ensemble_tab_layout(
+            SINDyEngine(), storage)
+        update_model_list()
+
+        ensemble_table = next(
+            table for table in layout.select({"type": DataTable})
+            if any(column.title == "95% Bootstrap CI"
+                   for column in table.columns)
+        )
+        self.assertEqual(ensemble_table.source.data["ci_95"],
+                         ["[-1.4000, -1.1000]"])
+        self.assertEqual(ensemble_table.source.data["stability"], ["75.0%"])
+
+        comparison = next(
+            div for div in layout.select({"type": Div})
+            if "ORIGINAL SINDY EQUATION" in div.text.upper()
+        )
+        self.assertIn("CONSENSUS EQUATION", comparison.text.upper())
+        self.assertIn("-1.25 x", comparison.text)
+
+        threshold = next(
+            slider for slider in layout.select({"type": Slider})
+            if slider.title == "Consensus Inclusion Threshold (%)"
+        )
+        threshold.value = 80
+        self.assertIn("d(x)/dt = 0", comparison.text)
 
     def test_trajectory_button_label_keeps_ic_and_distinctive_suffix(self):
         self.assertEqual(

@@ -1,7 +1,7 @@
 # 🔬 Lehigh University Impact Fellowship - [STEM VISUALIZATION](https://srrweb.cc.lehigh.edu/app/) - SINDy Module
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/Bokeh-3.x-FF7F0E?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/Flask-3.x-000000?style=for-the-badge&logo=flask&logoColor=white"/>
   <img src="https://img.shields.io/badge/pySINDy-latest-2ECC71?style=for-the-badge"/>
@@ -43,14 +43,6 @@ Whether you are studying coupled oscillators, chaotic attractors, or your own cu
 - Full training history leaderboard — compare runs side by side
 - Click any past run to instantly restore its plot and diagnostics
 - Delete runs you no longer need
-
-### 🤖 Data Scouting Framework
-Before you train, the module analyzes your data and automatically recommends:
-- The right **library type** (via FFT-based periodicity detection)
-- The optimal **polynomial degree** (via R² comparison at degrees 1, 2, 3)
-- A data-driven **sparsity threshold** (via high-frequency noise floor estimation)
-
-No language model. No API calls. Pure signal processing — fast and fully offline.
 
 ### 🔬 Residual Diagnostics
 After training, three diagnostic plots update automatically:
@@ -111,8 +103,7 @@ SINDy/
 ├── data/                    # Built-in training and test trajectories
 ├── engine/
 │   ├── sindy_model.py       # Fit, simulate, diagnostics, ensemble bootstrap
-│   ├── check_datafile.py    # Shared CSV and trajectory-set validation
-│   └── suggester.py         # Offline hyperparameter heuristics
+│   └── check_datafile.py    # Shared CSV and trajectory-set validation
 ├── tabs/
 │   ├── train_tab.py         # Train & Validate UI and callbacks
 │   ├── test_tab.py          # Held-out trajectory evaluation
@@ -132,12 +123,17 @@ SINDy/
 git clone https://github.com/len329lehighedu/STEMVISUALIZATION_SINDy.git
 cd STEMVISUALIZATION_SINDy
 
-# 2. Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# 2. Create the same Python 3.13 environment used by the Lehigh server
+python3.13 -m venv lehigh_stem_modules
+source lehigh_stem_modules/bin/activate
 
-# 3. Install dependencies
-pip install -r requirements.txt
+# 3. Install the server-compatible pinned dependencies
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+
+# 4. Verify the environment
+python -m pip check
+python -m unittest discover -s tests -v
 ```
 
 ## ▶️ Running the App
@@ -276,7 +272,7 @@ dv/dt = μ(1 − x²)v − x        (μ = 1)
 
 Three principles guided every design decision:
 
-**Transparency over automation** — The AI Suggester recommends, it does not decide. The Residual Diagnostics shows numbers, it does not classify. The researcher is always the one drawing conclusions.
+**Transparency over automation** — Model configuration remains under the researcher's control. Residual diagnostics show numbers and plots without claiming an automatic scientific interpretation.
 
 **Per-run reproducibility** — Every training run is stored with its full diagnostics, plot data, and model instance. Clicking a row in the history table restores everything exactly as it was.
 

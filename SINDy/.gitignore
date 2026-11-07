@@ -9,6 +9,7 @@ __pycache__/
 venv/
 .venv/
 env/
+lehigh_stem_modules/
 # history training logs
 logs/
 *.xlsx

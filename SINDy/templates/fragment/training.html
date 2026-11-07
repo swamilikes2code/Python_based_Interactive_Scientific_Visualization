@@ -27,9 +27,8 @@
 
     <!-- =====================================================================
          TRAIN TAB
-         Mirrors tabs/train_tab.py top-to-bottom: data source -> AI suggester
-         -> split strategy -> model config -> leaderboard -> residual
-         diagnostics.
+         Mirrors tabs/train_tab.py top-to-bottom: data source -> split strategy
+         -> model config -> leaderboard -> residual diagnostics.
     ====================================================================== -->
     <section class="subtab-panel" data-panel="train">
 
@@ -41,9 +40,9 @@
                 <p>Start from the Select System dropdown. Pick one of the pre-set systems to test SINDy's ability or
                     upload your own data file. The file must have time in the first column and one state variable per
                     subsequent column — \( t, x_1, x_2, \dots, x_n \).</p>
-                <p>When the file is uploaded, the module also runs the System Suggestion in the background: it analyzes
-                    the linearity, periodicity, and noise level of your data and pre-fills the hyperparameter controls
-                    below with a reasonable starting point. These are only suggestions, as they can be wrong.</p>
+                <p>You can upload multiple files when they describe the same state variables under different initial
+                    conditions. Every trajectory is validated and differentiated independently, so a time reset between
+                    files does not create an artificial derivative jump.</p>
             </div>
             <div class="doc-row-media">
                 <div class="doc-frame">
@@ -139,6 +138,8 @@
                     Fourier harmonic) goes.</p>
                 <p>The <b>Sparsity Threshold \( (\lambda) \)</b> prunes small coefficients: higher \( \lambda \) means a
                     simpler, sparser equation.</p>
+                <p>These controls are intentionally selected by the researcher. Compare multiple runs and verify each
+                    configuration using validation metrics, residuals, simulation behavior, and domain knowledge.</p>
             </div>
             <div class="doc-row-media">
                 <div class="doc-frame">

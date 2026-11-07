@@ -108,7 +108,9 @@ def SINDy():
         "SINDy.html",
         bokeh_script_SINDy=bokeh_script_SINDy,
         sindy_fragment_urls={
-            page: url_for("sindy_fragment", page=page)
+            # Keep these paths relative so the same rendered page works both
+            # directly at /SINDy and behind the production /app prefix.
+            page: url_for("sindy_fragment", page=page).lstrip("/")
             for page in SINDY_FRAGMENT_TEMPLATES
         },
     )
