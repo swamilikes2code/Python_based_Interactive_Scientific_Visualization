@@ -84,7 +84,7 @@ def test_tab_layout(engine, trained_model_storage):
     -------
     tuple(bokeh.layouts.column, callable)
         (layout, update_model_list) — update_model_list() is called by
-        main.py whenever the user switches to this tab, so the model
+        SINDy.py whenever the user switches to this tab, so the model
         dropdown always reflects the latest training history.
     """
 
@@ -557,7 +557,7 @@ def test_tab_layout(engine, trained_model_storage):
     btn_test.on_click(on_test_click)
 
     # =========================================================================
-    # SECTION 7 — EXTERNAL HOOK (called by main.py on tab switch)
+    # SECTION 7 — EXTERNAL HOOK (called by SINDy.py on tab switch)
     # Keeps the model dropdown and pre-set file dropdowns fresh whenever
     # the user navigates to this tab, since new runs/files may have been
     # added since the tab was last visited.
@@ -567,7 +567,7 @@ def test_tab_layout(engine, trained_model_storage):
         """
         Refresh model_select options from trained_model_storage, and
         refresh the pre-set CSV dropdowns from the data/ directory.
-        Called externally (from main.py) on every switch to this tab —
+        Called externally (from SINDy.py) on every switch to this tab —
         NOT wired to a Bokeh event, since there is no "tab became active"
         signal for a plain layout composition.
         """

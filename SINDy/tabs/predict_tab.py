@@ -243,7 +243,7 @@ def predict_tab_layout(engine, trained_model_storage):
     btn_clear.on_click(on_clear_click)
 
     # -------------------------------------------------------------------------
-    # 5. Update model list (called on tab switch from main.py)
+    # 5. Update model list (called on tab switch from SINDy.py)
     # -------------------------------------------------------------------------
     def update_model_list():
         options = [f"Run #{id}" for id in sorted(trained_model_storage.keys())]

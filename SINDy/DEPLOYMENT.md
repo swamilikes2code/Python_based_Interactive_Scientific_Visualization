@@ -1,13 +1,12 @@
 # Deploying the SINDy module in the parent website
 
-The integration uses two routes on the same public host:
+SINDy follows the same filename-based Bokeh setup as the existing STEM
+visualization modules:
 
-- `/SINDy` is the Flask page containing the shared site navigation and guide.
-- `/sindy-bokeh/main` is the Bokeh application embedded by that page.
+- `/app/SINDy` is the Flask page with the shared site navigation and guide.
+- `/SINDy` is the Bokeh application served from `SINDy.py`.
 
-Keeping these routes separate is required. Pointing both Flask and Bokeh at
-`/SINDy` works on different local ports but conflicts behind one production
-hostname.
+No SINDy-specific URL prefix or reverse-proxy rule is required.
 
 ## 1. Install the module environment
 
@@ -22,64 +21,29 @@ python -m pip check
 python -m unittest discover -s SINDy/tests -v
 ```
 
-The pinned requirements match the Python 3.13 environment used by the Lehigh
-server. The virtual environment is server-local and must not be committed.
+The virtual environment is server-local and must not be committed.
 
 ## 2. Start Bokeh
 
-```bash
-./SINDy/serve_parent_site.sh
-```
-
-The launcher defaults are:
-
-```text
-SINDY_PORT=5006
-SINDY_ADDRESS=127.0.0.1
-SINDY_URL_PREFIX=/sindy-bokeh
-SINDY_WEBSOCKET_ORIGIN=srrweb.cc.lehigh.edu
-```
-
-Each value can be overridden through the environment. Run this command under
-the same process manager used for the other Bokeh modules so it restarts after
-server reboots or process failures.
-
-## 3. Configure the reverse proxy
-
-Proxy the complete public prefix below to `127.0.0.1:5006`, preserving the
-prefix and supporting WebSocket upgrades:
-
-```text
-/sindy-bokeh/  ->  http://127.0.0.1:5006/sindy-bokeh/
-```
-
-The WebSocket endpoint is below `/sindy-bokeh/main/ws`. Forward the original host,
-protocol, and client IP headers. Leave `/SINDy` routed to the Flask service.
-
-If a different public prefix is required, set matching values in both places:
+Run the app from its module directory, just like the other Bokeh modules:
 
 ```bash
-SINDY_URL_PREFIX=/chosen-prefix ./SINDy/serve_parent_site.sh
-export SINDY_BOKEH_URL=https://srrweb.cc.lehigh.edu/chosen-prefix/main
+cd SINDy
+bokeh serve SINDy.py \
+  --allow-websocket-origin=srrweb.cc.lehigh.edu
 ```
 
-Restart the Flask service after changing `SINDY_BOKEH_URL`.
+The system administrator may add the server's assigned port or process-manager
+options to this command. The app name remains `/SINDy` because it is derived
+from the entrypoint filename.
 
-## 4. Verify before merging or releasing
+## 3. Verify
 
 ```bash
-curl --fail --silent --output /dev/null http://127.0.0.1:5006/sindy-bokeh/main
+curl --fail --silent --output /dev/null https://srrweb.cc.lehigh.edu/app/SINDy
 curl --fail --silent --output /dev/null https://srrweb.cc.lehigh.edu/SINDy
-curl --fail --silent --output /dev/null https://srrweb.cc.lehigh.edu/sindy-bokeh/main
+curl --fail --silent --output /dev/null https://srrweb.cc.lehigh.edu/SINDy/autoload.js
 ```
 
-Finally, open `https://srrweb.cc.lehigh.edu/SINDy` and confirm that the Train,
-Test, Predict, and Ensemble tabs appear and remain interactive. A rendered
-page without working controls usually means the WebSocket proxy or allowed
-origin is misconfigured.
-
-## Rollback
-
-Stop the SINDy Bokeh process, remove only the `/sindy-bokeh/` proxy rule introduced
-for this module, and roll the parent Flask deployment back to its previous
-commit. Other modules do not need to be changed.
+Finally, open `https://srrweb.cc.lehigh.edu/app/SINDy` and confirm that the
+Train, Test, Predict, and Ensemble tabs render and remain interactive.
