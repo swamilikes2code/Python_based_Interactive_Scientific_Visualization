@@ -5,12 +5,9 @@ import os
 app = Flask(__name__)
 
 # ── Deployment note ──────────────────────────────────────────────────────
-# Locally, BOKEH_URL defaults to localhost:5006 (unchanged from before).
-# On Render, this MUST be set as an environment variable pointing to the
-# public URL of the deployed Bokeh service (e.g.
-# https://sindy-bokeh.onrender.com/main), since the browser connects to
-# this URL DIRECTLY via WebSocket — it does not go through Flask.
-BOKEH_URL = os.environ.get("BOKEH_URL", "http://localhost:5006/main")
+# The filename-based Bokeh app is available at /SINDy, matching the setup used
+# by the other STEM visualization modules.
+BOKEH_URL = os.environ.get("BOKEH_URL", "http://localhost:5006/SINDy")
 
 
 @app.route("/")

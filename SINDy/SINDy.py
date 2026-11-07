@@ -1,4 +1,4 @@
-# main.py
+# SINDy.py
 
 from tabs.ensemble_tab import ensemble_tab_layout
 from tabs.test_tab import test_tab_layout
@@ -10,7 +10,8 @@ from bokeh.plotting import curdoc
 import os
 import sys
 
-# Path for Python to find the data files
+# Match the existing STEM modules: the public Bokeh route is derived from this
+# filename, so ``bokeh serve SINDy.py`` exposes the app at /SINDy.
 sys.path.append(os.path.dirname(__file__))
 
 
@@ -28,7 +29,7 @@ def build_app():
     layout_ensemble, update_ensemble = ensemble_tab_layout(
         engine, trained_model_storage)
 
-    # --- 3.TabPanel ---
+    # --- 3. TabPanel ---
     tab1 = TabPanel(child=layout_train,   title="🏋 Train & Validate")
     tab2 = TabPanel(child=layout_test,    title="🧪 Test")
     tab3 = TabPanel(child=layout_predict, title="🔮 Predict")
@@ -38,9 +39,9 @@ def build_app():
 
     # --- 4. Change Tab Logic ---
     def on_tab_change(attr, old, new):
-        if new == 1:          # change to tab Test
+        if new == 1:
             update_test()
-        elif new == 2:        # change to tab Predict
+        elif new == 2:
             update_predict()
         elif new == 3:
             update_ensemble()
@@ -50,7 +51,6 @@ def build_app():
     return project_tabs
 
 
-# --- 5. run web ---
-# create a separate copy when a user access the web
+# Create a separate document for every Bokeh session.
 curdoc().add_root(build_app())
 curdoc().title = "SINDy Module - Lab Dashboard"

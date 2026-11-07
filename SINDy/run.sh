@@ -14,7 +14,7 @@
 URL="http://127.0.0.1:8080"
 
 echo "🚀 Starting Bokeh server..."
-bokeh serve --allow-websocket-origin=127.0.0.1:8080 main.py &
+bokeh serve --allow-websocket-origin=127.0.0.1:8080 SINDy.py &
 BOKEH_PID=$!
 
 echo "🚀 Starting Flask app..."

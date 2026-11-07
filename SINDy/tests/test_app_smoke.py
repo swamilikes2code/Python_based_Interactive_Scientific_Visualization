@@ -2,7 +2,7 @@ import unittest
 
 from bokeh.models import Plot, Tabs
 
-from main import build_app
+from SINDy import build_app
 
 
 class AppSmokeTests(unittest.TestCase):

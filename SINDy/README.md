@@ -96,7 +96,7 @@ The diagnostics show you numbers and plots. *You* interpret them. No automated l
 
 ```
 SINDy/
-├── main.py                  # Bokeh application and per-session state
+├── SINDy.py                 # Bokeh entrypoint and per-session state
 ├── flask_app.py             # Flask shell that embeds the Bokeh server
 ├── run.sh                   # Local launcher for both services
 ├── render.yaml              # Two-service Render deployment blueprint
@@ -155,7 +155,7 @@ To run the services manually, use two terminals:
 
 ```bash
 # Terminal 1 — Bokeh backend
-bokeh serve --allow-websocket-origin=127.0.0.1:8080 main.py
+bokeh serve --allow-websocket-origin=127.0.0.1:8080 SINDy.py
 
 # Terminal 2 — Flask frontend
 python3 flask_app.py
