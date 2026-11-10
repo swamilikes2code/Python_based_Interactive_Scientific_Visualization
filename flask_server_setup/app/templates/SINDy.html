@@ -163,14 +163,8 @@
       margin: 0 auto;
     }
 
-    .fragment-loading,
-    .fragment-error {
-      padding: 36px;
-      color: var(--sindy-muted);
-      text-align: center;
-    }
-
-    .fragment-error { color: #a33a2e; }
+    .sindy-tabcontent { display: none; }
+    .sindy-tabcontent.active { display: block; }
 
     .sindy-workbench {
       width: 100%;
@@ -246,7 +240,1630 @@
 
     <section class="sindy-info-panel" aria-live="polite">
       <div id="sindy-page-content">
-        <div class="fragment-loading">Loading SINDy guide…</div>
+        <div id="storyline" class="sindy-tabcontent active">
+<div class="sd-container">
+
+    <section class="sd-hero">
+        <div class="sd-hero-text">
+            <h1 class="sd-title">Discover the equations hidden in your data</h1>
+            <div class="sd-text-block">
+                <p>Desiring a more expedited approach to formulating mathematical laws from experimental observations?
+                </p>
+                <p><b>The problem:</b> you have raw measurements, but no known differential equation describing how the
+                    system evolves.</p>
+                <p><b>Sparse Identification of Nonlinear Dynamics (SINDy)</b> searches a library of candidate functions
+                    and keeps only the sparsest, cleanest combination that explains your data — turning a CSV file into
+                    a governing ODE.</p>
+            </div>
+        </div>
+
+        <div class="sd-hero-diagram">
+            <div class="sd-pipeline-grid">
+                <div class="sd-node">
+                    <span class="sd-step-num">1</span>
+                    <div class="sd-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2C7 2 3 3.79 3 6s4 4 9 4 9-1.79 9-4-4-4-9-4z"></path>
+                            <path d="M3 6v6c0 2.21 4 4 9 4s9-1.79 9-4V6"></path>
+                            <path d="M3 12v6c0 2.21 4 4 9 4s9-1.79 9-4v-6"></path>
+                        </svg>
+                    </div>
+                    <p class="sd-node-title">Raw data</p>
+                    <p class="sd-node-sub">x(t), state matrix</p>
+                </div>
+                <div class="sd-node">
+                    <span class="sd-step-num">2</span>
+                    <div class="sd-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                    </div>
+                    <p class="sd-node-title">Feature library</p>
+                    <p class="sd-node-sub">Θ(X): Polynomial, Fourier</p>
+                </div>
+                <div class="sd-node">
+                    <span class="sd-step-num">3</span>
+                    <div class="sd-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                    </div>
+                    <p class="sd-node-title">Sparse regression</p>
+                    <p class="sd-node-sub">STLSQ, threshold λ</p>
+                </div>
+                <div class="sd-node">
+                    <span class="sd-step-num">4</span>
+                    <div class="sd-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <p class="sd-node-title">Governing ODE</p>
+                    <p class="sd-node-sub">dx/dt = Δ</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="sd-why">
+        <div class="sd-why-card">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <p class="sd-why-title">Interpretable</p>
+            <p class="sd-why-sub">Output is a real equation, not a black-box weight matrix — every term has a physical
+                meaning.</p>
+        </div>
+        <div class="sd-why-card">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>
+            <p class="sd-why-title">Data-driven</p>
+            <p class="sd-why-sub">No prior knowledge of the underlying physics required — only measurements of the
+                system's states.</p>
+        </div>
+        <div class="sd-why-card">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <p class="sd-why-title">Sparse</p>
+            <p class="sd-why-sub">Thresholded regression prunes weak terms, favoring the simplest equation that still
+                fits.</p>
+        </div>
+    </section>
+
+    <section class="sd-proof">
+        <div class="sd-proof-text">
+            <p class="sd-eyebrow">A real result</p>
+            <h2 class="sd-proof-title">From a coupled spring-mass CSV to this, automatically</h2>
+            <p class="sd-proof-body">Below is what the module actually recovered from noisy trajectory data — no
+                equation was given to it beforehand.</p>
+            <div class="sd-eq-block">
+                <p class="sd-eq-line"><span class="sd-eq-lhs">d(x&#8321;)/dt</span> = 0.996&nbsp;v&#8321;</p>
+                <p class="sd-eq-line"><span class="sd-eq-lhs">d(v&#8321;)/dt</span> = -1.497&nbsp;x&#8321; +
+                    0.500&nbsp;x&#8322;</p>
+                <p class="sd-eq-line"><span class="sd-eq-lhs">d(x&#8322;)/dt</span> = 1.011&nbsp;v&#8322;</p>
+                <p class="sd-eq-line"><span class="sd-eq-lhs">d(v&#8322;)/dt</span> = 0.470&nbsp;x&#8321; -
+                    0.503&nbsp;x&#8322;</p>
+            </div>
+            <p class="sd-proof-caption">Validation R&sup2; between 0.90 and 0.97 across all four states — with only the
+                correct terms surviving thresholding.</p>
+        </div>
+        <div class="sd-proof-media">
+            <div class="sd-browser-frame">
+                <img src="{{ url_for('static', filename='sindy/images/train_newlayout.png') }}"
+                    alt="Train tab showing SINDy fit against noisy trajectory data" class="sd-browser-img"
+                    loading="lazy" width="1400" height="1061">
+            </div>
+            <p class="sd-img-caption">Output of the Train &amp; Validate tab on the coupled spring-mass system.</p>
+        </div>
+    </section>
+
+    <div class="sd-bottom-cta">
+        <a href="#start-learning" class="sd-jump-btn">Explore the module
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+            </svg>
+        </a>
+    </div>
+
+    <hr class="sd-separator" id="start-learning">
+
+</div>
+
+<style>
+    .sd-container {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 48px 20px 20px;
+        background: transparent;
+    }
+
+    .sd-eyebrow {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 0 0 10px;
+    }
+
+    /* --- Hero --- */
+    .sd-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 48px;
+        margin-bottom: 56px;
+    }
+
+    .sd-hero-text {
+        flex: 1.15;
+    }
+
+    .sd-hero-diagram {
+        flex: 0.85;
+        background: transparent;
+        padding: 24px 22px;
+        border-radius: 12px;
+        /* border: 1px solid #e9ecef; */
+    }
+
+    .sd-title {
+        font-size: 28px;
+        line-height: 1.25;
+        color: var(--primary);
+        font-weight: 700;
+        margin: 0 0 22px;
+        letter-spacing: -0.5px;
+    }
+
+    .sd-text-block p {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #4f5f6f;
+        margin-bottom: 16px;
+    }
+
+    .sd-text-block b {
+        color: var(--primary);
+    }
+
+    .sd-bottom-cta {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0 30px;
+    }
+
+    .sd-jump-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 22px;
+        background-color: #ffffff;
+        color: #000000;
+        border: 1.5px solid #000000;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 400;
+        font-size: 14px;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .sd-jump-btn:hover {
+        background-color: var(--primary);
+        color: #ffffff;
+        /* border: 1.5px solid #fff; */
+    }
+
+    .sd-jump-btn svg {
+        transform: rotate(90deg);
+    }
+
+    /* --- Pipeline diagram --- */
+
+    .sd-pipeline-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .sd-node {
+        position: relative;
+        width: 100%;
+        padding: 18px 12px 16px;
+        border-radius: 10px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e2e6ea;
+    }
+
+    .sd-step-num {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sd-icon {
+        color: var(--accent);
+        display: flex;
+        justify-content: center;
+        margin-bottom: 6px;
+    }
+
+    .sd-node-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--primary);
+        margin: 0 0 2px;
+    }
+
+    .sd-node-sub {
+        font-size: 12px;
+        color: #8a94a0;
+        margin: 0;
+    }
+
+    /* --- Why SINDy --- */
+    .sd-why {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 60px;
+    }
+
+    .sd-why-card {
+        padding: 22px 20px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        background: #ffffff;
+    }
+
+    .sd-why-card svg {
+        color: var(--accent);
+        margin-bottom: 10px;
+    }
+
+    .sd-why-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0 0 6px;
+    }
+
+    .sd-why-sub {
+        font-size: 14px;
+        line-height: 1.6;
+        color: #6b7684;
+        margin: 0;
+    }
+
+    /* --- Proof section --- */
+    .sd-proof {
+        display: flex;
+        gap: 48px;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .sd-proof-text {
+        flex: 1;
+    }
+
+    .sd-proof-media {
+        flex: 1.1;
+    }
+
+    .sd-proof-title {
+        font-size: 22px;
+        color: var(--primary);
+        font-weight: 700;
+        margin: 0 0 14px;
+        line-height: 1.35;
+    }
+
+    .sd-proof-body {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #4f5f6f;
+        margin: 0 0 18px;
+    }
+
+    .sd-eq-block {
+        background: var(--primary);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+    }
+
+    .sd-eq-line {
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 14px;
+        color: #ffffff;
+        margin: 0 0 8px;
+        line-height: 1.5;
+    }
+
+    .sd-eq-line:last-child {
+        margin-bottom: 0;
+    }
+
+    .sd-eq-lhs {
+        color: #d8e4ec;
+        margin-right: 4px;
+    }
+
+    .sd-proof-caption {
+        font-size: 13px;
+        color: #536573;
+        margin: 0;
+    }
+
+    .sd-browser-frame {
+        border: 1px solid #e2e6ea;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .sd-browser-img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .sd-img-caption {
+        font-size: 12.5px;
+        color: #95a5a6;
+        margin-top: 10px;
+        text-align: center;
+        font-style: italic;
+    }
+
+    .sd-separator {
+        border: none;
+        margin: 10px 0 30px;
+    }
+
+    @media (max-width: 860px) {
+        .sd-hero {
+            flex-direction: column;
+        }
+
+        .sd-hero-diagram {
+            width: 100%;
+        }
+
+        .sd-why {
+            grid-template-columns: 1fr;
+        }
+
+        .sd-proof {
+            flex-direction: column;
+        }
+    }
+</style>
+        </div>
+        <div id="about" class="sindy-tabcontent">
+<div class="minimal-container">
+
+    <section class="welcome-hero-section">
+        <div class="hero-left-text">
+            <h2 class="minimal-title">About SINDy</h2>
+            <div class="text-block">
+                <p>Suppose we have a set of measurements \( x(t) \in \mathbb{R}^n \) from some physical system at different points in time \( t \). SINDy seeks to represent the time evolution of \( x(t) \) in terms of a nonlinear function \( f \):</p>
+                <div class="formula">\[ \frac{d}{dt}x(t) = f(x(t)) \]</div>
+                <p>The key idea behind SINDy is that \( f \) is often <b>sparse</b> in the space of an appropriate set of basis functions — meaning only a small number of terms are nonzero.</p>
+                <p>For this module, we use Python's <b>pySINDy</b> package to implement SINDy.</p>
+            </div>
+            <a href="https://pysindy.readthedocs.io/en/latest/summary.html" target="_blank" class="jump-btn">Read PySINDy Docs ↗</a>
+        </div>
+    </section>
+
+    <hr class="separator">
+
+    <section class="detail-section">
+        <h2 class="section-title">The Approximation Problem</h2>
+        <div class="text-block">
+            <p>Data are aggregated into matrices \( X \) and \( \dot{X} \), then a library matrix \( \Theta(X) \) is formed whose columns consist of candidate basis functions:</p>
+        </div>
+
+        <div class="formula">
+            \[
+            X = \begin{bmatrix}
+            x_1(t_1) & \dots & x_n(t_1) \\
+            \vdots & \ddots & \vdots \\
+            x_1(t_m) & \dots & x_n(t_m)
+            \end{bmatrix}, \quad
+            \dot{X} = \begin{bmatrix}
+            \dot{x}_1(t_1) & \dots & \dot{x}_n(t_1) \\
+            \vdots & \ddots & \vdots \\
+            \dot{x}_1(t_m) & \dots & \dot{x}_n(t_m)
+            \end{bmatrix}
+            \]
+        </div>
+
+        <div class="formula">
+            \[
+            \Theta(X) = \begin{bmatrix}
+            | & | & & | \\
+            \theta_1(X) & \theta_2(X) & \dots & \theta_\ell(X) \\
+            | & | & & |
+            \end{bmatrix}
+            \]
+        </div>
+    </section>
+
+    <hr class="separator">
+
+    <section class="detail-section">
+        <h2 class="section-title">The Core SINDy Problem</h2>
+        <div class="text-block">
+            <p>SINDy seeks a set of <b>sparse</b> coefficient vectors collected into a matrix \( \Xi \), solving:</p>
+        </div>
+
+        <div class="highlight-box">
+            \[ \dot{X} \approx \Theta(X)\Xi \]
+        </div>
+
+        <div class="text-block">
+            <p>Each column \( \xi_i \) of \( \Xi \) represents the coefficients for the \( i \)-th component of the model. SINDy uses <b>sparse regression</b> to ensure the resulting model is both accurate and <i>parsimonious</i> — using the simplest possible form.</p>
+            <p>For example, a sparse \( f(x) \) might look like:</p>
+        </div>
+
+        <div class="formula">
+            \[ \frac{d}{dt}x = \begin{bmatrix} 1 - x_1 + 3x_1x_2 \\ x_2^2 - 5x_1^3 \end{bmatrix} \]
+        </div>
+    </section>
+
+</div>
+
+<style>
+    .minimal-container {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: transparent;
+    }
+    .welcome-hero-section {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 40px;
+        margin-bottom: 50px;
+    }
+    .hero-left-text { flex: 1.2; }
+    .minimal-title {
+        font-size: 28px;
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+    }
+    .section-title {
+        font-size: 22px;
+        color: #2c3e50;
+        font-weight: 700;
+        border-left: 5px solid #3498db;
+        padding-left: 15px;
+        margin-bottom: 20px;
+    }
+    .text-block p {
+        font-size: 16px;
+        line-height: 1.7;
+        color: #4f5f6f;
+        margin-bottom: 18px;
+    }
+    .jump-btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 22px;
+        background-color: #fff;
+        color: #000;
+        text-decoration: none;
+        border-radius: 25px;
+        border: 1.5px solid #000000;
+        font-weight: 400;
+        font-size: 14px;
+        transition: background 0.2s;
+    }
+    .jump-btn:hover { background-color: var(--primary); color: #fff; }
+    .separator { border: none; margin: 40px 0; }
+    .detail-section { margin-bottom: 40px; }
+    .formula {
+        padding: 20px 0;
+        text-align: center;
+        font-size: 1.1em;
+        overflow-x: auto;
+    }
+    .highlight-box {
+        background: #f1f8ff;
+        border: 2px solid #3498db;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+        font-size: 1.4em;
+    }
+    @media (max-width: 768px) {
+        .welcome-hero-section { flex-direction: column; }
+    }
+</style>
+        </div>
+        <div id="training" class="sindy-tabcontent">
+<!--
+    ============================================================================
+    Training.html
+    ============================================================================
+    Host page for Training section.
+
+    LAYOUT: each explained concept is a row — text on the left, a matching
+    screenshot on the right (same pattern as the hero/proof sections in
+    storyline.html). Rows stack to full width on narrow screens.
+
+    VISUAL SYSTEM: re-aligned to storyline.html's tokens (var(--primary),
+    var(--accent), light card borders, sd-browser-frame-style image frames)
+    instead of the previous standalone palette, so all fragments look like
+    one product.
+
+    Image placeholders added for: data file example, the 3 split strategies,
+    the library/degree/threshold control, and the 3 residual diagnostics.
+    Drop your screenshots into static/images/ using the filenames referenced
+    in each <img src> below (they're just placeholders until then).
+    ============================================================================
+-->
+<div class="minimal-container">
+
+    <header class="page-header">
+        <h2 class="minimal-title">Training Your SINDy Model</h2>
+    </header>
+
+    <!-- =====================================================================
+         TRAIN TAB
+         Mirrors tabs/train_tab.py top-to-bottom: data source -> split strategy
+         -> model config -> leaderboard -> residual diagnostics.
+    ====================================================================== -->
+    <section class="subtab-panel" data-panel="train">
+
+        <!-- ---- Phase 1: Data source ---- -->
+        <div class="doc-row">
+            <div class="doc-row-text">
+                <span class="eyebrow">Data Source</span>
+                <h3 class="doc-title">Bringing In Your Data</h3>
+                <p>Start from the Select System dropdown. Pick one of the pre-set systems to test SINDy's ability or
+                    upload your own data file. The file must have time in the first column and one state variable per
+                    subsequent column — \( t, x_1, x_2, \dots, x_n \).</p>
+                <p>You can upload multiple files when they describe the same state variables under different initial
+                    conditions. Every trajectory is validated and differentiated independently, so a time reset between
+                    files does not create an artificial derivative jump.</p>
+            </div>
+            <div class="doc-row-media">
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/data.png') }}"
+                        alt="Example of a correctly formatted state-space CSV" class="doc-frame-img">
+                </div>
+                <p class="doc-img-caption">A correctly formatted state-space CSV — time in column 1, states after it.
+                </p>
+            </div>
+        </div>
+
+        <hr class="doc-divider">
+
+        <!-- ---- Phase 2: Model configuration ---- -->
+        <div class="doc-section-intro">
+            <span class="eyebrow">Model Configuration</span>
+            <h3 class="doc-title">Choosing How SINDy Learns</h3>
+        </div>
+
+        <h4 class="doc-subtitle">Train/Validation set up & Split Strategy</h4>
+        <p class="doc-intro-p">Derivatives \( \dot{X} \) are always computed once on the <i>full</i> trajectory first —
+            the split only decides how the resulting \( (X, \dot{X}) \) pairs are divided afterward. Three strategies
+            are available, and they test different things:</p>
+
+        <!-- 3 type of split in column format: text above, description image below-->
+        <!-- RANDOM SAMPLING -->
+        <div class="doc-grid">
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Random Sampling</p>
+                    <p>
+                        Every point is shuffled independently into train or validation.
+                    </p>
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/random_sampling.png') }}"
+                        alt="Random Sampling split example" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Random Sampling example.
+                </p>
+            </div>
+
+            <!-- TIME-BASED SPLIT -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Time-based</p>
+                    <p>
+                        Training uses the earlier portion of the trajectory, validation the later portion.
+                    </p>
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/time_based.png') }}" alt="Time-based split example"
+                        class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Time-based example.
+                </p>
+            </div>
+
+            <!-- RANDOM BLOCK SPLIT -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Random Block</p>
+                    <p>
+                        Splits by contiguous random blocks instead of single points.
+                    </p>
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/random_block.png') }}"
+                        alt="Random Block split example" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Random Block example.
+                </p>
+            </div>
+        </div>
+
+
+        <h4 class="doc-subtitle">Library, degree, and sparsity threshold</h4>
+        <div class="doc-row">
+            <div class="doc-row-text">
+                <p>The <b>Library</b> dropdown sets the candidate function space: <i>Polynomial</i>, <i>Fourier</i>, or
+                    <i>Combined</i> (both at once).
+                </p>
+                <p><b>Degree / Harmonics</b> controls how high the polynomial power (or
+                    Fourier harmonic) goes.</p>
+                <p>The <b>Sparsity Threshold \( (\lambda) \)</b> prunes small coefficients: higher \( \lambda \) means a
+                    simpler, sparser equation.</p>
+                <p>These controls are intentionally selected by the researcher. Compare multiple runs and verify each
+                    configuration using validation metrics, residuals, simulation behavior, and domain knowledge.</p>
+            </div>
+            <div class="doc-row-media">
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/hyperparameter.png') }}"
+                        alt="Hyperparameter controls" class="doc-frame-img">
+                </div>
+                <p class="doc-img-caption">SINDy's hyperparameters.</p>
+            </div>
+        </div>
+
+        <hr class="doc-divider">
+
+        <!-- ---- Phase 3: Leaderboard ---- -->
+        <div class="doc-section-intro">
+            <span class="eyebrow">Training Results</span>
+            <h3 class="doc-title">Reading the Leaderboard</h3>
+            <p>Every time you press <b>Train</b>, a new row is appended below, so you can compare configurations side by
+                side. Clicking a row to view the run's chart.</p>
+        </div>
+        <table class="doc-table">
+            <thead>
+                <tr>
+                    <th>Column</th>
+                    <th>Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data File / Split Type</td>
+                    <td>Run context: Dataset and Split strategy.</td>
+                </tr>
+                <tr>
+                    <td>Library / Degree / Threshold</td>
+                    <td>Configuration used.</td>
+                </tr>
+                <tr>
+                    <td>Train/Validation Metrics</td>
+                    <td>\( R^2 \), RMSE, and MAE on the training vs. validation split — computed on \( \dot{X} \).</td>
+                </tr>
+                <tr>
+                    <td>RMSE Diff</td>
+                    <td>\( | \text{RMSE}_{\text{train}} - \text{RMSE}_{\text{val}} | \). A large gap is an early warning
+                        sign of overfitting.</td>
+                </tr>
+                <tr>
+                    <td>Identified Equations</td>
+                    <td>The actual sparse ODE system SINDy recovered.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="doc-frame">
+            <img src="{{ url_for('static', filename='sindy/images/metric_table.png') }}" alt="History Leaderboard"
+                class="doc-frame-img">
+        </div>
+        <p class="doc-img-caption">A run's statistics are record after training.</p>
+
+        <hr class="doc-divider">
+
+        <!-- ---- Phase 4: Residual diagnostics ---- -->
+        <div class="doc-section-intro">
+            <span class="eyebrow">Model Diagnosis</span>
+            <h3 class="doc-title">Residual Diagnostics</h3>
+            <p>A <b>residual</b> is simply the leftover error the model didn't explain: for each state variable, \(
+                \text{residual} = \dot{x}_{\text{true}} - \dot{x}_{\text{predicted}} \), computed across the full
+                dataset.</p>
+                <!-- <p>If SINDy has found the right terms, whatever is left over should look
+                like structureless noise. Otherwise, the leftover error still carries a pattern — and that pattern
+                tells you what's missing.</p> -->
+        </div>
+
+        <!-- 3 type of residual stats: format text above, image below, separate into 3 columns, use all the width we had-->
+        <!-- RESIDUAL VS. TIME-->
+        <div class="doc-grid">
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Residual vs. time</p>
+                    <p>
+                        A well-fit model's residuals should scatter randomly around zero with no visible trend. </p>
+                    <!-- <p> A repeating wave or drift in the residual means the library is missing a term that captures that behavior.
+                    </p> -->
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/residual_time.png') }}"
+                        alt="Residual vs .time example" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Residual vs time example.
+                </p>
+            </div>
+
+            <!-- RESIDUAL FFT -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">Residual FFT (frequency content)</p>
+                    <p>
+                    <p>Same residual, viewed as a frequency spectrum. </p>
+                    <!-- <p>A flat spectrum with no dominant peak confirms the
+                        error really is noise. A sharp peak means there's periodic structure left over.</p>
+                    </p> -->
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/residual_fft.png') }}" alt="Residual FFT example"
+                        class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    Residual FFT example.
+                </p>
+            </div>
+
+            <!-- TRUE VS. PREDICTED DERIVATIVE -->
+            <div class="doc-card">
+                <div class="doc-card-text">
+                    <p class="doc-item-name">True vs. predicted derivative</p>
+                    <p>
+                        Each point plots \( \dot{x}_{\text{predicted}} \) against \( \dot{x}_{\text{true}} \) for one
+                        sample. </p>
+                    <!-- <p> A perfect model places every point on the \( y = x \) diagonal. Curvature or fanning away from
+                        that
+                        line signals bias or error.
+                    </p> -->
+                </div>
+
+                <div class="doc-frame">
+                    <img src="{{ url_for('static', filename='sindy/images/derivative_compare.png') }}"
+                        alt="True vs. predicted derivative" class="doc-frame-img">
+                </div>
+
+                <p class="doc-img-caption">
+                    True vs. predicted derivative example.
+                </p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<style>
+    /* ==========================================================================
+       Design tokens — aligned to storyline.html's system (var(--primary),
+       var(--accent), light #e9ecef borders, white cards) so this fragment
+       reads as the same product regardless of which tab loads first.
+       ========================================================================== */
+    .minimal-container {
+        --ink: var(--primary);
+        --ink-soft: #4f5f6f;
+        --muted: #8a94a0;
+        /* --line: #641a5e; */
+        --tip-ink: var(--accent);
+        --warn-ink: #b45309;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+    }
+
+    .page-header {
+        margin-bottom: 28px;
+        background-color: #b2e3f4;
+    }
+
+    .minimal-title {
+        font-size: 28px;
+        color: var(--ink);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    /* ---------- Section intros (no image, full width) ---------- */
+    .doc-section-intro {
+        margin-bottom: 18px;
+    }
+
+    .doc-divider {
+        border: none;
+        border-top: 1px solid var(--line);
+        margin: 22px 0;
+    }
+
+    .eyebrow {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 6px;
+    }
+
+    .doc-title {
+        font-size: 22px;
+        color: var(--ink);
+        font-weight: 700;
+        margin: 0 0 14px 0;
+    }
+
+    .doc-subtitle {
+        font-size: 16px;
+        color: var(--ink);
+        font-weight: 700;
+        margin: 34px 0 14px 0;
+    }
+
+    p {
+        font-size: 15.5px;
+        line-height: 1.75;
+        color: var(--ink-soft);
+        margin: 0 0 14px 0;
+    }
+
+    .doc-intro-p {
+        max-width: 760px;
+    }
+
+    p b {
+        color: var(--ink);
+    }
+
+
+    /* ==========================================================================
+       TEXT-LEFT / IMAGE-RIGHT ROWS — same ratio and framing as the
+       storyline.html hero/proof sections (sd-hero, sd-proof).
+       ========================================================================== */
+    .doc-row {
+        display: flex;
+        align-items: stretch;
+        gap: 48px;
+        margin-bottom: 8px;
+    }
+
+    .doc-row-text {
+        flex: 1.15;
+    }
+
+    .doc-row-media {
+        flex: 0.85;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .doc-item-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ink);
+        margin: 0 0 6px 0;
+    }
+
+    .doc-frame {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        background: #fff;
+    }
+
+    .doc-frame-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .doc-img-caption {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin: 10px 0 0 0;
+        text-align: center;
+        font-style: italic;
+    }
+
+    .doc-row-media .doc-frame {
+        flex: 1;
+        position: relative;
+        min-height: 0;
+        /* Firefox flexbox fix so it can actually shrink/grow */
+    }
+
+    .doc-row-media .doc-frame-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* ===== 3-column layout ===== */
+
+    .doc-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        margin: 24px 0;
+    }
+
+    .doc-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .doc-card-text {
+        flex: 1;
+        margin-bottom: 16px;
+    }
+
+    /* ---------- Definition list (stats line) ---------- */
+    .def-list {
+        margin: 0 0 20px 0;
+        max-width: 760px;
+    }
+
+    .def-list dt {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-top: 12px;
+    }
+
+    .def-list dd {
+        font-size: 15px;
+        line-height: 1.7;
+        color: var(--ink-soft);
+        margin: 2px 0 0 0;
+    }
+
+    /* ---------- Table (leaderboard columns) ---------- */
+    .doc-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0 24px 0;
+    }
+
+    .doc-table th,
+    .doc-table td {
+        text-align: left;
+        font-size: 14px;
+        padding: 10px 12px 10px 0;
+        /* border-bottom: 1px solid var(--line); */
+        color: var(--ink-soft);
+        vertical-align: top;
+    }
+
+    .doc-table th {
+        color: var(--ink);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 11.5px;
+        letter-spacing: 0.04em;
+    }
+
+    .doc-table td:first-child {
+        color: var(--ink);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+
+    @media (max-width: 860px) {
+        .doc-row {
+            flex-direction: column;
+        }
+
+        .doc-row-media {
+            width: 100%;
+        }
+    }
+</style>
+        </div>
+        <div id="testing" class="sindy-tabcontent">
+<!--
+    ============================================================================
+    Testing.html
+    ============================================================================
+    Host page for Testing section — kept intentionally short. A full-tab
+    screenshot does most of the explaining; text is just enough to say what
+    the tab is for before the image.
+    ============================================================================
+-->
+<div class="minimal-container">
+
+    <header class="page-header">
+        <h2 class="minimal-title">Testing Your SINDy Model</h2>
+    </header>
+
+    <p class="doc-intro-p">Pick a trained model and a held-out test trajectory, then press <b>TEST</b> — the discovered
+        equations are forward-simulated from the test file's initial condition and compared against the real data.
+        This checks whether the model actually generalizes, not just fits.</p>
+
+    <div class="doc-frame">
+        <img src="{{ url_for('static', filename='sindy/images/test_tab.png') }}" alt="Test tab overview"
+            class="doc-frame-img">
+    </div>
+    <p class="doc-img-caption">The Test tab — model &amp; data selectors, overlay plot, and metrics table.</p>
+
+</div>
+
+<style>
+    .minimal-container {
+        --ink: var(--primary);
+        --ink-soft: #4f5f6f;
+        --muted: #8a94a0;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+        background-color: #b2e3f4;
+    }
+
+    .minimal-title {
+        font-size: 28px;
+        color: var(--ink);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .doc-intro-p {
+        font-size: 15.5px;
+        line-height: 1.75;
+        color: var(--ink-soft);
+        width: 100%;
+        margin: 0 0 24px 0;
+    }
+
+    .doc-intro-p b {
+        color: var(--ink);
+    }
+
+    .doc-frame {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        background: #fff;
+    }
+
+    .doc-frame-img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .doc-img-caption {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin: 10px 0 0 0;
+        text-align: center;
+        font-style: italic;
+    }
+</style>
+        </div>
+        <div id="predicting" class="sindy-tabcontent">
+<!--
+    ============================================================================
+    Predicting.html
+    ============================================================================
+    Host page for Predict section — same minimal pattern as Testing.html:
+    1-2 lines of text, then one full-tab screenshot.
+    ============================================================================
+-->
+<div class="minimal-container">
+
+    <header class="page-header">
+        <h2 class="minimal-title">Predicting With Your SINDy Model</h2>
+    </header>
+
+    <p class="doc-intro-p">Pick a trained model, set a new initial condition and a time horizon, then press
+        <b>PREDICT</b> — the discovered equations are simulated forward from that starting point, with no true
+        trajectory to compare against. Use this to explore how the model behaves beyond your original data.</p>
+
+    <div class="doc-frame">
+        <img src="{{ url_for('static', filename='sindy/images/predict_tab.png') }}" alt="Predict tab overview"
+            class="doc-frame-img">
+    </div>
+    <p class="doc-img-caption">The Predict tab — model selector, initial condition &amp; horizon controls, and the
+        simulated trajectory plot.</p>
+
+</div>
+
+<style>
+    .minimal-container {
+        --ink: var(--primary);
+        --ink-soft: #4f5f6f;
+        --muted: #8a94a0;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+    }
+
+    .page-header {
+        margin-bottom: 20px;
+        background-color: #b2e3f4;
+    }
+
+    .minimal-title {
+        font-size: 28px;
+        color: var(--ink);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .doc-intro-p {
+        font-size: 15.5px;
+        line-height: 1.75;
+        color: var(--ink-soft);
+        width: 100%;
+        margin: 0 0 24px 0;
+    }
+
+    .doc-intro-p b {
+        color: var(--ink);
+    }
+
+    .doc-frame {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        background: #fff;
+    }
+
+    .doc-frame-img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .doc-img-caption {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin: 10px 0 0 0;
+        text-align: center;
+        font-style: italic;
+    }
+</style>
+        </div>
+        <div id="questions" class="sindy-tabcontent">
+<section class="assistant-page" data-sindy-assistant>
+    <div class="assistant-hero">
+        <div>
+            <!-- <span class="assistant-eyebrow">CURATED MODULE SUPPORT</span> -->
+            <h2>Ask the SINDy Assistant</h2>
+        </div>
+        <!-- <div class="assistant-privacy-pill"><span></span> Local knowledge base</div> -->
+    </div>
+
+    <div class="assistant-shell">
+        <aside class="assistant-topics" aria-label="Suggested questions">
+            <div class="assistant-search-wrap">
+                <label for="assistant-search">Search the guide</label>
+                <div class="assistant-search-row">
+                    <input id="assistant-search" data-assistant-search type="search"
+                        placeholder="Try “threshold”, “R²”, or “ensemble”…" autocomplete="off">
+                    <button type="button" data-search-submit aria-label="Search curated answers">Ask</button>
+                </div>
+                <p class="assistant-search-hint">Choose a question below or press Enter for the closest answer.</p>
+            </div>
+
+            <div class="assistant-question-groups">
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>01</span> Train &amp; validate</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="compare-models">How do I compare trained models?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="metrics-spaces">Why are Train and Test metrics different?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="threshold-zero">Why did the threshold remove every term?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="junk-terms">Why does a good model still contain junk terms?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="multi-trajectory">How should I use multiple training files?</button>
+                </div>
+
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>02</span> Test &amp; predict</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="high-r2-diverge">Why is R² high but simulation diverges?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="solve-failure">Why can solve_ivp fail on test data?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="prediction-horizon">Why does prediction drift over time?</button>
+                </div>
+
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>03</span> Ensemble &amp; confidence</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="inclusion">What does term inclusion percentage mean?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="ci-unavailable">Why is a coefficient CI unavailable?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="consensus">Original vs consensus equation?</button>
+                </div>
+
+                <div class="assistant-question-group" data-question-group>
+                    <h3><span>04</span> Research judgment</h3>
+                    <button type="button" class="assistant-question-card" data-question-id="time-split">Why can Time-based split have lower R² but cleaner equations?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="time-dependent">How do I model an explicitly time-dependent system?</button>
+                    <button type="button" class="assistant-question-card" data-question-id="trust-model">Should I trust a model when every metric looks good?</button>
+                </div>
+            </div>
+            <p class="assistant-empty-search" data-empty-search hidden></p>
+        </aside>
+
+        <div class="assistant-chat-panel">
+            <div class="assistant-chat-header">
+                <div class="assistant-identity">
+                    <span class="assistant-avatar" aria-hidden="true">ẋ</span>
+                    <div><strong>SINDy Assistant</strong><span>Research workflow guide</span></div>
+                </div>
+                <button type="button" class="assistant-clear" data-clear-chat hidden>Clear conversation</button>
+            </div>
+
+            <div class="assistant-chat-log" data-chat-log aria-live="polite" aria-label="Assistant conversation">
+                <div class="assistant-message assistant-message-bot assistant-welcome">
+                    <span class="assistant-avatar" aria-hidden="true">ẋ</span>
+                    <div class="assistant-bubble">
+                        <strong>Hi — I’m the SINDy Assistant.</strong>
+                        <p>Choose a question or search the curated knowledge base. I can explain this module’s workflow,
+                            metrics, predictions, and ensemble results.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assistant-chat-footer">
+                <span class="assistant-footer-dot"></span>
+                SINDy Module - STEM VISUALIZATION
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden knowledge base: JavaScript clones the selected answer into chat. -->
+    <div class="assistant-knowledge-base" hidden>
+        <article class="assistant-kb-entry" data-id="compare-models"
+            data-keywords="compare history leaderboard run model metrics residual active terms equation"
+            data-related="metrics-spaces,trust-model,consensus">
+            <h3 class="kb-question">How do I compare trained models?</h3>
+            <div class="kb-answer">
+                <p>Every training session is saved in the <b>History Leaderboard</b>. Start with validation RMSE and
+                    \(R^2\), but also compare equation sparsity, residual structure, and whether the terms make physical
+                    sense. Then select the same Run ID in <b>Test</b> and evaluate it on a genuinely new trajectory.</p>
+                <p>A strong candidate is usually simple, has similar train/validation performance, produces
+                    unstructured residuals, and remains accurate during forward simulation.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="metrics-spaces"
+            data-keywords="metric train validation test derivative state space rmse mae r2 difference"
+            data-related="high-r2-diverge,compare-models,trust-model">
+            <h3 class="kb-question">Why are Train and Test metrics different?</h3>
+            <div class="kb-answer">
+                <p>Train and validation metrics are computed in derivative space, \(dX/dt\), because that is what
+                    SINDy fits directly. Test metrics are computed in state space, \(x(t)\), after integrating the
+                    discovered equations.</p>
+                <p>The values have different units and should not be compared numerically. Small derivative errors can
+                    accumulate during integration, so always inspect both kinds of evidence.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="threshold-zero"
+            data-keywords="sparsity threshold zero eliminated coefficients terms empty equation"
+            data-related="junk-terms,compare-models,inclusion">
+            <h3 class="kb-question">Why did the threshold remove every term?</h3>
+            <div class="kb-answer">
+                <p>The sparsity threshold is larger than every fitted coefficient, so STLSQ pruned the full library and
+                    returned \(dX/dt=0\). Lower the threshold, preferably in small increments using the exact-threshold
+                    input, and retrain.</p>
+                <p>Do not automatically choose the smallest threshold: an overly small value can preserve many noisy
+                    terms. Look for the simplest equation that still validates and simulates well.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="junk-terms"
+            data-keywords="junk extra spurious terms random sampling leakage autocorrelation block split"
+            data-related="threshold-zero,time-split,trust-model">
+            <h3 class="kb-question">Why does a good model still contain junk terms?</h3>
+            <div class="kb-answer">
+                <p>Random Sampling can place nearly identical neighboring timesteps in training and validation. Because
+                    a trajectory is autocorrelated, this leakage can make validation look better than the discovered
+                    structure really is.</p>
+                <p>Try <b>Random Block</b>, inspect Ensemble inclusion, and compare the actual equations—not only the
+                    aggregate score. Spurious terms often have low inclusion or unstable coefficients.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="multi-trajectory"
+            data-keywords="multiple files trajectories initial conditions ic upload columns same system"
+            data-related="compare-models,solve-failure,inclusion">
+            <h3 class="kb-question">How should I use multiple training files?</h3>
+            <div class="kb-answer">
+                <p>Upload trajectories from the <b>same dynamical system</b> under different initial conditions. Every
+                    file must use identical state-column names and order, with time in the first column.</p>
+                <p>The module differentiates each trajectory separately before pooling the training pairs. This avoids
+                    a false derivative jump where one file ends and the next restarts at \(t=0\), while constraining one
+                    equation to explain a broader region of state space.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="high-r2-diverge"
+            data-keywords="high r2 simulation diverge derivative error integration prediction"
+            data-related="metrics-spaces,prediction-horizon,solve-failure">
+            <h3 class="kb-question">Why is R² high but simulation diverges?</h3>
+            <div class="kb-answer">
+                <p>Training \(R^2\) measures how well the model reproduces local derivatives, not the complete
+                    trajectory. Slight coefficient errors are repeatedly integrated and can accumulate into phase drift,
+                    amplitude error, or instability.</p>
+                <p>Use the Test tab to evaluate \(x(t)\) directly, inspect where divergence begins, and prefer equations
+                    that remain stable across unseen initial conditions.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="solve-failure"
+            data-keywords="solve ivp fail crash integration test initial condition extrapolation polynomial"
+            data-related="prediction-horizon,high-r2-diverge,multi-trajectory">
+            <h3 class="kb-question">Why can solve_ivp fail on test data?</h3>
+            <div class="kb-answer">
+                <p>SINDy only learns the region explored by its training trajectories. A test initial condition far
+                    outside that region forces the equation to extrapolate, and high-degree polynomial terms can grow
+                    extremely quickly.</p>
+                <p>Test with meaningfully different—but not wildly out-of-range—initial conditions. If integration still
+                    fails, try a simpler library, lower polynomial degree, or stronger sparsity.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="prediction-horizon"
+            data-keywords="prediction drift horizon time phase accumulated error unstable"
+            data-related="high-r2-diverge,solve-failure,metrics-spaces">
+            <h3 class="kb-question">Why does prediction drift over time?</h3>
+            <div class="kb-answer">
+                <p>Forward prediction repeatedly feeds the model’s output back into itself. Small errors in frequency,
+                    damping, or nonlinear coefficients therefore accumulate. Oscillators are especially sensitive: a
+                    small frequency error eventually becomes a large pointwise phase error.</p>
+                <p>Judge both short- and long-horizon behavior. A model can be scientifically useful over a finite
+                    horizon even when it is not an indefinite predictor.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="inclusion"
+            data-keywords="ensemble inclusion percentage bootstrap selected term frequency robustness"
+            data-related="ci-unavailable,consensus,junk-terms">
+            <h3 class="kb-question">What does term inclusion percentage mean?</h3>
+            <div class="kb-answer">
+                <p>Inclusion is the fraction of <b>successful bootstrap fits</b> in which a candidate term remains
+                    non-zero after thresholding. For example, 82% means the term survived in 82 of every 100 successful
+                    resampled fits.</p>
+                <p>High inclusion suggests structural robustness, but it is not proof of physical truth. Also inspect
+                    coefficient spread, sign consistency, validation performance, and domain knowledge.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="ci-unavailable"
+            data-keywords="confidence interval ci unavailable 50 majority bootstrap coefficient"
+            data-related="inclusion,consensus,trust-model">
+            <h3 class="kb-question">Why is a coefficient CI unavailable?</h3>
+            <div class="kb-answer">
+                <p>This module reports a 95% bootstrap coefficient interval only when a term appears in
+                    <b>strictly more than 50%</b> of successful fits. A term selected half the time has no structural
+                    majority, so an interval computed only from its non-zero values would look more trustworthy than it
+                    really is.</p>
+                <p>The CI is conditional on the term being present. Read it together with inclusion and stability.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="consensus"
+            data-keywords="consensus original equation threshold mean coefficient ensemble compare"
+            data-related="inclusion,ci-unavailable,compare-models">
+            <h3 class="kb-question">Original vs consensus equation?</h3>
+            <div class="kb-answer">
+                <p>The original equation comes from the selected training run. The consensus equation keeps only terms
+                    whose bootstrap inclusion exceeds the chosen consensus threshold and uses their bootstrap-mean
+                    coefficients.</p>
+                <p>Agreement between the two is evidence of robustness. Disagreement identifies terms that depend
+                    strongly on the sampled data; it does not automatically mean the original equation is wrong.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="time-split"
+            data-keywords="time based split damped decaying lower negative r2 clean equation tail signal"
+            data-related="junk-terms,metrics-spaces,trust-model">
+            <h3 class="kb-question">Why can Time-based split have lower R² but cleaner equations?</h3>
+            <div class="kb-answer">
+                <p>Damped systems concentrate useful nonlinear information in the early, high-amplitude region.
+                    Time-based splitting puts that region in training, which can reveal cleaner terms. Its validation
+                    tail may have very low signal variance, making \(R^2\) poor even when absolute errors are small.</p>
+                <p>A lower tail \(R^2\) does not automatically imply worse equations. Inspect absolute error, equation
+                    structure, residuals, and performance on a new initial condition.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="time-dependent"
+            data-keywords="time dependent forced sin t autonomous auxiliary state tau fourier"
+            data-related="multi-trajectory,trust-model,compare-models">
+            <h3 class="kb-question">How do I model an explicitly time-dependent system?</h3>
+            <div class="kb-answer">
+                <p>The current workflow assumes an autonomous system, \(dX/dt=f(X)\). For a forcing term such as
+                    \(\sin(t)\), add time as an auxiliary state \(\tau\) with \(d\tau/dt=1\). The augmented system can
+                    then represent \(\sin(\tau)\) through the Fourier or Combined library.</p>
+                <p>Include the auxiliary state as a normal CSV column and keep the same column order across every
+                    trajectory.</p>
+            </div>
+        </article>
+
+        <article class="assistant-kb-entry" data-id="trust-model"
+            data-keywords="trust reliable good metrics physical residual test ensemble evidence"
+            data-related="compare-models,inclusion,high-r2-diverge">
+            <h3 class="kb-question">Should I trust a model when every metric looks good?</h3>
+            <div class="kb-answer">
+                <p>No single score is sufficient. Look for agreement across several kinds of evidence:</p>
+                <ul>
+                    <li>Train and validation performance are reasonably close.</li>
+                    <li>Residuals have little visible time structure or unexplained frequency content.</li>
+                    <li>The equation is sparse and physically plausible.</li>
+                    <li>A new trajectory is reproduced through forward simulation.</li>
+                    <li>Important terms remain stable under the Ensemble bootstrap.</li>
+                </ul>
+                <p>Use the module to assemble evidence—not to replace scientific judgment.</p>
+            </div>
+        </article>
+    </div>
+</section>
+
+<style>
+    .assistant-page {
+        --assistant-ink: #183346;
+        --assistant-muted: #627385;
+        --assistant-cyan: #38b6d8;
+        --assistant-blue: #237caa;
+        --assistant-soft: #eef8fb;
+        max-width: 1280px;
+        margin: 0 auto;
+        color: var(--assistant-ink);
+    }
+
+    .assistant-hero {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        align-items: flex-end;
+        padding: 16px 4px 24px;
+    }
+
+    .assistant-eyebrow { display: block; color: var(--assistant-blue); font-size: 11px; font-weight: 800; letter-spacing: 1.8px; margin-bottom: 8px; }
+    .assistant-hero h2 { margin: 0 0 8px; font-size: clamp(27px, 3vw, 40px); letter-spacing: -1px; }
+    .assistant-hero p { max-width: 720px; margin: 0; color: var(--assistant-muted); line-height: 1.6; font-size: 15px; }
+    .assistant-privacy-pill { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 9px 13px; border: 1px solid #cce6ee; border-radius: 999px; background: #f7fdff; color: #356879; font-size: 12px; font-weight: 650; }
+    .assistant-privacy-pill span, .assistant-footer-dot { width: 8px; height: 8px; border-radius: 50%; background: #35af70; box-shadow: 0 0 0 4px rgba(53, 175, 112, .12); }
+
+    .assistant-shell { display: grid; grid-template-columns: minmax(280px, .8fr) minmax(460px, 1.45fr); min-height: 690px; overflow: hidden; border: 1px solid #dce8ed; border-radius: 18px; background: #fff; box-shadow: 0 18px 45px rgba(24, 51, 70, .10); }
+    .assistant-topics { padding: 22px; overflow-y: auto; background: linear-gradient(180deg, #f7fbfd, #eef7fa); border-right: 1px solid #dce8ed; }
+    .assistant-search-wrap label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 750; }
+    .assistant-search-row { display: flex; gap: 7px; }
+    .assistant-search-row input { min-width: 0; flex: 1; padding: 11px 12px; border: 1px solid #cadbe2; border-radius: 9px; background: #fff; color: var(--assistant-ink); font: inherit; font-size: 13px; outline: none; }
+    .assistant-search-row input:focus { border-color: var(--assistant-cyan); box-shadow: 0 0 0 3px rgba(56, 182, 216, .13); }
+    .assistant-search-row button { padding: 0 14px; border: 0; border-radius: 9px; background: var(--assistant-ink); color: white; font-weight: 700; cursor: pointer; }
+    .assistant-search-hint { margin: 8px 0 18px; color: #788894; font-size: 11px; line-height: 1.45; }
+    .assistant-question-group { margin-top: 19px; }
+    .assistant-question-group h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; color: #486170; font-size: 12px; letter-spacing: .35px; text-transform: uppercase; }
+    .assistant-question-group h3 span { color: var(--assistant-cyan); font-size: 10px; }
+    .assistant-question-card { width: 100%; margin: 0 0 7px; padding: 10px 12px; border: 1px solid transparent; border-radius: 9px; background: rgba(255, 255, 255, .75); color: #294858; font: inherit; font-size: 12.5px; line-height: 1.4; text-align: left; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+    .assistant-question-card:hover, .assistant-question-card:focus-visible { transform: translateX(3px); border-color: #b9dfe9; background: #fff; outline: none; }
+    .assistant-question-card:disabled { cursor: wait; opacity: .55; }
+    .assistant-empty-search { padding: 13px; border-radius: 9px; background: #fff8e8; color: #85631e; font-size: 12px; line-height: 1.5; }
+
+    .assistant-chat-panel { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; background: linear-gradient(180deg, #fff, #fbfdfe); }
+    .assistant-chat-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 15px 20px; border-bottom: 1px solid #e7eef1; }
+    .assistant-identity { display: flex; align-items: center; gap: 10px; }
+    .assistant-identity div { display: flex; flex-direction: column; gap: 2px; }
+    .assistant-identity strong { font-size: 14px; }
+    .assistant-identity span:not(.assistant-avatar) { color: #788894; font-size: 11px; }
+    .assistant-avatar { display: inline-grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(145deg, #183346, #2c8fb2); color: #fff; box-shadow: 0 6px 16px rgba(35, 124, 170, .22); font: 700 18px Georgia, serif; }
+    .assistant-clear { padding: 7px 10px; border: 1px solid #d9e4e8; border-radius: 8px; background: #fff; color: #637684; font-size: 11px; cursor: pointer; }
+    .assistant-chat-log { min-height: 550px; max-height: 650px; overflow-y: auto; padding: 26px 22px; scroll-behavior: smooth; }
+    .assistant-message { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; animation: assistant-message-in .28s ease both; }
+    .assistant-message-user { justify-content: flex-end; }
+    .assistant-bubble { max-width: min(680px, 84%); padding: 13px 15px; border-radius: 4px 15px 15px 15px; background: var(--assistant-soft); color: #294553; font-size: 13.5px; line-height: 1.65; box-shadow: 0 5px 16px rgba(24, 51, 70, .06); }
+    .assistant-message-user .assistant-bubble { border-radius: 15px 4px 15px 15px; background: var(--assistant-ink); color: #fff; }
+    .assistant-bubble p { margin: 0 0 9px; }
+    .assistant-bubble p:last-child { margin-bottom: 0; }
+    .assistant-bubble ul { margin: 7px 0 10px; padding-left: 19px; }
+    .assistant-bubble b, .assistant-bubble strong { color: #183346; }
+    .assistant-message-user .assistant-bubble strong { color: #fff; }
+    .assistant-thinking .assistant-bubble { display: flex; align-items: center; gap: 5px; min-width: 66px; min-height: 42px; }
+    .assistant-avatar-thinking { animation: assistant-avatar-think 1s ease-in-out infinite; }
+    .thinking-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--assistant-blue); animation: assistant-dot 1.1s infinite ease-in-out; }
+    .thinking-dot:nth-child(2) { animation-delay: .14s; }
+    .thinking-dot:nth-child(3) { animation-delay: .28s; }
+    .assistant-related { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; padding-top: 11px; border-top: 1px solid #d7e7ec; }
+    .assistant-related > span { width: 100%; color: #71838f; font-size: 10px; font-weight: 750; letter-spacing: .5px; text-transform: uppercase; }
+    .assistant-related-chip { padding: 6px 9px; border: 1px solid #badde7; border-radius: 999px; background: #fff; color: #26657c; font-size: 10.5px; cursor: pointer; }
+    .assistant-related-chip:hover { background: #e4f5fa; }
+    .assistant-answer-note { margin-top: 10px; color: #8797a1; font-size: 9.5px; }
+    .assistant-chat-footer { display: flex; align-items: center; justify-content: center; gap: 9px; padding: 12px 18px; border-top: 1px solid #e7eef1; color: #81909a; font-size: 10.5px; letter-spacing: .1px; }
+    .assistant-chat-footer .assistant-footer-dot { width: 6px; height: 6px; box-shadow: none; }
+
+    @keyframes assistant-message-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes assistant-avatar-think { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 182, 216, .25); } 50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(56, 182, 216, 0); } }
+    @keyframes assistant-dot { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+    @media (max-width: 900px) {
+        .assistant-shell { grid-template-columns: 1fr; }
+        .assistant-topics { max-height: 420px; border-right: 0; border-bottom: 1px solid #dce8ed; }
+        .assistant-chat-log { min-height: 480px; }
+    }
+
+    @media (max-width: 620px) {
+        .assistant-hero { align-items: flex-start; flex-direction: column; }
+        .assistant-topics, .assistant-chat-log { padding: 17px; }
+        .assistant-bubble { max-width: 90%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .assistant-message, .assistant-avatar-thinking, .thinking-dot { animation: none !important; }
+    }
+</style>
+        </div>
       </div>
     </section>
 
@@ -258,43 +1875,33 @@
   </main>
 
   <script>
-    const sindyFragmentUrls = {{ sindy_fragment_urls | tojson }};
-    const sindyContent = document.getElementById("sindy-page-content");
     const sindyTabs = Array.from(document.querySelectorAll(".sindy-tab"));
+    const sindyTabContents = Array.from(document.querySelectorAll(".sindy-tabcontent"));
 
-    async function loadSindyPage(page, tabButton, updateHash = true) {
-      const fragmentUrl = sindyFragmentUrls[page];
-      if (!fragmentUrl) return;
+    function openSindyTab(page, tabButton, updateHash = true) {
+      const content = document.getElementById(page);
+      if (!content) return;
 
       sindyTabs.forEach((tab) => {
         const selected = tab === tabButton;
         tab.classList.toggle("active", selected);
         tab.setAttribute("aria-selected", selected ? "true" : "false");
       });
-      sindyContent.innerHTML = '<div class="fragment-loading">Loading SINDy guide…</div>';
+      sindyTabContents.forEach((panel) => {
+        panel.classList.toggle("active", panel === content);
+      });
 
-      try {
-        const response = await fetch(fragmentUrl, {
-          headers: { "X-Requested-With": "SINDyFragment" }
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        sindyContent.innerHTML = await response.text();
-
-        if (page === "questions" && window.initSindyAssistant) {
-          window.initSindyAssistant();
-        }
-        if (window.MathJax && MathJax.typesetPromise) {
-          MathJax.typesetPromise([sindyContent]).catch(() => {});
-        }
-        if (updateHash) history.replaceState(null, "", `#${page}`);
-      } catch (error) {
-        sindyContent.innerHTML = '<div class="fragment-error">The guide section could not be loaded. The interactive workbench below is still available.</div>';
-        console.error("SINDy fragment load failed:", error);
+      if (page === "questions" && window.initSindyAssistant) {
+        window.initSindyAssistant();
       }
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([content]).catch(() => {});
+      }
+      if (updateHash) history.replaceState(null, "", `#${page}`);
     }
 
     sindyTabs.forEach((tab) => {
-      tab.addEventListener("click", () => loadSindyPage(tab.dataset.page, tab));
+      tab.addEventListener("click", () => openSindyTab(tab.dataset.page, tab));
     });
 
     document.querySelector(".sindy-tabs").addEventListener("keydown", (event) => {
@@ -307,12 +1914,13 @@
       sindyTabs[next].click();
     });
 
-    const initialPage = sindyFragmentUrls[location.hash.slice(1)]
-      ? location.hash.slice(1)
+    const requestedPage = location.hash.slice(1);
+    const initialPage = document.getElementById(requestedPage)?.classList.contains("sindy-tabcontent")
+      ? requestedPage
       : "storyline";
     const initialTab = sindyTabs.find((tab) => tab.dataset.page === initialPage)
       || sindyTabs[0];
-    loadSindyPage(initialPage, initialTab, false);
+    openSindyTab(initialPage, initialTab, false);
   </script>
 </body>
 </html>
