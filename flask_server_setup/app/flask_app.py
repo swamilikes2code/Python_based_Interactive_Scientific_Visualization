@@ -1,6 +1,6 @@
 # flask app
 
-from flask import Flask, abort, render_template, url_for
+from flask import Flask, render_template
 from bokeh.client import pull_session
 from bokeh.embed import server_document
 from flask import send_from_directory
@@ -8,16 +8,6 @@ from flask import send_from_directory
 
 # instantiate the flask app
 app = Flask(__name__, static_url_path="/app/static")
-
-SINDY_FRAGMENT_TEMPLATES = {
-    "storyline": "sindy_fragments/storyline.html",
-    "about": "sindy_fragments/about.html",
-    "training": "sindy_fragments/training.html",
-    "testing": "sindy_fragments/testing.html",
-    "predicting": "sindy_fragments/predicting.html",
-    "questions": "sindy_fragments/questions.html",
-}
-
 
 # create index page function
 @app.route("/app", methods=["GET"])
@@ -96,26 +86,8 @@ def lab_bayesian_optimization():
 
 @app.route("/SINDy", methods=["GET"])
 def SINDy():
-    bokeh_script_SINDy = server_document(
-        url="https://srrweb.cc.lehigh.edu/SINDy")
-    return render_template(
-        "SINDy.html",
-        bokeh_script_SINDy=bokeh_script_SINDy,
-        sindy_fragment_urls={
-            # Keep these paths relative so the same rendered page works both
-            # directly at /SINDy and behind the production /app prefix.
-            page: url_for("sindy_fragment", page=page).lstrip("/")
-            for page in SINDY_FRAGMENT_TEMPLATES
-        },
-    )
-
-
-@app.route("/SINDy/fragment/<page>", methods=["GET"])
-def sindy_fragment(page):
-    template = SINDY_FRAGMENT_TEMPLATES.get(page)
-    if template is None:
-        abort(404)
-    return render_template(template)
+    bokeh_script_SINDy = server_document(url="https://srrweb.cc.lehigh.edu/SINDy")
+    return render_template("SINDy.html", bokeh_script_SINDy=bokeh_script_SINDy)
 
 # @app.route("/acknowledgements", methods=['GET'])
 # def acknowledgements():
