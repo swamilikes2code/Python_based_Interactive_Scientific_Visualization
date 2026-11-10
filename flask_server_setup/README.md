@@ -39,26 +39,3 @@ Below is a link to the screenshot of command line commands in the repository.
 The final output on your local machine should appear as:
 
 ![Screesnshot of Final Output](https://github.com/swamilikes2code/Python_based_Interactive_Scientific_Visualization/blob/master/flask_server_setup/images/final_server_output.PNG)
-
-## SINDy module
-
-SINDy uses the same filename-based Bokeh setup as the existing modules. Run
-the backend from the module directory so its built-in `data/` paths resolve:
-
-```bash
-cd SINDy
-pip install -r requirements.txt
-bokeh serve SINDy.py --allow-websocket-origin=localhost:8080
-```
-
-In a second terminal, start the parent Flask application and open
-`http://localhost:8080/SINDy`:
-
-```bash
-python flask_server_setup/app/flask_app.py
-```
-
-In production, the parent page is `/app/SINDy` and the Bokeh app is `/SINDy`,
-matching the route convention already used by ZECC, SIR, and the other working
-modules. The system administrator only needs to run the Bokeh serve command in
-the backend. See [`../SINDy/DEPLOYMENT.md`](../SINDy/DEPLOYMENT.md).
