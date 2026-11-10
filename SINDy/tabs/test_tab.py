@@ -30,9 +30,9 @@ from bokeh.plotting import figure
 from bokeh.palettes import Category10
 import numpy as np
 import pandas as pd
-import os
 import base64
 import io
+from app_paths import DATA_DIR
 from scipy.integrate import solve_ivp
 from engine.check_datafile import check_upload_size, validate_dataframe
 
@@ -94,7 +94,9 @@ def test_tab_layout(engine, trained_model_storage):
     # data source for up to 2 independent test trajectories.
     # =========================================================================
 
-    csv_files = [f for f in os.listdir('data') if f.endswith('.csv')]
+    csv_files = [f for f in DATA_DIR.iterdir()
+                 if f.is_file() and f.suffix.lower() == '.csv']
+    csv_files = [f.name for f in csv_files]
 
     model_select = Select(
         title="SELECT MODEL (FROM HISTORY)", options=[], value="")
@@ -298,8 +300,8 @@ def test_tab_layout(engine, trained_model_storage):
 
     def _load_df_from_select(sel_value):
         """Load a DataFrame from a pre-set CSV file living in data/."""
-        path = os.path.join('data', sel_value)
-        if not os.path.exists(path):
+        path = DATA_DIR / sel_value
+        if not path.exists():
             return None, f"File {sel_value} missing"
         try:
             df = pd.read_csv(path).astype(np.float64)
@@ -599,7 +601,8 @@ def test_tab_layout(engine, trained_model_storage):
             btn_test.disabled = True
             status_div.text = "<i>No trained models available. Train a model first.</i>"
 
-        f_list = [f for f in os.listdir('data') if f.endswith('.csv')]
+        f_list = [f.name for f in DATA_DIR.iterdir()
+                  if f.is_file() and f.suffix.lower() == '.csv']
         file_select_1.options = f_list
         file_select_2.options = ["(none)"] + f_list
 

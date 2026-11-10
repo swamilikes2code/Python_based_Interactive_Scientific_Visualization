@@ -27,6 +27,7 @@ import copy
 import base64
 import io
 import warnings
+from app_paths import DATA_DIR
 from engine.check_datafile import check_upload_size, validate_dataframe, validate_trajectory_set
 from bokeh.io import curdoc
 
@@ -129,8 +130,8 @@ def train_tab_layout(engine, trained_model_storage):
                                   "from different initial conditions. Columns "
                                   "must match: t, x1, x2...")
         else:
-            path = os.path.join('data', new)
-            if os.path.exists(path):
+            path = DATA_DIR / new
+            if path.exists():
                 df = pd.read_csv(path).astype(np.float64)
                 val_err = validate_dataframe(df)
                 if val_err:
@@ -765,7 +766,7 @@ def train_tab_layout(engine, trained_model_storage):
             short = ", ".join(labels[:3]) + ("…" if len(labels) > 3 else "")
             data_file_label = f"Custom Upload ×{len(dfs)} ({short})"
         else:
-            path = os.path.join('data', file_select.value)
+            path = DATA_DIR / file_select.value
             df = pd.read_csv(path).astype(np.float64)
             data_file_label = _SYSTEM_LABELS.get(
                 file_select.value, file_select.value)
@@ -948,8 +949,8 @@ def train_tab_layout(engine, trained_model_storage):
 
     # Validate the default pre-set once so missing or malformed packaged data
     # surfaces immediately without changing the user's model configuration.
-    initial_path = os.path.join('data', file_select.value)
-    if os.path.exists(initial_path):
+    initial_path = DATA_DIR / file_select.value
+    if initial_path.exists():
         try:
             df_init = pd.read_csv(initial_path).astype(np.float64)
             val_err = validate_dataframe(df_init)
