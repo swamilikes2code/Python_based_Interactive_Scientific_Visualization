@@ -166,6 +166,108 @@
     .sindy-tabcontent { display: none; }
     .sindy-tabcontent.active { display: block; }
 
+    .preset-guide {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 20px 0 34px;
+    }
+
+    .preset-guide-header {
+      max-width: 820px;
+      margin-bottom: 24px;
+    }
+
+    .preset-guide-header h2 {
+      margin: 0 0 10px;
+      color: var(--sindy-ink);
+      font-size: clamp(25px, 3vw, 34px);
+    }
+
+    .preset-guide-header p,
+    .preset-card p,
+    .preset-workflow p {
+      color: #4f6471;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .preset-card {
+      padding: 22px;
+      border: 1px solid rgba(24, 51, 70, .14);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 8px 22px rgba(24, 51, 70, .08);
+    }
+
+    .preset-card h3 {
+      margin: 0 0 6px;
+      color: var(--sindy-ink);
+      font-size: 21px;
+    }
+
+    .preset-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 12px 0 16px;
+    }
+
+    .preset-tag {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #e8f5fb;
+      color: #24546d;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .preset-facts {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 8px 12px;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .preset-facts dt {
+      color: #263f4f;
+      font-weight: 700;
+    }
+
+    .preset-facts dd {
+      margin: 0;
+      color: #536875;
+    }
+
+    .preset-equation {
+      margin-top: 16px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      border-left: 4px solid #3498db;
+      border-radius: 0 8px 8px 0;
+      background: #f4f9fc;
+      color: #183346;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .preset-workflow {
+      margin-top: 20px;
+      padding: 18px 20px;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .preset-workflow strong { color: var(--sindy-ink); }
+
     .sindy-workbench {
       width: 100%;
       padding: 16px 16px 50px;
@@ -193,6 +295,9 @@
       .modules-menu { top: 58px; right: -80px; left: auto; transform: none; }
       .sindy-tabs { justify-content: flex-start; }
       .sindy-tab { padding: 12px 16px; font-size: 14px; }
+      .preset-grid { grid-template-columns: 1fr; }
+      .preset-facts { grid-template-columns: 1fr; gap: 2px; }
+      .preset-facts dd { margin-bottom: 8px; }
     }
   </style>
 </head>
@@ -232,6 +337,7 @@
     <div class="sindy-tabs" role="tablist" aria-label="SINDy documentation">
       <button class="sindy-tab active" type="button" role="tab" aria-selected="true" data-page="storyline">About</button>
       <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="about">SINDy</button>
+      <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="presets">Presets</button>
       <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="training">Train</button>
       <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="testing">Test</button>
       <button class="sindy-tab" type="button" role="tab" aria-selected="false" data-page="predicting">Predict</button>
@@ -811,6 +917,105 @@
         .welcome-hero-section { flex-direction: column; }
     }
 </style>
+        </div>
+        <div id="presets" class="sindy-tabcontent">
+          <section class="preset-guide">
+            <header class="preset-guide-header">
+              <h2>Built-in systems</h2>
+              <p>
+                The presets are small, noisy time-series datasets chosen to show how library design changes what
+                SINDy can discover. Each training file has two held-out test trajectories from different initial
+                conditions, so you can check whether the recovered equations generalize beyond the fitted data.
+              </p>
+            </header>
+
+            <div class="preset-grid">
+              <article class="preset-card">
+                <h3>Coupled spring–mass system</h3>
+                <p>Two interacting masses exchange energy through linear spring forces.</p>
+                <div class="preset-tags">
+                  <span class="preset-tag">Linear dynamics</span>
+                  <span class="preset-tag">4 states</span>
+                  <span class="preset-tag">Best first example</span>
+                </div>
+                <dl class="preset-facts">
+                  <dt>Variables</dt><dd><code>x1, v1, x2, v2</code></dd>
+                  <dt>Start with</dt><dd>Polynomial library, degree 1</dd>
+                  <dt>Research idea</dt><dd>Check whether SINDy keeps only cross-coupled position and velocity terms.</dd>
+                </dl>
+                <div class="preset-equation">
+                  x1' = v1 &nbsp;&nbsp; x2' = v2<br>
+                  v1', v2' = sparse linear combinations of x1 and x2
+                </div>
+              </article>
+
+              <article class="preset-card">
+                <h3>Van der Pol oscillator</h3>
+                <p>A self-sustained nonlinear oscillator whose trajectories approach a stable limit cycle.</p>
+                <div class="preset-tags">
+                  <span class="preset-tag">Nonlinear dynamics</span>
+                  <span class="preset-tag">2 states</span>
+                  <span class="preset-tag">Limit cycle</span>
+                </div>
+                <dl class="preset-facts">
+                  <dt>Variables</dt><dd><code>x, v</code></dd>
+                  <dt>Start with</dt><dd>Polynomial library, degree 3</dd>
+                  <dt>Research idea</dt><dd>Observe why the cubic interaction term is needed to recover the nonlinear damping.</dd>
+                </dl>
+                <div class="preset-equation">
+                  x' = v<br>
+                  v' = -x + μ(1 - x²)v
+                </div>
+              </article>
+
+              <article class="preset-card">
+                <h3>Nonlinear pendulum</h3>
+                <p>The restoring force is trigonometric rather than polynomial, especially at larger angles.</p>
+                <div class="preset-tags">
+                  <span class="preset-tag">Periodic dynamics</span>
+                  <span class="preset-tag">2 states</span>
+                  <span class="preset-tag">Trigonometric term</span>
+                </div>
+                <dl class="preset-facts">
+                  <dt>Variables</dt><dd><code>theta, omega</code></dd>
+                  <dt>Start with</dt><dd>Combined library, degree/harmonics 1</dd>
+                  <dt>Research idea</dt><dd>Compare a polynomial approximation with a library that can represent <code>sin(theta)</code>.</dd>
+                </dl>
+                <div class="preset-equation">
+                  theta' = omega<br>
+                  omega' ≈ -sin(theta)
+                </div>
+              </article>
+
+              <article class="preset-card">
+                <h3>Time-forced oscillator</h3>
+                <p>External periodic forcing is represented by adding time as a state variable named <code>tau</code>.</p>
+                <div class="preset-tags">
+                  <span class="preset-tag">Time-dependent</span>
+                  <span class="preset-tag">Augmented state</span>
+                  <span class="preset-tag">External forcing</span>
+                </div>
+                <dl class="preset-facts">
+                  <dt>Variables</dt><dd><code>x, tau</code></dd>
+                  <dt>Start with</dt><dd>Combined library, degree/harmonics 1</dd>
+                  <dt>Research idea</dt><dd>See how augmenting time converts a non-autonomous equation into a SINDy-compatible system.</dd>
+                </dl>
+                <div class="preset-equation">
+                  x' ≈ -x + sin(tau)<br>
+                  tau' ≈ 1
+                </div>
+              </article>
+            </div>
+
+            <div class="preset-workflow">
+              <p>
+                <strong>Suggested workflow:</strong> begin with the recommended library, train the model, inspect the
+                validation metrics and residual plots, then open Test to evaluate the two held-out trajectories.
+                Coefficients may vary slightly with noise, split strategy and sparsity threshold; prioritize a stable
+                sparse structure over matching every coefficient exactly.
+              </p>
+            </div>
+          </section>
         </div>
         <div id="training" class="sindy-tabcontent">
 <!--
