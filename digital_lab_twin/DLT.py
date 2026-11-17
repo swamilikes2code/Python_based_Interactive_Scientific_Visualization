@@ -1,27 +1,18 @@
 
 #needed for this to work: working directory should have a models folder with mmscalerX.pkl and mmscalerY.pkl and model.pt, and an outputs folder
 # imports, put these at the very top of everything
-import matplotlib.pyplot as plt
-import matplotlib
-import tqdm
 import copy
 import modularNN as mnn
 import numpy as np
 import pandas as pd
 import pandas
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from sklearn.model_selection import train_test_split
-from sklearn import preprocessing
 import joblib
-import pathlib as path
 import os
-from bokeh.plotting import figure, show, curdoc
+from bokeh.plotting import figure, curdoc
 from bokeh.layouts import row, column
 from bokeh.io import curdoc
 from bokeh.layouts import layout, Spacer
-from bokeh.io import export_svgs
 from bokeh.models.dom import HTML
 import datetime
 from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel, Tabs, Div, Paragraph, Button, Select, RadioButtonGroup, NumericInput, DataTable, StringFormatter, TableColumn, TextInput, HelpButton, Tooltip, NumberFormatter
@@ -171,54 +162,35 @@ stScalerY = joblib.load(stScalerYLocation)
 #updates bokeh plot with new values
 #call when run button is hit
 def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
-    # initialize everything 
-    # note that these load funcs will need you to change to your current directory here!
-    #print(os.getcwd() )
-    #os.chdir('C:\\Users\\kenda\\Documents\\GitHub\\Python_based_Interactive_Scientific_Visualization\\digital_lab_twin') #Windows version
-    #os.chdir('/Users/tyreesedavidson/Documents/GitHub/Python_based_Interactive_Scientific_Visualization/digital_lab_twin') #Mac version
-    XTimes = np.linspace(0, 150, 200)
-    XDF = pd.DataFrame(XTimes, columns=['Time'])
-    #generate empty columns
-    XDF['C_X'] = np.zeros(200)
-    XDF['C_N'] = np.zeros(200)
-    XDF['C_L'] = np.zeros(200)
-    XDF['F_in'] = np.zeros(200)
-    XDF['C_N_in'] = np.zeros(200)
-    XDF['I0'] = np.zeros(200)
-    XTimes = XDF.pop('Time') #popped for plotting
-    #write init conditions to df
-    #Only write to the first row for these 3, they'll be filled in thru the loop
-    XDF['C_X'][0] = C_X
-    XDF['C_N'][0] = C_N
-    XDF['C_L'][0] = C_L
-    #write to all rows for these 3, they won't be filled in thru the loop
-    XDF['F_in'] = F_in
-    XDF['C_N_in'] = C_N_in
-    XDF['I0'] = I0
+    """Run the autoregressive model without per-step Pandas allocations."""
+    num_steps = 200
+    times = np.linspace(0, 150, num_steps)
+    states = np.empty((num_steps, 6), dtype=float)
+    states[:, 3] = F_in
+    states[:, 4] = C_N_in
+    states[:, 5] = I0
+    states[0, :3] = (C_X, C_N, C_L)
 
-    #loop through the experiment and predict each timestep
-    for i in range(0, 199):
-        #get the current timestep
-        X_current = XDF.iloc[i]
-        #scale the current timestep
-        X_current_scaled = stScalerX.transform([X_current])
-        #predict the next timestep
-        Y_current_scaled = model(torch.tensor(X_current_scaled, dtype=torch.float32))
-        #unscale the prediction
-        Y_current_scaled = Y_current_scaled.detach().numpy()
-        Y_current = stScalerY.inverse_transform(Y_current_scaled)
-        #store the prediction
-        nextTimeStep = i+1
-        XDF.iloc[nextTimeStep, 0] = Y_current[0,0]
-        XDF.iloc[nextTimeStep, 1] = Y_current[0,1]
-        XDF.iloc[nextTimeStep, 2] = Y_current[0,2]
-    #after this loop, XDF should be filled with the predicted values
-    #export XDF to csv
-    #add times back in
-    XDF['Time'] = XTimes
-    return XDF
-    #XDF.to_csv('outputs/prediction.csv', index=False)
-    #TODO: re-call the plotting function to show results to user
+    # The trajectory is autoregressive, so each prediction still uses the
+    # previous state. Inference mode removes graph construction while keeping
+    # the trained model and numerical workflow unchanged.
+    with torch.inference_mode():
+        for i in range(num_steps - 1):
+            current_scaled = stScalerX.transform(states[i:i + 1])
+            prediction_scaled = model(
+                torch.as_tensor(current_scaled, dtype=torch.float32)
+            ).cpu().numpy()
+            states[i + 1, :3] = stScalerY.inverse_transform(prediction_scaled)[0]
+
+    return pd.DataFrame({
+        'C_X': states[:, 0],
+        'C_N': states[:, 1],
+        'C_L': states[:, 2],
+        'F_in': states[:, 3],
+        'C_N_in': states[:, 4],
+        'I0': states[:, 5],
+        'Time': times,
+    })
 
 # predLoop(biomass_con.value, nitrate_con.value, 0, inlet_flow.value, inlet_concentration.value, light_intensity.value)
 #testing with default values
@@ -372,12 +344,14 @@ def export_data():
 
 
 export_button = Button(label="Export Data", button_type="success",  height = 60, width = 300)
+export_callback_attached = False
 
 
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
 
 def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, ):  #pH = pH,
+    global export_callback_attached
     
     #set initial conditions by changing these vals
     C_X_init = bio.value
@@ -391,14 +365,19 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
 
     # print((C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init))
     datas = predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
-    #creates the source for the graph that the new plot will be based on
-    #data = "outputs/prediction.csv"
-    #datas = pandas.read_csv(data)
-    sourceS = ColumnDataSource(datas)
-    #attempt to reset the graph IDEA: ADD     p.renderers = [] AT THE BEGINNING OF THE PLOTTING FUNCTION
-    plot_graph(sourceS) ######this is the new plot that will be shown YOU NEED TO FIX THIS SO THAT THE FIGURE IS UPDATED
-    export_button.js_on_event("button_click", CustomJS(args=dict(source=sourceS),
-                            code=open(join(dirname(__file__), "download.js")).read()))
+    datas['modified_C_L'] = datas['C_L'] * 1000
+    # Existing renderers already reference this source; replacing its data is
+    # substantially cheaper than rebuilding the plot and hover tools.
+    source.data = ColumnDataSource.from_df(datas)
+    if not export_callback_attached:
+        export_button.js_on_event(
+            "button_click",
+            CustomJS(
+                args=dict(source=source),
+                code=open(join(dirname(__file__), "download.js")).read(),
+            ),
+        )
+        export_callback_attached = True
     run_button_status_message.text = 'Configuration Ran'
     run_button_status_message.styles = updated
     
@@ -628,38 +607,32 @@ def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train, 
   # training loop
   for epoch in range(epochs):
         model.train()
-        with tqdm.tqdm(batch_start, unit="batch", mininterval=0, disable=True) as bar:
-            bar.set_description(f"Epoch {epoch}")
-            for start in bar:
-                # take a batch
-                X_batch = X_train_tensor[start:start+batchSize]
-                y_batch = Y_train_tensor[start:start+batchSize]
-                # forward pass
-                y_pred = model(X_batch)
-                loss = lossFunction(y_pred, y_batch)
-                # backward pass
-                for param in model.parameters():
-                    param.grad = None
-                loss.backward()
-                # update weights
-                optimizer.step()
-                # print progress
-                bar.set_postfix(mse=float(loss))
+        for start in batch_start:
+            # take a batch
+            X_batch = X_train_tensor[start:start+batchSize]
+            y_batch = Y_train_tensor[start:start+batchSize]
+            # forward pass
+            y_pred = model(X_batch)
+            loss = lossFunction(y_pred, y_batch)
+            # backward pass
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            # update weights
+            optimizer.step()
         # evaluate accuracy at end of each epoch
         model.eval()
-        y_pred = model(X_train_tensor)
-        mse = lossFunction(y_pred, Y_train_tensor)
-        mse = float(mse)
-        trainLoss.append(mse)
-        if mse < best_mse:
-            best_mse = mse
-            best_weights = copy.deepcopy(model.state_dict())
-        
-        #validation loss
-        y_pred = model(X_val_tensor)
-        mse = lossFunction(y_pred, Y_val_tensor)
-        mse = float(mse)
-        valLoss.append(mse)
+        with torch.no_grad():
+            y_pred = model(X_train_tensor)
+            mse = float(lossFunction(y_pred, Y_train_tensor))
+            trainLoss.append(mse)
+            if mse < best_mse:
+                best_mse = mse
+                best_weights = copy.deepcopy(model.state_dict())
+
+            # validation loss
+            y_pred = model(X_val_tensor)
+            mse = float(lossFunction(y_pred, Y_val_tensor))
+            valLoss.append(mse)
     
     # restore model and return best accuracy
   model.load_state_dict(best_weights)

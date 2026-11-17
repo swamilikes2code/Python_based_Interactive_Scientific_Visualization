@@ -114,31 +114,49 @@ def animate_update():
         current_time = start_time
     slider_time.value = current_time
 
-def update_data(attrname, old, new):
+def update_bar(time_value=None):
+    """Update the bar chart from the already-computed trajectory."""
+    if time_value is None:
+        time_value = slider_time.value
 
-    # Get the current slider values
+    data = source.data
+    vbar_top_temp = [
+        np.interp(time_value, data['vec_time'], data['int_vec_A']),
+        np.interp(time_value, data['vec_time'], data['int_vec_B']),
+        np.interp(time_value, data['vec_time'], data['int_vec_C']),
+    ]
+    source_vbar.data = dict(
+        specie_names=specie_names,
+        vbar_top=vbar_top_temp,
+        color=specie_colors,
+    )
+
+
+def update_trajectory(attrname, old, new):
+    """Re-solve the ODE only when a kinetic parameter changes."""
     k_AB_temp = slider_k_AB.value
     k_BC_temp = slider_k_BC.value
     O_AB_temp = slider_order_AB.value
     O_BC_temp = slider_order_BC.value
-    time_temp = slider_time.value
 
     # Generate the new curve
-    vec_time = np.linspace(t_start, t_end, N)  # vector for time
     params_temp = [O_AB_temp, O_BC_temp, k_AB_temp, k_BC_temp]
     vec_conc_t = odeint(dconc_dt, vec_conc_t0, vec_time, args=(params_temp,))
     int_vec_A = vec_conc_t[:,0]
     int_vec_B = vec_conc_t[:,1]
     int_vec_C = vec_conc_t[:,2]
     source.data =  dict(vec_time=vec_time, int_vec_A=int_vec_A, int_vec_B=int_vec_B, int_vec_C=int_vec_C)
-    vbar_top_temp = [np.interp(time_temp, vec_time, int_vec_A), np.interp(time_temp, vec_time, int_vec_B),
-                     np.interp(time_temp, vec_time, int_vec_C)]
-    specie_names = ['A', 'B', 'C']
-    specie_colors = ['darkgray', 'mediumblue', 'darkorange']
-    source_vbar.data = dict(specie_names=specie_names, vbar_top=vbar_top_temp, color=specie_colors)
+    update_bar()
 
-for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC, slider_time]:
-    w.on_change('value', update_data)
+
+def update_time(attrname, old, new):
+    """Move through a trajectory without running the ODE solver again."""
+    update_bar(new)
+
+
+for w in [slider_k_AB, slider_k_BC, slider_order_AB, slider_order_BC]:
+    w.on_change('value', update_trajectory)
+slider_time.on_change('value', update_time)
     
 def animate():
     global callback_id

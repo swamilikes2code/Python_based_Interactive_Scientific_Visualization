@@ -4,7 +4,10 @@ from io import BytesIO
 import os
 import random
 import base64
+import copy
+import threading
 from math import nan
+from functools import lru_cache
 
 from bokeh.io import curdoc
 from bokeh.layouts import column, row, Spacer, layout
@@ -47,6 +50,7 @@ warning = {'width': '250px', 'background-color': '#def2f1', 'padding': '5px 10px
 # --------------- ACCURACY LISTS --------------- #
 # declare at the top to use everywhere
 val_accuracy = []
+training_in_progress = False
 
 # --------------- STATUS MESSAGES --------------- #
 
@@ -727,21 +731,46 @@ master = True
 # master = False
 
 ####################################################################################################
-# Load data from the csv file                        # ---- This section takes 1.5-2.5 to run ---- #
-if master:
-    df1 = pd.read_csv("biodegradability_classification/data/option_1.csv", low_memory=False, na_filter=False) # -------------------- #
-    df2 = pd.read_csv("biodegradability_classification/data/option_2.csv", low_memory=False, na_filter=False) # -------------------- #
-    df3 = pd.read_csv("biodegradability_classification/data/option_3.csv", low_memory=False, na_filter=False) # -------------------- #
-    df4 = pd.read_csv("biodegradability_classification/data/option_4.csv", low_memory=False, na_filter=False) # -------------------- #
-else:
-    df1 = pd.read_csv("./data/option_1.csv", low_memory=False, na_filter=False) # -------------------- #
-    df2 = pd.read_csv("./data/option_2.csv", low_memory=False, na_filter=False) # -------------------- #
-    df3 = pd.read_csv("./data/option_3.csv", low_memory=False, na_filter=False) # -------------------- #
-    df4 = pd.read_csv("./data/option_4.csv", low_memory=False, na_filter=False) # -------------------- #
+# Load the molecular-properties dataset immediately because it powers the
+# histogram and mandatory columns. The much larger fingerprint datasets are
+# loaded only when selected for training.
+data_prefix = "biodegradability_classification/data" if master else "./data"
+dataset_paths = tuple(
+    os.path.join(data_prefix, f"option_{index}.csv")
+    for index in range(1, 5)
+)
+
+
+@lru_cache(maxsize=4)
+def load_dataset(data_index):
+    return pd.read_csv(
+        dataset_paths[data_index],
+        low_memory=False,
+        na_filter=False,
+        memory_map=True,
+    )
+
+
+def load_dataset_preview(data_index, rows=15):
+    if data_index == 0:
+        return load_dataset(0).iloc[:rows]
+    return pd.read_csv(
+        dataset_paths[data_index],
+        low_memory=False,
+        na_filter=False,
+        nrows=rows,
+    )
+
+
+def load_dataset_columns(data_index):
+    if data_index == 0:
+        return load_dataset(0).columns[3:].tolist()
+    return pd.read_csv(dataset_paths[data_index], nrows=0).columns[3:].tolist()
+
+
+df1 = load_dataset(0)
 
 dataset_size = len(df1)                              # ---- This section takes 1.5-2.5 to run ---- #
-                                                     # ---- This section takes 1.5-2.5 to run ---- #
-all_df = [df1, df2, df3, df4]                        # ---- This section takes 1.5-2.5 to run ---- #
                                                      # ---- This section takes 1.5-2.5 to run ---- #
 # just holding mandatory cols                        # ---- This section takes 1.5-2.5 to run ---- #
 df = df1.iloc[:, :3]                                 # ---- This section takes 1.5-2.5 to run ---- #
@@ -760,19 +789,19 @@ data_opts = ['Molecular Properties', 'Morgan Fingerprint', 'ECFP2', 'Path Finger
 
 # Limit the dataframe to the first 15 rows
 df1_subset = df1.iloc[:15, :10].round(3)
-df2_subset = df2.iloc[:15, :10]
-df3_subset = df3.iloc[:15, :10]
-df4_subset = df4.iloc[:15, :10]
+df2_subset = load_dataset_preview(1).iloc[:, :10]
+df3_subset = load_dataset_preview(2).iloc[:, :10]
+df4_subset = load_dataset_preview(3).iloc[:, :10]
 
 df1_tab_source = ColumnDataSource(df1_subset)
 df2_tab_source = ColumnDataSource(df2_subset)
 df3_tab_source = ColumnDataSource(df3_subset)
 df4_tab_source = ColumnDataSource(df4_subset)
 
-cols1 = df1.columns[3:].tolist()
-cols2 = df2.columns[3:].tolist()
-cols3 = df3.columns[3:].tolist()
-cols4 = df4.columns[3:].tolist()
+cols1 = load_dataset_columns(0)
+cols2 = load_dataset_columns(1)
+cols3 = load_dataset_columns(2)
+cols4 = load_dataset_columns(3)
 
 all_cols = [cols1, cols2, cols3, cols4]
 
@@ -1287,58 +1316,70 @@ alg_select.on_change('value', update_algorithm)
 
 
 def run_ML():
-    global model
-    train_status_message.text = f'Algorithm: {my_alg}'
-    train_status_message.styles = updated
-
-    update_color()
-
-    train_validate_model()
+    start_training(tuned=False)
 
 def split_data(train_percentage, val_percentage, test_percentage, data_index):
     global X_train, X_val, X_test, y_train, y_val, y_test
-    np.random.seed(123)
+    random_state = np.random.RandomState(123)
 
-    temp_df = all_df[data_index]
+    temp_df = load_dataset(data_index)
     temp_cols = all_cols[data_index]    
 
     X = temp_df[temp_cols]
     y = df['Class']
 
-    X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=(100-train_percentage)/100)
+    X_train, X_temp, y_train, y_temp = train_test_split(
+        X,
+        y,
+        test_size=(100-train_percentage)/100,
+        random_state=random_state,
+    )
     test_split = test_percentage / (100-train_percentage)
-    X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=test_split)
+    X_val, X_test, y_val, y_test = train_test_split(
+        X_temp,
+        y_temp,
+        test_size=test_split,
+        random_state=random_state,
+    )
 
-def train_validate_model():
-    global model
-    global train_scores, val_scores
-    train_scores.clear()
-    val_scores.clear()
+def compute_training_result(model_to_fit, algorithm_name, x_train, y_train, x_val, y_val):
+    result_train_scores = [0]
+    result_val_scores = [0]
 
-    sizes = np.linspace(.01, 1.0, 15)
-    train_scores.append(0)
-    val_scores.append(0)
-    if my_alg == "K-Nearest Neighbor":
-        if X_train.shape[0]*.01 < model.n_neighbors:
-            sizes = np.linspace(.025, 1.0, 15)
-        if X_train.shape[0]*.025 < model.n_neighbors:
-            sizes = np.linspace(.05, 1.0, 15)
-        if X_train.shape[0]*.05 < model.n_neighbors:
-            sizes = np.linspace(.075, 1.0, 15)
- 
-    for size in sizes:
-        np.random.seed(123)
-        X_train_subset = X_train.sample(frac=size, random_state=42)
+    if hasattr(model_to_fit, 'random_state') and model_to_fit.random_state is None:
+        model_to_fit.set_params(random_state=123)
+
+    training_sizes = np.linspace(.01, 1.0, 15)
+    if algorithm_name == "K-Nearest Neighbor":
+        if x_train.shape[0]*.01 < model_to_fit.n_neighbors:
+            training_sizes = np.linspace(.025, 1.0, 15)
+        if x_train.shape[0]*.025 < model_to_fit.n_neighbors:
+            training_sizes = np.linspace(.05, 1.0, 15)
+        if x_train.shape[0]*.05 < model_to_fit.n_neighbors:
+            training_sizes = np.linspace(.075, 1.0, 15)
+
+    for size in training_sizes:
+        X_train_subset = x_train.sample(frac=size, random_state=42)
         y_train_subset = y_train.loc[X_train_subset.index]
 
         # train model
-        model.fit(X_train_subset, y_train_subset)
+        model_to_fit.fit(X_train_subset, y_train_subset)
 
-        train_score = accuracy_score(y_train_subset, model.predict(X_train_subset)) # Evaluate on training and test sets
-        val_score = accuracy_score(y_val, model.predict(X_val))
-        
-        train_scores.append(train_score) #add the scores to the arrays 
-        val_scores.append(val_score)
+        train_score = accuracy_score(y_train_subset, model_to_fit.predict(X_train_subset))
+        val_score = accuracy_score(y_val, model_to_fit.predict(x_val))
+
+        result_train_scores.append(train_score)
+        result_val_scores.append(val_score)
+
+    return model_to_fit, result_train_scores, result_val_scores
+
+
+def apply_training_result(result, tuned=False):
+    global model, training_in_progress
+    fitted_model, result_train_scores, result_val_scores = result
+    model = fitted_model
+    train_scores[:] = result_train_scores
+    val_scores[:] = result_val_scores
 
     val_accuracy.append(round(val_scores[-1], 3))
 
@@ -1352,12 +1393,97 @@ def train_validate_model():
             test_save_select.value = opt
             predict_select.value = opt
 
+    if tuned:
+        tune_status_message.text = f'Algorithm: {my_alg}'
+        tune_status_message.styles = updated
+        tuned_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
+        <div><b>Tuned Validation Accuracy:</b> {val_accuracy[-1]}</div>
+        </div>"""
+    else:
+        train_status_message.text = f'Algorithm: {my_alg}'
+        train_status_message.styles = updated
+
+    training_in_progress = False
+    set_training_controls_disabled(False)
+    update_color()
+
+
+def training_failed(error, tuned=False):
+    global training_in_progress
+    status = tune_status_message if tuned else train_status_message
+    status.text = f'Error: {error}'
+    status.styles = not_updated
+    training_in_progress = False
+    set_training_controls_disabled(False)
+    update_color()
+
+
+def set_training_controls_disabled(disabled):
+    for control in [
+        data_select,
+        tvt_slider,
+        save_config_button,
+        alg_select,
+        hp_slider,
+        hp_select,
+        hp_toggle,
+        train_button,
+        tune_button,
+    ]:
+        control.disabled = disabled
+
+
+def start_training(tuned=False):
+    global training_in_progress
+    if training_in_progress:
+        return
+
+    training_in_progress = True
+    set_training_controls_disabled(True)
+    model_to_fit = copy.deepcopy(model)
+    algorithm_name = my_alg
+    document = curdoc()
+
+    def worker():
+        try:
+            result = compute_training_result(
+                model_to_fit,
+                algorithm_name,
+                X_train,
+                y_train,
+                X_val,
+                y_val,
+            )
+            document.add_next_tick_callback(
+                lambda result=result: apply_training_result(result, tuned=tuned)
+            )
+        except Exception as error:
+            document.add_next_tick_callback(
+                lambda error=error: training_failed(error, tuned=tuned)
+            )
+
+    threading.Thread(target=worker, daemon=True).start()
+
+
+def train_validate_model():
+    result = compute_training_result(
+        model,
+        my_alg,
+        X_train,
+        y_train,
+        X_val,
+        y_val,
+    )
+    apply_training_result(result)
+
     # test_save_select.value = test_save_select.options[-1]
     # predict_select.value = predict_select.options[-1]
     # print(test_save_select.value)
     # print(predict_select.value)
 
 def load_ML():
+    if training_in_progress:
+        return
     if save_config_message.styles == not_updated:
         warning_spacer_1.visible = False
         train_status_message.styles = warning
@@ -1374,7 +1500,7 @@ def load_ML():
         tune_status_message.styles=not_updated
         warning_spacer_2.visible=True
 
-        curdoc().add_next_tick_callback(run_ML)
+        run_ML()
 
 # Attach callback to the run button
 train_button.on_click(load_ML)
@@ -1400,20 +1526,7 @@ tuned_accuracy_display = Div(text = """
                              </div>""")
 
 def run_tuned_config():
-    global my_alg
-    tune_status_message.text = f'Algorithm: {my_alg}'
-    tune_status_message.styles = updated
-
-    update_color()
-
-    global model
-
-    train_validate_model()
-
-    # Updating accuracy display
-    tuned_accuracy_display.text = f"""<div style='background-color: #FBE9D0; padding: 20px; font-family: Arial, sans-serif;'>
-    <div><b>Tuned Validation Accuracy:</b> {val_accuracy[-1]}</div> 
-    </div>"""
+    start_training(tuned=True)
 
 
 # setting widget callbacks
@@ -1470,6 +1583,8 @@ hp_toggle.on_change('active', hp_toggle_callback)
 
 
 def load_tuned_config():
+    if training_in_progress:
+        return
     if train_status_message.styles == not_updated or train_status_message.styles == warning:
         warning_spacer_2.visible = False
         tune_status_message.styles = warning
@@ -1482,7 +1597,7 @@ def load_tuned_config():
         tune_status_message.text = "Loading tuned config..."
         tune_status_message.styles = loading
         
-        curdoc().add_next_tick_callback(run_tuned_config)
+        run_tuned_config()
 
 tune_button.on_click(load_tuned_config)
 
@@ -2147,11 +2262,30 @@ def molecule_to_descriptors(mol):
     return y_pred
 
 mfpg = rdFingerprintGenerator.GetMorganGenerator(radius=1, fpSize=2048)
+
+
+@lru_cache(maxsize=1)
+def dataset_molecules():
+    return tuple(Chem.MolFromSmiles(smiles) for smiles in df['SMILES'])
+
+
+@lru_cache(maxsize=3)
+def dataset_fingerprints(kind):
+    molecules = dataset_molecules()
+    if kind == 'morgan':
+        return tuple(mfpg.GetFingerprint(mol) for mol in molecules)
+    if kind == 'ecfp':
+        return tuple(ecfpg.GetFingerprint(mol) for mol in molecules)
+    if kind == 'path':
+        return tuple(Chem.RDKFingerprint(mol, maxPath=2) for mol in molecules)
+    raise ValueError(f"Unknown fingerprint kind: {kind}")
+
+
 # from 2016 rdkit ugm github
 def molecule_to_morgan(mol):
     a = np.zeros(2048)
     fp = mfpg.GetFingerprint(mol)
-    store_acc(fp, [mfpg.GetFingerprint(Chem.MolFromSmiles(m)) for m in df['SMILES']])
+    store_acc(fp, dataset_fingerprints('morgan'))
     DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
     y_pred = p_model.predict(X_pred)
@@ -2161,7 +2295,7 @@ ecfpg = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 def molecule_to_ecfp(mol):
     a = np.zeros(2048)
     fp = ecfpg.GetFingerprint(mol)
-    store_acc(fp, [ecfpg.GetFingerprint(Chem.MolFromSmiles(m)) for m in df['SMILES']])
+    store_acc(fp, dataset_fingerprints('ecfp'))
     DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
     y_pred = p_model.predict(X_pred)
@@ -2170,7 +2304,7 @@ def molecule_to_ecfp(mol):
 def molecule_to_pathfp(mol):
     a = np.zeros(2048)
     fp = Chem.RDKFingerprint(mol, maxPath=2)
-    store_acc(fp, [Chem.RDKFingerprint(Chem.MolFromSmiles(m), maxPath=2) for m in df['SMILES']])
+    store_acc(fp, dataset_fingerprints('path'))
     DataStructs.ConvertToNumpyArray(fp, a)
     X_pred = pd.DataFrame([a])
     y_pred = p_model.predict(X_pred)
@@ -2194,11 +2328,15 @@ def calc_pred_acc(similarity):
 def store_acc(fp, model_fp):
     global similarity, p_accuracy
     similarities = DataStructs.BulkTanimotoSimilarity(fp, model_fp)
-    similarities.sort()
-    similarity = round(similarities[-1], 2)
+    similarity = round(max(similarities), 2)
     p_accuracy = calc_pred_acc(similarity)
     # print(similarity)
     # print(p_accuracy)
+
+
+@lru_cache(maxsize=128)
+def lookup_iupac_name(smiles):
+    return pubchempy.get_compounds(smiles, namespace='smiles')[0].iupac_name
 
 def predict_biodegrad():
     if predict_select.value == '':
@@ -2263,8 +2401,7 @@ def predict_biodegrad():
         actual_class = df.at[known_index, 'Class']
         user_name = df['Substance Name'][known_index].lower()
     else:
-        user_compound = pubchempy.get_compounds(user_smiles, namespace='smiles')
-        user_name = user_compound[0].iupac_name
+        user_name = lookup_iupac_name(user_smiles)
         actual_class = 'Unknown'
 
     predict_status_message.text = 'Prediction complete'
