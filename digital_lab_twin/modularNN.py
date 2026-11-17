@@ -1,11 +1,9 @@
 # imports
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import tqdm
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import joblib
@@ -86,38 +84,32 @@ def trainModel(model, lossFunction, optimizer, epochs, batchSize, X_train_tensor
     # training loop
     for epoch in range(epochs):
         model.train()
-        with tqdm.tqdm(batch_start, unit="batch", mininterval=0, disable=True) as bar:
-            bar.set_description(f"Epoch {epoch}")
-            for start in bar:
-                # take a batch
-                X_batch = X_train_tensor[start:start+batchSize]
-                y_batch = Y_train_tensor[start:start+batchSize]
-                # forward pass
-                y_pred = model(X_batch)
-                loss = lossFunction(y_pred, y_batch)
-                # backward pass
-                for param in model.parameters():
-                    param.grad = None
-                loss.backward()
-                # update weights
-                optimizer.step()
-                # print progress
-                bar.set_postfix(mse=float(loss))
+        for start in batch_start:
+            # take a batch
+            X_batch = X_train_tensor[start:start+batchSize]
+            y_batch = Y_train_tensor[start:start+batchSize]
+            # forward pass
+            y_pred = model(X_batch)
+            loss = lossFunction(y_pred, y_batch)
+            # backward pass
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            # update weights
+            optimizer.step()
         # evaluate accuracy at end of each epoch
         model.eval()
-        y_pred = model(X_train_tensor)
-        mse = lossFunction(y_pred, Y_train_tensor)
-        mse = float(mse)
-        trainLoss.append(mse)
-        if mse < best_mse:
-            best_mse = mse
-            best_weights = copy.deepcopy(model.state_dict())
-        
-        #validation loss
-        y_pred = model(X_val_tensor)
-        mse = lossFunction(y_pred, Y_val_tensor)
-        mse = float(mse)
-        valLoss.append(mse)
+        with torch.no_grad():
+            y_pred = model(X_train_tensor)
+            mse = float(lossFunction(y_pred, Y_train_tensor))
+            trainLoss.append(mse)
+            if mse < best_mse:
+                best_mse = mse
+                best_weights = copy.deepcopy(model.state_dict())
+
+            # validation loss
+            y_pred = model(X_val_tensor)
+            mse = float(lossFunction(y_pred, Y_val_tensor))
+            valLoss.append(mse)
     
     # restore model and return best accuracy
     model.load_state_dict(best_weights)
@@ -134,6 +126,8 @@ def testModel(model, lossFunction, X_test_tensor, Y_test_tensor):
 
 #plotter takes in the training and validation loss and plots them
 def plotter(trainLoss, valLoss):
+    import matplotlib.pyplot as plt
+
     #plot the loss
     plt.plot(trainLoss, label='Training Loss')
     plt.plot(valLoss, label='Validation Loss')
@@ -153,6 +147,8 @@ def plot_predictions(train_data,
   """
   Plots training data, test data and compares predictions.
   """
+  import matplotlib.pyplot as plt
+
   plt.figure(figsize=(10, 7)) #create the base of our figure, figsize feeds in width/height in inches
   #if needed, move data to cpu
   if torch.cuda.is_available():
