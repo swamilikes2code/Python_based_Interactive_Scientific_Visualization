@@ -2,12 +2,10 @@
 #needed for this to work: working directory should have a models folder with mmscalerX.pkl and mmscalerY.pkl and model.pt, and an outputs folder
 # imports, put these at the very top of everything
 import copy
-import modularNN as mnn
+import importlib
 import numpy as np
 import pandas as pd
 import pandas
-import torch
-import joblib
 import os
 from bokeh.plotting import figure, curdoc
 from bokeh.layouts import row, column
@@ -145,16 +143,38 @@ biomass_con.on_change('value', optimize_status_message_callback)
 modelLocation = 'models/model.pt'
 if master:
     modelLocation = prefix + modelLocation
-model = torch.load(modelLocation)
-model.eval()
 #scalers
 stScalerXLocation = 'models/stScalerX.pkl'
 stScalerYLocation = 'models/stScalerY.pkl'
 if master:
     stScalerXLocation = prefix + stScalerXLocation
     stScalerYLocation = prefix + stScalerYLocation
-stScalerX = joblib.load(stScalerXLocation)
-stScalerY = joblib.load(stScalerYLocation)
+torch = None
+mnn = None
+model = None
+stScalerX = None
+stScalerY = None
+
+
+def ensure_prediction_runtime():
+    global torch, model, stScalerX, stScalerY
+    if torch is None:
+        torch = importlib.import_module('torch')
+    if model is None:
+        model = torch.load(modelLocation)
+        model.eval()
+    if stScalerX is None or stScalerY is None:
+        joblib = importlib.import_module('joblib')
+        stScalerX = joblib.load(stScalerXLocation)
+        stScalerY = joblib.load(stScalerYLocation)
+
+
+def ensure_training_runtime():
+    global torch, mnn
+    if torch is None:
+        torch = importlib.import_module('torch')
+    if mnn is None:
+        mnn = importlib.import_module('modularNN')
 
 
 #function takes in initial conditions and runs the model
@@ -163,6 +183,7 @@ stScalerY = joblib.load(stScalerYLocation)
 #call when run button is hit
 def predLoop(C_X, C_N, C_L, F_in, C_N_in, I0):
     """Run the autoregressive model without per-step Pandas allocations."""
+    ensure_prediction_runtime()
     num_steps = 200
     times = np.linspace(0, 150, num_steps)
     states = np.empty((num_steps, 6), dtype=float)
@@ -536,7 +557,7 @@ rawData = pd.read_csv(csvPath, header=0)
 #remove unneeded column
 rawData.drop('Index_within_Experiment', axis = 1, inplace = True)
 #X is inputs--the three Concentrations, F_in, I0 (light intensity), and c_N_in (6)
-X = rawData[['Time', 'C_X', 'C_N', 'C_L', 'F_in', 'C_N_in', 'I0']]
+X = rawData[['Time', 'C_X', 'C_N', 'C_L', 'F_in', 'C_N_in', 'I0']].copy()
 Y = X.copy(deep=True)
 #drop unnecessary rows in Y
 Y.drop('F_in', axis = 1, inplace = True)
@@ -556,6 +577,7 @@ if master:
 lossCSV = pd.read_csv(lossCSVPath, header=0)
 
 def model_loop(lR = learning_rate,  lFn = loss_Fn, opt = optimizer, tr = train,  n = neurons, e = epochs, b = batch_Size, X = X, Y = Y, device = device, optimizer_options = optimizer_options, loss_options = loss_options): #ts = test, vs = val_split,
+  ensure_training_runtime()
   #create a timer for whole model loop
   modelStart = time.perf_counter()  
   #user defined parameters: current values can serve as a default
