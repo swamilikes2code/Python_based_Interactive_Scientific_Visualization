@@ -17,6 +17,7 @@ from bokeh.models import ColumnDataSource, HoverTool, Slider, CustomJS, TabPanel
 import warnings
 import random
 import time
+import threading
 from os.path import dirname, join
 warnings.filterwarnings("ignore", category=UserWarning, message="X does not have valid feature names, but StandardScaler was fitted with feature names")
 #Instrutions Tab Section_____________________________________________________________________________________________________________________
@@ -370,22 +371,10 @@ export_callback_attached = False
 
 #Run Button******************************************************************************************************************************
 run_button = Button(label = "Run", button_type = "primary", height = 60, width = 300)
+prediction_running = False
 
-def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con, ):  #pH = pH,
-    global export_callback_attached
-    
-    #set initial conditions by changing these vals
-    C_X_init = bio.value
-    C_N_init = nit.value
-    C_L_init = 0.0
-    F_in_init = inf.value
-    C_N_in_init = inc.value
-    I0_init = li.value
-    # p = figure() PREDLOOP IDEA EVERYTIME THE FUNCTION IS CALLED IT ALSO PASSES IN A NEW FIGURE THAT IS CREATED
-
-
-    # print((C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init))
-    datas = predLoop(C_X_init, C_N_init, C_L_init, F_in_init, C_N_in_init, I0_init)
+def runbutton_function(datas):
+    global export_callback_attached, prediction_running
     datas['modified_C_L'] = datas['C_L'] * 1000
     # Existing renderers already reference this source; replacing its data is
     # substantially cheaper than rebuilding the plot and hover tools.
@@ -401,12 +390,40 @@ def runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_conc
         export_callback_attached = True
     run_button_status_message.text = 'Configuration Ran'
     run_button_status_message.styles = updated
+    prediction_running = False
+    run_button.disabled = False
+
+
+def prediction_failed(error):
+    global prediction_running
+    run_button_status_message.text = f'Error: {error}'
+    run_button_status_message.styles = not_updated
+    prediction_running = False
+    run_button.disabled = False
     
 
 def load_runbutton_function():
+    global prediction_running
+    if prediction_running:
+        return
+    prediction_running = True
+    run_button.disabled = True
     run_button_status_message.text = 'Running...'
     run_button_status_message.styles = loading
-    runbutton_function(li = light_intensity, inf = inlet_flow,  inc = inlet_concentration, nit = nitrate_con, bio = biomass_con,)
+    initial_conditions = (
+        biomass_con.value, nitrate_con.value, 0.0, inlet_flow.value,
+        inlet_concentration.value, light_intensity.value,
+    )
+    document = curdoc()
+
+    def worker():
+        try:
+            result = predLoop(*initial_conditions)
+            document.add_next_tick_callback(lambda result=result: runbutton_function(result))
+        except Exception as error:
+            document.add_next_tick_callback(lambda error=error: prediction_failed(error))
+
+    threading.Thread(target=worker, daemon=True).start()
 
 run_button.on_click(load_runbutton_function)
 

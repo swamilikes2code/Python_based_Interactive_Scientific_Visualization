@@ -2830,30 +2830,14 @@ predict_button_layout = layout(
 
 tab4_layout = row(left_page_spacer, predict_button_layout, row(large_left_page_spacer, column(top_page_spacer, predict_display)), row(left_page_spacer, column(top_page_spacer, smiles_gen)))
 
-test_tab_placeholder = Spacer(width=1, height=1)
-predict_tab_placeholder = Spacer(width=1, height=1)
-train_tab = TabPanel(child=tab1_layout, title='Train and Validate')
-test_tab = TabPanel(child=test_tab_placeholder, title='Test')
-predict_tab = TabPanel(child=predict_tab_placeholder, title='Predict')
-
 tabs = Tabs(tabs = [
                     # TabPanel(child = tab0_layout, title = 'Steps'),
-                    train_tab,
+                    TabPanel(child = tab1_layout, title = 'Train and Validate'),
                     # TabPanel(child = tab1_layout_portrait, title = 'Train and Validate MOBILE TEST'),
                     # TabPanel(child = tab2_layout, title = 'Train and Validate'),
-                    test_tab,
-                    predict_tab
+                    TabPanel(child = tab3_layout, title = 'Test'),
+                    TabPanel(child = tab4_layout, title = 'Predict')
                 ])
-
-
-def load_tab_content(attr, old, new):
-    if new == 1 and test_tab.child is test_tab_placeholder:
-        test_tab.child = tab3_layout
-    elif new == 2 and predict_tab.child is predict_tab_placeholder:
-        predict_tab.child = tab4_layout
-
-
-tabs.on_change('active', load_tab_content)
 
 curdoc().add_root(tabs)
 
