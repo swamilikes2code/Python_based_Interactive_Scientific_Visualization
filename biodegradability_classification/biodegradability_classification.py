@@ -5,6 +5,7 @@ import os
 import random
 import base64
 import copy
+import importlib
 import threading
 from math import nan
 from functools import lru_cache
@@ -17,9 +18,6 @@ from bokeh.models.dom import HTML
 from bokeh.models.ui import SVGIcon
 from bokeh.plotting import figure, show
 from bokeh.transform import dodge
-import pubchempy
-from rdkit import Chem, RDLogger
-from rdkit.Chem import DataStructs, Descriptors, AllChem, rdFingerprintGenerator
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_curve
 from sklearn.model_selection import train_test_split
@@ -34,7 +32,28 @@ from datetime import datetime
 start_time = datetime.now()
 warnings.simplefilter(action='ignore', category=BokehUserWarning)
 warnings.simplefilter(action='ignore', category=ConvergenceWarning)
-RDLogger.DisableLog('rdApp.*') #ignoring hydrogen warning
+pubchempy = None
+Chem = None
+DataStructs = None
+Descriptors = None
+mfpg = None
+ecfpg = None
+
+
+def ensure_chemistry_runtime():
+    global pubchempy, Chem, DataStructs, Descriptors, mfpg, ecfpg
+    if Chem is not None:
+        return
+
+    pubchempy = importlib.import_module('pubchempy')
+    Chem = importlib.import_module('rdkit.Chem')
+    DataStructs = importlib.import_module('rdkit.DataStructs')
+    Descriptors = importlib.import_module('rdkit.Chem.Descriptors')
+    fingerprint_generator = importlib.import_module('rdkit.Chem.rdFingerprintGenerator')
+    rd_logger = importlib.import_module('rdkit.RDLogger')
+    rd_logger.DisableLog('rdApp.*')
+    mfpg = fingerprint_generator.GetMorganGenerator(radius=1, fpSize=2048)
+    ecfpg = fingerprint_generator.GetMorganGenerator(radius=2, fpSize=2048)
 
 
 # --------------- MESSAGE STYLES --------------- #
@@ -2252,6 +2271,7 @@ user_smiles_input = TextInput(title = 'Enter a SMILES string:', width=197, heigh
 # test in dataset C=C(C)C(=O)O
 
 def molecule_to_descriptors(mol):
+    ensure_chemistry_runtime()
     global similarity, p_accuracy
     similarity = '-'
     p_accuracy = '-'
@@ -2261,11 +2281,9 @@ def molecule_to_descriptors(mol):
     y_pred = p_model.predict(X_pred)
     return y_pred
 
-mfpg = rdFingerprintGenerator.GetMorganGenerator(radius=1, fpSize=2048)
-
-
 @lru_cache(maxsize=1)
 def dataset_molecules():
+    ensure_chemistry_runtime()
     return tuple(Chem.MolFromSmiles(smiles) for smiles in df['SMILES'])
 
 
@@ -2283,6 +2301,7 @@ def dataset_fingerprints(kind):
 
 # from 2016 rdkit ugm github
 def molecule_to_morgan(mol):
+    ensure_chemistry_runtime()
     a = np.zeros(2048)
     fp = mfpg.GetFingerprint(mol)
     store_acc(fp, dataset_fingerprints('morgan'))
@@ -2291,8 +2310,8 @@ def molecule_to_morgan(mol):
     y_pred = p_model.predict(X_pred)
     return y_pred
 
-ecfpg = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
 def molecule_to_ecfp(mol):
+    ensure_chemistry_runtime()
     a = np.zeros(2048)
     fp = ecfpg.GetFingerprint(mol)
     store_acc(fp, dataset_fingerprints('ecfp'))
@@ -2302,6 +2321,7 @@ def molecule_to_ecfp(mol):
     return y_pred
 
 def molecule_to_pathfp(mol):
+    ensure_chemistry_runtime()
     a = np.zeros(2048)
     fp = Chem.RDKFingerprint(mol, maxPath=2)
     store_acc(fp, dataset_fingerprints('path'))
@@ -2336,6 +2356,7 @@ def store_acc(fp, model_fp):
 
 @lru_cache(maxsize=128)
 def lookup_iupac_name(smiles):
+    ensure_chemistry_runtime()
     return pubchempy.get_compounds(smiles, namespace='smiles')[0].iupac_name
 
 def predict_biodegrad():
@@ -2343,6 +2364,8 @@ def predict_biodegrad():
         predict_status_message.text = 'Error: please select a Save'
         predict_status_message.styles = not_updated
         return
+
+    ensure_chemistry_runtime()
     
     pred_index = predict_select.options.index(predict_select.value)
 
@@ -2807,14 +2830,30 @@ predict_button_layout = layout(
 
 tab4_layout = row(left_page_spacer, predict_button_layout, row(large_left_page_spacer, column(top_page_spacer, predict_display)), row(left_page_spacer, column(top_page_spacer, smiles_gen)))
 
+test_tab_placeholder = Spacer(width=1, height=1)
+predict_tab_placeholder = Spacer(width=1, height=1)
+train_tab = TabPanel(child=tab1_layout, title='Train and Validate')
+test_tab = TabPanel(child=test_tab_placeholder, title='Test')
+predict_tab = TabPanel(child=predict_tab_placeholder, title='Predict')
+
 tabs = Tabs(tabs = [
                     # TabPanel(child = tab0_layout, title = 'Steps'),
-                    TabPanel(child = tab1_layout, title = 'Train and Validate'),
+                    train_tab,
                     # TabPanel(child = tab1_layout_portrait, title = 'Train and Validate MOBILE TEST'),
                     # TabPanel(child = tab2_layout, title = 'Train and Validate'),
-                    TabPanel(child = tab3_layout, title = 'Test'),
-                    TabPanel(child = tab4_layout, title = 'Predict')
+                    test_tab,
+                    predict_tab
                 ])
+
+
+def load_tab_content(attr, old, new):
+    if new == 1 and test_tab.child is test_tab_placeholder:
+        test_tab.child = tab3_layout
+    elif new == 2 and predict_tab.child is predict_tab_placeholder:
+        predict_tab.child = tab4_layout
+
+
+tabs.on_change('active', load_tab_content)
 
 curdoc().add_root(tabs)
 
