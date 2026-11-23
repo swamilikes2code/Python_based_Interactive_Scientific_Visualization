@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <!-- NEW: MathJax, needed for the equations -->
+    <script>
+      window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]] } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+
+    <title>Example title</title>
+    <style>
+      body {
+        margin: 0;
+        background: #fff;
+        font-family: "Work Sans", sans-serif;
+        font-weight: 400;
+      }
+      .container {
+        width: 85vw;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      header {
+        background: #262626;
+        height: 5.86vw;
+      }
+
+      Header::after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      .logo {
+        float: left;
+        padding: 0.651vw 0;
+        width: 22.79vw;
+        height: 100%;
+      }
+
+      nav {
+        float: right;
+      }
+
+      nav ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      nav li {
+        display: inline-block;
+        margin: left 3.56vw;
+        margin: 0 2.28vw;
+        padding-top: 2.21vw;
+        position: relative;
+      }
+
+      nav a {
+        color: rgb(255, 251, 251);
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 1.3vw;
+      }
+
+      nav a:hover {
+        color: #31a6ff;
+      }
+      nav a::before {
+        content: "";
+        display: block;
+        height: 5px;
+        width: 100%;
+        background-color: #31a6ff;
+
+        position: absolute;
+        width: 0%;
+        top: 0;
+        transition: all ease-in-out 250ms;
+      }
+
+      nav a:hover::before {
+        width: 100%;
+      }
+
+      .head1 {
+        text-align: center;
+        color: #000;
+        font-size: vw;
+        padding: 1.042vw;
+      }
+
+      .head1 {
+        text-align: center;
+        color: #000;
+        font-size: 3.125vw;
+        font-weight: bold;
+        font-family: "Segoe UI";
+      }
+      .flexwrap {
+        display: flex;
+        width: auto;
+        margin: auto;
+        font-family: "Segoe UI";
+        max-width: 90rem;
+      }
+      .flexwrap1 {
+        display: flex;
+        width: auto;
+        font-family: "Segoe UI";
+        color: #484848;
+        font-weight: 600;
+        font-size: 1.354vw;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        background: #b2e3f4;
+        gap: 2.083vw;
+        line-height: 1.5;
+        margin: auto;
+      }
+      .flexcol {
+        color: #484848;
+        font-weight: 600;
+        border: 0.1953vw;
+        font-size: 1.3542vw;
+        border-style: solid;
+        border-color: #000;
+        padding: 0.651vw;
+        width: 50%;
+        background: #e8e8e8;
+        border-radius: 30px;
+        margin: 0 1.302vw;
+      }
+      .head2 {
+        text-align: center;
+        color: #000;
+        font-size: 2.604vw;
+        font-weight: 600;
+        font-family: "Segoe UI";
+      }
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 52.083vw;
+        height: 29.297vw;
+      }
+      .footer {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-decoration: none;
+        overflow: hidden;
+        padding: 1.953vw 0;
+        box-sizing: border-box;
+        background-color: #262626;
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+        margin-top: -180px;
+      }
+      .footer1 {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-decoration: none;
+        overflow: hidden;
+        padding: 1.953vw 0;
+        box-sizing: border-box;
+        background-color: #262626;
+        display: flex;
+        width: 100%;
+        font-family: "Segoe UI";
+        margin-bottom: -4.883vw;
+      }
+      .footerpic {
+        width: 7.161vw;
+        height: 6.51vw;
+        padding: 0.65vw;
+      }
+      .flexcol1 {
+        position: relative;
+        color: #ddd;
+        padding: 0.65vw;
+        width: 50%;
+        background: #262626;
+        height: auto;
+        font-family: "work sans", sans-serif;
+        font-size: 1.042vw;
+      }
+      .flexcol1 p {
+        position: absolute;
+        left: 0;
+      }
+      .flexcol1 img {
+        position: absolute;
+        right: 0;
+      }
+
+      .flexcol2 {
+        width: 28%;
+        height: auto;
+        margin: 112px 0 0 0;
+      }
+      .flexcol4 {
+        width: 32%;
+        height: auto;
+        margin: 230px 0 0 0;
+      }
+      .flexcol3 {
+        width: 40%;
+        height: auto;
+        margin: 230px 0 0 0;
+        padding-right: 1.3vw;
+      }
+      .flexcol5 {
+        width: 45%;
+        position: relative;
+        height: auto;
+        padding-left: 5.21vw;
+      }
+      .flexcol6 {
+        width: 55%;
+        position: relative;
+        height: auto;
+      }
+      .footerbutton {
+        margin: 5px 2px;
+        text-decoration: none;
+        font-family: "proxima nova";
+        font-weight: 200;
+        font-size: 1.302vw;
+        width: 20px;
+        text-align: center;
+        background-color: #31a6ff;
+        color: #fff;
+
+        border: solid 2px #31a6ff;
+        border-radius: 50px;
+        padding: 0.521vw;
+
+        -webkit-transition-duration: 300ms;
+        transition-duration: 300ms;
+      }
+      .footerbutton:hover {
+        color: #31a6ff;
+        background-color: #fff;
+      }
+      .fa {
+        padding: 0.521vw;
+        font-size: 1.302vw;
+        width: 1.302vw;
+        text-align: center;
+        text-decoration: none;
+        margin: 5px 2px;
+        border-radius: 50%;
+      }
+      .fa:hover {
+        opacity: 0.7;
+      }
+      .fa-linkedin {
+        background: #007bb5;
+        color: white;
+      }
+      .fa-github {
+        border: 0.195vw solid #521d91;
+      }
+
+      @media all and (max-width: 960px) {
+        nav li {
+          padding-top: 0.325vw;
+        }
+        .flexcol {
+          padding: 0 10px;
+          border-radius: 17px;
+        }
+
+        .tab {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #f1f1f1;
+        }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+          font-size: 17px;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
+        }
+      }
+      .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+      }
+
+      /* Create two equal columns that floats next to each other */
+      .text_column {
+        float: left;
+        width: 50%;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+
+      /* Clear floats after the columns */
+      .text_row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      /* ===== NEW: styles for the formatted Gas Laws content ===== */
+
+      /* Let the visible tab fill the blue box */
+      .tabcontent {
+        flex: 1;
+      }
+
+      /* Space between paragraphs, lists and headings */
+      .tabcontent p,
+      .tabcontent ul,
+      .tabcontent ol {
+        margin-top: 0;
+        margin-bottom: 1em;
+      }
+
+      /* Centered equation titles, e.g. "Ideal Gas Law" */
+      .eq-title {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 1.5em;
+      }
+
+      /* Centered chart image with caption */
+      .tabcontent figure {
+        margin: 1.5em auto;
+        text-align: center;
+      }
+      .tabcontent figure img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Long source URLs should wrap instead of overflowing */
+      .sources a {
+        word-break: break-all;
+      }
+
+      /* "Jump to Module" button and note at the bottom of the About tab */
+      html {
+        scroll-behavior: smooth;
+      }
+      .jump-note {
+        text-align: center;
+        margin-top: 2.5em;
+      }
+      .jump-btn {
+        display: block;
+        width: 90%;
+        max-width: 470px;
+        margin: 0 auto 1.5em;
+        padding: 0.5em 0;
+        text-align: center;
+        background: #fff;
+        color: #000;
+        border: 2px solid #000;
+        border-radius: 50px;
+        font-family: "Segoe UI";
+        font-size: 1.8vw;
+        font-weight: normal;
+        text-decoration: none;
+      }
+      .jump-btn:hover {
+        background: #e8e8e8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="container">
+        <img
+          src="Logo2.jpg"
+          alt="logo"
+          class="logo"
+        />
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/app" class="text-size">Home</a></li>
+          <li>
+            <a href="example" class="text-size"
+              >Example</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <style>
+      .text-size {
+        font-size: 16px; /* Adjust the font size as desired */
+      }
+    </style>
+    <h1 class="head1">Understanding Gas Behavior</h1>
+    <div class="tab">
+      <button
+        class="tablinks"
+        onclick="openTab(event, 'About')"
+        id="defaultOpen"
+      >
+        About
+      </button>
+      <button class="tablinks" onclick="openTab(event, 'Gas Behavior')">
+        Gas Behavior
+      </button>
+      <button class="tablinks" onclick="openTab(event, 'Instructions')">
+        Instructions
+      </button>
+      <button class="tablinks" onclick="openTab(event, 'Questions')">
+        Questions
+      </button>
+      
+    </div>
+
+    <!-- All four tabs now share ONE blue box (before, each tab had its own,
+         which left empty blue strips for the hidden ones) -->
+    <div class="flexwrap1">
+
+      <!-- ===================== ABOUT ===================== -->
+      <div id="About" class="tabcontent">
+        <h3>About</h3>
+        <p>
+          The Gas Laws module works to emphasize the strengths and setbacks to
+          using the Ideal Gas Law in comparison to other equations of state.
+          Use the module to visually see on various graphs the differences
+          between real gas data and three different equations of state in order
+          to understand where some/all of those equations appropriately model
+          the data and where some/all of them fall short.
+        </p>
+
+        <p class="jump-note">
+          <strong>NOTE:</strong> If the module below is not appearing, try
+          refreshing or opening this page in a private/incognito window.
+        </p>
+        <a class="jump-btn" href="#bokeh-module">Jump to Module</a>
+      </div>
+
+      <!-- ===================== GAS BEHAVIOR ===================== -->
+      <div id="Gas Behavior" class="tabcontent">
+        <h3>Gas Behavior</h3>
+
+        <p>
+          In order to demonstrate the relationship between temperature,
+          pressure, and volume for gases, the ideal gas law is commonly used.
+        </p>
+
+        <p class="eq-title">Ideal Gas Law</p>
+        \[ PV = nRT \]
+
+        <p>The ideal gas law makes four assumptions:</p>
+        <ul>
+          <li>The gas particles have negligible volume compared to the total volume of a gas.</li>
+          <li>The gas particles have no intermolecular forces (ex: attraction or repulsion) with other gas particles.</li>
+          <li>The gas particles move randomly in accordance with Newton’s laws of motion.</li>
+          <li>The gas particles have perfect elastic collisions with no energy transfer.</li>
+        </ul>
+
+        <p>
+          In reality, an ideal gas does not exist. All gas particles possess
+          some volume, exhibit intermolecular forces with the gas particles
+          surrounding it, and do not have perfect elastic collisions due to the
+          conservation of energy and momentum that is within the system.
+        </p>
+
+        <p>
+          Even with these drawbacks to the ideal gas law, real gases can behave
+          ideally under certain conditions. This includes considerably low
+          pressures or high temperatures; under these conditions, the volume
+          and intermolecular attractions of a gas particle become small enough
+          they can be considered negligible.
+        </p>
+
+        <p>
+          Z-factor compressibility charts can be used to visualize the behavior
+          of a specific molecule in comparison to its assumed behavior
+          calculated from the ideal gas law. Below is a generalized
+          compressibility chart. If a gas were to behave perfectly ideally, it
+          would be a horizontal line at Z=1. Instead, it can be seen that at
+          certain ranges of reduced pressures and temperatures, the line
+          deviates significantly. Those regions are regions of low pressure and
+          high temperature, where ideality deviates the most. When generating
+          the temperature, volume, and pressure ranges for the module,
+          compressibility factor charts were consulted to find an appropriate
+          range that represents ranges of relative ideality and deviations from
+          ideality.
+        </p>
+
+        <figure>
+          <img
+            src="Lee-Kesler-compressibility-factor.png"
+            alt="Lee-Kesler simple fluid compressibility factor chart: compressibility factor Z versus reduced pressure Pr, with curves for reduced temperatures from 1.0 to 5.0 and the critical point and saturated gas line marked"
+            width="600"
+          />
+          <figcaption>Lee-Kesler Simple Fluid Compressibility Factor</figcaption>
+        </figure>
+
+        <p>
+          Other equations of state try to account for the unrepresented
+          variables in the ideal gas law. For example, the Van Der Waals
+          equation includes the variable <em>a</em> for intermolecular forces
+          and <em>b</em> in order to represent the volume of 1 mole of the
+          given molecule. Both variables <em>a</em> and <em>b</em> try to
+          correct the assumptions made in the ideal gas law in order to more
+          accurately predict the behavior of a gas, and are calculated using
+          the critical temperature and pressure of each specific gas.
+        </p>
+
+        <p class="eq-title">Virial Equation of State</p>
+        \[
+          P = \frac{RT}{\hat{V} - b} - \frac{a}{\hat{V}^2}
+          \quad \text{with} \quad
+          a = \frac{27R^2T_c^2}{64P_c}, \quad
+          b = \frac{RT_c}{8P_c}
+        \]
+
+        <p>
+          Additionally, the Soave-Redlich-Kwong (SRK) equation of state
+          tackles the molecular volume and attraction of real gas particles in
+          an equation that implements <em>a</em>, <em>b</em>, and &omega;
+          (Pitzer Acentric Factor) to formulate an equation to more closely
+          model real gas behavior.
+        </p>
+
+        <p class="eq-title">Soave-Redlich-Kwong Equation of State</p>
+        \[
+          P = \frac{RT}{\hat{V} - b} - \frac{\alpha a}{\hat{V}(\hat{V} + b)}
+        \]
+
+        \[
+        \begin{aligned}
+          a &= 0.42747 \, \frac{(RT_c)^2}{P_c} \\[6pt]
+          b &= 0.08664 \, \frac{RT_c}{P_c} \\[6pt]
+          m &= 0.48508 + 1.55171\,\omega - 0.1561\,\omega^2 \\[6pt]
+          T_r &= T / T_c \\[6pt]
+          \alpha &= \left[ 1 + m\left( 1 - \sqrt{T_r} \right) \right]^2
+        \end{aligned}
+        \]
+
+        <div class="sources">
+          <h3>Sources</h3>
+          <ul>
+            <li><a href="https://www.ncbi.nlm.nih.gov/books/NBK441936/">https://www.ncbi.nlm.nih.gov/books/NBK441936/</a></li>
+            <li><a href="https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Physical_Chemistry_(LibreTexts)/16%3A_The_Properties_of_Gases/16.02%3A_van_der_Waals_and_Redlich-Kwong_Equations_of_State">https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Physical_Chemistry_(LibreTexts)/16%3A_The_Properties_of_Gases/16.02%3A_van_der_Waals_and_Redlich-Kwong_Equations_of_State</a></li>
+            <li><a href="https://courses.ems.psu.edu/png520/m10_p5.html">https://courses.ems.psu.edu/png520/m10_p5.html</a></li>
+            <li><a href="https://pressbooks.bccampus.ca/thermo1/chapter/3-2-real-gas-and-compressibility-factor/">https://pressbooks.bccampus.ca/thermo1/chapter/3-2-real-gas-and-compressibility-factor/</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ===================== INSTRUCTIONS ===================== -->
+      <div id="Instructions" class="tabcontent">
+        <h3>Instructions</h3>
+        <p>
+          In order to use the module, select from the dropdown menu on the top
+          left the substance you would like to use. From there, you can select
+          which graph you would like to view: Pressure vs. Volume, Pressure vs.
+          Temperature, Volume vs. Temperature. Each graph allows you to slide
+          the unknown variable to your desired quantity. The arrow keys on your
+          keyboard can also be used to adjust that value. When hovering your
+          mouse over the graph, you can see the specific values from each real
+          gas data point or equation of state. Right click or use the buttons
+          on the right side of the graph itself to toggle on/off the hover tool
+          as desired. If you want to zoom in to specific portions of the graph,
+          that can also be done by either right clicking or using the buttons
+          on the right side of the graph. Additionally, by clicking on the
+          legend’s values, they can be hidden/shown on the graph in order to
+          more clearly see the data being observed.
+        </p>
+      </div>
+
+      <!-- ===================== QUESTIONS ===================== -->
+      <div id="Questions" class="tabcontent">
+        <h3>Supplemental Questions</h3>
+
+        <ol>
+          <!-- Question 1 -->
+          <li>
+            The ideal gas law assumes molecules have no volume and no attractions.
+            For each molecule pair below, which assumption is more likely to
+            deviate from the ideal gas law? Explain your reasoning.
+            <ol type="a">
+              <li>Nitrogen and Sulfur Dioxide</li>
+              <li>Methane and Ethane</li>
+              <li>Argon and Water</li>
+              <li>
+                Use the graphs in the module to show which substance is more likely
+                to deviate from the ideal gas law.
+              </li>
+            </ol>
+          </li>
+
+          <!-- Question 2 -->
+          <li>
+            Set Methane’s temperature to 250 K on the Pressure vs. Volume graph.
+            <ol type="a">
+              <li>Looking at just the ideal gas line, what is the predicted pressure at a volume of 0.5 L/mol?</li>
+              <li>What is the percent error between the true value (real gas data) and the prediction made by the ideal gas law?</li>
+              <li>Do you believe the percent error between the ideal gas line and the real data will be larger or smaller at 2 L/mol in comparison to 0.5 L/mol? Explain your reasoning.</li>
+            </ol>
+          </li>
+
+          <!-- Question 3 -->
+          <li>
+            Look at Argon, a nonpolar substance, on the Pressure vs. Temperature
+            graph. Using a volume of 0.5 L/mol, make a table with the following
+            temperatures: Argon: 160 K, 180 K, 200 K.
+            <ol type="a">
+              <li>Calculate the pressure at these temperatures using each equation of state and compare it to the real gas data in the module.</li>
+              <li>Calculate the percent error and determine which equations of state would be suitable at these temperatures (the calculation is suitable if the percent error is less than 5%).</li>
+              <li>Make a second table and repeat parts a and b with a volume of 0.05 L/mol. What is the difference in the data and percent error in comparison to the first table? What is the reason for these differences?</li>
+            </ol>
+          </li>
+
+          <!-- Question 4 -->
+          <li>
+            A power plant needs to store 5,000 mol of propane at 385 K and 10 MPa.
+            One container can hold 75 liters of propane and costs $2,000. Set
+            Propane’s pressure to 10 MPa on the Volume vs. Temperature graph.
+            <ol type="a">
+              <li>Using the SRK equation of state, how many liters of propane are there? How many containers would be needed to hold the predicted volume of propane?</li>
+              <li>Using the virial equation of state, how many liters of propane are there? How many containers would be needed to hold the predicted volume of propane?</li>
+              <li>Now look at the real gas data at the same conditions. What is the accurate number of containers needed?</li>
+              <li>Which equation of state gives the more accurate number of containers needed? How much money would have been wasted if the other equation of state was used to predict the number of containers needed?</li>
+            </ol>
+          </li>
+        </ol>
+      </div>
+
+    </div>
+
+    <script>
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+
+        // NEW: make sure equations in the newly shown tab are rendered
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([document.getElementById(tabName)]);
+        }
+      }
+      // Get the element with id="defaultOpen" and click on it
+      document.getElementById("defaultOpen").click();
+      // Keyboard navigation
+      document.addEventListener("keydown", (event) => {
+        // Let the Bokeh sliders use the arrow keys without changing tabs
+        if (event.target.closest && event.target.closest("#bokeh-module")) {
+          return;
+        }
+        const tablinks = document.querySelectorAll(".tablinks");
+        let currentTab = Array.from(tablinks).findIndex((tab) =>
+          tab.classList.contains("active")
+        );
+
+        if (event.key === "ArrowRight") {
+          currentTab = (currentTab + 1) % tablinks.length;
+        } else if (event.key === "ArrowLeft") {
+          currentTab = (currentTab - 1 + tablinks.length) % tablinks.length;
+        } else {
+          return;
+        }
+
+        tablinks[currentTab].click();
+      });
+      
+        </script>
+
+        <div id="bokeh-module" style="width: 90%; margin: 2em auto;">
+          {{ script|safe }}
+        </div>
+
+        <br />
+        <br />
+      </body>
+    </html>
